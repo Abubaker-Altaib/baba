@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<!-- department duration report wizard -->
+
+
+	<record id="emp_delegation_report_wizard_form" model="ir.ui.view">
+            <field name="name">emp.delegation.report.wizard</field>
+            <field name="model">emp.delegation.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Employee Delegation Report" version="7.0">
+                	
+                    <group>
+                        <field name='state_id' required="1" domain="[('level','=','1')]"/>
+                        <field name='state_id_level2' attrs="{'required':[('state_id_level3','!=',False)]}" domain="[('level','=','2'),('parent_id','=',state_id)]"/>
+                        <field name='state_id_level3' attrs="{'required':[('state_id_level2','!=',False)]}" domain="[('level','=','3'),('parent_id','=',state_id_level2)]"/>
+                        <field name='department_id'/>
+                    </group>
+                    <group col="5" colspan="2">
+                        <field name="date_from" attrs="{'required':[('date_to','!=',False)]}"/>
+                        <field name="date_to" attrs="{'required':[('date_from','!=',False)]}"/>
+                    </group>
+              
+              <footer>
+
+                    <button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+                         or
+                <button special="cancel" string="Cancel" class="oe_link"/>
+              </footer>
+          </form>
+            </field>
+      </record>
+
+        <record id="action_emp_delegation_report_wizard" model="ir.actions.act_window">
+            <field name="name">Employee Delegation Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">emp.delegation.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="emp_delegation_report_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+      
+        <menuitem sequence="31"
+                name="Employee Delegation Report"
+                action="action_emp_delegation_report_wizard"
+                id="emp_delegation_report_menu"
+                parent="hr_custom.menu_hr_employees_reports"
+                />
+
+        
+    </data>
+</openerp>

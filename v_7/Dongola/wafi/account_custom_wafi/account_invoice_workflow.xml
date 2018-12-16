@@ -1,0 +1,108 @@
+<?xml version="1.0" ?>
+<openerp>
+	<data>
+
+		<!-- Activites -->
+
+		<record model="workflow.activity" id="act_complete">
+			<field name="wkf_id" ref="account.wkf" />
+			<field name="name">complete</field>
+			<field name="action">to_complete()</field>
+			<field name="kind">function</field>
+		</record>
+
+		<record model="workflow.activity" id="act_confirm">
+			<field name="wkf_id" ref="account.wkf" />
+			<field name="name">confirm</field>
+			<field name="action">to_confirm()</field>
+			<field name="kind">function</field>
+		</record>
+
+		<record model="workflow.activity" id="act_review">
+			<field name="wkf_id" ref="account.wkf"/>
+			<field name="name">review</field>
+			<field name="action">write({'state':'review'})</field>
+			<field name="kind">function</field>
+		</record>
+
+		<!-- Transitions -->
+
+		<record model="workflow.transition" id="t100">
+			<field name="act_from" ref="account.act_draft" />
+			<field name="act_to" ref="act_complete" />
+			<field name="signal">to_complete</field>
+		</record>
+
+		<record model="workflow.transition" id="t101">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_confirm" />
+			<field name="signal">to_confirm</field>
+		</record>
+
+		<record model="workflow.transition" id="t102">
+			<field name="act_from" ref="act_confirm" />
+			<field name="act_to" ref="act_review" />
+			<field name="signal">to_review</field>
+		</record>
+
+		<record model="workflow.transition" id="t103">
+			<field name="act_from" ref="account.act_open" />
+			<field name="act_to" ref="account.act_paid" />
+			<field name="signal">to_paid</field>
+		</record>
+
+		<record id="t4" model="workflow.transition">
+		    <field name="act_from" ref="act_review"/>
+		    <field name="act_to" ref="account.act_open"/>
+		    <field name="signal">invoice_open</field>
+		</record>
+		
+		<!-- Activites Custom -->
+		<record model="workflow.activity" id="act_complete_custom">
+			<field name="wkf_id" ref="account.wkf" />
+			<field name="name">complete_custom</field>
+			<field name="action">write({'state':'complete'})</field>
+			<field name="kind">function</field>
+		</record>
+
+		<record model="workflow.activity" id="act_confirm_custom">
+			<field name="wkf_id" ref="account.wkf" />
+			<field name="name">confirm_custom</field>
+			<field name="action">to_confirm()</field>
+			<field name="kind">function</field>
+		</record>
+
+		<record model="workflow.activity" id="act_review_custom">
+			<field name="wkf_id" ref="account.wkf"/>
+			<field name="name">review_custom</field>
+			<field name="action">write({'state':'review'})</field>
+			<field name="kind">function</field>
+		</record>
+		
+		
+		<!--Transitions Custom -->
+		<record model="workflow.transition" id="t104">
+			<field name="act_from" ref="account.act_draft" />
+			<field name="act_to" ref="act_complete_custom" />
+			<field name="signal">to_complete_custom</field>
+		</record>
+
+		<record model="workflow.transition" id="t105">
+			<field name="act_from" ref="act_complete_custom" />
+			<field name="act_to" ref="act_confirm_custom" />
+			<field name="signal">to_confirm_custom</field>
+		</record>
+		
+		<record model="workflow.transition" id="t106">
+			<field name="act_from" ref="act_confirm_custom" />
+			<field name="act_to" ref="act_review_custom" />
+			<field name="signal">to_review_custom</field>
+		</record>
+		
+		<record id="t400" model="workflow.transition">
+		    <field name="act_from" ref="act_review_custom"/>
+		    <field name="act_to" ref="account.act_open"/>
+		    <field name="signal">invoice_open</field>
+		</record>
+	</data>
+</openerp>

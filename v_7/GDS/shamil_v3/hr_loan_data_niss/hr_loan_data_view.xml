@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+                <record model="ir.ui.view" id="view_hr_loan_data">
+			<field name="name">hr.loan.data.tree</field>
+			<field name="model">hr.loan.data</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+                             <tree string="Loan Data">
+				<field name="transaction_time"/>
+				<field name="amount" />
+				<field name="state" />
+				<field name="partner_code" />
+				<field name="partner_name" />
+				<field name="partner_id" />
+				<field name="ready" />
+				<field name="loan_type" />
+			     </tree>
+			</field>
+		</record>
+
+	<record id="view_hr_loan_data_filter" model="ir.ui.view">
+        <field name="name">hr loan data.select</field>
+        <field name="model">hr.loan.data</field>
+        <field name="arch" type="xml">
+            <search string="Amanat details">
+               <group>
+	  		<field name="transaction_time"/>
+			<field name="amount" />
+			<field name="state" />
+			<field name="partner_code" />
+			<field name="partner_name" />
+			<field name="partner_id" />
+			<field name="ready" />
+			<field name="loan_type" />
+                </group>
+                <group expand="0" string="Group By..." colspan="4" col="10" >
+                    <filter string="Partner" context="{'group_by':'partner_code'}"/>
+                    <filter string="Time" context="{'group_by':'transaction_time'}"/>
+                </group>
+            </search>
+	</field>
+	</record>
+
+		<record id="action_hr_loan_data_tree" model="ir.actions.act_window">
+			<field name="name">Loan Data</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hr.loan.data</field>
+			<field name="view_mode">tree</field>
+			<field name="domain">[]
+                        </field>
+			<field name="view_id" ref="view_hr_loan_data" />
+                        <field name="search_view_id" ref="view_hr_loan_data_filter"/>
+		</record>
+
+               <menuitem name="Loan Data" parent="hr_loan.hr_loan_menu" sequence="40"
+		action="action_hr_loan_data_tree" id="menu_hr_loan_data"
+			icon="STOCK_PRINT" />
+
+	</data>
+</openerp>

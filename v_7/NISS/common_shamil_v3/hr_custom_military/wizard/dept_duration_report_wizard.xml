@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<!-- department duration report wizard -->
+
+
+	<record id="dept_duration_report_wizard_form" model="ir.ui.view">
+            <field name="name">dept.duration.report.wizard</field>
+            <field name="model">dept.duration.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Seniority Report" version="7.0">
+                	
+                    <group>
+                        <field name='type'/>
+                        <field name='department_id' attrs="{'required':[('type','=','department_duration')],'invisible':[('type','!=','department_duration')]}"/>
+                        <field name='degree_id' attrs="{'required':[('type','=','age')],'invisible':[('type','!=','age')]}"/>
+                    </group>
+                    <group col="5" colspan="2" attrs="{'invisible':[('type','!=','department_duration')]}">
+                        <field name="more_than" attrs="{'required':[('type','=','department_duration')],'invisible':[('type','!=','department_duration')]}"/>
+                        <field name="less_than" attrs="{'required':[('type','=','department_duration')],'invisible':[('type','!=','department_duration')]}"/>
+                    </group>
+
+                    <group col="5" colspan="2" attrs="{'invisible':[('type','!=','age')]}">
+                        <field name="age_from" attrs="{'required':[('type','=','age')],'invisible':[('type','!=','age')]}"/>
+                        <field name="age_to" attrs="{'required':[('type','=','age')],'invisible':[('type','!=','age')]}"/>
+                    </group>
+              
+              <footer>
+
+                    <button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+                         or
+                <button special="cancel" string="Cancel" class="oe_link"/>
+              </footer>
+          </form>
+            </field>
+      </record>
+
+        <record id="action_dept_duration_report_wizard" model="ir.actions.act_window">
+            <field name="name">Department duration Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dept.duration.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="dept_duration_report_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+      
+        <menuitem sequence="30"
+                name="Department duration Report"
+                action="action_dept_duration_report_wizard"
+                id="dept_duration_report_menu"
+                parent="hr_custom.menu_hr_employees_reports"
+                />
+
+        
+    </data>
+</openerp>

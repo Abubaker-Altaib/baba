@@ -1,0 +1,183 @@
+<odoo>
+    <data>
+        <template id="budget_comparison_report_tamplate">
+            <t t-call="web.html_container">
+                <t t-set="data_report_margin_top" t-value="12"/>
+                <t t-set="data_report_header_spacing" t-value="9"/>
+                <t t-set="data_report_dpi" t-value="110"/>
+                <t t-call="web.basic_layout">
+                    <div class="page">
+
+                        <html>
+                            <body>
+                                <head>
+                                    <style>
+
+                                        table, td, th {
+                                        border: 1px solid #ddd;
+                                        text-align: center;
+                                        }
+
+                                        table {
+                                        border-collapse: collapse;
+                                        width: 100%;
+                                        }
+
+                                        th, td {
+                                        padding: 15px;
+                                        }
+                                        th {
+                                        background-color:#cccccc;#E7D9D9
+                                        font-weight: bold;
+                                        }
+                                        td {
+
+                                        font-weight: bold;
+
+                                        }
+                                        td, th {
+                                        border: 3px solid black;
+                                        padding: 3px 10px;
+                                        }
+
+                                        td,th,h1,h3,h4 { font-family:"DejaVu Serif";
+                                        }
+
+
+
+                                    </style>
+
+
+
+
+
+                                </head>
+                                <table style="width:40%;">
+
+                                    <tr>
+                                        <th colspan="2">Main Information</th>
+                                    </tr>
+
+                                    <tr >
+                                        <th >First Periode :</th> <td name="first_periode_date_td"><t t-esc="data.get('date_from')"/> - <t t-esc="data.get('date_to')"/></td>
+                                    </tr>
+                                    <tr >
+                                        <th >Second Periode :</th> <td name="second_periode_date_th"><t t-esc="data.get('date_from_s')"/> - <t t-esc="data.get('date_to_s')"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Budget Type :</th>   <td>
+
+                                        <t t-esc="dict(get.fields_get(allfields=['budget_type'])['budget_type']['selection'])[data.get('budget_type')]"/>
+
+                                    </td>
+                                    </tr>
+
+
+
+                                </table>
+
+                                <br/>
+
+
+                                <table>
+                                    <tr>
+                                        <th style="border: 0px; visibility:hidden;"></th>
+                                        <th style="border: 0px; visibility:hidden;"></th>
+                                        <th colspan="2">First Period</th>
+                                        <th colspan="2">Second Period</th>
+
+
+                                    </tr>
+                                    <tr>
+                                        <t t-if="data.get('budget_type')=='out'">
+                                            <th>Analytic Code</th>
+                                            <th>Analytic Name</th>
+                                            <th>Actual Expense</th>
+                                            <th>Achievement</th>
+                                            <th>Actual Expense</th>
+                                            <th>Achievement</th>
+                                            <th>Compare</th>
+                                        </t>
+                                        <t t-else="">
+                                            <th>Analytic Code</th>
+                                            <th>Analytic Name</th>
+                                            <th>Actual Revenue</th>
+                                            <th>Deviation</th>
+                                            <th>Actual Revenue</th>
+                                            <th>Deviation</th>
+                                            <th>Compare</th>
+                                        </t>
+                                    </tr>
+                                    <t t-foreach="data['analytic_ids']" t-as="id">
+                                        <t t-if="get.get_analytic_info(id,data).type=='view'">
+                                            <tr style="background-color:#ba9191;">
+                                                <td><t t-esc="get.get_analytic_info(id,data).code"/></td>
+                                                <td><t t-esc="get.get_analytic_info(id,data).name"/></td>
+                                                <t t-if="get.get_analytic_summation_period(id,data) != []">
+                                                    <t t-if="data.get('budget_type')=='out'">
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] * -1 or '-'"/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[0][0]['percentage'] and str(round( 100 - ((get.get_analytic_summation_period(id,data)[0][0]['planned_amount']+get.get_analytic_summation_period(id,data)[0][0]['total_operation']) != 0 and get.get_analytic_summation_period(id,data)[0][0]['residual']*100/(get.get_analytic_summation_period(id,data)[0][0]['planned_amount'] + get.get_analytic_summation_period(id,data)[0][0]['total_operation']) or 100 ),2)) + '%' or '-' "/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] * -1 or '-' "/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[1][0]['percentage'] and str(round( 100 - ((get.get_analytic_summation_period(id,data)[1][0]['planned_amount']+get.get_analytic_summation_period(id,data)[1][0]['total_operation']) != 0 and get.get_analytic_summation_period(id,data)[1][0]['residual']*100/(get.get_analytic_summation_period(id,data)[1][0]['planned_amount'] + get.get_analytic_summation_period(id,data)[1][0]['total_operation']) or 100 ),2)) + '%' or '-' "/></td>
+                                                        <td><t t-esc="(get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] ) and ( (get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] * -1) - (get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] * -1)) or '-'"/></td>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] or '-' "/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[0][0]['deviation'] and str(round(((get.get_analytic_summation_period(id,data)[0][0]['planned_amount']+get.get_analytic_summation_period(id,data)[0][0]['total_operation']) != 0 and get.get_analytic_summation_period(id,data)[0][0]['residual']*100/(get.get_analytic_summation_period(id,data)[0][0]['planned_amount'] + get.get_analytic_summation_period(id,data)[0][0]['total_operation']) or 100 ),2))+'%' or '-' "/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] or '-' "/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[1][0]['deviation'] and srt(round(((get.get_analytic_summation_period(id,data)[1][0]['planned_amount']+get.get_analytic_summation_period(id,data)[1][0]['total_operation']) != 0 and get.get_analytic_summation_period(id,data)[1][0]['residual']*100/(get.get_analytic_summation_period(id,data)[1][0]['planned_amount'] + get.get_analytic_summation_period(id,data)[1][0]['total_operation']) or 100 ),2) )+'%' or '-'"/></td>
+                                                        <td><t t-esc="(get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] ) and ( (get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] ) - (get.get_analytic_summation_period(id,data)[1][0]['practical_amount'])) or '-' "/></td>
+                                                    </t>
+                                                </t>
+                                            </tr>
+                                        </t>
+
+
+                                        <t t-if="get.get_analytic_info(id,data).type=='normal'">
+
+                                            <tr style="background-color:#E7D9D9;">
+                                                <td><t t-esc="get.get_analytic_info(id,data).code"/></td>
+                                                <td><t t-esc="get.get_analytic_info(id,data).name"/></td>
+                                                <t t-if="get.get_analytic_summation_period(id,data) != []">
+                                                    <t t-if="data.get('budget_type')=='out'">
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] * -1 or '-'"/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[0][0]['percentage'] and str(round( 100 - ((get.get_analytic_summation_period(id,data)[0][0]['planned_amount']+get.get_analytic_summation_period(id,data)[0][0]['total_operation']) != 0 and get.get_analytic_summation_period(id,data)[0][0]['residual']*100/(get.get_analytic_summation_period(id,data)[0][0]['planned_amount'] + get.get_analytic_summation_period(id,data)[0][0]['total_operation']) or 100 ),2))+'%' or '-' "/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] * -1 or '-' "/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[1][0]['percentage'] and str(round(100 - ((get.get_analytic_summation_period(id,data)[1][0]['planned_amount']+get.get_analytic_summation_period(id,data)[1][0]['total_operation']) != 0 and get.get_analytic_summation_period(id,data)[1][0]['residual']*100/(get.get_analytic_summation_period(id,data)[1][0]['planned_amount'] + get.get_analytic_summation_period(id,data)[1][0]['total_operation']) or 100 ),2))+'%' or '-' "/></td>
+                                                        <td><t t-esc="(get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] ) and ( (get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] * -1) - (get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] * -1) ) or '-'"/></td>
+
+                                                    </t>
+                                                    <t t-else="">
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] or '-' "/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[0][0]['deviation'] and str(round(((get.get_analytic_summation_period(id,data)[0][0]['planned_amount']+get.get_analytic_summation_period(id,data)[0][0]['total_operation']) != 0 and get.get_analytic_summation_period(id,data)[0][0]['residual']*100/(get.get_analytic_summation_period(id,data)[0][0]['planned_amount'] + get.get_analytic_summation_period(id,data)[0][0]['total_operation']) or 100 ),2))+'%' or '-' "/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] or '-' "/></td>
+                                                        <td><t t-esc="get.get_analytic_summation_period(id,data)[1][0]['deviation'] and str(round(((get.get_analytic_summation_period(id,data)[1][0]['planned_amount']+get.get_analytic_summation_period(id,data)[1][0]['total_operation']) != 0 and get.get_analytic_summation_period(id,data)[1][0]['residual']*100/(get.get_analytic_summation_period(id,data)[1][0]['planned_amount'] + get.get_analytic_summation_period(id,data)[1][0]['total_operation']) or 100 ),2))+'%' or '-' "/></td>
+                                                        <td><t t-esc="(get.get_analytic_summation_period(id,data)[0][0]['practical_amount'] and get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] ) and ( (get.get_analytic_summation_period(id,data)[0][0]['practical_amount']) - (get.get_analytic_summation_period(id,data)[1][0]['practical_amount'] )  )or '-'"/></td>
+
+
+                                                    </t>
+
+                                                </t>
+                                            </tr>
+                                        </t>
+
+
+
+
+                                    </t>
+                                </table>
+
+
+
+                            </body>
+
+
+
+
+                        </html>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

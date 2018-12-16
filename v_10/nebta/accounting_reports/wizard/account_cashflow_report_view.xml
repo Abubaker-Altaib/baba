@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+   <record id="accounting_cashflow_report_view1" model="ir.ui.view">
+        <field name="name">Accounting Report</field>
+        <field name="model">accounting.report</field>
+        <field name="inherit_id" ref="account.accounting_report_view"/>
+
+        <field name="arch" type="xml">
+    
+             <field name="account_report_id" position="replace">
+                <field name="account_report_id" domain="[('cash_flow','!=',True), ('parent_id','=',False)]]"/>
+           </field>
+                <xpath expr="//field[@name='date_to']" position="after">
+
+                <field name="allow_summation" /> 
+
+                <field name="with_details" />
+
+                </xpath> 
+        </field>
+    </record>
+
+<!-- Cashflow Statement-->
+    <record id="accounting_cashflow_report_view" model="ir.ui.view">
+        <field name="name">Accounting Cashflow Statement</field>
+        <field name="model">accounting.report</field>
+        <field name="inherit_id" ref="account.accounting_report_view"/>
+        <field name="mode">primary</field> 
+        <field name="arch" type="xml">
+         
+                <xpath expr="//field[@name='enable_filter']" position="replace">
+                <field name="enable_filter" invisible="1"/>
+		</xpath>
+
+                <xpath expr="//field[@name='debit_credit']" position="replace">
+                <field name="debit_credit" invisible="1"/>
+		</xpath>
+
+                <xpath expr="//field[@name='account_report_id']" position="replace">
+                <field name="account_report_id" options="{'no_quick_create': True, 'no_create_edit' : True}" domain="[('parent_id','=',False),('cash_flow','=',True)]"/>
+                </xpath> 
+
+                <xpath expr="//field[@name='date_from']" position="replace">
+                 <field name="date_from" required="1"/>
+                </xpath> 
+
+                <xpath expr="//field[@name='date_to']" position="replace">
+                <field name="date_to" required="1"/>
+                </xpath> 
+                <xpath expr="//field[@name='date_to']" position="after">
+                <field name="cash_flow_template" />
+                </xpath>
+               
+        </field>
+    </record>
+
+ 
+    <record id="action_account_cashflow_report" model="ir.actions.act_window">
+        <field name="name">Financial Cashflow Statement</field>
+        <field name="res_model">accounting.report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="context" eval="{'default_account_report_id':ref('account_financial_report_cashflow0'), 'default_cash_flow_template': True}"/>
+        <field name="view_id" ref="accounting_cashflow_report_view"/>
+
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_account_report_cf" name="Financial Cashflow Statement" action="action_account_cashflow_report" parent="account.menu_finance_legal_statement" sequence="100"/>
+
+<!-- Change Owner Equity-->
+
+    <record id="accounting_ownerequity_report_view" model="ir.ui.view">
+        <field name="name">Change Owner Equity</field>
+        <field name="model">accounting.report</field>
+        <field name="inherit_id" ref="account.accounting_report_view"/>
+        <field name="mode">primary</field> 
+        <field name="arch" type="xml">
+         
+                 <xpath expr="//field[@name='enable_filter']" position="replace">
+                <field name="enable_filter" invisible="1"/>
+
+		</xpath>
+
+                <xpath expr="//field[@name='debit_credit']" position="replace">
+                <field name="debit_credit" invisible="1"/>
+		</xpath>
+
+                <xpath expr="//field[@name='account_report_id']" position="replace">
+                <field name="account_report_id" options="{'no_quick_create': True, 'no_create_edit' : True}" domain="[('parent_id','=',False)]"/>
+               </xpath> 
+
+                <xpath expr="//field[@name='date_from']" position="replace">
+                 <field name="date_from" required="1"/>
+                </xpath> 
+
+                <xpath expr="//field[@name='date_to']" position="replace">
+                <field name="date_to" required="1"/>
+                </xpath> 
+                <xpath expr="//field[@name='date_to']" position="after">
+                <field name="owner_equity" />
+                </xpath>
+            
+        </field>
+    </record>
+
+
+    <record id="action_account_ownerequity_report" model="ir.actions.act_window">
+        <field name="name">Change Owner Equity</field>
+        <field name="res_model">accounting.report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="accounting_ownerequity_report_view"/>
+        <field name="context" eval="{'default_account_report_id':ref('account_financial_report_ownerequity0'), 'default_owner_equity': True}"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_account_report_oe" name="Change Owner Equity" action="action_account_ownerequity_report" parent="account.menu_finance_legal_statement" sequence="100"/>
+
+
+
+</odoo>

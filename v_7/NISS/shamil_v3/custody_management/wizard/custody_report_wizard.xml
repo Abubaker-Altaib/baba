@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+       <record id="id_view_custody_report" model="ir.ui.view">
+            <field name="name">Custody Report Form</field>
+            <field name="model">custody.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                   <form string="Custodies Report" version="7.0">
+                      <group>  
+              	         <field name="type"/>
+              	         <field name="department_id" attrs="{'invisible' : [('type' , '=' , 'in_stock' )] , 'required' : [('type' , '=' , 'in_user' )]}"/>
+                         <field name="with_childern" attrs="{'invisible' : [('type' , '=' , 'in_stock' )] }"/>
+                      </group>
+                         <newline />
+			     
+                              <footer>
+				  <button string="Print" name="print_report"  type="object" />
+                                        or	
+                                  <button string="Cancel" special="cancel" icon="gtk-cancel"/>
+                             </footer>
+                   </form>
+            </field>
+        </record>
+
+
+
+               
+       
+       <record id="action_print_custody_report" model="ir.actions.act_window">
+            <field name="name">Action For Custody Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">custody.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="id_view_custody_report"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Reports"
+                parent="menu_account_pact_root"
+                id="menu_custody_reports"
+                />
+
+      
+       <menuitem
+            action="action_print_custody_report"
+            id="menu_action_print_custody_report"
+            parent="menu_custody_reports"
+            name="Custody Report" />
+            
+    </data>
+</openerp>

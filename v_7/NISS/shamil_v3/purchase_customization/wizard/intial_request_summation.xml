@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="id_intial_request_summation_report_view" model="ir.ui.view">
+            <field name="name">Intial Request Summation Report Wizard Form</field>
+            <field name="model">intial.request.summation</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Intial Request Summation Report" version="7.0">
+        			<separator string="Intial Request Summation" colspan="4"/>
+            			<group>
+
+            			
+
+            			<group col="2" colspan="4" >
+                                        <field name="company_id" />
+                                        <field name="executing_agency"/>  
+            			</group>
+                                <group col="2" colspan="4">
+                                        <field name="purchase_purposes"/>  
+            			      <field name="request_ids" domain="[('state','in',['draft','in_progress']),('executing_agency','=', executing_agency)]"/>
+            			</group>
+            			</group>
+	    			<footer>
+          	    	<button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight" colspan="2"/>
+                        or
+			<button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link" colspan="2"/>
+                        	</footer>
+               </form>
+            </field>
+	    </record>
+
+        <record id="action_intial_request_summation_report_wizard" model="ir.actions.act_window">
+            <field name="name">Action Intial Request Summation Report Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">intial.request.summation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="id_intial_request_summation_report_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Intial Request Summation Report"
+                parent="purchase_report.menu_purchase_advance_reports"
+                action="action_intial_request_summation_report_wizard"
+                id="menu_intial_request_summation_report_wizard"
+                />
+
+    </data>
+</openerp>

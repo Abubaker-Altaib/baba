@@ -1,0 +1,1334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<menuitem id="payroll_configure" parent="hr.menu_hr_configuration"
+			name="Payroll" groups="base.group_hr_manager" sequence="45" />
+		<menuitem id="menu_hr_root_payroll" parent="hr.menu_hr_root"
+			name="Payroll" sequence="30" groups="base.group_hr_manager,group_payroll_user" />
+		<menuitem id="menu_hr_payroll_addendum" parent="menu_hr_root_payroll"
+			name="Payrolls/ Addendums" sequence="30" groups="group_payroll_user"/>
+		<menuitem id="menu_hr_payroll_reporting" parent="hr_custom.menu_hr_reports"
+			name="Payroll" groups="base.group_hr_manager,group_payroll_user" />
+
+		<!-- Salary Scale -->
+
+		<record model="ir.ui.view" id="view_salary_scale_form">
+			<field name="name">hr.salary.scale.form</field>
+			<field name="model">hr.salary.scale</field>
+			<field name="arch" type="xml">
+				<form string="Salary Scale">
+					<field name="name" />
+					<field name="code" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="employee_type" />
+					<notebook colspan="4">
+						<page string="Degrees">
+							<field colspan="4" name="degree_ids" nolabel="1">
+								<tree string="Degrees" editable="top">
+									<field name="sequence" />
+									<field name="name" />
+									<field name="category_id" />
+									<field name="basis" />
+									<field name="max_raise"/>
+									<field name="raise_type" />
+									<field name="raise_amount" />
+									<field name="exempted_amount" groups="hr_payroll_custom.group_tax" />
+									<field name="taxable" groups="hr_payroll_custom.group_tax" />
+								</tree>
+							</field>
+						</page>
+						<page string="Substitution Setting">
+							<field name="sub_salary" />
+							<field name="sub_bonus" />
+						        <field name="sub_prcnt_selection" 
+                                                              attrs="{'invisible':[('sub_salary','!=','diff')],
+                                                                      'required':[('sub_salary','=','diff')]}"
+                                                               groups="hr_payroll_custom.group_substitution_percentage"/>
+							<field name="sub_percentage" 
+                                                               attrs="{'required':[('sub_prcnt_selection','in',('percentge','bigest','smalest'))],'invisible':[('sub_prcnt_selection','not in',('percentge','bigest','smalest'))]}"
+                                                               groups="hr_payroll_custom.group_substitution_percentage" />
+							<field  name="sub_setting" required="1"/>
+	
+						</page>
+						<page string="Accounts">
+							<field name="account_id" />
+						</page>
+					</notebook>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_salary_scale_tree">
+			<field name="name">hr.salary.scale.tree</field>
+			<field name="model">hr.salary.scale</field>
+			<field name="arch" type="xml">
+				<tree string="Salary Scale">
+					<field name="code" />
+					<field name="name" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="degree_ids" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_salary_scale" model="ir.actions.act_window">
+			<field name="name">Salary Scale</field>
+			<field name="res_model">hr.salary.scale</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_salary_scale_tree" />
+		</record>
+		<menuitem id="hr_menu_salary_scale" name="Salary Scale"
+			parent="payroll_configure" sequence="6" />
+		<menuitem id="hr_salary_scale_action_menu" name="Salary Scale"
+			parent="hr_menu_salary_scale" action="action_salary_scale" />
+
+
+		<!-- hr.degree.category -->
+
+		<record model="ir.ui.view" id="view_degree_category_form">
+			<field name="name">hr.degree.category.form</field>
+			<field name="model">hr.degree.category</field>
+			<field name="arch" type="xml">
+				<form string="Degree category">
+					<field name="name" />
+					<field name="code" />
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_degree_category_tree">
+			<field name="name">hr.degree.category.tree</field>
+			<field name="model">hr.degree.category</field>
+			<field name="arch" type="xml">
+				<tree string="Degree category">
+					<field name="code" />
+					<field name="name" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_degree_category" model="ir.actions.act_window">
+			<field name="name">Degree category</field>
+			<field name="res_model">hr.degree.category</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_degree_category_tree" />
+		</record>
+
+		<menuitem id="degree_category_actione_menu" name="Degree category"
+			parent="hr_menu_salary_scale" action="action_degree_category" />
+		<!-- Salary Degree -->
+
+		<record model="ir.ui.view" id="view_salary_degree_form">
+			<field name="name">hr.salary.degree.form</field>
+			<field name="model">hr.salary.degree</field>
+			<field name="arch" type="xml">
+				<form string="Salary Scale Degrees" version="7.0">
+					<sheet>
+						<group>
+							<group>
+								<field name="name" />
+								<field name="sequence" on_change="change_fields(basis,sequence,max_raise)"/>
+							</group>
+							<group>
+								<field name="payroll_id" />
+								<field name="category_id" />
+								<field name="active" />
+							</group>
+						</group>
+						<notebook>
+							<page string="Degree Definition">
+								<group>
+									<group string="Degree Configuration">
+										<field name="raise_type" />
+										<field name="basis" on_change="change_fields(basis,sequence,max_raise)"/>
+										<field name="raise_amount" />
+									</group>
+									<group string="Taxes" groups="hr_payroll_custom.group_tax">
+										<field name="taxable" />
+										<field name="exempted_amount" />
+									</group>
+									<group string="Bonuses" colspan="2">
+										<field name="max_raise" on_change="change_fields(basis,sequence,max_raise)"/>
+									<!--button name="load_bouns" string="Load Bouns" type="object" icon="gtk-convert"/-->
+										<field name="bonus_ids" nolabel="1" colspan="2"
+											context="{'default_payroll_id':payroll_id}">
+											<tree string="Bonuses" editable="top">
+												<field name="payroll_id" invisible="1" />
+												<field name="sequence" />
+												<field name="name" />
+												<field name="basic_salary" />
+												<field name="old_basic_salary" />
+												<field name="margin_time" />
+											</tree>
+										</field>
+									</group>
+								</group>
+							</page>
+							<page string="Allowances/Deductions">
+								<group col="4">
+									<field name="allow_deduct_ids" nolabel="1" colspan="2"
+										context="{'default_payroll_id':payroll_id}">
+										<tree string="Allowances/Deductions" editable="top">
+											<field name="payroll_id" invisible="1" />
+											<field name="allow_deduct_id" />
+											<field name="amount" />
+										</tree>
+									</field>
+								</group>
+							</page>
+							<page string="Description">
+								<field name="notes" nolabel="1" />
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_salary_degree_tree">
+			<field name="name">hr.salary.degree.tree</field>
+			<field name="model">hr.salary.degree</field>
+			<field name="arch" type="xml">
+				<tree string=">Salary Scale Degrees">
+					<field name="sequence" />
+					<field name="name" />
+					<field name="payroll_id" />
+					<field name="category_id" />
+					<field name="basis" />
+					<field name="max_raise"/>
+					<field name="raise_type" />
+					<field name="raise_amount" />
+					<field name="exempted_amount" groups="hr_payroll_custom.group_tax" />
+					<field name="taxable" groups="hr_payroll_custom.group_tax" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_salary_degree_filter" model="ir.ui.view">
+			<field name="name">hr.salary.degree.filter</field>
+			<field name="model">hr.salary.degree</field>
+			<field name="arch" type="xml">
+				<search string="Search salary degree">
+					<group col='8' colspan='4'>
+						<separator orientation="vertical" />
+						<field name="payroll_id" widget="selection" />
+						<separator orientation="vertical" />
+						<field name="raise_type" />
+						<separator orientation="vertical" />
+						<field name="raise_amount" />
+					</group>
+					<separator orientation="vertical" />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Scale" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'payroll_id'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="action_salary_degree" model="ir.actions.act_window">
+			<field name="name">Salary Scale Degrees</field>
+			<field name="res_model">hr.salary.degree</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_salary_degree_tree" />
+		</record>
+
+		<menuitem id="salary_degree_actione_menu" name="Salary Scale Degrees"
+			parent="hr_menu_salary_scale" action="action_salary_degree" />
+
+		<!-- salary bonuses -->
+
+		<record model="ir.ui.view" id="view_salary_bonuses_form">
+			<field name="name">hr.salary.bonuses.form</field>
+			<field name="model">hr.salary.bonuses</field>
+			<field name="arch" type="xml">
+				<form string="Salary Scale Levels Bonuses" version="7.0">
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="basic_salary" />
+			    <field name="old_basic_salary" />
+       			    <field name="margin_time" />
+                            
+                        </group>
+                        <group>
+                            <field name="code" />
+		            <field name="payroll_id" />
+	            	    <field name="degree_id" />
+			    <field name="sequence" />
+                        </group>
+
+                    </group>
+
+                    <div class="oe_view_nocontent_create">
+                   <field  mode="tree" name="bonuses_lines_ids" colspan="4">
+                        <tree string="Rates" editable="bottom">
+                           <field name="date"/>
+                           <field name="amount"/>
+                        </tree>
+                   </field>
+
+                    </div>
+
+            
+
+
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_salary_bonuses_tree">
+			<field name="name">hr.salary.bonuses.tree</field>
+			<field name="model">hr.salary.bonuses</field>
+			<field name="arch" type="xml">
+				<tree string="Salary Scale Levels Bonuses">
+					<field name="code" />
+					<field name="sequence" />
+					<field name="payroll_id" />
+					<field name="degree_id" />
+					<field name="name" />
+					<field name="basic_salary" />
+					<field name="old_basic_salary" />
+				</tree>
+			</field>
+		</record>
+		<record id="view_salary_bonuses_filter" model="ir.ui.view">
+			<field name="name">hr.salary.bonuses.filter</field>
+			<field name="model">hr.salary.bonuses</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search salary degree">
+					<group col='8' colspan='4'>
+						<separator orientation="vertical" />
+						<field name="payroll_id" widget="selection" />
+						<separator orientation="vertical" />
+						<field name="degree_id" widget="selection">
+							<filter domain="[('payroll_id','=',payroll_id)]" />
+						</field>
+
+						<separator orientation="vertical" />
+						<field name="name" context="{'group_by':['payroll_id','degree_id']}" />
+
+					</group>
+				</search>
+			</field>
+		</record>
+		<record id="action_salary_bonuses" model="ir.actions.act_window">
+			<field name="name">Salary Scale Levels Bonuses</field>
+			<field name="res_model">hr.salary.bonuses</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_salary_bonuses_tree" />
+		</record>
+
+		<menuitem id="salary_bonuses_action_menu" name="Salary Scale Levels Bonuses"
+			parent="hr_menu_salary_scale" action="action_salary_bonuses" />
+
+		<!-- Allowances And Deductions -->
+
+		<record model="ir.ui.view" id="view_allowance_deduction_form">
+			<field name="name">hr.allowance.deduction.form</field>
+			<field name="model">hr.allowance.deduction</field>
+			<field name="arch" type="xml">
+				<form string="Allowances And Deductions" version="7.0">
+					<group>
+						<group>
+							<field name="name" />
+							<field name="sequence" />
+							<field name="code" />
+						</group>
+						<group>
+							<field name="name_type" />
+							<field name="company_id" widget="selection" groups="base.group_multi_company" />
+							<field name="active" />
+						</group>
+					</group>
+					<notebook colspan="4">
+						<page string="Allowances/Deductions Definition">
+							<group>
+								<group string="Salary">
+									<field name="in_salary_sheet" />
+									<field name="based_employment" />
+									<field name="pay_sheet"
+										attrs="{'required':[('in_salary_sheet','=',True)],'invisible':[('in_salary_sheet','!=',True)]}" />
+									<field name="salary_included" />
+									<field name="old_salary_included" />
+									<field name="started_section_included" />
+								</group>
+								<group string="Dates">
+									<field name="start_date" />
+									<field name="end_date" />
+								</group>
+								<group string="Other Info">
+									<field name="type" />
+									<field name="linked_absence" />
+									<field name="special" />
+                                    <field name="allowance_type"
+										attrs="{'required':[('name_type','=','allow')],'invisible':[('name_type','!=','allow')]}" />
+								</group>
+								<group string="">
+									<field name="related_gender_type" />
+									<field name="related_marital_status" />
+									<field name="distributed" />
+									<field name="stamp" />
+								</group>
+								<!--group string="Extra Allowances" attrs="{'invisible':[('name_type','!=','allow')]}">
+									
+									<field name="qualification" />
+									<field name="family_relation" />
+									<field name="substitution" />
+								</group-->
+								<group string="Extra Deductions"
+									attrs="{'invisible':[('name_type','!=','deduct')]}">
+									<field name="penalty" />
+								</group>
+								<group string="Taxes" groups="hr_payroll_custom.group_tax">
+									<field name="taxable" />
+									<field name="exempted_amount" />
+									<field name="bonus_percent" />
+								</group>
+							</group>
+						</page>
+						<page string="Allowances" attrs="{'invisible':[('type','=','amount')]}">
+							<field name="allowances_ids" colspan="4" nolabel="1" />
+						</page>
+                                                <page string="Holidays" attrs="{'invisible':[('linked_absence','!=',True)]}">
+							<field name="holiday_ids" colspan="4" nolabel="1" />
+						</page>
+						<page string="Categories">
+							<field name="allow_cat_ids" colspan="4" nolabel="1">
+								<tree editable="bottom">
+									<field name="cat_id" context="{'allow_cat_ids' : parent.allow_cat_ids}"/>
+									<field name="value" />
+								</tree>
+							</field>						
+						</page>
+						<page string="Departments">
+							<field name="department_ids" colspan="4" nolabel="1" />
+						</page>
+						<page string="Jobs">
+							<field name="allow_job_ids" colspan="4" nolabel="1">
+								<tree editable="bottom">
+									<field name="job_id" context="{'allow_job_ids' : parent.allow_job_ids}"/>
+									<field name="value" />
+								</tree>
+							</field>
+						</page>
+                        <page string="Genders" attrs="{'invisible':[('related_gender_type','=',False)]}">
+							<field name="allow_gender_ids" colspan="4" nolabel="1">
+								<tree editable="bottom">
+									<field name="gender" />
+									<field name="value" />
+								</tree>
+							</field>
+						</page>
+						<page string="Accounts">
+							<group>
+								<field name="account_id" />
+							</group>
+						</page>
+						<page string="Marital Status"
+							attrs="{'invisible':[('related_marital_status','=','no')]}">
+							<field colspan="4" name="marital_status_ids" nolabel="1">
+								<tree string="Marital Status" editable="top">
+									<field name="married" />
+									<field name="children_no" />
+									<field name="percentage" />
+									<field name="taxable" groups="hr_payroll_custom.group_tax" />
+								</tree>
+							</field>
+						</page>
+						<page string="Notes">
+							<field name="notes" />
+						</page>
+					</notebook>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_allowance_deduction_tree">
+			<field name="name">hr.allowance.deduction.tree</field>
+			<field name="model">hr.allowance.deduction</field>
+			<field name="arch" type="xml">
+				<tree string="Allowances And Deductions">
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="code" />
+					<field name="name" />
+					<field name="name_type" />
+					<field name="pay_sheet" />
+					<field name="type" />
+					<field name="start_date" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_allowance_deduction" model="ir.actions.act_window">
+			<field name="name">Allowances And Deductions</field>
+			<field name="res_model">hr.allowance.deduction</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="context">{'active_test': False}</field>
+			<field name="view_id" ref="view_allowance_deduction_tree" />
+		</record>
+                <menuitem id="hr.menu_hr_configuration" name="Configuration" parent="hr.menu_hr_root" groups="base.group_hr_manager,group_payroll_user" sequence="50"/>
+		<menuitem id="hr_allowance_deduction_menu" name="Allowances / Deductions"
+			parent="payroll_configure" sequence="10" groups="group_payroll_user"/>
+
+		<menuitem id="hr_allowance_deduction_action_menu" name="Allowances / Deductions"
+			parent="hr_allowance_deduction_menu" action="action_allowance_deduction" groups="group_payroll_user" />
+
+		<record model="ir.ui.view" id="view_salary_allowance_deduction_form">
+			<field name="name">hr.salary.allowance.deduction.form</field>
+			<field name="model">hr.salary.allowance.deduction</field>
+			<field name="arch" type="xml">
+				<form string="Salary Scale Allowances And Deductions">
+					<field name="payroll_id" />
+					<field name="degree_id" />
+					<field name="allow_deduct_id" />
+					<field name="amount" />
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_salary_allowance_deduction_tree">
+			<field name="name">hr.salary.allowance.deduction.tree</field>
+			<field name="model">hr.salary.allowance.deduction</field>
+			<field name="arch" type="xml">
+				<tree editable="top" string="Salary Scale Allowances And Deductions">
+					<field name="payroll_id" readonly="1" />
+					<field name="degree_id" readonly="1" />
+					<field name="allow_deduct_id" readonly="1" />
+					<field name="amount" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_salary_allowance_deduction_filter" model="ir.ui.view">
+			<field name="name">hr.salary.allowance.deduction.filter</field>
+			<field name="model">hr.salary.allowance.deduction</field>
+			<field name="arch" type="xml">
+				<search string="Salary Scale Allowances And Deductions">
+					<group col='8' colspan='4'>
+						<separator orientation="vertical" />
+						<field name="payroll_id" widget="selection">
+							<filter domain="[('hr.salary.scale.payroll_id','=', payroll_id)]" />
+						</field>
+						<separator orientation="vertical" />
+						<field name="degree_id" widget="selection">
+						</field>
+						<separator orientation="vertical" />
+						<field name="allow_deduct_id" widget="selection">
+						</field>
+					</group>
+				</search>
+			</field>
+		</record>
+		<record id="action_salary_allowance_deduction" model="ir.actions.act_window">
+			<field name="name">Salary Scale Allowances And Deductions</field>
+			<field name="res_model">hr.salary.allowance.deduction</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_salary_allowance_deduction_tree" />
+		</record>
+		<menuitem id="hr_salary_allowance_deduction_action_menu"
+			name="Salary Scale Allowances / Deductions" parent="hr_allowance_deduction_menu"
+			action="action_salary_allowance_deduction" />
+
+		<!-- Zakat And Taxes -->
+
+		<record model="ir.ui.view" id="view_zakat_form">
+			<field name="name">hr.zakat.form</field>
+			<field name="model">hr.zakat</field>
+			<field name="arch" type="xml">
+				<form string="Zakat" version="7.0">
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                           <field name="zakat_year" required="True"/>
+					       <field name="start_date" />
+						   <field name="monthly_value" />
+                           <field name="minimal_amount" />
+                        </group>
+                        <group>
+					        <field name="active" />
+					        <field name="end_date" />
+                            <field name="religion" />
+                            <field name="account_id" />
+                        </group>
+                    </group>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_zakat_tree">
+			<field name="name">hr.zakat.tree</field>
+			<field name="model">hr.zakat</field>
+			<field name="arch" type="xml">
+				<tree string="Zakat">
+					<field name="name" />
+					<field name="zakat_year" required="True"/>
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="monthly_value" />
+					<field name="minimal_amount" />
+					<field name="religion" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_zakat" model="ir.actions.act_window">
+			<field name="name">Zakat</field>
+			<field name="res_model">hr.zakat</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_zakat_tree" />
+		</record>
+
+		<record model="ir.ui.view" id="view_tax_form">
+			<field name="name">hr.tax.form</field>
+			<field name="model">hr.tax</field>
+			<field name="arch" type="xml">
+				<form string="Taxes">
+					<field name="name" select="1" />
+					<field name="active" />
+					<notebook colspan="4">
+						<page string="Tax Info">
+							<field name="taxset_age" />
+							<field name="no_years_service" />
+							<field name="taxset_min" />
+							<field name="taxset_max" />
+							<field name="percent" />
+							<field name="previous_tax" />
+							<field name="income_tax_percentage" groups="hr_payroll_custom.group_income_taxes" />
+						</page>
+						<page string="Accounts">
+							<field name="account_id" />
+							<field name="bon_account_id" />
+						</page>
+					</notebook>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_tax_tree">
+			<field name="name">hr.tax.tree</field>
+			<field name="model">hr.tax</field>
+			<field name="arch" type="xml">
+				<tree string="Taxes">
+					<field name="name" />
+					<field name="taxset_min" />
+					<field name="taxset_max" />
+					<field name="percent" />
+					<field name="previous_tax" />
+					<field name="taxset_age" />
+					<field name="no_years_service" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_tax" model="ir.actions.act_window">
+			<field name="name">Taxes</field>
+			<field name="res_model">hr.tax</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_tax_tree" />
+		</record>
+
+		<menuitem id="zakah_taxes_menu" name="Zakat And Taxes"
+			parent="payroll_configure" groups="base.group_hr_manager,group_payroll_user" />
+
+		<menuitem id="tax_tree_menu" name="Taxes" parent="zakah_taxes_menu"
+			action="action_tax" groups="hr_payroll_custom.group_tax,group_payroll_user" />
+
+		<menuitem id="zakat_tree_menu" name="Zakat" parent="zakah_taxes_menu"
+			action="action_zakat" />
+
+		<!-- Allowance Deduction Exception -->
+
+		<record model="ir.ui.view" id="view_hr_allow_deduc_exception_form">
+			<field name="name">hr.allowance.deduction.exception.form</field>
+			<field name="model">hr.allowance.deduction.exception</field>
+			<field name="arch" type="xml">
+				<form string="Allowance And Deduction Exception" version="7.0">
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<p> Exception Info </p>
+							</h1>
+						</div>
+						<group colspan="2" col="4">
+
+							<field name="employee_id" on_change="onchange_employee(employee_id)" />
+							<field name="types" on_change="onchange_type(types)"/>
+							<field name="action" on_change="onchange_action(action)"/>
+							<field name="allow_deduct_id" />
+							<field name="amount" attrs="{'invisible':[('action','=','exclusion')]}" />
+							<field name="start_date"  />
+							<field name="end_date"  />
+							<field name="active"  />
+
+						</group>
+						<group col="1">
+							<field name="comments" colspan="6" />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="view_hr_allow_deduc_exception_tree">
+			<field name="name">hr.allowance.deduction.exception.tree</field>
+			<field name="model">hr.allowance.deduction.exception</field>
+			<field name="arch" type="xml">
+				<tree string="Allowance And Deduction Exception" version="7.0">
+					<field name="employee_id" on_change="onchange_employee(employee_id)" />
+					<field name="types" />
+					<field name="action" />
+					<field name="allow_deduct_id" />
+					<field name="amount" attrs="{'invisible':[('action','=','exclusion')]}"/>
+					<field name="start_date" />
+					<field name="end_date" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_hr_allow_deduc_exception" model="ir.actions.act_window">
+			<field name="name">Allowance Deduction Exception</field>
+			<field name="res_model">hr.allowance.deduction.exception</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_hr_allow_deduc_exception_tree" />
+		</record>
+
+		<record id="view_hr_allow_deduc_exception_filter" model="ir.ui.view">
+			<field name="name">Allowance Deduction Exception</field>
+			<field name="model">hr.allowance.deduction.exception</field>
+			<field name="arch" type="xml">
+				<search string="">
+
+					<field name="employee_id" />
+					<field name="types" />
+					<field name="action" />
+					<field name="allow_deduct_id" />
+					<field name="amount" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<filter string="Allowance/Deduction" icon="terp-personal"
+						domain="[]" context="{'group_by':'allow_deduct_id'}" />
+					<filter string="Type" icon="terp-personal" domain="[]"
+						context="{'group_by':'type'}" />
+					<filter string="Action" icon="terp-go-home" domain="[]"
+						context="{'group_by':'action'}" />
+				</search>
+			</field>
+		</record>
+		<menuitem id="menu_hr_payroll_exception" parent="menu_hr_root_payroll"
+			name="Allowances/Deductions Exception" sequence="30" />
+		<menuitem id="hr_allow_deduc_exception_menu" name="Allowances/Deductions Exception"
+			parent="menu_hr_payroll_exception" action="action_hr_allow_deduc_exception" />
+
+		<!-- Employee Substitution -->
+
+		<record model="ir.ui.view" id="view_hr_employee_substitution_form">
+			<field name="name">hr.employee.substitution.form</field>
+			<field name="model">hr.employee.substitution</field>
+			<field name="arch" type="xml">
+				<form string="Employee Substitution" version="7.0">
+					<header>
+						<button name="action_approve" string="Approve" states="draft"
+							type="object" />
+						<button name="action_done" string="Done" states="draft"
+							type="object" />
+
+						<field name="state" widget="statusbar" statusbar_visible="draft,approve,done" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<label for="employee_id" class="oe_edit_only" />
+							<h1>
+								<field name="employee_id" required="1"/>
+							</h1>
+						</div>
+						<group>
+							<group>
+								<field name="payroll_id" />
+								<field name="degree_id" />
+								<label for="days" string="Duration" />
+								<div>
+									<group col="3">
+										<field name="start_date" nolabel="1" class="oe_inline" required="1"/>
+										<label string="-" class="oe_inline" />
+										<field name="end_date" nolabel="1" class="oe_inline" />
+									</group>
+
+								</div>
+							</group>
+							<group>
+								<field name="bonus_id" />
+
+							</group>
+						</group>
+						<field name="comments" placeholder="Note..." />
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_hr_employee_substitution_tree">
+			<field name="name">hr.employee.substitution.tree</field>
+			<field name="model">hr.employee.substitution</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Substitution">
+					<field name="employee_id" />
+					<field name="payroll_id" />
+					<field name="degree_id" />
+					<field name="bonus_id" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+		<record id="action_hr_employee_substitution" model="ir.actions.act_window">
+			<field name="name">Employee Substitution</field>
+			<field name="res_model">hr.employee.substitution</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="context">{'search_default_approved':1}</field>
+			<field name="view_id" ref="view_hr_employee_substitution_tree" />
+		</record>
+		<record id="view_hr_employee_substitution_filter" model="ir.ui.view">
+			<field name="name">Employee Substitution</field>
+			<field name="model">hr.employee.substitution</field>
+			<field name="arch" type="xml">
+				<search string="Employee Substitution">
+					<field name="employee_id" />
+					<field name="payroll_id" />
+					<field name="degree_id" />
+					<field name="bonus_id" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<filter string="Salary Scale" domain="[]"
+						context="{'group_by':'payroll_id'}" />
+					<filter name="approved" icon="terp-check" string="Approved"
+						domain="[('state', '=', 'approve')]" />
+				</search>
+			</field>
+		</record>
+		<menuitem id="hr_employee_substitution_menu" name="Employee Substitution"
+			parent="hr_custom.menu_hr_payroll_processes" action="action_hr_employee_substitution" 
+			groups="base.group_department_manager"/>
+
+       <record id="view_employee_salary_addendum_form" model="ir.ui.view">
+            <field name="name">hr.employee.salary.addendum.form</field>
+            <field name="model">hr.employee.salary.addendum</field>
+            <field name="arch" type="xml">
+                <form string="Compute/Transfer/Rollback" version="7.0">
+                    <header>
+		                <button name="compute" string="Compute" type="object" 
+                                attrs="{'invisible':['|',('compute_per','!=','employee'),('state','!=','draft')]}"  class="oe_highlight"/>
+						<button name="approve" string="Approve" states="compute" type="object" class="oe_highlight"/>
+				<!--button name="button_schedular" string="Scedular"  context="{'button':True}" type="object" class="oe_highlight"/-->
+		               	<button name="rollback" string="Rollback" type="object" 
+                                attrs="{'invisible':['|',('compute_per','!=','employee'),('state','!=','compute')]}"/>
+		               	<button name="transfer" string="Transfer" type="object" states="approve" class="oe_highlight"/>
+		               	<button name="action_cancel" string="Cancel" type="object"
+                                attrs="{'invisible':['|',('compute_per','!=','employee'),('state','not in',('compute','approve',))]}"/>
+	                    <button name="action_cancel_draft" string="Set to Draft" type="object" states="cancel"/>
+		                <field name="state" widget="statusbar" statusbar_visible="draft,compute,approve,transferred" />
+				    </header>
+                    <group>
+                       <field name="name" />
+                       <field name="payroll_ids" widget="many2many_tags" />
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="compute_per" on_change="onchange_compute_per(compute_per)"/>
+                        <field name="type"/>
+                        <label for="date" string="Date"/>
+                            <div>
+                                <group col="4">
+                                    <field name="month" nolabel="1" required="1" placeholder="Select Month" class="oe_inline"/>
+                                    <field name="year" nolabel="1"  required="1" placeholder="Year" class="oe_inline"/>
+                                    <field name="date" class="oe_inline"/>
+                                </group>
+                            </div>
+                         <field name="number"/>
+                    </group>
+                    <notebook>    
+		                <page string="Addendum" attrs="{'invisible':[('type','!=','addendum')]}">
+			                <field name="addendum_ids" nolabel="1"
+                               attrs="{'required':[('type','=','addendum')]}" 
+                               domain= "[('in_salary_sheet','!=', 'True'),('allowance_type','=','general'),('allowance_type','!=','in_cycle')]"/>
+			            </page>
+		                <page string="Salary Batchs" attrs="{'invisible':[('compute_per','!=','batch')]}">
+			                <field name="batch_ids" nolabel="1"/>
+			            </page>
+			            <page string="Employees" attrs="{'invisible':[('compute_per','!=','employee')]}">
+			                <field name="employee_ids" nolabel="1" 
+                                   domain= "['|',('state', '!=', 'refuse'),('delegation', '=', True),('payroll_id','in',payroll_ids[0][2]),('salary_suspend','!=',True)]" />
+			            </page>
+                        <page string="Archive">
+			                <field name="arch_ids" nolabel="1" >
+                               <tree string="Payroll Main Archive">
+								<field name="code" />
+								<field name="employee_id" />
+								<field name="bank_account_id" />
+								<field name="company_id" groups="base.group_multi_company" />
+								<field name="scale_id" />
+								<field name="total_allowance" />
+								<field name="total_deduction" />
+								<field name="allowances_tax" groups="hr_payroll_custom.group_tax" />
+								<field name="net" />
+					            <field name="responsible_id" />
+				          </tree>
+                       </field>
+			            </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_hr_employee_salary_addendum_tree">
+			<field name="name">hr.employee.salary.addendum.tree</field>
+			<field name="model">hr.employee.salary.addendum</field>
+			<field name="arch" type="xml">
+				<tree string="Salary Addendum">
+                    <field name="date" />
+                    <field name="name" />
+					<field name="type"/>
+                    <field name="year" />
+					<field name="month" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="state"  />
+				</tree>
+			</field>
+		</record>
+
+        <record id="action_employee_salary_addendum" model="ir.actions.act_window">
+            <field name="name">Salary Addendum</field>
+            <field name="res_model">hr.employee.salary.addendum</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_hr_employee_salary_addendum_tree" />
+        </record>
+
+	<menuitem
+            action="action_employee_salary_addendum"
+            id="menu_employee_salary_addendum"
+            parent="menu_hr_payroll_addendum"
+            name="Salary Addendum" />
+
+
+		<!-- HR Salary Main Archive -->
+		<record model="ir.ui.view" id="view_hr_payroll_main_archive_form">
+			<field name="name">hr.payroll.main.archive.form</field>
+			<field name="model">hr.payroll.main.archive</field>
+			<field name="arch" type="xml">
+				<form string="Payrolls Main Archive" version="7.0" create="false" delete="false">
+					<sheet>
+						<label for="code" class="oe_edit_only" string="Employee Code and Name" />
+						<h1>
+							<field name="code" class="oe_inline" placeholder="Employee code"
+								style="width: 6em" />
+							-
+							<field name="employee_id" class="oe_inline" placeholder="Employee name" />
+						</h1>
+
+						<group>
+							<group string="Position ">
+								<field name="company_id" widget="selection" groups="base.group_multi_company" />
+								<field name="department_id" />
+								<field name="job_id" />
+							</group>
+							<group string="Payroll Date">
+					            <field name="responsible_id" />
+								<field name="salary_date" />
+								<field name="year" />
+								<field name="month" />
+
+							</group>
+							<group string="Scale Info">
+								<field name="scale_id" />
+								<field name="degree_id" />
+								<field name="bonus_id" />
+							</group>
+						</group>
+
+
+						<notebook>
+							<page string="Salary Details">
+								<group>
+									<group>
+										<field name="total_allowance" />
+										<field name="total_deduction" />
+										<field name="net" />
+									</group>
+									<group>
+										<field name="basic_salary" />
+										<field name="tax" groups="hr_payroll_custom.group_tax" />
+										<field name="allowances_tax" groups="hr_payroll_custom.group_tax" />
+										<field name="zakat" />
+									</group>
+								</group>
+							</page>
+							<page string="Allowance And Deduction">
+								<field name="allow_deduct_ids" nolabel="1" readonly="1"
+									domain="[('in_salary_sheet','=',True)]" />
+							</page>
+							<page string="Accounting">
+								<group>
+									<field name="bank_account_id" />
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="view_hr_payroll_main_archive_tree">
+			<field name="name">hr.payroll.main.archive.tree</field>
+			<field name="model">hr.payroll.main.archive</field>
+			<field name="arch" type="xml">
+				<tree string="Payroll Main Archive" create="false" delete="false">
+					<field name="code" />
+					<field name="employee_id" />
+					<field name="bank_account_id" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="scale_id" />
+					<field name="total_allowance" />
+					<field name="total_deduction" />
+					<field name="allowances_tax" groups="hr_payroll_custom.group_tax" />
+					<field name="net" />
+					<field name="year" />
+					<field name="month" />
+					<field name="responsible_id" />
+					<field name="in_salary_sheet" invisible="1" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_hr_hr_payroll_main_filter" model="ir.ui.view">
+			<field name="name">Payroll Main Archive</field>
+			<field name="model">hr.payroll.main.archive</field>
+			<field name="arch" type="xml">
+				<search string="Search A">
+					<field name="code" />
+					<field name="employee_id" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="scale_id" />
+					<field name="year" />
+					<field name="month" />
+					<field name="in_salary_sheet" />
+					<newline />
+					<filter string="Company" icon="terp-personal" domain="[]"
+						context="{'group_by':'company_id'}" />
+					<filter string="Salary Scale" icon="terp-personal" domain="[]"
+						context="{'group_by':'scale_id'}" />
+					<filter string="Year" icon="terp-go-home" domain="[]"
+						context="{'group_by':'year'}" />
+					<filter string="Month" icon="terp-go-home" domain="[]"
+						context="{'group_by':'month'}" />
+				</search>
+			</field>
+		</record>
+
+		<record id="action_hr_payroll_main_archive" model="ir.actions.act_window">
+			<field name="name">Payroll Main Archive</field>
+			<field name="res_model">hr.payroll.main.archive</field>
+			<field name="domain">[('in_salary_sheet','=',True)]</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_hr_payroll_main_archive_tree" />
+		</record>
+		<record model="ir.actions.act_window.view" id="act_payroll_main_tree_view">
+			<field eval="1" name="sequence" />
+			<field name="domain">[('in_salary_sheet','=',False)]</field>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="view_hr_payroll_main_archive_tree" />
+			<field name="act_window_id" ref="action_hr_payroll_main_archive" />
+		</record>
+
+		<record model="ir.actions.act_window.view" id="act_payroll_main_form_view">
+			<field eval="2" name="sequence" />
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_hr_payroll_main_archive_form" />
+			<field name="act_window_id" ref="action_hr_payroll_main_archive" />
+		</record>
+		<menuitem id="hr_payroll_main_archive_menu" name="Payrolls Main Archive"
+			parent="menu_hr_payroll_addendum" action="action_hr_payroll_main_archive" />
+
+
+		<!-- HR Payroll Addendum -->
+		<record model="ir.ui.view" id="view_hr_payroll_addendum_form">
+			<field name="name">hr.payroll.addendum.form</field>
+			<field name="model">hr.payroll.main.archive</field>
+			<field name="arch" type="xml">
+				<form string="Addendum" version="7.0" create="false" delete="false">
+					<sheet>
+						<label for="code" class="oe_edit_only" string="Employee Code and Name" />
+						<h1>
+							<field name="code" class="oe_inline" placeholder="Employee code"
+								style="width: 6em" />
+							-
+							<field name="employee_id" class="oe_inline" placeholder="Employee name" />
+						</h1>
+						<group>
+							<group string="Scale Info">
+								<field name="scale_id" />
+								<field name="degree_id" />
+								<field name="bonus_id" />
+							</group>
+							<group string="Position ">
+								<field name="company_id" widget="selection" groups="base.group_multi_company" />
+								<field name="department_id" />
+								<field name="job_id" />
+							</group>
+							<group string="Dates">
+					            <field name="responsible_id" />
+								<field name="salary_date" />
+								<field name="year" />
+								<field name="month" />
+							</group>
+						</group>
+						<notebook>
+							<page string="Addendum Details">
+								<group>
+									<group>
+										<field name="total_allowance" string="Total Addendum"/>
+										<field name="total_deduction" />
+										<field name="net" string="Net"/>
+									</group>
+									<group groups="hr_payroll_custom.group_tax">
+										<field name="allowances_tax"  />
+									</group>
+								</group>
+							</page>
+							<page string="Addendum And Deduction">
+								<field name="allow_deduct_ids" nolabel="1" readonly="1"
+									domain="[('in_salary_sheet','=',False)]" >
+									<tree string="Addendum And Deduction Archive">
+										<field name="type" />
+										<field name="allow_deduct_id" string="Addendum/Deduction"/>
+										<field name="amount" />
+										<field name="tax_deducted" groups="hr_payroll_custom.group_tax" />
+										<field name="imprint" />
+									</tree>
+
+                                </field>
+							</page>
+							<page string="Accounting">
+								<group>
+									<field name="bank_account_id" />
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_hr_payroll_addendum_tree">
+			<field name="name">hr.payroll.addendum.tree</field>
+			<field name="model">hr.payroll.main.archive</field>
+			<field name="arch" type="xml">
+				<tree string="Addendums" create="false" delete="false">
+					<field name="code" />
+					<field name="employee_id" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="scale_id" />
+					<field name="total_allowance" string="Total Addendum"/>
+					<field name="total_deduction" />
+					<field name="allowances_tax" groups="hr_payroll_custom.group_tax" string="Addendum Taxes"/>
+					<field name="net" string="Net"/>
+					<field name="year" />
+					<field name="month" />
+					<field name="in_salary_sheet" invisible="1" />
+					<field name="responsible_id" />
+				</tree>
+			</field>
+		</record>
+		<record id="action_hr_payroll_addendum" model="ir.actions.act_window">
+			<field name="name">Payroll Addendums </field>
+			<field name="res_model">hr.payroll.main.archive</field>
+			<field name="domain">[('in_salary_sheet','=',False)]</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		<record model="ir.actions.act_window.view" id="act_addendum2_tree_view">
+			<field eval="1" name="sequence" />
+			<field name="domain">[('in_salary_sheet','=',False)]</field>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="view_hr_payroll_addendum_tree" />
+			<field name="act_window_id" ref="action_hr_payroll_addendum" />
+		</record>
+
+		<record model="ir.actions.act_window.view" id="act_addendum2_form_view">
+			<field eval="2" name="sequence" />
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_hr_payroll_addendum_form" />
+			<field name="act_window_id" ref="action_hr_payroll_addendum" />
+		</record>
+
+		<menuitem id="hr_payroll_addendum_menu" name="Payroll Addendums"
+			parent="menu_hr_payroll_addendum" action="action_hr_payroll_addendum" />
+
+		<!-- Allowance Deduction Archive -->
+
+		<record model="ir.ui.view" id="view_hr_allow_deduc_archive_form">
+			<field name="name">hr.allowance.deduction.archive.form</field>
+			<field name="model">hr.allowance.deduction.archive</field>
+			<field name="arch" type="xml">
+				<form string="Allowance And Deduction Archive" version="7.0">
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<p> Archive Info </p>
+							</h1>
+						</div>
+						<group colspan="2" col="4">
+							<field name="type" />
+							<field name="allow_deduct_id" />
+							<newline />
+							<field name="amount" />
+							<field name="tax_deducted" groups="hr_payroll_custom.group_tax" />
+							<field name="imprint" />
+						</group>
+
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="view_hr_allow_deduc_archive_tree">
+			<field name="name">hr.allowance.deduction.archive.tree</field>
+			<field name="model">hr.allowance.deduction.archive</field>
+			<field name="arch" type="xml">
+				<tree string="Allowance And Deduction Archive">
+					<field name="type" />
+					<field name="allow_deduct_id" />
+					<field name="amount" />
+					<field name="tax_deducted" groups="hr_payroll_custom.group_tax" />
+					<field name="imprint" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- employee exempt tax -->
+
+		<record model="ir.ui.view" id="view_hr_employee_exempt_tax_form">
+			<field name="name">hr.employee.exempt.tax.form</field>
+			<field name="model">hr.employee.exempt.tax</field>
+			<field name="arch" type="xml">
+				<form string="Employee Exempt Tax" create="false" version="7.0">
+					<header>
+						<button name="approve_exempted" string="Approve" states="draft"
+							type="object" icon="gtk-apply" class="oe_highlight" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,approve" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<label for="employee_id" class="oe_edit_only" />
+							<h1>
+								<field name="employee_id" />
+							</h1>
+						</div>
+						<group colspan="2" col="4">
+							<field name="company_id" />
+							<field name="date" />
+							<field name="birth_date" />
+							<field name="employment_date" />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="view_hr_employee_exempt_tax_tree">
+			<field name="name">hr.employee.exempt.tax.tree</field>
+			<field name="model">hr.employee.exempt.tax</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Exempt Tax" create="false">
+					<field name="company_id" />
+					<field name="employee_id" />
+					<field name="birth_date" />
+					<field name="employment_date" />
+					<field name="state" />
+					<button name="approve_exempted" string="Approve" states="draft"
+						type="object" class="oe_highlight" icon="gtk-apply" />
+				</tree>
+			</field>
+		</record>
+		<record id="action_hr_employee_exempt_tax" model="ir.actions.act_window">
+			<field name="name">Employee Exempt Tax</field>
+			<field name="res_model">hr.employee.exempt.tax</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_hr_employee_exempt_tax_tree" />
+		</record>
+		<record id="view_hr_employee_exempt_tax_filter" model="ir.ui.view">
+			<field name="name">Employee Exempt Tax</field>
+			<field name="model">hr.employee.exempt.tax</field>
+			<field name="arch" type="xml">
+				<search string="">
+					<field name="employee_id" />
+					<field name="birth_date" />
+					<field name="employment_date" />
+					<filter string="Company" domain="[]" context="{'group_by':'company_id'}" />
+				</search>
+			</field>
+		</record>
+		<menuitem id="hr_employee_exempt_tax_menu" name="Exempt Tax"
+			parent="menu_hr_root_payroll" groups="group_tax,group_payroll_user" />
+
+		<menuitem id="hr_employee_exempt_tax_form_menu" name="Exempt Tax"
+			parent="hr_employee_exempt_tax_menu" action="action_hr_employee_exempt_tax" groups="group_tax,group_payroll_user"/>
+
+
+		<!-- hr salary batch -->
+
+		<record model="ir.ui.view" id="view_hr_salary_batch_form">
+			<field name="name">hr.salary.batch.form</field>
+			<field name="model">hr.salary.batch</field>
+			<field name="arch" type="xml">
+				<form string="Salary Batch"  version="7.0">
+					<header>
+                      <span>
+		                <button name="compute_batch" string="Compute" type="object" states="draft" class="oe_highlight"/>
+		               	<button name="rollback_batch" string="Rollback" type="object" states="compute"/>
+				<button name="approve_batch" string="Approve" states="compute" type="object" class="oe_highlight"/>
+		               	<button name="action_cancel_batch" string="Cancel" type="object" states="compute,approve"/>
+	                        <button name="action_cancel_draft_batch" string="Set to Draft" type="object" states="cancel"/>
+		                <field name="state" widget="statusbar" statusbar_visible="draft,compute,approve,cancel" />
+                      </span>
+					</header>
+					<sheet>
+						<group colspan="2" col="4">
+							<field name="batch_id" colspan="4" />
+							<field name="responsible_id" />
+					        <field name="batch_total" />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="view_hr_salary_batch_tree">
+			<field name="name">hr.salary.batch.tree</field>
+			<field name="model">hr.salary.batch</field>
+			<field name="arch" type="xml">
+				<tree string="Salary Batchs">
+					<field name="batch_id" />
+					<field name="responsible_id" />
+					<field name="batch_total" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+	</data>
+</openerp>

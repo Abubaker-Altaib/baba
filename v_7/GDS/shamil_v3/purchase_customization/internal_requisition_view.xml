@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="requestion_form_customization_inherit_id" model="ir.ui.view">
+			<field name="name">requestion_customization.form</field>
+			<field name="model">ireq.m</field>
+			<field name="inherit_id" ref="purchase_foreign.internal_requestion_form_inherit" />
+			<field name="arch" type="xml">
+                        <header position="replace">
+                              <header>
+	                           <button name="in_progress" states="draft" string="In progress" groups="purchase_customization.group_ireq_m_inprogress" confirm="Are you sure you want to mack this request in progress?" />
+
+		                       <button name="completed" states="in_progress" string="Complete" groups="purchase_customization.group_ireq_m_complete"  confirm="Are you sure you want to complete this request?" />
+		                       <button name="in_progress_quote" states="completed" string="Close" groups="purchase_customization.group_ireq_m_close"   confirm="Are you sure you want to close this request?" />
+
+                               <button name="cancel" states="draft,in_progress,in_progress_quote,in_progress_fin_request,completed_fin_request" string="Cancel Request" groups="purchase_customization.group_purchase_request_cancel" icon="gtk-cancel" type="object" confirm="Are you sure you want to delete this request?" />
+	                           
+                               <button name="back_to_quotes" states="completed_quote,in_progress_fin_request" string="Back To Quotes" groups="purchase_customization.group_quote_close" icon="gtk-cancel" type="object" confirm="Are you sure you want to delete this request?" />
+
+			                   <button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" />
+			                   <button name="closed_quote" states="completed_quote" string="Close quote" groups="purchase_customization.group_quote_close" confirm="Are you sure you want to close quote this request?" />
+	
+	                           <button name="in_progress_fin_request" states="closed_quote" string="In Progress Financial Request" groups="purchase_customization.group_fin_request_inprogress" confirm="Are you sure you want to mack this request in progress?" />
+	
+			                   <button name="completed_fin_request" states="in_progress_fin_request" string="Completed Financial Request" groups="purchase_customization.group_fin_request_complete" confirm="Are you sure you want to complete this request?" />
+	
+			                   <button name="closed_fin_request" states="completed_fin_request" string="Close Financial Request" groups="purchase_customization.group_fin_request_close" confirm="Are you sure you want to close this request?" />
+	                                  
+
+    
+
+                                   <xpath expr="//button[@string='Create Purchase order']" position="replace"> 
+                                        <class attrs="{'invisible':[('purchase_type','=','internal')]}">
+                                        <button colspan="4" name="%(purchase_foreign.action_create_purchase_partial_order)d"
+                                                     string="Create Purchase order" type="action" states="closed_fin_request"   groups="purchase_customization.group_purchase_order_create"/>
+                                  </class>
+				   </xpath>
+                                  <xpath expr="//button[@string='Make Purchase Order']" position="replace">
+                                        <class attrs="{'invisible':[('purchase_type','=','foreign')]}">
+                                        <button colspan="4" name="done" string="Make Purchase Order"
+                                            confirm="Are you sure you want to create purchase Order?" states="closed_fin_request" groups="purchase_customization.group_purchase_order_create"/>
+                                  </class>
+				   </xpath>
+
+
+
+                                   
+
+
+
+
+                       
+
+                                   <field name="state" widget="statusbar" readonly="1" statusbar_visible="draft,done,cancel" />
+                              </header>
+                        </header>
+
+                        <button name="create_quote" position='replace'>
+                        	<button name="create_quote" states="in_progress_quote" string="Create a Quotation" type="object" groups="purchase_custom.group_purchase_commitee_member"/>
+                        </button>
+
+                        <field name="department_id" position='replace' >
+                                <field name="department_id" required="1" attrs="{'readonly':['|',('state','not in',['draft'])]}"/>  
+                        </field>
+                        <field name="cat_id" position='replace' >
+		                        <field name="cat_id" required="0" invisible="1" on_change="onchange_category_check_products_line(cat_id,pro_ids)"/>  
+                        </field>
+                        <field name="company_id" position='replace'>
+                               <field name="company_id" readonly="1" />
+                        </field>
+
+                        <field name="company_id" position='before' >
+                                <field name="executing_agency" required="1"  groups="purchase_customization.group_purchase_order_custom"/>  
+                        </field>
+                       <field name="company_id" position='after' >
+                                <field name="purchase_purposes" attrs="{'readonly':[('state','not in',['draft','in_progress'])],'required':[('state','in',['draft','in_progress'])]} " />  
+                        </field>
+                       <field name="purpose" position='replace' >
+                                 <field name="purpose" invisible="1" />
+                       </field>
+
+                        <field name="purpose" position='replace' >
+                                  <field name="purpose" invisible="1" />
+                       </field>
+
+                        <field name="purchase_type" position="replace" >
+			              <field name="purchase_type" colspan="2" required="1" attrs="{'readonly':[('state','not in',['draft','confirmed_d','confirmed_s','in_progress_quote'])]}" />
+                         </field>
+
+
+
+                        <field name="pro_ids" position='replace'>
+                        <field name="pro_ids">
+                                <tree editable="bottom" string="Items Lines">
+                                    <field name="product_id" 
+                                    on_change="onchange_product_id(product_id)"/>
+                                    <field name="name" invisible="True"/>
+                                    <field name="product_uom" />
+                                    <field name="product_qty"/>
+                                    <field name="desc" />  
+                                    <field name="state" invisible="True"/>                                                                      
+                                </tree>
+                        </field></field>
+
+                      <field name="r4" position='replace'>
+                      <field name="r4" colspan="2" attrs="{'required':[('state', '=', 'completed_quote')]}"/>
+                      </field>
+
+
+
+
+            </field>
+          </record>
+
+          <record id="ireq_m_tree_inherit_customization" model="ir.ui.view">
+            <field name="name">ireq.m.tree</field>
+            <field name="model">ireq.m</field>
+            <field name="inherit_id" ref="purchase_custom.ireq_m_tree"/>
+            <field name="arch" type="xml">
+          <xpath expr="//tree[@string='Request for approval of a purchase']" position="replace">
+             <tree colors="grey:state in ('cancel','done');red:state in ('in_progress_fin_request');green:state in ('completed_fin_request')" string="Request for approval of a purchase">
+                        <field name="name"/>
+                        <field name="department_id"/>
+                        <field name="ir_ref"/>
+                        <field name="user"/>
+                        <field name="state"/>
+                  </tree>
+
+
+           </xpath>
+
+
+        </field>
+    </record>
+
+
+         
+
+
+<!-- Inherit To Purchase Custom Action Add Domain in Tree View -->
+        <record id="purchase_custom.ireq_m_form_action" model="ir.actions.act_window">
+            <field name="name">Request for approval of a purchase</field>
+            <field name="res_model">ireq.m</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('state' , 'not in' , ['cancel','in_progress_fin_request','completed_fin_request','closed_fin_request','done'])]</field>
+            <field name="view_id" ref="purchase_custom.ireq_m_tree"/>
+            <field name="help" type="html">
+             
+            </field>
+        </record>
+        <record id="purchase_customization_form_action" model="ir.actions.act_window">
+            <field name="name">Finincial Ratification Orders</field>
+            <field name="view_id" ref="purchase_custom.ireq_m_tree"/>
+            <field name="res_model">ireq.m</field>
+            <field name="domain">[('state' , 'in' , ['in_progress_fin_request','completed_fin_request','closed_fin_request'])]</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+
+        <menuitem action="purchase_customization_form_action" id="menu_purchase_customization_form" sequence="8" parent="purchase.menu_procurement_management"/>
+
+
+		<!--record id="quote_customization_inherit" model="ir.ui.view">
+			<field name="name">quote.customization.inherit</field>
+			<field name="model">pur.quote</field>
+			<field name="inherit_id" ref="purchase_custom.pur_quote_form" />
+			<field name="arch" type="xml">
+
+                       </field>
+        </record-->
+	</data>
+</openerp>

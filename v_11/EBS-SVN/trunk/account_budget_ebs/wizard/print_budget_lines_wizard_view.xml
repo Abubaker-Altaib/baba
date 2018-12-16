@@ -1,0 +1,38 @@
+<odoo>
+ <data>
+
+ <record model="ir.ui.view" id="print_budget_lines_wizard_view">
+      <field name="name">print.budget.lines.wizard.view</field>
+      <field name="model">print.budget.lines.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Print Budget Lines">
+        	<group>
+        	<field name='parent_account_id' domain="[('user_type_id.type','=','view')]" context="{'show_parent_account':True}"/>
+          <field name='analatic_account_id'/>
+          <field name='year'/>
+        </group>
+
+        <footer>
+            <button name="print_report" string="Print" type="object" class="oe_highlight"/>
+             or
+            <button string="Cancel" class="oe_highlight" special="cancel"/>
+        </footer>
+        </form>
+    </field>
+</record>
+
+
+<record id="action_wizard_print_budget_lines" model="ir.actions.act_window">   
+			<field name="name">Print Budget Lines</field>
+			<field name="res_model">print.budget.lines.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+</record>
+
+<menuitem name="Print Budget Lines" id="print_budget_lines_menu" action="action_wizard_print_budget_lines" parent="account_budget_custom.menu_budget_reporting"/>
+
+
+
+</data>
+</odoo>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+
+  <data>
+
+   
+  <!-- Form , Tree , Menu and Action For Release Order -->
+    <record model="ir.ui.view" id="custody_release_order_form">
+		<field name="name">custody.release.order.form</field>
+		<field name="model">custody.release.order</field>
+		<field name="arch" type="xml">
+                <form string="Release Order" version="7.0">
+                  <header>
+                    <button name="confirm" states="draft" string="Confirm" confirm="Are you sure you want to confirm this request?" />
+		    
+		    <button name="verify" states="confirm" string="Verify From Custody" confirm="Are you sure you complete the verification process?"/>
+		    <button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" />
+	            <button name="cancel" states="draft" string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to cancel this request?" />
+                 
+                  <field name="state" widget="statusbar" readonly="1" statusbar_visible="draft,confirm,assign,cancel" />
+                  </header>
+		  <sheet>
+		       <div class="oe_title">
+		                <h1>
+		                    <label string="Custody Release Request" />
+		                </h1>
+		       </div>
+		       <group >
+                          <group >
+	                  <field name="name" readonly="1" colspan="2"/> 
+			 
+                          </group >
+                          <group > 
+                          <field name="department_id" colspan="2" />
+                          </group >
+                         </group>
+		        
+		       <notebook >
+		          <page string="Custody Lines" colspan="4">
+		                <field name="custody_lines"  attrs="{'readonly' : [('state' , 'not in' , ['draft'])] }">
+		                        <tree editable="bottom" string="Custody Lines">
+		                            <field name="custody_id" readonly="1"/>
+		                            <field name="name" readonly="1"/>
+		                            <field name="employee_id" readonly="1"/>
+                                            <field name="release_date" colspan="2" readonly="1"/>
+                                            <field name="damage" />
+		                        </tree>           
+		                </field>
+		          </page>
+
+		       </notebook>
+		  </sheet>
+
+	     
+	        </form>
+	     </field>
+
+   </record>
+
+  <record id="custody_release_order_tree" model="ir.ui.view">
+			<field name="name">custody.release.order.tree</field>
+			<field name="model">custody.release.order</field>
+			<field name="arch" type="xml">
+				<tree string="Custody Orders">
+					<field name="name" />
+					<field name="department_id"/>	
+                                        <field name="state"/>	
+				</tree>
+ 
+			</field>
+  </record>
+
+
+
+ <record model="ir.actions.act_window" id="action_custody_release_order_form">
+        <field name="name">custody release order Action</field>
+        <field name="res_model">custody.release.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+ </record>
+
+
+                  
+                  <menuitem id="menu_custody_release_order" 
+                             icon="terp-partner"
+                             action="action_custody_release_order_form" 
+                             name="Release Custody Order" 
+                             parent="menu_account_pact_child"
+                             web_icon="images/pos.png" 
+                             web_icon_hover="images/pos-hover.png"/>
+                  
+
+
+
+
+
+   
+
+
+
+     </data>
+</openerp>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="view_total_purchase" model="ir.ui.view">
+            <field name="name">Total purchase</field>
+            <field name="model">total.purchase</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml" >
+            <form string="Total purchase" version="7.0">
+                <group>
+                     <field name="from_date" colspan="2" on_change="onchange_date(from_date, to_date)"/>
+                     <field name="to_date" colspan="2" on_change="onchange_date(from_date, to_date)"/>
+                     <field name="product" colspan="2"/>
+                 </group>
+                 <footer>
+           	    	<button name="print_report" string="Print" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                 </footer>
+    	    </form>
+            </field>
+    </record>
+
+        <record id="action_wizard_total_purchase" model="ir.actions.act_window">
+            <field name="name">Total purchase</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">total.purchase</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_total_purchase"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Total Purchases"
+                parent="menu_purchase_advance_reports"
+                action="action_wizard_total_purchase"
+                id="menu_wizard_purchases_total"
+                />
+    </data>
+</openerp>		 		

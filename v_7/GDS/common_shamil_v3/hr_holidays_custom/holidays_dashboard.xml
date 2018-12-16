@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      	<record id="action_hr_holidays_tree" model="ir.actions.act_window">
+        	<field name="name">Holidays</field>
+			<field name="res_model">hr.holidays</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,graph</field>
+			<field name="context">{'group_by':['holiday_status_id']}</field>
+			<!--<field name="view_id" ref="account.view_account_entries_report_tree"/>
+			<field name="domain">[('year','=',time.strftime('%Y'))]</field>-->
+         </record>
+
+
+<record id="board_hr_form_inherit" model="ir.ui.view">
+            <field name="name">board.hr.holidays.leave.month.form</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr2_basic.board_hr_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/hpaned/child1" position="inside">
+                 <action colspan="4" height="160" width="400" name="%(action_hr_holidays_tree)d" string="Holidays" groups="base.group_sedc_manager,base.group_hr_manager"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

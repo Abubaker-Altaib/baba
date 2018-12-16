@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="internal_requestion_form_inherit" model="ir.ui.view">
+			<field name="name">internal_requestion.form</field>
+			<field name="model">ireq.m</field>
+			<field name="inherit_id" ref="purchase_custom.ireq_m_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+                               <!--field name="state" position="replace" >
+                                    <field name="state"  widget="statusbar" statusbar_visible="draft,done,cancel"/>
+                               </field-->
+			       <field name="purpose" colspan="2" position="after">
+			              <field name="purchase_type" colspan="2" required="1" attrs="{'readonly':[('state','not in',['draft','confirmed_d','confirmed_s'])]}" />
+			              <field name="product_type" colspan="2" attrs="{'readonly':[('state','not in',['draft','confirmed_d','confirmed_s'])],'invisible':[('purchase_type','!=','foreign')]}" />
+			       </field>
+
+ 		               <button name="done" position="replace">
+                                  <class attrs="{'invisible':[('purchase_type','=','internal')]}">
+                                            <button colspan="4" name="%(purchase_foreign.action_create_purchase_partial_order)d"
+                                                     string="Create Purchase order" type="action" states="approve2,checked"/>
+				  </class>
+                                  <class attrs="{'invisible':[('purchase_type','=','foreign')]}">
+                                    <button colspan="4" name="done" string="Make Purchase Order"
+                                            confirm="Are you sure you want to create purchase Order?" states="approve2"
+                                            />
+                                    </class>
+                                    </button>
+
+                               <!--xpath expr="//button[@string='Make Purchase Order']" position="attributes">
+					<attribute name="attrs">{'invisible':[('purchase_type','=','foreign')]}</attribute>
+				</xpath-->
+			</field>
+		</record>
+	</data>
+</openerp>

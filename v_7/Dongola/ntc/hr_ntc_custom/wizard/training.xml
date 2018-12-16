@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="training_report_outside_form" model="ir.ui.view">
+            <field name="name">training.report.outside.form</field>
+            <field name="model">training.report.outside</field>
+            <field name="arch" type="xml">
+                <form string="Training Report" version="7.0">
+                    <group>
+                      <field name="company_id" colspan="2" widget="many2many_tags" groups="base.group_multi_company" />
+                      <field name="training_category_id" colspan="2"/>
+                      <!--field name="payroll_ids" widget="many2many_tags"/-->
+                    </group>
+                    <group>
+                      <field name="date_from" colspan="2"/>
+                      <field name="date_to" colspan="2"/>
+                      
+                      <field name="type" colspan="2"/>
+                    </group>
+                    <footer>
+                        <button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+                          or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="training_report_outside" model="ir.actions.act_window">
+            <field name="name">Training Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">training.report.outside</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="training_report_outside_form" />
+            <field name="target">new</field>
+        </record>
+
+      	<menuitem
+                  action="training_report_outside"
+                  id="menu_training_report_outside"
+                  parent="hr_training.training_report_menue"
+                  name="Training Report" />
+
+
+        <record id="training_report_employee_form" model="ir.ui.view">
+            <field name="name">training.report.employee.form</field>
+            <field name="model">training.report.outside</field>
+            <field name="arch" type="xml">
+                <form string="Training Employee Report" version="7.0">
+                    <group>
+                      <field name="company_id" colspan="2" widget="many2many_tags" groups="base.group_multi_company" />
+                      <field name="payroll_ids" colspan="2"/>
+                    </group>
+                    <group>
+                      <field name="date_from" colspan="2" attrs="{'invisible':[('type1','=','2')]}"/>
+                      <field name="date_to" colspan="2" attrs="{'invisible':[('type1','=','2')]}" />
+                      <field name="qual_ids" colspan="2" attrs="{'invisible':[('type1','=','1')], 'required':[('type1','=','2')]}" domain="[('type','=','view')]"/>
+                      <field name="type1" colspan="2"/>
+                    </group>
+                    <footer>
+                        <button name="print_report_2" string="Print" type="object"  class="oe_highlight"/>
+                          or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="training_report_employee" model="ir.actions.act_window">
+            <field name="name">Training Employee Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">training.report.outside</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="training_report_employee_form" />
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                  action="training_report_employee"
+                  id="menu_training_report_employee"
+                  parent="hr_training.training_report_menue"
+                  name="Training Employee Report" />
+
+
+        <report
+         auto="False"
+         menu="False" 
+         id="training_landscape"
+         model="hr.employee"
+         name="training.employee2"
+         file="hr_ntc_custom/report/employee_training2.mako"
+         string="Allowance/Deduction Landscape" 
+         report_type="webkit"  header="False" />
+
+
+
+        
+        <record id="training_wizard_form_custom" model="ir.ui.view">
+            <field name="name">training wizard</field>
+            <field name="model">training.wizard</field>
+            <field name="arch" type="xml">
+                <form string="training wizard" version="7.0">
+                    <group>
+                        <field name="inc_emps" groups="base.group_unit_manager,hr_ntc_custom.group_training_direct_manager,base_custom.group_general_department_manager,base_custom.group_department_manager"/>
+                    </group>
+                    <notebook>
+                        <page string="Courses">
+                            <field name="suggested"/>
+                        </page>
+
+                        <page string="Suggested">
+                            <field name="suggested_blank">
+                                <tree version="7.0" editable="bottom" >
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button name="w_create" string="create" type="object"  class="oe_highlight"/>
+                                or
+                        <button special="cancel" string="Cancel"   class="oe_link"/>
+                    </footer>
+                </form>
+            </field>
+      </record>
+
+        <record id="training_wizard_form_action" model="ir.actions.act_window">
+            <field name="name">training wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">training.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="training_wizard_form_custom"/>
+            <field name="target">new</field>
+        </record>
+
+
+      
+        <menuitem
+                name="training wizard"
+                action="training_wizard_form_action"
+                id="training_wizard_form_action_menu"
+                parent="hr_training.menu_training_root"
+                />
+        
+        <record id="training_mail_wizard_form_custom" model="ir.ui.view">
+            <field name="name">training mail wizard</field>
+            <field name="model">training.mail.wizard</field>
+            <field name="arch" type="xml">
+                <form string="training mail wizard" version="7.0">
+                        <field name="text" colspan="5" nolabel="1" rowspan="5"/>
+                    
+                    <footer>
+                        <button name="send_mail" string="Send" type="object"  class="oe_highlight"/>
+                                or
+                        <button special="cancel" string="Cancel"   class="oe_link"/>
+                    </footer>
+                </form>
+            </field>
+      </record>
+
+        <record id="training_mail_wizard_form_action" model="ir.actions.act_window">
+            <field name="name">training mail wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">training.mail.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="training_mail_wizard_form_custom"/>
+            <field name="target">new</field>
+        </record>
+
+
+
+        <record id="training_search_wizard_form_custom" model="ir.ui.view">
+            <field name="name">training search wizard</field>
+            <field name="model">training.search.wizard</field>
+            <field name="arch" type="xml">
+                <form string="training search wizard" version="7.0">
+                        <field name="lines_ids" />
+                    <footer>
+                        <button name="save" context="{'lines_ids':lines_ids}" string="Save" type="object"  class="oe_highlight"/>
+                                or
+                        <button special="cancel" string="Cancel"   class="oe_link"/>
+                    </footer>
+                </form>
+            </field>
+      </record>
+
+        <record id="training_search_wizard_form_action" model="ir.actions.act_window">
+            <field name="name">training search wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">training.search.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="training_search_wizard_form_custom"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>

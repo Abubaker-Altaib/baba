@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<menuitem id="hr.menu_hr_configuration" name="Configuration"
+			parent="hr.menu_hr_root"
+			groups="base.group_hr_manager,base.group_training_manager,base.group_training_user"
+			sequence="50" />
+		<menuitem id="menu_training_root" name="Training" parent="hr.menu_hr_root" />
+		<menuitem id="menu_training_configuration" name="Training Configuration"
+			parent="hr.menu_hr_configuration" sequence="1"
+			groups="base.group_training_manager,base.group_training_user" />
+		<menuitem id="menu_training_process" name="Process"
+			parent="menu_training_root" sequence="2"
+			groups="base.group_training_manager,base.group_training_user,base.group_department_manager,base.group_unit_manager" />
+		<menuitem id="menu_training_enrich" name="Enrich" parent="menu_training_root"
+			sequence="3" />
+		<menuitem id="menu_training_action" name="Training Actions"
+			parent="menu_training_root" sequence="4" />
+		<menuitem name="Training Reports" id="training_report_menue"
+			parent="hr_custom.menu_hr_reports" />
+		<!--Training Category -->
+		<record model="ir.ui.view" id="hr_training_category_search_view">
+			<field name="name">hr.training.category.search</field>
+			<field name="model">hr.training.category</field>
+			<field name="arch" type="xml">
+				<search>
+					<field name="name"
+						filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" />
+				</search>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_training_category_tree_view">
+			<field name="name">hr.training.category.tree</field>
+			<field name="model">hr.training.category</field>
+			<field name="arch" type="xml">
+				<tree string="Training Category">
+					<field name="code" />
+					<field name="name" />
+				</tree>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_training_category_form_view">
+			<field name="name">hr.training.category.form</field>
+			<field name="model">hr.training.category</field>
+			<field name="arch" type="xml">
+				<form string="Training Category" version="7.0">
+					<sheet string="Training Category">
+						<h1>
+							<field name="name" class="oe_inline" placeholder="Category Name..." />
+							-
+							<field name="code" class="oe_inline" placeholder="Category Code..." />
+						</h1>
+						<group>
+							<group>
+								<field name="active" />
+							</group>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id="action_hr_training_category" model="ir.actions.act_window">
+			<field name="name">Training Category</field>
+			<field name="res_model">hr.training.category</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a training category.
+				</p>
+			</field>
+		</record>
+		<menuitem id="menu_hr_training_category" name="Training Category"
+			parent="menu_training_configuration" action="action_hr_training_category"
+			groups="base.group_training_manager,base.group_training_user" />
+
+
+		<!--Training Course -->
+		<record model="ir.ui.view" id="hr_training_course_search_view">
+			<field name="name">hr.training.course.search</field>
+			<field name="model">hr.training.course</field>
+			<field name="arch" type="xml">
+				<search string="Training Course">
+					<field name="name"
+						filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" />
+					<field name="training_category_id" />
+					<field name="job_ids" />
+					<!-- field name="specification_ids" / -->
+					<field name="employee_category_ids" />
+				</search>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_training_course_tree_view">
+			<field name="name">hr.training.course.tree</field>
+			<field name="model">hr.training.course</field>
+			<field name="arch" type="xml">
+				<tree string="Training Course">
+					<field name="code" />
+					<field name="name" />
+					<field name="training_category_id" />
+				</tree>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_training_course_form_view">
+			<field name="name">hr.training.course.form</field>
+			<field name="model">hr.training.course</field>
+			<field name="arch" type="xml">
+				<form string="Training Course" version="7.0">
+					<sheet string="Training Course">
+						<h1>
+							<field name="name" class="oe_inline" placeholder="Course Name..." />
+							-
+							<field name="code" class="oe_inline" placeholder="Course Code..." />
+						</h1>
+						<group>
+							<group>
+								<field name="training_category_id" />
+								<!-- field name="check_both" / -->
+							</group>
+							<group>
+								<field name="general_experience_year" />
+								<!-- field name="specific_experience_year" / -->
+							</group>
+							<notebook colspan="2">
+								<page string="Course Details">
+									<field name="objective" placeholder="Course Objectives..."
+										nolabel="1" />
+									<field name="content" placeholder="Course Contents..."
+										nolabel="1" />
+								</page>
+								<page string="Dedicated Jobs">
+									<field name="job_ids" nolabel="1">
+										<tree>
+											<field name="name" />
+											<field name="type" />
+										</tree>
+									</field>
+
+								</page>
+								<page string="Qualifications">
+									<field name="qualification_ids" nolabel="1" />
+								</page>
+								<page string="Employee Categories">
+									<field name="employee_category_ids" nolabel="1" />
+								</page>
+								<page string="Previous Courses Required ">
+									<field name="prev_course_ids" nolabel="1" />
+								</page>
+								<!-- page string="Experince Area"> <field name="specification_ids" 
+									/> </page -->
+							</notebook>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id="action_hr_training_course" model="ir.actions.act_window">
+			<field name="name">Training Course</field>
+			<field name="res_model">hr.training.course</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a training course.
+				</p>
+			</field>
+		</record>
+		<menuitem id="menu_hr_training_course" name="Training Course"
+			parent="menu_training_configuration" action="action_hr_training_course"
+			groups="base.group_training_manager,base.group_training_user" />
+
+		<!-- Enrich Configuration -->
+		<record model="ir.ui.view" id="hr_training_enrich_form_view">
+			<field name="name">hr.training.enrich.form</field>
+			<field name="model">hr.training.enrich</field>
+			<field name="arch" type="xml">
+				<form string="Training Enrich Configration" version="7.0">
+					<sheet string="Training Enrich Configration">
+						<group>
+							<group>
+								<field name="name" />
+								<field name="code" />
+								<field name="fixed_value"
+									attrs="{'invisible':[('enrich_type','!=','3')] ,'required':[('enrich_type','=','3')]}" />
+							</group>
+							<group>
+								<field name="enrich_type" on_change="onchange_enrich_type(enrich_type)" />
+								<field name="currency" />
+							</group>
+							<notebook colspan="4">
+								<page string="States"
+									attrs="{'invisible':[('enrich_type','!=','1')] ,'required':[('enrich_type','=','1')]}">
+									<field name="emp_states" attrs="{'required':[('enrich_type','=','1')] } ">
+										<tree string="Company" editable="top" nolabel="1">
+											<field name="company_id" />
+											<field name="amount" />
+										</tree>
+									</field>
+								</page>
+								<page string="Allowance" attrs="{'invisible':[('enrich_type','!=','2')]}">
+									<group>
+										<field colspan="4" name="allowance_id"
+											attrs="{'required':[('enrich_type','=','2')]}" />
+									</group>
+								</page>
+								<page string="Comments">
+									<field colspan="4" name="comments" nolabel="1" />
+								</page>
+							</notebook>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_training_enrich_tree_view">
+			<field name="name">hr.training.enrich.tree</field>
+			<field name="model">hr.training.enrich</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Training Enrich Configration">
+					<field name="name" />
+					<field name="enrich_type" />
+					<field name="currency" />
+					<field name="fixed_value" />
+				</tree>
+			</field>
+		</record>
+		<record id="action_hr_training_enrich" model="ir.actions.act_window">
+			<field name="name">Training Enrich Configuration</field>
+			<field name="res_model">hr.training.enrich</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a training enrich.
+				</p>
+			</field>
+		</record>
+		<menuitem id="menu_hr_training_enrich" name="Enrich Configration"
+			parent="menu_training_enrich" groups="base.group_training_manager,base.group_training_user"
+			action="action_hr_training_enrich" />
+
+		<!-- Plan Configuration -->
+		<record model="ir.ui.view" id="hr_training_plan_form_view">
+			<field name="name">hr.training.plan.form</field>
+			<field name="model">hr.training.plan</field>
+			<field name="arch" type="xml">
+				<form string="Training Plan Configration" version="7.0">
+					<sheet string="Training Plan Configration">
+						<group>
+							<group>
+								<field name="name" />
+								<field name="classification" />
+							</group>
+							<group>
+								<field name="code" />
+								<field name="percentage" />
+							</group>
+
+							<group>
+								<field name="start_date" />
+								<field name="active" />
+							</group>
+							<group>
+								<field name="end_date" />
+							</group>
+							<notebook colspan="2">
+								<page string="Suggested Courses">
+									<field name="suggested_course_ids" nolabel="1" />
+								</page>
+							</notebook>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_training_plan_tree_view">
+			<field name="name">hr.training.plan.tree</field>
+			<field name="model">hr.training.plan</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Training Plan Configration">
+					<field name="name" />
+					<field name="code" />
+					<field name="start_date" />
+					<field name="end_date" />
+				</tree>
+			</field>
+		</record>
+		<record id="action_hr_training_plan" model="ir.actions.act_window">
+			<field name="name">Training plan Configuration</field>
+			<field name="res_model">hr.training.plan</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a training plan.
+				</p>
+			</field>
+		</record>
+		<menuitem id="menu_hr_training_plan" name="Training Plan"
+			parent="menu_training_configuration" groups="base.group_training_manager,base.group_training_user"
+			action="action_hr_training_plan" />
+
+		<!-- record id="view_partner_trainer_form" model="ir.ui.view">
+			<field name="name">res.partner.trainer.form.inherit</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_partner_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='supplier']" position="after">
+					<field name="trainer" onchange="onchange_trainer(trainer)" />
+				</xpath>
+			</field>
+		</record-->
+		<record id="action_hr_training_center" model="ir.actions.act_window">
+			<field name="name">Training Centers</field>
+			<field name="res_model">res.partner</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">kanban,tree,form</field>
+			<field name="domain">[('trainer','=',True')]</field>
+			<field name="context">{'default_trainer':True, 'default_supplier':True,'default_customer':False}</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create new training center.
+				</p>
+			</field>
+		</record>
+
+		<record id="action_training_center_kanban" model="ir.actions.act_window.view">
+			<field eval="1" name="sequence" />
+			<field name="view_mode">kanban</field>
+			<field name="view_id" ref="base.res_partner_kanban_view" />
+			<field name="act_window_id" ref="action_hr_training_center" />
+		</record>
+		<record id="action_training_center_form" model="ir.actions.act_window.view">
+			<field eval="2" name="sequence" />
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="base.view_partner_tree" />
+			<field name="act_window_id" ref="action_hr_training_center" />
+		</record>
+		<record id="action_training_center_form" model="ir.actions.act_window.view">
+			<field eval="3" name="sequence" />
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="base.view_partner_simple_form" />
+			<field name="act_window_id" ref="action_hr_training_center" />
+		</record>
+
+		<menuitem id="menu_hr_training_center" name="Training Centers"
+			parent="menu_training_configuration" groups="base.group_training_manager,base.group_training_user"
+			action="action_hr_training_center" />
+	</data>
+</openerp>

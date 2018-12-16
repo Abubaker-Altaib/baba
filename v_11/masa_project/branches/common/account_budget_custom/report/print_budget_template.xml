@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="print_budget_template">
+        <t t-call="web.html_container">
+
+                <t t-call="web.external_layout">
+                    <t t-foreach="docs" t-as="o">
+                    <div class="page" style="font-family:Amiri">
+
+                      <center><h2><u>Budget Period Notice</u></h2></center>
+
+                      <table class="table table-condensed table-bordered">
+                        <tr >
+                            
+                            <td class="text-center"><h4><strong>Budgetary position</strong></h4></td>
+                            <td class="text-center"><h4><span t-field="o.analytic_account_id"/></h4></td>
+                            <td class="text-center"><h4><strong>Planned amount</strong></h4></td>
+                            <td class="text-center"><h4><span t-field="o.amount"/></h4></td>
+                        </tr>
+                        <tr class="text-center" >
+                            <td ><h4><strong>Period</strong></h4></td>
+                            <td colspan="3"><h4><span t-field="o.date_from"/>
+                             ---- <span t-field="o.date_to"/></h4></td>
+                           
+                        </tr>
+                        </table>
+
+                      <table class="table ">
+                        <thead>
+                            <tr>
+                                <th class="text-center"><h4>Budgetary position</h4></th>
+                                <th class="text-center"><h4>Movements</h4></th>
+                                <th class="text-center"><h4>Approved amount</h4></th>
+                                <th class="text-center"><h4>Confirm amount</h4></th>
+                                <th class="text-center"><h4>Practical amount</h4></th>
+                                <th class="text-center"><h4>Residual amount</h4></th>
+                                <th class="text-center"> <h4>Percentage</h4></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr t-foreach="o.crossovered_budget_line" t-as="line">
+                                <td class="text-center" style="border-style:solid;border-width: 1px;border-color: black; " ><h4><span t-field="line.general_budget_id"/></h4></td>
+                                <td class="text-center" style="border-style:solid;border-width: 1px;border-color: black; "> <h4><span t-field="line.total_operation"/></h4></td>
+                                <td class="text-center" style="border-style:solid;border-width: 1px;border-color: black; "> <h4><span t-field="line.planned_amount"/></h4></td>
+                                <td class="text-center" style="border-style:solid;border-width: 1px;border-color: black; "> <h4><span t-field="line.confirm"/></h4></td>
+                                <td class="text-center" style="border-style:solid;border-width: 1px;border-color: black; "> <h4><span t-esc="line.practical_amount" /></h4></td>
+                                <td class="text-center" style="border-style:solid;border-width: 1px;border-color: black; "> <h4><span t-esc="line.residual" /></h4></td>
+                                <td class="text-center" style="border-style:solid;border-width: 1px;border-color: black; "> <h4><span t-esc="line.percentage" /></h4></td>
+                            </tr>
+                        </tbody>
+                        <thead >
+                            <tr style="border-top-style:solid;border-width: 3px;border-color: black; ">
+                                <td class="text-center"><h4><strong>Total</strong></h4></td>
+                                  <td class="text-center"><h4><strong><t t-esc="sum([c.total_operation for c in o.crossovered_budget_line])"/></strong></h4></td>
+                                  <td class="text-center"><h4><strong><t t-esc="sum([c.planned_amount for c in o.crossovered_budget_line])"/></strong></h4></td>
+                                  <td class="text-center"><h4><strong><t t-esc="sum([c.confirm for c in o.crossovered_budget_line])"/></strong></h4></td>
+                                  <td class="text-center"><h4><strong><t t-esc="sum([c.practical_amount for c in o.crossovered_budget_line])"/></strong></h4></td>
+                                  <td class="text-center"><h4><strong><t t-esc="sum([c.residual for c in o.crossovered_budget_line])"/></strong></h4></td>
+                                  <td class="text-center"><h4><strong><span t-esc="sum([c.percentage for c in o.crossovered_budget_line])" /></strong></h4></td>
+                            </tr>
+                        </thead>
+                    </table>
+                    <p style="page-break-after:always;"/>
+
+                    </div>
+                     </t>
+
+            </t>
+        </t>
+    </template>
+</odoo>

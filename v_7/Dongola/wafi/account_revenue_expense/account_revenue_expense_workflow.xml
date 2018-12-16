@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<!-- Activities -->
+		
+		<record id="act_schedule" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="name">schedule</field>
+			<field name="action">schedule_voucher()</field>
+			<field name="kind">function</field>
+		</record>
+
+		<!-- Transitions -->
+
+		<record id="account_voucher_wafi.voucher_t8" model="workflow.transition">
+			<field name="act_from" ref="account_voucher_wafi.act_review" />
+			<field name="act_to" ref="act_schedule" />
+			<field name="signal">review_schedule</field>
+		</record>
+		<record id="voucher_t10" model="workflow.transition">
+			<field name="act_from" ref="act_schedule" />
+			<field name="act_to" ref="account_voucher_wafi.act_pay" />
+			<field name="signal">schedule_pay</field>
+		</record>
+	</data>
+</openerp>

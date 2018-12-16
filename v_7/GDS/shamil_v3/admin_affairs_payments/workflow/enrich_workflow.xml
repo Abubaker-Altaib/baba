@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Enrich Payment Activity-->
+
+        <record id="wkf_payment_enrich" model="workflow">
+            <field name="name">wkf.payment.enrich</field>
+            <field name="osv">payment.enrich</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_payment_enrich_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_payment_enrich"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+        <record id="wkf_payment_enrich_first_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_payment_enrich"/>
+            <field name="name">first_confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">first_confirmed()</field>  
+        </record>
+        <record id="wkf_payment_enrich_second_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_payment_enrich"/>
+            <field name="name">second_confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">second_confirmed()</field>  
+        </record>
+        <record id="wkf_payment_enrich_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_payment_enrich"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>  
+        </record>
+
+        <record id="wkf_payment_enrich_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_payment_enrich"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>  
+            <field name="flow_stop">True</field>          
+        </record>
+        <record id="wkf_payment_enrich_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_payment_enrich"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+        </record>
+
+<!-- Enrich Payment Transition-->
+
+        <record id="wkf_payment_enrich_darft_first_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_payment_enrich_draft"/>
+            <field name="act_to" ref="wkf_payment_enrich_first_confirmed"/>
+            <field name="signal">first_confirmed</field>
+        </record>
+        <record id="wkf_payment_enrich_darft_second_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_payment_enrich_first_confirmed"/>
+            <field name="act_to" ref="wkf_payment_enrich_second_confirmed"/>
+            <field name="signal">second_confirmed</field>
+        </record>
+        <record id="wkf_payment_enrich_second_confirmed_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_payment_enrich_second_confirmed"/>
+            <field name="act_to" ref="wkf_payment_enrich_confirmed"/>
+            <field name="signal">confirmed</field>
+        </record>
+
+        <record id="wkf_payment_enrich_confirmed_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_payment_enrich_confirmed"/>
+            <field name="act_to" ref="wkf_payment_enrich_done"/>
+            <field name="signal">done</field>
+        </record>
+
+		<record id="wkf_payment_enrich_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_payment_enrich_draft"/>
+            <field name="act_to" ref="wkf_payment_enrich_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+		<record id="wkf_payment_enrich_first_confirmed_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_payment_enrich_first_confirmed"/>
+            <field name="act_to" ref="wkf_payment_enrich_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+		<record id="wkf_payment_enrich_second_confirmed_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_payment_enrich_second_confirmed"/>
+            <field name="act_to" ref="wkf_payment_enrich_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+		<record id="wkf_payment_enrich_confirmed_d_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_payment_enrich_confirmed"/>
+            <field name="act_to" ref="wkf_payment_enrich_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_payment_enrich_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_payment_enrich_cancel"/>
+            <field name="act_to" ref="wkf_payment_enrich_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>
+

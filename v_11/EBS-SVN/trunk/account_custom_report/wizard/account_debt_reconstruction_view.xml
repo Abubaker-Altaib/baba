@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="debt_reconstruction_view" model="ir.ui.view">
+        <field name="name">debt reconstruction wizard</field>
+        <field name="model">debt.reconstruction.wizard</field>
+        <field name="arch" type="xml">
+
+        <form string="debt reconstruction" version="7.0">
+        <group col="4">
+            <field name="account_parent_id" required="1" domain="[('internal_type','in',['payable','view'])]" context="{'show_parent_account':True}"/>
+            <newline />
+            <field name="date_from" colspan="1" />
+            <field name="date_to" colspan="2" />
+        </group>
+        <footer>
+            <button string="Print" name="print_report" type="object" class="oe_highlight"/>
+            or
+            <button string="Cancel" class="oe_link" special="cancel"/>
+        </footer>
+        </form> 
+
+        </field>
+    </record>
+
+    <record id="action_debt_reconstruction" model="ir.actions.act_window">
+        <field name="name">action debt reconstruction</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">debt.reconstruction.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <menuitem
+        id="menu_debt_reconstruction"
+        name="Debt Reconstruction"
+        parent="account.menu_finance_legal_statement"
+        action="action_debt_reconstruction"
+       />
+
+</odoo>

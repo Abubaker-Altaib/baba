@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="maintenance_request_search_view" model="ir.ui.view">
+            <field name="name">maintenance.request.search</field>
+            <field name="model">maintenance.request</field>
+            <field name="arch" type="xml">
+                <search string="search by">
+                    <field name="request_datetime"/>
+                    <field name="recieve_datetime"/>
+                    <field name="state"/>
+                    <field name="ref"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Maintenance Department" icon="terp-folder-green" context="{'group_by':'department_id'}"/>
+                        <filter string="Request Datetime" icon="terp-folder-green" context="{'group_by':'request_datetime'}"/>
+                        <filter string="Recieve Datetime" icon="terp-folder-green" context="{'group_by':'recieve_datetime'}"/>
+                        <filter string="State" icon="terp-folder-green" context="{'group_by':'state'}"/>
+                        <filter string="Reference" icon="terp-folder-green" context="{'group_by':'ref'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="maintenance_request_tree_view" model="ir.ui.view">
+            <field name="name">maintenance.request.tree</field>
+            <field name="model">maintenance.request</field>
+            <field name="arch" type="xml">
+                <tree string="Maintenance requests">
+                    <field name="ref" />
+                    <field name="department_id" />
+                    <field name="request_datetime" />
+                    <field name="recieve_datetime" />
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        <record id="maintenance_request_form_view" model="ir.ui.view">
+            <field name="name">maintenance.request.form</field>
+            <field name="model">maintenance.request</field>
+            <field name="arch" type="xml">
+                <form string="Maintenance requests Request" version="7.0">
+                    <header>
+                        <button name="request" states="draft" string="Request" confirm="Are you sure you want to make this request?" class="oe_highlight"/>
+                        <button name="in_reciption" states="requested" string="Inform The Employee" confirm="Are you sure you want to Inform The Employee?" class="oe_highlight" groups="vehicles_maintenance.maintenance_user"/>
+                        <button name="process" states="in_reciption" string="Start Work" confirm="Are you sure you want to start this request?" class="oe_highlight" groups="vehicles_maintenance.maintenance_user"/>
+                        
+                        <button name="ret_request" states="in_reciption,process" string="Return To Request" confirm="Are you sure you want to Return To Request?" class="oe_highlight" groups="vehicles_maintenance.group_maintenance_set_to_draft"/>
+
+
+                        <button name="done" states="process" string="Done" confirm="Are you sure you want to done this request?" class="oe_highlight" groups="vehicles_maintenance.maintenance_manager"/>
+                        <button name="cancel" states="draft,requested,in_reciption,process" string="Cancel" confirm="Are you sure you want to cancel this request?" class="oe_highlight" groups="vehicles_maintenance.maintenance_manager,vehicles_maintenance.maintenance_user"/>
+                        <button name="draft" states="canceled" string="Set to draft" confirm="Are you sure you want to reset this request?" class="oe_highlight" groups="vehicles_maintenance.group_maintenance_set_to_draft"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,requested,process,done"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="ref" readonly="1"/>
+                                <field name="employee_id" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false}" readonly="1" domain="[('state','=','approved')]"/>
+                                <field name="vehicle_id" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false}" required="1" domain="[('state','=','confirm')]" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="request_datetime" readonly="1"/>
+                                <label for="odometer" />
+                                <div>
+                                    <field name="odometer" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="odometer_unit" class="oe_inline" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                </div>
+                            </group>
+
+                            <group>
+                                <field name="machine_type" attrs="{'readonly':[('state','!=','in_reciption')],'invisible':[('state','in',('draft','requested'))]}"/>
+                                <field name="wheel_type" attrs="{'readonly':[('state','!=','in_reciption')],'invisible':[('state','in',('draft','requested'))]}"/>
+                            </group>
+                            
+                            <group>
+                                <field name="vehicle_id_employee_id" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false}" readonly="1" attrs="{'invisible':[('vehicle_id_employee_id','=',False)]}"/>
+                                <field name="vehicle_id_department_id" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false}" readonly="1" attrs="{'invisible':[('vehicle_id_department_id','=',False)]}"/>
+                                <field name="vehicle_id_vin_sn" readonly="1" attrs="{'invisible':[('vehicle_id_vin_sn','=',False)]}"/>
+                            </group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false}" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="department_id" attrs="{'readonly':[('state','not in',['draft','requested'])],'required':[('state','in',['draft','requested'])],'invisible':[('state','not in',['draft','requested'])]}" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false}"/>
+                            </group>
+                            <group attrs="{'invisible':[('state','=','draft')]}" string="Request Datetime">
+                                <field name="recieve_datetime" readonly='1' invisible="0" groups="admin_affairs.group_fleet_employee"/>
+
+                                <field name="recieve_date" attrs="{'readonly':[('state','!=','requested')],'required':[('state','=','requested')]}" groups="vehicles_maintenance.maintenance_manager,vehicles_maintenance.maintenance_user,vehicles_maintenance.group_maintenance_set_to_draft"/>
+                                <field name="recieve_time" widget="float_time" attrs="{'readonly':[('state','!=','requested')],'required':[('state','=','requested')]}" groups="vehicles_maintenance.maintenance_manager,vehicles_maintenance.maintenance_user,vehicles_maintenance.group_maintenance_set_to_draft"/>
+
+                                <field name="end_datetime" readonly="1"/>
+                                <field name="maintenance_time" readonly="1"/>
+                            </group>
+                            
+                            <group>
+                                <field name="description" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </group>
+                        </group>
+                        <notebook attrs="{'invisible':[('state','in',['draft','requested','requested','in_reciption'])]}">
+                            <page string="Jobs">
+                                <field name="damage_lines_ids" attrs="{'readonly':[('state','not in',('process') )]}">
+                                    <tree string="Damages" editable="top">
+                                        <field name="damages_ids" widget="many2many_tags" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false}" context="{'damage_lines_ids':parent.damage_lines_ids}" required="1"/>
+                                        <field name="department_id" readonly="1" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false}"/>
+                                        <field name="job_ids" invisible="1"/>
+                                        <field name="job_state" invisible="1"/>
+                                        <field name="job_ref" readonly="1" attrs="{'invisible':[('job_ids','=',[])]}"/>
+                                        <button name="open_record" type="object" icon="gtk-open" />
+                                        <button name="reset" type="object" icon="gtk-cancel" attrs="{'invisible':['|',('job_ids','=',[]),('job_state','=','done')]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="maintenance_requests_action" model="ir.actions.act_window">
+            <field name="name">Maintenance requests</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">maintenance.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="action_maintenance_requests_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="maintenance_request_form_view"/>
+            <field name="act_window_id" ref="maintenance_requests_action"/>
+        </record>
+
+        <record id="action_maintenance_requests_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="maintenance_request_tree_view"/>
+            <field name="act_window_id" ref="maintenance_requests_action"/>
+        </record>
+
+        <record id="maintenance_job_search_view" model="ir.ui.view">
+            <field name="name">maintenance.job.search</field>
+            <field name="model">maintenance.job</field>
+            <field name="arch" type="xml">
+                <search string="search by">
+                    <field name="vehicle_id" />
+                    <field name="start_datetime"/>
+                    <field name="end_datetime"/>
+                    <field name="state"/>
+                    <field name="ref"/>
+                    <field name="process_ref"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Vehicle" icon="terp-folder-green" context="{'group_by':'vehicle_id'}"/>
+                        <filter string="Start Datetime" icon="terp-folder-green" context="{'group_by':'start_datetime'}"/>
+                        <filter string="End Datetime" icon="terp-folder-green" context="{'group_by':'end_datetime'}"/>
+                        <filter string="State" icon="terp-folder-green" context="{'group_by':'state'}"/>
+                        <filter string="Reference" icon="terp-folder-green" context="{'group_by':'ref'}"/>
+                        <filter string="Process Reference" icon="terp-folder-green" context="{'group_by':'process_ref'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="maintenance_job_tree_view" model="ir.ui.view">
+            <field name="name">maintenance.job.tree</field>
+            <field name="model">maintenance.job</field>
+            <field name="arch" type="xml">
+                <tree string="Maintenance jobs">
+                    <field name="ref" />
+                    <field name="vehicle_id" />
+                    <field name="damages_ids" />
+                    <field name="start_datetime" />
+                    <field name="end_datetime" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        <record id="maintenance_job_form_view" model="ir.ui.view">
+            <field name="name">maintenance.job.form</field>
+            <field name="model">maintenance.job</field>
+            <field name="arch" type="xml">
+                <form string="Maintenance jobs" version="7.0">
+                    <header>
+                        <button name="request" states="draft" string="Request" confirm="Are you sure you want to make this request?" class="oe_highlight" groups="vehicles_maintenance.division_manager"/>
+                        <button name="request_manager" states="need_manager" string="Manager Request" confirm="Are you sure you want to make this request?" class="oe_highlight" groups="vehicles_maintenance.maintenance_engineer,vehicles_maintenance.maintenance_manager"/>
+                        <button name="done" states="recieved" string="done" confirm="Are you sure you want to done this request?" class="oe_highlight"  groups="vehicles_maintenance.maintenance_manager"/>
+                        <button name="cancel" states="draft,requested,need_manager" string="Cancel" confirm="Are you sure you want to cancel this request?" class="oe_highlight"  groups="vehicles_maintenance.maintenance_engineer,vehicles_maintenance.maintenance_manager"/>
+                        <button name="return" states="recieved" string="Cancel" confirm="Are you sure you want to cancel this request?" class="oe_highlight"  groups="vehicles_maintenance.maintenance_engineer,vehicles_maintenance.maintenance_manager"/>
+                        <button name="draft" states="canceled" string="Set to draft" confirm="Are you sure you want to reset this request?" class="oe_highlight"  groups="vehicles_maintenance.group_maintenance_set_to_draft" invisible="1"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,requested,recieved,done"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="ref" readonly="1"/>
+                                <field name="process_ref" readonly="1"/>
+                                <field name="damages_ids" readonly="1" widget="many2many_tags"/>
+                            </group>
+                            <group >
+                                <field name="vehicle_id" readonly="1" options='{"no_open":True}'/>
+                                <label for="odometer" />
+                                <div>
+                                    <field name="odometer" class="oe_inline" readonly="1"/>
+                                    <field name="odometer_unit" class="oe_inline" readonly="1"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="start_datetime" readonly="1"/>
+                                <field name="end_datetime" readonly="1"/>
+                                <field name="job_time" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false}" required="1" readonly="1"/>
+                                <field name="exchange_order_id" options='{"no_open":True}' readonly="1" attrs="{'invisible':[('exchange_order_id','=',False)]}" />
+                                <field name="purchase_requestion_id" options='{"no_open":True}' readonly="1" attrs="{'invisible':[('purchase_requestion_id','=',False)]}" />
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="spares">
+                                <field name="spares_ids" required="1" attrs="{'readonly':[('state','!=','draft')]}" >
+                                    <tree string="spares" editable="top">
+                                        <field name="product_id" context="{'spares_ids':parent.spares_ids,'default_spare_ok':True,'form_view_ref':'vehicles_maintenance.spare_normal_form_view','vehicle_id':parent.vehicle_id, 'default_vehicle_category': parent.vehicle_id}" required="1" domain="[('spare_ok','=',True)]" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false}"/>
+                                        <field name="quantity" required="1"/>
+                                        <field name="recieved_quantity" readonly="1"/>
+                                        <field name="damages_ids" readonly="1" widget="many2many_tags"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Engineers">
+                                <field name="eng_ids" attrs="{'readonly':[('state','!=','draft')]}" required="1" domain="[('state','=','approved')]"></field>
+                            </page>
+                            <page string="Spare Exchange Orders">
+                                <field name="exchange_order_ids" readonly="1" attrs="{'invisible':[('state','=','draft')]}" nolabel="1" context="{'default_maintenance':True,'form_view_ref':'vehicles_maintenance.exchange_order_maintenance_form','tree_view_ref':'vehicles_maintenance.exchange_order_maintenance_tree'}"/>
+                            </page>
+                            <page string="Comments" groups="vehicles_maintenance.maintenance_manager">
+                                <field name="comments" ></field>
+                                <separator string="Report Log"/>
+                                <field name="report_log" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="maintenance_job_action" model="ir.actions.act_window">
+            <field name="name">Maintenance jobs</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">maintenance.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem name="Vehicles Maintenance" id="menu_vehicles_maintenance" parent="fleet.fleet_vehicles"/>
+        <menuitem name="Maintenance requests" id="menu_maintenance_request" action="maintenance_requests_action" parent="menu_vehicles_maintenance" sequence="2"/>
+        <menuitem name="Maintenance jobs" id="menu_maintenance_job" action="maintenance_job_action" parent="menu_vehicles_maintenance" sequence="3" groups="vehicles_maintenance.maintenance_manager,vehicles_maintenance.maintenance_user,vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc,vehicles_maintenance.group_maintenance_set_to_draft"/>
+        <record id="maintenance_damage_tree_view" model="ir.ui.view">
+            <field name="name">maintenance.damage.tree</field>
+            <field name="model">maintenance.damage</field>
+            <field name="arch" type="xml">
+                <tree string="Maintenance damages" editable="top">
+                    <field name="name" required="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+        <record id="maintenance_damage_action" model="ir.actions.act_window">
+            <field name="name">Maintenance damages</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">maintenance.damage</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <menuitem name="Maintenance Damages" id="menu_maintenance_damage_tree_view" action="maintenance_damage_action" parent="vehicles_maintenance" sequence="3"/>
+        <record model="ir.ui.view" id="vehicle_form_inherit_maintenance_archive">
+            <field name="name">fleet.vehicle.form.inherit.maintenance_archive</field>
+            <field name="model">fleet.vehicle</field>
+            <field name="inherit_id" ref="admin_affairs.view_fleet_vehicle_form_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/notebook/page[@string='Notes']" position="before">
+                    <page string="Maintenance Details">
+                        <field name='maintenance_spare_ids' readonly="1">
+                            <tree>
+                                <field name="product_id"/>
+                                <field name="quantity"/>
+                                <field name="process_ref"/>
+                                <field name="start_datetime"/>
+                                <field name="damages_ids"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Movable Spares">
+                        <field name='maintenance_move_spare_ids' readonly="1" nolabel="1">
+                            <tree editable="top">
+                                <field name="product_id"/>
+                                <field name="product_qty"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='machine_no']" position="after">
+                    <field name="machine_type" attrs="{'readonly':[('state','!=','draft')]}"/>
+                    <field name="wheel_type" attrs="{'readonly':[('state','!=','draft')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_location_form_inherit" model="ir.ui.view">
+            <field name="name">stock.location.form</field>
+            <field name="model">stock.location</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='active']" position="after">
+                    <field name="is_maintenance_location" colspan="2"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!-- Create maintenace.request From vehicle.accident -->
+
+        <record id="vehicle_accident_form_inherit" model="ir.ui.view">
+            <field name="name">vehicle.accident.form.inherit</field>
+            <field name="model">vehicle.accident</field>
+            <field name="inherit_id" ref="admin_affairs.vehicle_accident_form" />
+            <field name="type">form</field>
+            <field eval="5" name="priority"/>
+            <field name="arch" type="xml">                
+
+                    <xpath expr="/form/sheet/group" position="before">
+                        <div class="oe_title">
+                            <h1>
+
+                        <button string="Create Maintenance" name="create_maintenance" type="object"
+                        class="oe_highlight" colspan="2" attrs="{'invisible' : ['|',('maintenance_id' , '!=' , False),('state' , '!=' , 'maintenace_dept')]}"/>
+                            </h1>
+                        </div>
+                    </xpath>
+
+                    <xpath expr="//field[@name='accident_date']" position="after">
+                        <field name="maintenance_id" attrs="{'invisible' : [('maintenance_id' , '=' , False)],'readonly':[('state','not in',('draft','maintenace_dept'))]}"  context="{'form_view_ref':'maintenance_request_form_view'}"/>
+                    </xpath>
+                    
+            </field>
+        </record>
+
+        <record id="maintenances_request_with_footer" model="ir.ui.view">
+            <field name="name">Maintenance Request Form</field>
+            <field name="model">maintenance.request</field>
+            <field name="type">form</field>
+            <field eval="5" name="priority"/>
+            <field name="arch" type="xml">
+            <form string="Maintenance jobs" version="7.0">
+                <header>
+                        <button name="request" states="draft" string="Request" confirm="Are you sure you want to make this request?" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,requested,process,done"/>
+                    </header>
+                <sheet>
+
+                <group>
+                    <group>
+                    <field name="vehicle_id" readonly="1"/>
+                    <field name="request_datetime" readonly="1"/>
+                    <field name="description" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                    </group>
+                </group>
+                </sheet>
+                    
+
+                <field name="out_source" invisible="1"/>
+                <footer attrs="{'invisible' : [('out_source' , '!=' , True)]}">
+                    <button name="write" type="object" string="Save" class="oe_highlight"/> or                          
+                    <button name="cancel" string="Cancel" special="cancel" class="oe_link"/>
+                </footer>
+                    </form>
+                   
+
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

@@ -1,0 +1,553 @@
+
+<openerp>
+	<data>
+
+		<!-- Clearance Form,Tree View & Action -->
+
+		<record id="id_purchase_clearance_view_form" model="ir.ui.view">
+			<field name="name">purchase.clearance.form</field>
+			<field name="model">purchase.clearance</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Puchase Clearance" version="7.0" attrs="{'readonly':['|',('state', '=', 'done'),('state','=','cancel')]}">
+                                       <header>
+
+
+                                       <button name="recieve_document" states="draft" string="Recieve Documents" type="workflow"
+							confirm="Are you sure you want to convert to the Other Stage?" groups="purchase_clearance.group_purchase_clearance_confirm"/>
+
+
+                                        <button name="exemption" states="recieve_document" string="Exemption" type="workflow"
+							confirm="Are you sure you want to convert to the Other Stage?" groups="purchase_clearance.group_purchase_clearance_confirm"/>
+
+
+
+						<button name="confirmed" states="exemption" string="Confirm" type="workflow"
+							confirm="Are you sure you want to confirm this clearance?" groups="purchase_clearance.group_purchase_clearance_confirm"/>
+
+						<button name="approved" states="confirmed" string="Approve" type="workflow"
+							confirm="Are you sure you want to Approve?" groups="purchase_clearance.group_purchase_clearance_approved"/>
+
+						
+
+            					<button name="done" states="approved" string="Done" type="workflow"
+							confirm="Are you sure you want to complete this order?" groups="purchase_clearance.group_purchase_clearance_done"/>  
+
+						<button name="cancel" states="draft,confirmed,approved" string="Cancel Request" type="workflow" icon="gtk-cancel" confirm="Are you sure you want to Cancel this Clearance?" groups="purchase_clearance.group_purchase_clearance_cancel"/>
+
+						<button name="ir_action_cancel_draft" states="cancel"
+							string="Set to Draft" type="object" icon="gtk-convert" groups="purchase_clearance.group_purchase_clearance_cancel"/>
+
+                                               <field name="state" widget="statusbar" statusbar_visible="draft,recieve_document,exemption,confirmed,approved,done,cancel"
+                                                      />
+					</header>
+                                    <sheet>
+				       <group>
+
+                                           <group>
+						<field name="name" readonly="1"/>
+                                                <field name="bill_of_lading" required="1" attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>
+						 <field name="packing_list"  attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>   
+                                                 <field name="origin_certificate"  attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>   
+                                                  <field name="sender_to" attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/> 
+                                                  <field name="packing_type" required="True" attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>   
+                                                  <field name="clearance_purpose" required="1" attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}" on_change="clearance_purpose_change(clearance_purpose)" invisible="1"/>                                                <field name="bill_of_lading_type"   attrs="{'required' :[('state', 'in', ['draft','recieve_document','exemption'])] ,'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>
+                                           </group>
+                                           <group>
+		                               <field name="date" required="1" attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>  
+		                               <field name="bill_of_lading_date" required="1" attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>
+                                                <field name="origin_invoice"  attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>
+                                             <field name="origin_country"  attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>
+                                             <field name="abdication_certificate"  attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])],'invisible' : [('sender_to' , '!=' , 'other')]}"/>
+                                              
+                                             <field name="purchase_order_ref"  on_change="purchase_ref(purchase_order_ref)" attrs="{'invisible':[('clearance_purpose', '!=', 'purchase')], 'required':[('clearance_purpose', '!=', 'other')], 'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}" domain ="['|',('state','=','draft'),('state','=','sign')]" />
+						
+						<field name="department_id" attrs="{'invisible':[('clearance_purpose', '!=', 'other')], 'required':[('clearance_purpose', '!=', 'purchase')], 'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>
+                                               <field name="packing_type_count" required="True"  attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>
+	                              </group>
+                                      
+
+                                      
+                                       <group>
+                                                <field name="letter_given" required="True" attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>
+                                                <field name="letter_recipient" required="True" attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>
+                                                <field name="ship_method"  on_change="onchange_ship_method(ship_method)"     required="1" attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>           
+                                               
+                                                
+                                           <field name="partner_id" 
+							attrs="{'invisible':[('type', '!=', 'external')], 'required':[('type', '!=', 'internal')], 'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}" />
+                                         </group>
+                                        <group>
+                                         <field name="letter_given_phone" required="True" attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>
+			                <field name="type"  attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+                                        <field name="user" 
+							attrs="{'invisible':[('type', '!=', 'internal')], 'required':[('type', '!=', 'external')], 'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])]}"/>
+						
+                                        
+<field name="all_data_complete" 
+					attrs="{'readonly':[('state', 'not in', ['draft','recieve_document','exemption'])] , 'required' : [('state', '=', 'draft') ]}"/>
+                                        </group>
+
+                                       
+					</group>
+
+
+					<notebook colspan="2">
+
+                              <page string="ITEMS">
+
+               <separator string="Items" colspan="6" attrs="{'invisible' : [('clearance_purpose' , '!=' , 'purchase')] }"/>
+                              <group>
+                                               <group>
+
+                                                <field name="message_content" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')]}" required="1"/> 
+                                               </group>
+                                                <group>
+                                                <field name="specifections_required" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')]}" />
+					       
+					        </group>
+                                            </group> 
+                         <separator string="Categories" colspan="6" attrs="{'invisible' : [('clearance_purpose' , '!=' , 'other')] }"/>
+                                                             <group >
+                                                                    <button name="load_items" type="object" string="Load Items" attrs="{'invisible':['|',('state', '!=', 'draft'),('clearance_purpose', '!=', 'purchase')]}"/>
+                                                             </group>
+                                                             <group >
+                                                                    <button name="load_items" type="object" string="Add Items" attrs="{'invisible':['|',('clearance_purpose', '!=', 'other'),('state', 'not in', ['draft','exemption']),]}"/>
+                                                             </group>
+
+							     <field colspan="4" name="clearance_products_ids"  nolabel="1" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')] , 'invisible' : [('clearance_purpose' , '!=' , 'purchase')] }">
+									
+								    <tree editable="bottom" string="Items Lines" create="false">
+									  <field name="category_id" required="True"/>
+									  <field name="product_id" required="True" on_change="product_id_change(product_id)" domain="[('categ_id','=',category_id)]"/>
+									  <field name="name" invisible="True" />
+                                                                          
+									  <field name="product_uom" attrs="{'readonly':[('clearance_purpose_pro','!=','purchase')]}"/>
+									  <field name="clearance_purpose_pro" invisible="True"/>
+									  <field name="product_qty" attrs="{'readonly':[('clearance_purpose_pro','!=','other')]}"/>
+                                                                          <field name="price_unit" readonly="1"/>
+								 	  <field name="product_weight" attrs="{'readonly':[('clearance_purpose_pro','!=','other')]}" />
+									  <field name="clearance_price_unit" attrs="{'readonly':[('clearance_purpose_pro','!=','purchase')]}"/>
+								   </tree>
+							    </field>
+						<field colspan="4" name="clearance_category_ids"  nolabel="1" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')] , 'invisible' : [('clearance_purpose' , '!=' , 'other')] }">
+																                 <tree editable="bottom" string="Categories Lines" >
+																					  <field name="category_id" required="1"   domain="[('specifections_required','=' , parent.specifections_required)]"/>
+																					
+																					  
+																					  
+<field name="name" invisible="1" />																																						  
+																					  <field name="category_qty" colspan="1"/>
+																					  
+<field name="notes" />																	 
+																					  
+		 </tree>
+		 </field>	
+
+
+
+                             </page>
+
+
+
+
+
+
+
+
+
+
+
+
+						<page string="Clearance">
+						   
+							         <separator string="Dates" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')]}"/>
+                              
+
+
+
+                                    <separator string="Financial Exemption" attrs="{'invisible':[('ship_method', '=', 'air_freight')]}"/>
+
+                                  <group> 
+
+                                      <group>
+                                          <field name="fin_customs_fees_send_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '=', 'air_freight')]}"/>
+                                          <field name="fin_value_added_send_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '=', 'air_freight')]}"/>
+                                          <field name="fin_ports_send_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', 'in', ['air_freight','free_zone'] )]}"/>
+                                      </group>   
+
+                                    <group>
+                                    <field name="fin_customs_fees_recieve_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '=', 'air_freight')]}"/>                                  
+                                    <field name="fin_value_added_recieve_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '=', 'air_freight')]}"/>                                
+                                    <field name="fin_ports_recieve_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', 'in', ['air_freight','free_zone'] )]}"/>
+
+                                      </group>                             
+                                  </group> 
+
+
+
+                                 <separator string="Customs Exemption" attrs="{'invisible':[('ship_method', '=', 'air_freight')]}"/>
+                                   
+                                 <group>
+	                             
+                                   <group>
+                                    <field name="customs_fees_send_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '=', 'air_freight')]}"/>
+                                    <field name="value_added_send_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '=', 'air_freight')]}"/>
+                                    <field name="accept_abdication_send_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('abdication_certificate', '!=', 'received')]}"/>
+                                   <field name="im_send_date"  attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '=', 'air_freight')]}"/> 
+                                   <field name="facilitate_letter_send_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '!=', 'air_freight')]}"/>
+                                   <field name="im_no"   colspan="1" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '=', 'air_freight')]}"/>
+                                   </group>
+                                   
+                                   
+
+                                  <group>
+                                  <field name="customs_fees_recieve_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '=', 'air_freight')]}"/>
+                                  <field name="value_added_recieve_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '=', 'air_freight')]}"/>
+                                    
+                                    <field name="accept_abdication_recieve_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('abdication_certificate', '!=', 'received')]}"/>
+                                     <field name="im_recieve_date"   colspan="1" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '=', 'air_freight')]}"/>
+                                     <field name="facilitate_letter_recieve_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')], 'invisible':[('ship_method', '!=', 'air_freight')]}"/> 
+                                     <field name="send_to_clearance_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')]}"/>
+                                  </group>
+
+
+                                  </group>
+
+	                             
+
+                                  
+
+							      
+							       
+                                 
+
+							
+							     
+						</page>
+						<page string="Other Informations">
+						   
+
+                                                        
+                                                        <group>
+                                                             <group>
+                                                               <field name="authority_approve" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')]}"/> 
+                                                               <field name="clearance_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')]}"/>
+                                                               <field name="need_voucher" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')],'invisible' : [('state' , '!=' , 'exemption')]}"/>
+
+                                                               <field name="entry_user" readonly="1" />
+                                                        </group>
+                                                       <group>
+                                                               <field name="final_approve_date" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')] , 'required' : [('state' , '=' , 'approved')] }"/>
+						     
+                                                     <field name="bill_description" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')]}"/>
+                                                       <field name="company_id" readonly="1" />
+                                                       </group>
+                      
+                                                           
+                                                          
+                                                                                                               
+                                                       
+
+							<group colspan="2" name="Bills Informations" attrs="{'readonly':[('state', '!=', 'draft')], 'required':[('state','=','draft')]}">
+
+								<separator string="Bills Information" colspan="6" />
+                                <button name="create_quote" states="exemption" string="Add Quotation's Item"
+                                        type="object" />                             
+								<field colspan="6" name="clearance_bills" nolabel="1" attrs="{'readonly':[('state', 'not in', ['draft','exemption'])]}" >
+								       
+
+
+								<tree string="Bills Lines" create="false">
+									     <field name="description" colspan="2" />
+									     <field name="bill_amount" colspan="2" required="1" />
+							             			                                     
+								</tree>
+
+								
+							    </field>
+                                                                <newline/>
+								
+							
+								
+                                  
+                                   <group >
+                                    <field name="bills_amoun_total" colspan="2" readonly="1"/>
+                                    <field name="initial_bills_amount" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')] , 'invisible' : [('ship_method' , '!=' , 'air_freight')]}"/>
+                                    <field name="initial_customs_amount" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')] , 'invisible' : [('ship_method' , '!=' , 'air_freight')]}"/>
+                                    
+                                   
+                                   </group>
+                                   <group >
+                                      <field name="currency" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')]}"/>
+                                    <field name="final_invoice_amount" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')] , 'invisible' : [('ship_method' , '!=' , 'air_freight')]}"/>
+                                         
+                                         
+	                                  
+                                       <field name="final_customs_amount" attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')] , 'invisible' : [('ship_method' , '!=' , 'air_freight')]}"/>
+                                       
+                                  </group>
+                                  
+                                   
+								</group> </group> 
+						</page>
+
+
+						<page string="accounting" attrs="{'invisible':[('state', 'not in', ['confirmed','approved','done'])]}">
+                                                      <field name="account_voucher_ids" colspan="4" nolabel="1" readonly="1" context="{'form_view_ref'   : 'account_voucher.view_purchase_receipt_form', 'tree_view_ref' : 'account_voucher.view_purchase_receipt_tree'}" />
+						
+						</page>
+                                                <page string="Containers"  invisible="1" >
+                                                <button name="create_container" string="Add Container" type="object" colspan="2"/>
+						<field name="containers_ids" colspan="8" nolabel="1" >
+						       <tree string="Containers" create="false">
+							    <field name="no_container"/>
+							    <field name="date_planned"/>
+							    <field name="date_received"/>
+							    <field name="date_delivery"/>
+							    <field name="container_type"/>
+							    <field name="container_owner_name"/>
+							    <field name="container_stauts" />
+							</tree></field>
+						</page>
+						<page string="Notes">
+							<field name="notes" colspan="4" nolabel="1"   attrs="{'readonly':['|',('state', '=', 'cancel'),('state', '=', 'done')]}"/>
+						</page>
+                                                <!--page string="Log Trace">
+							<field name="log_trace" colspan="4" nolabel="1" readonly="1" groups="purchase_clearance.group_purchase_clearance_trace" />
+						</page-->
+					</notebook>
+                                 </sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="id_purchase_clearance_view_tree" model="ir.ui.view">
+			<field name="name">purchase.clearance.tree</field>
+			<field name="model">purchase.clearance</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree colors="blue:state not in ('cancel','done');grey:state in ('cancel','done');" string="Purchase Clearance">
+					<field name="name" />
+                                         <field name="department_id" />
+					<field name="bill_of_lading"/>
+					<field name="message_content" />
+					<field name="ship_method" />
+                                        <field name="date" />
+					<field name="entry_user" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- Product Form and Tree -->
+
+		<record id="purchase_clearance_products_form" model="ir.ui.view">
+			<field name="name">purchase.clearance.products.form</field>
+			<field name="model">purchase.clearance.products</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Items">
+					<notebook colspan="4">
+						<page string="Items">
+							<field name="category_id" />
+							<field name="product_id" colspan="4"
+								on_change="product_id_change(product_id)" domain="[('categ_id','=',category_id)]" />
+							<field name="name" colspan="4" />
+                                                        
+							<field name="product_qty" colspan="2" />
+                                                        <field name="price_unit" readonly="1" colspan="2"/>
+							<field name="product_weight" />
+							<field name="product_uom" colspan="2" />
+							<field name="product_packaging" colspan="2"/>
+							<field name="clearance_price_unit" />
+							<field name="clearance_purpose_pro" invisible="True"/>
+							
+							<field name="description" colspan="4" />
+						</page>
+						<page string="Notes">
+							<field name="notes" colspan="4" nolabel="1" />
+						</page>
+					</notebook>
+				</form>
+			</field>
+		</record>
+		<record id="purchase_clearance_products_tree" model="ir.ui.view">
+			<field name="name">purchase.clearance.products.tree</field>
+			<field name="model">purchase.clearance.products</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Items">
+					<field name="category_id" />
+					<field name="product_id" on_change="product_id_change(product_id)"
+						domain="[('categ_id','=',category_id)]" />
+					<field name="name" />
+                                        
+					<field name="product_uom" />
+					<field name="product_qty" />
+					<field name="product_weight" />
+					<field name="clearance_purpose_pro" invisible="True"/>
+				</tree>
+			</field>
+		</record>
+
+		<!-- billing forms and tree -->
+		<record id="purchase_clearance_billing_form" model="ir.ui.view">
+			<field name="name">purchase.clearance.billing.form</field>
+			<field name="model">purchase.clearance.billing</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Bills Information">
+					<notebook colspan="4">
+						<page string="Bills Information">
+                          <group colspan="2" col="2">
+					        <field name="price_type" />
+                            <field name="bill_amount"  required="1" />
+                          </group>
+                          <group colspan="2" col="2">
+							<field name="allocation_base"  attrs="{'invisible':[('price_type', '!=', 'add')] , 'required':[('price_type', '=', 'add')]}" />
+							<field name="description"  required="1" domain="[('ship_method', '=' , ship_method)]"/>
+					      </group> 
+                          <group colspan="2" col="2">
+
+                           <field name="ship_method" invisible="1"/>
+                          </group>
+						</page>
+					</notebook>
+				</form>
+			</field>
+		</record>
+		<record id="purchase_clearance_billing_tree" model="ir.ui.view">
+			<field name="name">purchase.clearance.billing.tree</field>
+			<field name="model">purchase.clearance.billing</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Bills Information">
+
+					<field name="bill_amount" colspan="2" required="1" />
+					<field name="price_type" colspan="2"/>
+					<field name="allocation_base" colspan="2" attrs="{'invisible':[('price_type', '!=', 'add')], 'required':[('price_type', '=', 'add')]}" />
+					<field name="description" colspan="2" required="1" />
+				</tree>
+			</field>
+		</record>
+		<!-- Purchase Clearance Search Filter -->
+
+		<record id="view_purchase_clearance_filter" model="ir.ui.view">
+			<field name="name">purchase.clearance.list.select</field>
+			<field name="model">purchase.clearance</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search for Purchase Clearance">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="date" select="1" />
+					<separator orientation="vertical" />
+					<field name="bill_of_lading" select="1"/>
+					<field name="state" select="1" />
+					<field name="ship_method" select="1" />
+					<field name="partner_id" select="1" />
+					<field name="entry_user" />
+
+
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Responsible" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'user'}" />
+                                                <filter string="Department" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'department_id'}" />
+                                                <filter string="Bill By" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'ship_method'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+
+					</group>
+				</search>
+			</field>
+		</record>
+                <record id="containers_menu_form_id"   model="ir.ui.view" >
+                 <field name="name">container.container.form</field>
+                 <field name="model">container.container</field>
+                 <field name="type">form</field>
+                 <field name="arch"  type="xml">
+                  <form string="Data Of Container:">
+                    <group>
+                    <group col="6" colspan="6">
+		            <field name="no_container" colspan="3" required="1"/>
+                            <field name="container_size" colspan="3"/>
+                    </group>
+                    <group col="6" colspan="6">
+		            <field name="date_planned" colspan="2" required="1"/>
+		            <field name="date_received" colspan="2" required="1"/>
+		            <field name="date_delivery" colspan="2" on_change="change_container_stauts()"/>
+                    </group>
+                    <group col="6" colspan="6">
+				    <field name="container_type" colspan="3" required="1"/>
+				    <field name="container_owner_name" colspan="3" attrs="{'invisible' :[('container_type','!=' , 'rent' )],'required' :[('container_type','=' , 'rent')] }"/>
+                    </group>
+                    <group col="6" colspan="6">
+                    <field name="container_target" colspan="3"/>
+                    <field name="container_stauts" attrs="{'invisible' :[('container_type','!=' , 'rent' )] }"/>
+                    </group>
+                    <group col="6" colspan="6">
+                    <field name="fine_day" attrs="{'invisible' :[('container_type','!=' , 'rent' )] }" colspan="3" readonly="1"/>
+                    <button name="compute_fine"  string="Compute" icon="gtk-execute" type="object" attrs="{'invisible' :[('container_type','!=' , 'rent' )] }"/>
+                    </group>
+                    <group col="6" colspan="6">
+                    <field name="desc" colspan="6" nolabel="1"/>
+                    </group>
+                    
+                    </group>
+                </form>
+                </field>
+                </record>
+                 <record id="containers_menu_tree_id"   model="ir.ui.view" >
+                 <field name="name">container.container.tree</field>
+                 <field name="model">container.container</field>
+                 <field name="type">tree</field>
+                 <field name="arch"  type="xml">
+                  <tree string="Data Of Container:">
+                    <field name="no_container"/>
+                    <field name="date_planned"/>
+                    <field name="date_received"/>
+                    <field name="date_delivery"/>
+                    <field name="container_type"/>
+                    <field name="container_owner_name"/>
+                    <field name="container_stauts" />
+                </tree>
+                </field>
+                </record>
+ 		<!-- Menu -->
+ 		<!-- Menu -->
+
+		<record id="id_purchase_clearance_2_action" model="ir.actions.act_window">
+			<field name="res_model">purchase.clearance</field>
+			<field name="domain">[]</field>
+		</record>
+
+		<menuitem id="id_purchase_clearance_menu1" name="Purchase Clearance"
+			parent="base.menu_purchase_root" sequence="2"/>
+
+		<!--menuitem id="id_purchase_clearance_menu2" name="Clearance"
+			parent="id_purchase_clearance_menu1" action="id_purchase_clearance_2_action" /-->
+
+
+                
+
+       <act_window
+           domain="[('clearance_ids', '=', active_id)]"
+           id="act_purchase_order_purchase_clearance_link"
+           name="Purchase Orders"
+           res_model="purchase.order"
+           src_model="purchase.clearance"/>
+
+	<!--act_window
+           domain="[('clearance_ids', '=', active_id)]"
+           id="act_billing_information_clearance_link"
+           name="Bills info"
+           res_model="purchase.clearance.billing"
+           src_model="purchase.clearance"/-->
+
+	</data>
+</openerp>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		
+
+		<!-- Fuel Slice report wiz View -->
+		<record id="view_fuel_slice_report_wiz" model="ir.ui.view">
+			<field name="name">Fuel Slice Report Wiz</field>
+			<field name="model">fuel.slice.report.wiz</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Fuel Slice Report" version="7.0">
+					<group >
+						<field name="company_id" colspan="2" groups="base.group_multi_company" required="1" />
+						<newline />
+						<!--field name="date_from" colspan="2" required="1"/>
+						<field name="date_to" colspan="2" required="1"/-->
+						<newline />
+					</group>
+					<group col="4" >
+						<field name="date_from" colspan="2" required="1"/>
+						<field name="date_to" colspan="2" required="1"/>
+						<field name="process_type" />
+						<field name="category_id" />
+						<field name="year" />
+						<field name="department_id" />
+						<field name="included_department" attrs="{'invisible':[('department_id','=',False)]}" />
+					</group>
+					<newline />
+					<footer>
+						<button name="print_report" string="Print" type="object"
+							class="oe_highlight" />
+						or
+						<button special="cancel" string="Cancel" class="oe_link" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<!-- TFuel Slice report wiz Action -->
+		<record id="action_fuel_slice_report_wiz" model="ir.actions.act_window">
+			<field name="name">Fuel Slice Report</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">fuel.slice.report.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_fuel_slice_report_wiz" />
+			<!--field name="context">{'default_total_report': True, 'default_status':'active'}</field-->
+			<!--field name="context">{'default_report_type':'total_report', 'default_status':'active'}</field-->
+			<field name="target">new</field>
+		</record>
+
+		<!-- Fuel Slice report wizard Menu -->
+		<menuitem name="Fuel Slice Report" parent="fuel_report_menu"
+			action="action_fuel_slice_report_wiz" id="menu_fuel_slice_report_wiz" />
+
+
+		
+ 		
+
+	</data>
+</openerp>

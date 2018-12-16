@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- the form -->
+
+        <record id="health_insurance_request_form" model="ir.ui.view">
+            <field name="name">Health Insurance Request Form</field>
+            <field name="model">health.insurance.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_confirm" string="Confirm" states="draft" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_approve" string="Aprove" states="confirmed" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_done" string="Done" states="approval" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_cancle" states="draft,confirmed,approval" string="Cancel" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_set_draft" states="cancel" string="Set Draft" type="object"
+                                class="oe_highlight"/>
+                        <field name="state" statusbar_visible="draft,confirmed,approval,done" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="subject_name" required="1"
+                                       attrs="{'readonly':['|',('state','=','done'),('state','=','cancle')]}"/>
+                                <field name="address_id" required="1"/>
+                                <field name="company_id" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="date" required="1"
+                                      readonly="1"/>
+                                <field name="local_state_id" required="1"
+                                       attrs="{'readonly':['|',('state','=','done'),('state','=','cancle')]}"/>
+                                <field name="type_" required="1"
+                                       attrs="{'readonly':['|',('state','=','done'),('state','=','cancle')]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Beneficiaries">
+<field name="beneficiaries_ids" attrs="{'readonly':[('state','in',['done', 'cancle'])]}"
+    context="{'local_state':local_state_id,'type':type_}">
+                                    
+                                    <tree editable="bottom">
+<field name="fageer_id" context="{'beneficiaries_ids':parent.beneficiaries_ids}"
+                                               attrs="{'required':[('type_','in',['renew','add_to_exist','replace'])]
+                              ,'column_invisible':[('parent.type_','not in',['add_to_exist','renew','replace'])],'readonly':[('state','in',['done', 'cancle'])]}"
+                                               domain="[('local_state_id','=',local_state_id),('i_health','=',True)]"/>
+         <field name="fageer_new_id"
+context="{'new_beneficiaries_ids':parent.beneficiaries_ids}"
+                                               domain="[('local_state_id','=',local_state_id),('i_health','=',False)]"
+                                               attrs="{'required':[('type_','in',['add','replace'])],'column_invisible':[('parent.type_','not in',['add','replace'])],
+                                'readonly':[('state','in',['done', 'cancle'])]}"/>
+                                        <field name="local_state_id" invisible="1"/>
+
+                                        <field name="state" invisible="1"/>
+                                        <field name="relative_id" attrs="{'required':[('type_','=','add_to_exist')],
+                                  'column_invisible':[('parent.type_','!=','add_to_exist')],'readonly':[('state','in',['done', 'cancle'])]}"/>
+                                        <field name="type_" readonly="1" invisible="1"/>
+                                        <field name="no_insurance"
+                                               attrs="{'required':[('parent.state','=','confirmed')],'readonly':[('parent.state','in',['done', 'cancle'])],'column_invisible':['|',('parent.type_','not in',['add','replace']),('parent.state','in',['draft','confirmed'])]}"/>
+
+                                        <field name="insurance_start_date"
+                                               attrs="{'readonly':[('state','in',['done', 'cancle'])],'column_invisible':[('parent.state','in',['draft','confirmed'])],'required':[('parent.state','=','confirmed')]}"/>
+
+                                        <field name="admin_unit_id" readonly="1"
+                                               attrs="{'column_invisible':[('parent.type_' ,'!=','add')]}"/>
+                                        <field name="name" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- the tree -->
+        <record id="health_insurance_request_tree" model="ir.ui.view">
+            <field name="name">Health Insurance Request Tree</field>
+            <field name="model">health.insurance.order</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="subject_name"/>
+                    <field name="local_state_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!-- the action -->
+        <record id="health_insurance_request_action" model="ir.actions.act_window">
+            <field name="name">Health Insurance Request</field>
+            <field name="res_model">health.insurance.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+        <!-- the menu -->
+        <menuitem id="health_insurance_request_menu"
+                  name="Health Insurance Request"
+                  parent="health_insurance_main_menu"
+                  action="health_insurance_request_action"
+                  sequence="3"/>
+
+
+        <!--&lt;!&ndash; this is the one 2 many &ndash;&gt;-->
+        <!--<record id="benificries_insurance_request_form" model="ir.ui.view">-->
+        <!--<field name="name">Benificries</field>-->
+        <!--<field name="model">insurance.beneficiaries</field>-->
+        <!--<field name="type">form</field>-->
+        <!--<field name="arch" type="xml">-->
+        <!--<form>-->
+        <!--<group>-->
+        <!--<group>-->
+        <!--<field name="fageer_id" readonly="1"/>-->
+        <!--<field name="type_" readonly="1"/>-->
+        <!--<field name="no_insurance" />-->
+        <!--</group>-->
+        <!--<group>  -->
+        <!--<field name="insurance_start_date" />-->
+        <!--<field name="local_state_id" readonly="1"/>-->
+        <!--<field name="state" readonly="1"/>-->
+        <!--</group>-->
+        <!--</group>-->
+
+        <!--&lt;!&ndash; Health insurance integration&ndash;&gt;-->
+        <!--<group col="3" colspan="2"  attrs="{'invisible':[('health_integration','=',False)]}">-->
+
+        <!--<div class="oe_button_box"  name="button_box">-->
+        <!--<center>-->
+        <!--<button name="health_insurance_call" string="Verify" type="object"-->
+        <!--class="oe_stat_button" icon="fa-eye"/>-->
+
+        <!--<field name="valid_bnf" invisible="1" />-->
+        <!--<field name="health_integration" invisible="1" />-->
+
+        <!--</center>-->
+        <!--</div>-->
+
+        <!--<group string="Patient Information" col="4" colspan="2" >-->
+
+        <!--<field name="crt_bnf_id" readonly="1" />-->
+
+        <!--<field name="cart_bnf_name" readonly="1" />-->
+        <!--<field name="cart_cst_name" readonly="1"/>-->
+        <!--<field name="cart_sts" readonly="1"/>-->
+
+        <!--&lt;!&ndash;                                     <field name="bnf_phone" readonly="1"/>-->
+        <!--&ndash;&gt;                                </group>-->
+        <!--</group>-->
+
+
+        <!--</form>-->
+        <!--</field>-->
+        <!--</record>-->
+
+        <!--  -->
+        <record id="insurance_beneficiaries_form" model="ir.ui.view">
+            <field name="name">Insurance Beneficiaries</field>
+            <field name="model">insurance.beneficiaries</field>
+            <field name="arch" type="xml">
+                <form  create="false" delete="false">
+                    <sheet>
+                        <h2>
+                            <field name="no_insurance" placeholder="Insurance Number" style="width:40%"/>
+                        </h2>
+                        <group col="4" colspan="2">
+                            <field name="fageer_id" readonly="1" invisible="1"/>
+                            <field name="name" readonly="1"/>
+                            <field name="local_state_id" readonly="1"/>
+                            <field name="type_" readonly="1"/>
+                            <field name="insurance_start_date"/>
+                            <field name="state" readonly="1"/>
+                      <field name="health_integration" invisible="1"/>
+
+                        </group>
+
+
+                        <div attrs="{'invisible':[('health_integration','=',False)]}">
+                            <group col="4" colspan="2" >
+                                <field name="crt_bnf_id"/>
+                                <div class="oe_button_box" name="button_box">
+                                    <center>
+                                        <button name="health_insurance_call" string="Verify" type="object"
+                                                class="oe_stat_button" icon="fa-eye"/>
+                                    </center>
+                                </div>
+
+                            </group>
+                            <group col="4" colspan="2" string="Health Insurance">
+                                <field name="cart_bnf_name" readonly="1"/>
+                                <field name="cart_cst_name" readonly="1"/>
+                                <field name="cart_sts" readonly="1"/>
+                            </group>
+                        </div>
+                        <field name="valid_bnf" invisible="1"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- the tree -->
+        <record id="benificries_insurance_request_tree" model="ir.ui.view">
+            <field name="name">Benificries</field>
+            <field name="model">insurance.beneficiaries</field>
+            <field name="arch" type="xml">
+                <tree  create="false" delete="false">
+                    <field name="name"/>
+                    <field name="type_"/>
+                    <field name="no_insurance"/>
+                    <field name="insurance_start_date"/>
+                    <field name="local_state_id"/>
+                    <field name="state"/>
+                    <button name="complete_function" string="Complete" type="object"
+                            class="oe_highlight" states="draft"
+                            />
+                </tree>
+            </field>
+        </record>
+        <!-- this is the search view -->
+        <record id="emergency_and_urgent_cases_search" model="ir.ui.view">
+            <field name="name">Benificries</field>
+            <field name="model">insurance.beneficiaries</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="fageer_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Local State" name="local_state_id" domain="[]"
+                                context="{'group_by':'local_state_id'}"/>
+                        <filter string="Type" name="type_" domain="[]" context="{'group_by':'type_'}"/>
+                        <filter string="State" name="state" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!-- the action -->
+        <record id="benificries_insurance_request_action" model="ir.actions.act_window">
+            <field name="name">Benificries</field>
+            <field name="res_model">insurance.beneficiaries</field>
+            <field name="view_mode">tree,form,search</field>
+            <field name="view_type">form</field>
+        </record>
+        <!-- the menu -->
+        <menuitem id="benificries_insurance_request_menu"
+                  name="Cards"
+                  parent="health_insurance_main_menu"
+                  action="benificries_insurance_request_action"
+                  sequence="4"/>
+
+    </data>
+</odoo>

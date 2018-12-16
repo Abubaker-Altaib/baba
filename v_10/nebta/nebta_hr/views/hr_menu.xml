@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+	<!-- Hide unneccary menus -->
+    <delete id="mail.mail_channel_menu_root_chat" model="ir.ui.menu"/>
+    <delete id="calendar.mail_menu_calendar" model="ir.ui.menu"/>
+
+	<!-- Rearrange Payroll menus -->
+    <menuitem id="hr_payroll.menu_hr_payroll_root" name="Payroll" parent="hr.menu_hr_root" sequence="91" />
+    <menuitem id="hr_payroll.menu_hr_payroll_configuration" name="Payroll Configuration" parent="hr.menu_human_resources_configuration"/>
+    <menuitem id="hr_payroll.menu_department_tree" name="Employee Payslip" parent="hr_payroll.menu_hr_payroll_root"/>
+    <menuitem id="hr_payroll.menu_hr_payslip_run" name="Payslips Batches" parent="hr_payroll.menu_hr_payroll_root"/>
+
+	<!-- Rearrange Holidays menus -->
+    <menuitem id="hr_holidays.menu_hr_holidays_root" name="Holidays" parent="hr.menu_hr_root" sequence="92" />
+    <menuitem id="hr_holidays.menu_hr_holidays_dashboard" name="Dashboard" parent="hr_holidays.menu_hr_holidays_root"/>
+    <menuitem id="hr_holidays.menu_hr_holidays_my_leaves" name="My Leaves" parent="hr_holidays.menu_hr_holidays_root"/>
+    <menuitem id="hr_holidays.menu_hr_holidays_approvals" name="Leaves to Approve" parent="hr_holidays.menu_hr_holidays_root"/>
+    <menuitem id="hr_holidays.menu_hr_holidays_configuration" name="Leaves Types" parent="hr.menu_human_resources_configuration"/>
+    <menuitem id="menu_hr_holidays_report" name="Reports" parent="hr.menu_hr_root" sequence="93"/>
+    <menuitem id="hr_holidays.menu_hr_holidays_report" name="Reports" parent="menu_hr_holidays_report" sequence="2"/>
+    <menuitem id="hr_holidays.menu_hr_holidays_dashboard" name="Dashboard" parent="menu_hr_holidays_report" sequence="1"/>
+
+    <menuitem id="hr.menu_view_employee_category_form" name="Employee Tags" action="hr.open_view_categ_form" parent="hr.menu_human_resources_configuration" sequence="1" groups="hr.group_hr_user,hr.group_hr_manager"/>
+
+    <menuitem id="view_hr_job_menu" name="Employee Jobs" action="hr.action_hr_job" parent="hr.menu_human_resources_configuration" sequence="1" groups="hr.group_hr_user,hr.group_hr_manager"/>
+
+    <menuitem id="meeting_menu" name="Meetings Types" action="calendar.action_calendar_event_type" parent="hr.menu_human_resources_configuration" sequence="2" groups="hr.group_hr_user,hr.group_hr_manager"/>
+
+    <menuitem id="hr_contract.hr_menu_contract_type" action="hr_contract.action_hr_contract_type" name="Contract Types" parent="hr.menu_human_resources_configuration" sequence="3"/>
+
+    <menuitem id="hr_payroll.menu_hr_salary_rule_category" action="hr_payroll.action_hr_salary_rule_category" parent="hr_payroll.menu_hr_payroll_configuration" sequence="11" name="Salary Rule Categories"/>  
+    <menuitem id="hr_payroll.menu_hr_salary_rule_category_tree_view" name="Salary Rule Categories Hierarchy" action="hr_payroll.action_hr_salary_rule_category_tree_view" parent="hr_payroll.menu_hr_payroll_configuration" sequence="12"/> 
+    <menuitem id="hr.menu_view_employee_category_form" action="hr.open_view_categ_form" name="Employee Tags" parent="hr.menu_human_resources_configuration" sequence="1"/>
+    <menuitem id="hr_payroll.menu_hr_salary_rule_category" action="hr_payroll.action_hr_salary_rule_category" name="Salary Rule Categories" parent="hr_payroll.menu_hr_payroll_configuration" sequence="11" groups="hr_payroll.group_hr_payroll_manager"
+        />
+
+    <menuitem id="hr_holidays.menu_open_allocation_holidays" parent="hr_holidays.menu_hr_holidays_my_leaves" name="Allocation Requests" action="hr_holidays.open_allocation_holidays" sequence="40" groups="hr_holidays.group_hr_holidays_manager,hr_holidays.group_hr_holidays_user"/>
+
+<!-- Hr employee inherit Legal Leaves -->
+    <record id="view_employee_form_leave_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.leave.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='active_group']" position="after">
+                <group string="Leaves">
+                    <label for="remaining_leaves"/>
+                    <div>
+                        <field name="remaining_leaves" class="oe_inline"/> days
+                    </div>
+                </group>
+            </xpath>        
+        </field>
+    </record>
+
+<!-- Change Holidays Approvals Groups -->
+
+ <record id="edit_holiday_new_inherit" model="ir.ui.view">
+            <field name="name">Leave Request</field>
+            <field name="model">hr.holidays</field>
+ 	    <field name="inherit_id" ref="hr_holidays.edit_holiday_new"/>
+            <field name="arch" type="xml">
+		<xpath expr="//button[@name='action_approve']" position="attributes">
+		<attribute name="groups">nebta_hr.group_coach,hr_holidays.group_hr_holidays_manager</attribute>
+		</xpath>
+		<xpath expr="//button[@name='action_validate']" position="attributes">
+		<attribute name="groups">nebta_hr.group_manager,hr_holidays.group_hr_holidays_manager</attribute>
+		</xpath>
+		<xpath expr="//button[@name='action_refuse']" position="attributes">
+		<attribute name="groups">nebta_hr.group_coach,nebta_hr.group_manager</attribute>
+		</xpath>
+	    </field>
+  </record>
+
+<!-- Change payroll Workflow Groups -->
+<record id="view_hr_payslip_inherit" model="ir.ui.view">
+            <field name="name">hr.payslip.form</field>
+            <field name="model">hr.payslip</field>
+ 	    <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+ 	    <xpath expr="//button[@name='action_payslip_done']" position="attributes">
+		<attribute name="groups">hr_payroll.group_hr_payroll_manager</attribute>
+		</xpath>
+	    </field>
+  </record>
+
+
+<record id="hr_payslip_run_inherit" model="ir.ui.view">
+            <field name="name">hr.payslip.run.form</field>
+            <field name="model">hr.payslip.run</field>
+ 	    <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
+            <field name="arch" type="xml">
+		<xpath expr="//button[@name='close_payslip_run']" position="attributes">
+		<attribute name="groups">hr_payroll.group_hr_payroll_manager</attribute>
+		</xpath>
+	    </field>
+  </record>
+
+
+</data>
+</odoo>

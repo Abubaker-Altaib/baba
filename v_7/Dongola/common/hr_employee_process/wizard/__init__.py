@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+#    NCTR, Nile Center for Technology Research
+#    Copyright (C) 2011-2012 NCTR (<http://www.nctr.sd>).
+#
+##############################################################################
+
+#import hr_bonus_candidates_wizard
+#import hr_promotion_candidates_wizard
+import hr_employee_process_wizard
+import hr_bonus_candidates_wizard
+import hr_promotion_candidates_wizard
+
+
+
+
+

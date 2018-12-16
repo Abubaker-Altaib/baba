@@ -1,0 +1,103 @@
+<?xml version="1.0" ?>
+<openerp>
+<data>
+
+
+<record model="workflow.activity" id="act_confirm_buying">
+        <field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+        <field name="name">confirm_buying</field>
+        <field name="kind">function</field>
+        <field name="action">write({'state':'confirm_buying'})</field>
+    </record>
+
+<record model="workflow.activity" id="act_buying">
+        <field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+        <field name="name">buying</field>
+        <field name="kind">function</field>
+        <field name="action">buying_holiday()</field>
+    </record>
+
+<record model="workflow.activity" id="act_paid">
+        <field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+        <field name="name">paid</field>
+        <field name="kind">function</field>
+        <field name="action">paid()</field>
+    </record>
+
+<!--record model="workflow.activity" id="act_confirm_end_service">
+        <field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+        <field name="name">confirm_end_service</field>
+        <field name="kind">function</field>
+        <field name="action">write({'state':'confirm_end_service'})</field>
+    </record-->
+
+<record model="workflow.activity" id="act_end_service">
+        <field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+        <field name="name">end_service</field>
+        <field name="kind">function</field>
+        <field name="action">end_service_holiday()</field>
+    </record>
+
+    
+   <record model="workflow.transition" id="t110">
+        <field name="act_from" ref="hr_holidays.act_confirm" />
+        <field name="act_to" ref="act_confirm_buying" />
+        <field name="condition">holiday_status_id.buy_leave</field>
+        <field name="signal" eval="False"/>
+    </record>
+   <record model="workflow.transition" id="t120">
+        <field name="act_from" ref="act_confirm_buying" />
+        <field name="act_to" ref="act_buying" />
+        <field name="signal">buying_holiday</field>
+    </record>
+
+   <record model="workflow.transition" id="t130">
+        <field name="act_from" ref="act_confirm_buying" />
+        <field name="act_to" ref="hr_holidays.act_validate1" />
+        <field name="signal">validate</field>
+        <field name="condition">double_validation</field>
+    </record>
+
+    <record model="workflow.transition" id="t150">
+        <field name="act_from" ref="act_confirm_buying" />
+        <field name="act_to" ref="hr_holidays.act_validate" />
+        <field name="signal">validate</field>
+        <field name="condition">not double_validation</field>
+    </record>
+
+
+   <record model="workflow.transition" id="t140">
+        <field name="act_from" ref="act_buying" />
+        <field name="act_to" ref="act_paid" />
+        <field name="signal">paid</field>
+    </record>
+
+    <record model="workflow.transition" id="holiday_buy_confirm2refuse"> 
+        <field name="act_from" ref="act_confirm_buying" />
+        <field name="act_to" ref="hr_holidays.act_refuse" />
+        <field name="signal">refuse</field>
+        <field name="condition">True</field>
+        <!--field name="group_id" ref="base.group_hr_user"/-->
+    </record>
+
+   <!--record model="workflow.transition" id="t150">
+        <field name="act_from" ref="hr_holidays.act_confirm" />
+        <field name="act_to" ref="act_confirm_end_service" />
+        <field name="condition">holiday_status_id.buy_leave</field>
+        <field name="signal" eval="False"/>
+    </record-->
+   <record model="workflow.transition" id="t160">
+        <field name="act_from" ref="act_confirm_buying" />
+        <field name="act_to" ref="act_end_service" />
+        <field name="signal">end_service_holiday</field>
+    </record>
+
+   <record model="workflow.transition" id="t170">
+        <field name="act_from" ref="act_end_service" />
+        <field name="act_to" ref="act_paid" />
+        <field name="signal">paid</field>
+    </record>
+
+
+</data>
+</openerp>

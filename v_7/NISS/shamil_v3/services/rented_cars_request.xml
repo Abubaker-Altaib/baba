@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+		<!-- Rented Cars Request Record Form,Tree View & Action -->
+
+		<record id="view_rented_cars_request_view_form" model="ir.ui.view">
+			<field name="name">rented.cars.request.form</field>
+			<field name="model">rented.cars.request</field>
+			<field name="arch" type="xml">
+			    <form string="Rented Cars Request" version="7.0">
+				<header>
+				    <button name="confirmed_d" states="draft" string="Section Manager confirmation"
+					    confirm="Are you sure you want to Confirm this request?"  class="oe_highlight"
+                                   groups="base.group_Section_manager,base.group_general_department_manager,base.group_department_managers"/>
+				    <!--button name="confirmed_gm" states="confirmed_d" string=" Department manager confirmation"
+					    confirm="Are you sure you want to confirm this request?" class="oe_highlight"/>
+                                    <groups="base.group_general_department_manager,base.group_department_managers"/>
+				    <button name="boss" states="confirmed_gm" string="Department General Manager Approval"
+					    confirm="Are you sure you want to approve this request"  class="oe_highlight"/>
+				    <button name="gm" states="boss" string="General Manager approval"
+					    confirm="Are you sure you want to approve this request"  class="oe_highlight"/>
+                                    <groups="base.group_general_department_manager"/>
+				    <button name="process" states="gm" string="GM approval"
+					    confirm="Are you sure you want to approve this request"  class="oe_highlight"/>
+                                    < groups="base.group_admin_affairs_general_manager"/>					
+                                    <button name="section_process" states="confirmed_d" string=" Admin Affairs Manager approval"
+					    confirm="Are you sure you want to approve this request" class="oe_highlight"/>
+                                    <groups="base.group_admin_affairs_manager" /-->							
+                                    <button name="execute" states="confirmed_d" string="Service Section Manager"
+					    confirm="Are you sure you want to approve this request?"  class="oe_highlight"
+                                     groups="base.group_service_section_manager" />
+                                    <button name="done" states="execute" string="Service Officer"
+					    confirm="Are you sure you want to approve this request?"  
+                                    />
+				    <button name="cancel" states="draft,confirmed_d,confirmed_gm,boss,gm,process,section_process,execute" 
+                                            string="Cancel Request" class="oe_highlight" confirm="Are you sure you want to Cancel this request?" />
+			            <button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object"
+                                            class="oe_highlight" 
+                                    groups="media.group_send_to_draft" />
+				    <field name="state" widget="statusbar"  statusbar_visible="draft,done,cancel" />
+				</header>
+				<sheet>
+				    <group col="4" colspan="2">
+					<field name="name" colspan="2" />				
+					<field name="date" colspan="2" />
+					<field name="department_id" colspan="2" />
+					<field name="employee_id" colspan="2"/>
+					<!--field name="code" colspan="2"/-->
+					<field name="car_type" colspan="2" attrs="{'invisible':[('state','not in',('execute','done'))],'required':[('state','=','execute')]}" />	
+				    </group>
+				    <group col="4" colspan="2">
+					<field name="date_of_rent" colspan="2" 
+                                               attrs="{'invisible':[('car_type','=','owned')],'required':[('car_type','=','rented')]}" />
+					<field name="date_of_return" colspan="2" 
+                                               attrs="{'invisible':[('car_type','=','owned')],'required':[('car_type','=','rented')]}" />
+					<field name="car_id" colspan="2" 
+                                               attrs="{'invisible':[('state','not in',('execute','done') )],'required':[('state','=','execute')]}" domain="[('ownership','=',car_type),('status','!=','active')]"/>
+					<field name="partner_id" colspan="2" 
+                                               attrs="{'required':['|',('state','=','execute'),('payment_selection','==','voucher'),('car_type','!=','rented')]}"/>
+					<field name="user_id" colspan="2" />
+ 					<field name="payment_selection" colspan="2" attrs="{'invisible':['!',('state','not in',('execute','done')),('car_type','!=','rented')],'required':['!',('state','=','execute'),('car_type','=','rented')]}"/>
+					<field name="cost" colspan="2" attrs="{'invisible':['!',('state','not in',('execute','done')),('payment_selection','!=','enrich')],'required':[('payment_selection','==','enrich')]}"/>
+					<field name="enrich_category" colspan="2" attrs="{'invisible':['!',('state','not in',('execute','done')),('payment_selection','!=','enrich')],'required':[('state','=','execute'),('payment_selection','==','enrich')]}" domain="[('state','=','confirmed'),('company_id','=',company_id)]"/>
+                                        <field name="company_id"  />	
+					<field name="car_rented_detial_ref" colspan="2"  attrs="{'invisible':[('car_type','=','owned')]}"/>
+				    </group>
+				    <notebook colspan="4">											
+					<page string="Notes">
+					    <field name="notes" colspan="4" nolabel="1" />
+                                        </page>							
+				    </notebook>
+				</sheet>
+			    </form>
+			</field>
+		</record>
+
+
+		<record id="view_rented_cars_request_tree" model="ir.ui.view">
+			<field name="name">rented.cars.request.tree</field>
+			<field name="model">rented.cars.request</field>
+			<field name="arch" type="xml">
+				<tree string="Rented Cars Request">
+						<field name="name" colspan="2" />				
+						<field name="date" colspan="2" />
+						<field name="partner_id" colspan="2" />						
+						<!--field name="car_id" colspan="2"/-->
+						<!--field name="code" colspan="2"/-->
+						<field name="date_of_rent" colspan="2"  />
+						<field name="date_of_return" colspan="2"  />	
+						<field name="employee_id"/>
+						<!--field name="department_id"/-->
+						<field name="state"/>									
+						</tree>
+			</field>
+		</record>
+
+
+
+		<!-- Rented Cars Request Search Filter -->
+
+		<record id="view_rented_cars_request_filter" model="ir.ui.view">
+			<field name="name">rented.cars.request.list.select</field>
+			<field name="model">rented.cars.request</field>
+			<field name="arch" type="xml">
+				<search string="Search for Rented Cars Request">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="date" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="partner_id" colspan="1"/>
+					<separator orientation="vertical" />
+					<!--field name="car_id" colspan="1"/-->
+					<separator orientation="vertical" />
+					<!--field name="department_id" colspan="1" widget="selection"/-->
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Partner" icon="terp-personal"
+							domain="[]" context="{'group_by':'partner_id'}" />
+						<filter string="Department" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'department_id'}" />
+						<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+
+
+               <record id="rented_cars_request_action" model="ir.actions.act_window">
+			<field name="res_model">rented.cars.request</field>
+			<field name="domain">[]</field>
+		</record>
+
+		<!-- Menu -->
+
+
+
+       <menuitem id="menu_rented_cars_request" name="Rented Cars Request"
+			parent="menu_rented_cars" action="rented_cars_request_action" />
+
+
+<!--Shortcut To Rented Cars Details-->
+
+       <act_window
+           domain="[('rented_request_id', '=', active_id)]"
+           id="act_rented_request_and_rented_details"
+           name="Rent Details"
+           res_model="rented.cars"
+           src_model="rented.cars.request"/>
+
+
+
+ 
+
+
+
+
+	</data>
+</openerp>

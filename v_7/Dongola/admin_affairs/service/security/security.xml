@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data noupdate="1">
+		<record id="group_building_maintenace" model="res.groups">
+			<field name="name">Building Maintenance</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+		</record>
+		<record id="group_vehicle_maintenace" model="res.groups">
+			<field name="name">Vehicle Maintenance</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+			<field name="implied_ids" eval="[(4, ref('admin_affairs.group_service_officer'))]"/>
+		</record>
+		<record id="group_environment_safety_service_officer" model="res.groups">
+			<field name="name">Environment And Safety Service Officer</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+			<field name="implied_ids" eval="[(4, ref('admin_affairs.group_service_officer'))]"/>
+		</record>
+		<record id="group_service_section_manager" model="res.groups">
+			<field name="name">Service Section Manager</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+			<field name="implied_ids" eval="[(4, ref('fleet.group_fleet_manager'))]"/>
+		</record>
+		<record id="group_hospitality_service_officer" model="res.groups">
+			<field name="name">Hospitality Service Officer</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+			<field name="implied_ids" eval="[(4, ref('admin_affairs.group_service_officer'))]"/>
+		</record>
+		<record id="group_occasion_service_officer" model="res.groups">
+			<field name="name">Occasion Service Officer</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+			<field name="implied_ids" eval="[(4, ref('admin_affairs.group_service_officer'))]"/>
+		</record>
+		<record id="group_hall_service_officer" model="res.groups">
+			<field name="name">Hall Service Officer</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+			<field name="implied_ids" eval="[(4, ref('admin_affairs.group_service_officer'))]"/>
+		</record>
+		<record id="group_building_service_officer" model="res.groups">
+			<field name="name"> Building Service Officer</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+			<field name="implied_ids" eval="[(4, ref('admin_affairs.group_service_officer'))]"/>
+		</record>
+		<record id="group_media_service_officer" model="res.groups">
+			<field name="name">Media Service Officer</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+			<field name="implied_ids" eval="[(4, ref('admin_affairs.group_service_officer'))]"/>
+		</record>
+		<record id="group_public_relation_officer" model="res.groups">
+			<field name="name">Public Relation Officer</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+			<field name="implied_ids" eval="[(4, ref('admin_affairs.group_service_officer'))]"/>
+		</record>
+		<!--record id="ir_rule_section_manager" model="ir.rule">
+			<field name="name">section manager</field>
+			<field name="model_id" ref="model_fleet_vehicle_log_contract"/>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('admin_affairs.group_section_manager')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_section_manager_service_type" model="ir.rule">
+			<field name="name">section manager</field>
+			<field name="model_id" ref="model_fleet_service_type"/>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('admin_affairs.group_section_manager')])]" name="groups"/>
+			<field eval="1" name="perm_read"/>
+		</record-->
+		<record id="ir_rule_services1" model="ir.rule">
+			<field name="name">General</field>
+			<field name="model_id" ref="model_fleet_vehicle_log_contract"/>
+			<field name="domain_force">[('cost_subtype_id.category','=','general')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_environment_safety_service_officer'),ref('group_hospitality_service_officer'),ref('group_occasion_service_officer'),ref('group_hall_service_officer'),ref('group_building_service_officer'),ref('group_media_service_officer'),ref('group_public_relation_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		
+		<record id="ir_rule_services2" model="ir.rule">
+			<field name="name">Environment and Safety Service Officer</field>
+			<field name="model_id" ref="model_fleet_vehicle_log_contract"/>
+			<field name="domain_force">[('cost_subtype_id.category','=','env_safety')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_environment_safety_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_services3" model="ir.rule">
+			<field name="name">Hospitality Service Officer</field>
+			<field name="model_id" ref="model_fleet_vehicle_log_contract"/>
+			<field name="domain_force">[('cost_subtype_id.category','=','hospitality')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_hospitality_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		
+		<record id="ir_rule_services4" model="ir.rule">
+			<field name="name">Occasion Service Officer</field>
+			<field name="model_id" ref="model_fleet_vehicle_log_contract"/>
+			<field name="domain_force">[('cost_subtype_id.category','=','occasion')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_occasion_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		
+		<record id="ir_rule_services5" model="ir.rule">
+			<field name="name">Hall Service Officer</field>
+			<field name="model_id" ref="model_fleet_vehicle_log_contract"/>
+			<field name="domain_force">[('cost_subtype_id.category','=','hall')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_hall_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_services6" model="ir.rule">
+			<field name="name">Building Service Office</field>
+			<field name="model_id" ref="model_fleet_vehicle_log_contract"/>
+			<field name="domain_force">[('cost_subtype_id.category','=','building')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_building_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_services7" model="ir.rule">
+			<field name="name">Media Service Officer</field>
+			<field name="model_id" ref="model_fleet_vehicle_log_contract"/>
+			<field name="domain_force">[('cost_subtype_id.category','=','media')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_media_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		
+		<record id="ir_rule_services8" model="ir.rule">
+		    <field name="name">Public Relation Officer</field>
+			<field name="model_id" ref="model_fleet_vehicle_log_contract"/>
+			<field name="domain_force">[('cost_subtype_id.category','=','public_relation')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_public_relation_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_env" model="ir.rule">
+			<field name="model_id" ref="fleet.model_fleet_service_type"/>
+			<field name="domain_force">['|',('category','=','env_safety'),('parent_id.category','=','env_safety')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_environment_safety_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_hall" model="ir.rule">
+			<field name="model_id" ref="fleet.model_fleet_service_type"/>
+			<field name="domain_force">['|',('category','=','hall'),('parent_id.category','=','hall')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_hall_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_public_relation" model="ir.rule">
+			<field name="model_id" ref="fleet.model_fleet_service_type"/>
+			<field name="domain_force">['|',('category','=','public_relation'),('parent_id.category','=','public_relation')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_public_relation_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_media" model="ir.rule">
+			<field name="model_id" ref="fleet.model_fleet_service_type"/>
+			<field name="domain_force">['|',('category','=','media'),('parent_id.category','=','media')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_media_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_building" model="ir.rule">
+			<field name="model_id" ref="fleet.model_fleet_service_type"/>
+			<field name="domain_force">['|',('category','=','building'),('parent_id.category','=','building')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_building_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_occasion" model="ir.rule">
+			<field name="model_id" ref="fleet.model_fleet_service_type"/>
+			<field name="domain_force">['|',('category','=','occasion'),('parent_id.category','=','occasion')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_occasion_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_hospitality" model="ir.rule">
+			<field name="model_id" ref="fleet.model_fleet_service_type"/>
+			<field name="domain_force">['|',('category','=','hospitality'),('parent_id.category','=','hospitality')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_hospitality_service_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_general" model="ir.rule">
+			<field name="model_id" ref="fleet.model_fleet_service_type"/>
+			<field name="domain_force">['|',('category','=','general'),('parent_id.category','=','general')]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_environment_safety_service_officer'),ref('group_hospitality_service_officer'),ref('group_occasion_service_officer'),ref('group_hall_service_officer'),ref('group_building_service_officer'),ref('group_media_service_officer'),ref('group_public_relation_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+		<record id="ir_rule_service" model="ir.rule">
+			<field name="model_id" ref="fleet.model_fleet_service_type"/>
+			<field name="domain_force">[('category','=','service'),('parent_id','=',False)]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_environment_safety_service_officer'),ref('group_hospitality_service_officer'),ref('group_occasion_service_officer'),ref('group_hall_service_officer'),ref('group_building_service_officer'),ref('group_media_service_officer'),ref('group_public_relation_officer')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+		</record>
+	</data>
+</openerp>  

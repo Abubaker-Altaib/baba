@@ -1,0 +1,217 @@
+<odoo>
+    <data>
+        
+
+
+      <!-- Places of Worship Model -->
+
+
+      <record id="worship_view_tree" model="ir.ui.view">
+        <field name="name"> Worship Tree</field>
+        <field name="model">dzc_4_5.places.of.worship</field>
+        <field name="arch" type="xml">
+          <tree>
+          <field name="name"/>
+            <field name="type"/>
+            <field name="date_of_establish"/>
+            <field name="support_type"/>
+          </tree>
+        </field>
+      </record>
+
+    <!-- Form view for worship model -->
+    <record id="‫‪worship_view_form" model="ir.ui.view">
+      <field name="name">worship Form</field>
+      <field name="model">dzc_4_5.places.of.worship</field>
+      <field name="arch" type="xml">
+        <form>
+    
+
+          <sheet>
+            <group col="4" colspan="2" string="Mosques and Houses Information">
+            
+          <field name="name"  required="1"/>
+          <field name="type" required="1"/>
+          <field name="date_of_establish" required="1"/>
+
+          <field name="state_id" required="1" domain="[('company_id' ,'=' , company_id)]"/>
+
+          <field name="local_state_id" required="1" domain="[('state_id' ,'=' , state_id)]"/>
+          
+          <field name="supervisor" required="1"/>
+          <field name="supervisor_national_number" required="1"/>
+          <field name="responsible" required="1"/>
+          <field name="responsible_national_number" required="1"/>
+          <field name="support_type" required="1"/>
+</group>
+<group col="4" colspan="2">
+          <field name="khalwa_size" attrs="{'required':[('type','=','khalwa')],'invisible':[('type','!=','khalwa')]}"/>
+          <field name="khalwa_system" attrs="{'required':[('type','=','khalwa')],'invisible':[('type','!=','khalwa')]}"/>
+          <field name="no_shikh" attrs="{'required':[('type','=','khalwa')],'invisible':[('type','!=','khalwa')]}"/>
+          <field name="no_students" attrs="{'required':[('type','=','khalwa')],'invisible':[('type','!=','khalwa')]}"/>
+
+    <field name="company_id" readonly="1" required="1"/>
+    <field name="user_id" readonly="1" required="1"/>
+
+</group>
+<notebook>
+    <page string="Accounts Info">
+        <group col="4" >
+          <field name="property_account_id" required="1"/>
+          <field name="property_analytic_account_id" required="1" />
+          <field name="property_journal_id" required="1"/>
+      </group>
+</page>
+       </notebook> 
+         
+
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+
+  <record id="worship_view_search" model="ir.ui.view">
+   <field name="name">worship.view.search</field>
+   <field name="model">dzc_4_5.places.of.worship</field>
+   <field name="arch" type="xml">
+
+     <search string="Search Opportunities">
+       <field name="name"/>
+       <field name='date_of_establish'/>
+     
+         <group expand="0" string="Group By">
+          <filter string="State" context="{'group_by': 'state_id'}"/>
+          <filter string="Type" context="{'group_by': 'type'}"/>
+          
+
+        </group>
+     </search>
+
+   </field>
+ </record>
+      <record id="dzc_4_5_worship_action" model="ir.actions.act_window">
+        <field name="name">Mosques and Houses</field>
+        <field name="res_model">dzc_4_5.places.of.worship</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+      </record>
+
+    <!-- Main Dawa Menu -->
+    <menuitem id="dzc4_5_menu"
+        name="Dawa Channel"
+        sequence="2"/>
+
+        <!-- Configuration Menue-->
+        <menuitem id="dzc4_5_configmenu"
+            name="Configuration"
+            parent="dzc4_5_menu"
+            />
+
+            <!-- Places of Worship-->
+            <menuitem id="dzc4_5_places_of_worship"
+                name="Mosques and Houses"
+                parent="dzc4_5_configmenu"
+                action="dzc_4_5_worship_action"/>
+    <act_window id="dzc4_5_dawa_axis_action"
+		name="Dawa Axis"
+		res_model="dawa.axis"
+		view_mode="search,tree,form"/>
+		
+		<menuitem id="dawa_axis_menu"
+                name="Dawa Axis"
+                parent="dzc4_5_configmenu"
+                action="dzc4_5_dawa_axis_action"/>
+    
+    
+    <!-- dawa axis tree view -->
+  <record id="dawa_axis_tree_view" model="ir.ui.view">
+    <field name="name"> Dawa Axis</field>
+    <field name="model">dawa.axis</field>
+    <field name="arch" type="xml">
+        <tree>
+          <field name="name" />
+          <field name="company_id"/>
+        </tree>
+	  </field>
+  </record>
+<!-- dawa axis form view -->
+
+
+<record id="dawa_axis_form_view" model="ir.ui.view">
+      <field name="name">Dawa Axis Form</field>
+      <field name="model">dawa.axis</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml" >
+        <form >
+          <sheet>
+            <group colspan="2">
+              <group>
+                <field name="name" required="1"/>
+              </group>
+              <group>
+                <field name="company_id" required="1" readonly="1"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Activitis">
+                <field name="activitiy_ids" required="1">
+                  <tree editable="bottom">
+					<field name="name" required="1"/>
+                    <field name="account" required ="1"/>
+                  </tree>
+                </field>
+              </page>
+              <page string="Accounting">
+								<group colspan="2">
+									<group>
+										<field name="journal_id" required="1" />
+										<field name="property_account_id" required="1" />
+									</group>
+									<group>
+										<field name="property_analytic_account_id" required="1" />
+									</group>
+								</group>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+
+<!-- Dawa Organizations -->
+
+    <record id="dawa_org_view_tree" model="ir.ui.view">
+    <field name="name"> Organizations Tree</field>
+    <field name="model">dzc2.organizations</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="channel_type"/>
+      </tree>
+    </field>
+  </record>
+  
+
+<!-- Dawa organization action -->
+<record id="Dawa_organization_action" model="ir.actions.act_window">
+  <field name="name">Organizations</field>
+  <field name="res_model">dzc2.organizations</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+  <field name="domain">[('channel_type' , '=' , 'dawa')]</field>
+  <field name="context">{'default_channel_type': 'dawa','default_activity':'dawee'}</field>
+</record>
+
+<!-- Dawa organization menu -->
+<menuitem name="Organizations"
+  id="dawa_organization_menu"
+  parent="dzc4_5_configmenu"
+  action="Dawa_organization_action"
+  sequence="4"/>
+  
+
+
+</data>
+</odoo>

@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+	<template pageSize="(842.0,595.0)" title="Purchase Requisition" author="NCTR">
+		<pageTemplate id="first">
+			<frame id="first"  x1="1.3cm" y1="0.9cm"  width="800" height="500" />
+			<pageGraphics>
+				<image x="1.3cm" y="25.0cm" height="77" width="180">[[company.logo or removeParentNode('image')]]</image>
+			</pageGraphics>
+		</pageTemplate>
+	</template>
+	<stylesheet>
+		<blockTableStyle id="Table2">
+			<blockBackground colorName="#E5E1E1" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="0" />
+			<blockBottomPadding length="0" />
+			<blockAlignment value="CENTER" />
+			<blockValign value="LEFT" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table7">
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="4" />
+			<blockBottomPadding length="8" />
+			<blockAlignment value="CENTER" />
+			<blockValign value="LEFT" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table3">
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		<paraStyle name="Main_header" alignment="CENTER" fontName="Helvetica-Bold" fontSize="14.0" spaceBefore="0.0" spaceAfter="20.0" />
+		<paraStyle name="Main_header2" alignment="CENTER" fontName="Helvetica-Bold" fontSize="14.0" spaceBefore="0.0" spaceAfter="20.0"  rightIndent="-60"/>
+		<paraStyle name="P8" fontName="Microsoft Sans Serif" fontSize="8.0" alignment="CENTER" rightIndent="4" />
+		<paraStyle name="P9" fontName="Helvetica-Bold" fontSize="9.00" alignment="CENTER" rightIndent="0.0" leftIndent="7.5" />
+		<paraStyle name="P7" fontName="Microsoft Sans Serif-Bold" fontSize="10.00" alignment="CENTER" rightIndent="-70" />
+		<paraStyle name="P6" fontName="Helvetica-Bold" fontSize="10.00" alignment="CENTER" rightIndent="0.0" leftIndent="30.0" />
+		
+		<images />
+	</stylesheet>
+	<story>
+			
+			<para style="Main_header">[[company.name]]</para>
+			<para style="Main_header2">
+			 تقرير لجنة المشتريات للفترة من  [[ data['form']['date_from'] ]] إلى [[data['form']['date_to'] ]]
+			</para>
+
+			<section>
+			
+			<blockTable colWidths="360,110,110,120,80,60" style="Table2">
+				<tr>
+					<td>
+						<blockTable colWidths="80,60,110,110" style="Table7">
+						<tr>
+							<td>
+								<para style="P9">الحالة</para>
+							</td>
+							<td>
+								<para style="P9">المبلغ</para>
+							</td>
+							<td>
+								<para style="P9">الجهة الموردة</para>
+							</td>
+							<td>
+								<para style="P9">تاريخ التصديق</para>
+							</td>
+						</tr>
+						</blockTable>
+					</td>
+					<td>
+						<para style="P9">تاريخ الطلب</para>
+					</td>
+					<td>
+						<para style="P9">الجهة الطالبة</para>
+					</td>
+					<td>
+						<para style="P9">المطلوب</para>
+					</td>
+					<td>
+						<para style="P9">رقم الطلب</para>
+					</td>
+					<td>
+						<para style="P6">متسلسل</para>
+					</td>
+				</tr>
+				<tr><para style="P8">[[ repeatIn(line(data),'req') ]]</para>
+					<td>
+						<section>
+							<blockTable colWidths="80,60,110,110" style="Table7">
+								[[ req['order_line'] or removeParentNode('blockTable')]]
+								<tr>
+									[[ repeatIn(req['order_line'],'order') ]]
+									<td>
+										<para style="P8">[[ order['state']=='approved' and 'فى التصديق' or order['state']=='done' and 'تم' or order['state']=='except_picking' and 'فى انتظار الشحن' or order['state']=='except_invoice' and 'في انتظار الفاتورة ' or '/' ]]</para>
+									</td>
+									<td>
+										<para style="P8">[[ order['amount'] ]]</para>
+									</td>
+									<td>
+										<para style="P8">[[ order['partner'] ]]</para>
+									</td>
+									<td>
+										<para style="P8">[[ order['order_date'] ]] </para>
+									</td>
+							
+								</tr>
+							</blockTable>
+						</section>
+					</td>
+					<td>
+						<para style="P8">[[ req['req_date'] ]]</para>
+					</td>
+					<td>
+					<para style="P8">[[ req['department'] ]]</para>
+					</td>
+					<td>
+						<para style="P8">[[ req['desired'] ]]</para>
+					</td>
+					<td>
+						<para style="P8">[[ req['req_no'] ]]</para>
+					</td>
+					<td>
+						<para style="P8">
+							<seq id="L1" />
+						</para>
+					</td>
+				</tr>
+			</blockTable>
+			<blockTable colWidths="140,700" style="Table3">
+				<tr>
+					<td>
+						<para style="P7">[[ formatLang(total(data))]]</para>
+					</td>
+					<td>
+						<para style="P9">الإجمالى</para>
+					</td>
+				</tr>
+			</blockTable>
+			<para style="Main_header"><seqReset id="L1" /></para>
+		</section>
+		
+	</story>
+
+
+
+
+	<!--story>
+		
+		<para style="Main_header">[[company.name]]</para>
+		<para style="Main_header">
+		 تقرير لجنة المشتريات للفترة من  [[ data['form']['date_from'] ]] - [[data['form']['date_to'] ]]</para>
+		<section>
+		<blockTable colWidths="350,110,110,120,80,60" style="Table2">
+			<tr>
+				<td>
+					<para style="P9"></para>
+				</td>
+				<td>
+					<para style="P9">تاريخ الطلب</para>
+				</td>
+				<td>
+					<para style="P9">الجهة الطالبة</para>
+				</td>
+				<td>
+					<para style="P9">المطلوب</para>
+				</td>
+				<td>
+					<para style="P9">رقم الطلب</para>
+				</td>
+				<td>
+					<para style="P9">متسلسل</para>
+				</td>
+			</tr>
+
+			<tr>
+				<td><section>
+					<blockTable colWidths="80,80,90,100" style="Table2">
+						<tr>
+							<td>
+								<para style="P9">الحالة</para>
+							</td>
+							<td>
+								<para style="P9">المبلغ</para>
+							</td>
+							<td>
+								<para style="P9">الجهة الموردة</para>
+							</td>
+							<td>
+								<para style="P9">تاريخ التصديق</para>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<para style="P8"> [[ o['state'] ]]</para>
+							</td>
+							<td>
+								<para style="P8">[[ o['amount'] ]]</para>
+							</td>
+							<td>
+								<para style="P8">[[ o['partner'] ]]</para>
+							</td>
+							<td>
+								<para style="P8">[[ repeatIn(ord(data) , 'o') ]]  [[ o['order_date'] ]] </para>
+							</td>
+							
+						</tr>
+					</blockTable></section>
+				</td>
+				
+				
+				<td>
+					<para style="P8">[[ lines['req_date'] ]]</para>
+				</td>
+				<td>
+					<para style="P8">[[ lines['department'] ]]</para>
+				</td>
+				<td>
+					<para style="P8">[[ lines['desired'] ]]</para>
+				</td>
+				<td>
+					<para style="P8">[[ repeatIn(line(data),'lines') ]] [[ lines['req_no'] ]]</para>
+				</td>
+				<td>
+					<para style="P8">
+						<seq id="L1" />
+					</para>
+				</td>
+				
+				
+			
+			</tr>
+		</blockTable>
+	</section>
+		<blockTable colWidths="80,750" style="Table3">
+			<tr>
+				<td>
+					<para style="P9"></para>
+				</td>
+				<td>
+					<para style="P9">اﻹجمالى</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para>
+			<seqReset id="L1" />
+		</para>
+	</story-->
+</document>

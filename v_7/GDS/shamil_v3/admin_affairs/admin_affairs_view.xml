@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+
+	<data>
+
+                   <menuitem id="menu_administrative_affairs_root" 
+                             icon="terp-partner" 
+                             name="Admin Affairs" 
+                             sequence="3" 
+                             web_icon="images/pos.png" 
+                             web_icon_hover="images/pos-hover.png"/>
+
+                   <menuitem id="menu_admin_affairs_operations" 
+                             parent="menu_administrative_affairs_root"
+                             name="Operations" 
+                             sequence="1" />
+
+                   <menuitem id="admin_affairs_configuration_menu"
+                             parent="menu_administrative_affairs_root" 
+                             name="Configuration" 
+                             sequence="3" />
+
+                   <menuitem name="Reports"
+			     parent="menu_administrative_affairs_root"
+			     id="main_menu_report"
+                             sequence="2"/>
+
+		<menuitem id="vehicle_configuration" 
+                          name="Vehicle" 
+                          parent="admin_affairs_configuration_menu" 
+                          sequence="1"/>
+
+<!-- Admin affairs model Form and Tree and action -->
+		<record id="admin_affairs_model_form" model="ir.ui.view">
+			<field name="name">admin_affairs.model.form</field>
+			<field name="model">admin.affairs.model</field>
+			<field name="arch" type="xml">
+				<form string="Model configuration">
+					<field name="name" select="1"/>
+					<field name="model" />
+					
+				</form>
+			</field>
+		</record>
+		
+		<record id="admin_affairs_model_tree" model="ir.ui.view">
+			<field name="name">admin_affairs.model.tree</field>
+			<field name="model">admin.affairs.model</field>
+			<field name="arch" type="xml">
+				<tree string="Model configuration">
+					<field name="name" />
+					<field name="model"/>		
+				</tree>
+			</field>
+		</record>	
+		
+		<!-- Admin affairs model Filter -->
+		<record id="admin_affairs_model_filter" model="ir.ui.view">
+			<field name="name">admin_affairs.model.list.select</field>
+			<field name="model">admin.affairs.model</field>
+			<field name="arch" type="xml">
+				<search string="Search for model record">
+					<field name="name" select="1" />
+					<field name="model" />		
+					<newline />
+				</search>
+			</field>
+		</record>
+		
+		<record id="admin_affairs_model_action" model="ir.actions.act_window">
+			<field name="name">Admin affairs model configuration</field>
+			<field name="res_model">admin.affairs.model</field>		
+			<field name="view_mode">tree,form</field>
+		    <field name="search_view_id" ref="admin_affairs_model_filter"/>
+		</record>
+
+	<!-- Admin affairs account lines Form and Tree and action -->
+		<record id="admin_affairs_account_form" model="ir.ui.view">
+			<field name="name">admin_affairs.account.form</field>
+			<field name="model">admin_affairs.account</field>
+			<field name="arch" type="xml">
+				<form string="Accounting configuration">
+					<field name="name" select="1"/>
+					<field name="date" />
+					<field name="model_id" widget="selection"/>
+					<field name="templet_id" />
+					<!--field name="code" /-->
+					<field name="name_type" />
+					<notebook colspan="4">
+						<page string="Accounting">
+                    					<separator colspan="4" string="Expenses"/>
+							<field name="journal_id" />
+							<field name="account_id" />
+							<field name="analytic_id" />
+                    					<separator colspan="4" string="Projects"/>
+							<!--field name="pro_journal_id" />
+							<field name="pro_account_id" /-->
+						</page>
+						<page string="Notes">
+							<field name="notes" colspan="4" nolabel="1" />
+						</page>
+					</notebook>
+				</form>
+			</field>
+		</record>
+		
+		<record id="admin_affairs_account_tree" model="ir.ui.view">
+			<field name="name">admin_affairs.account.tree</field>
+			<field name="model">admin_affairs.account</field>
+			<field name="arch" type="xml">
+				<tree string="Accounting configuration">
+					<field name="name" />
+					<field name="date" />
+					<field name="model_id"/>		
+				</tree>
+			</field>
+		</record>	
+		
+		<!-- admin affairs account Filter -->
+		<record id="admin_affairs_account_filter" model="ir.ui.view">
+			<field name="name">admin_affairs.account.list.select</field>
+			<field name="model">admin_affairs.account</field>
+			<field name="arch" type="xml">
+				<search string="Search for configuration record">
+					<field name="name" select="1" />
+					<field name="model_id" widget="selection"/>		
+					<separator orientation="vertical" />
+					<field name="date" colspan="1"/>																			
+					<newline />
+
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Model" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'model_id'}" />
+					    <separator orientation="vertical"/>
+					    <filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+		
+		<record id="admin_affairs_account_action" model="ir.actions.act_window">
+			<field name="name">Accounting configuration</field>
+			<field name="res_model">admin_affairs.account</field>		
+			<field name="view_mode">tree,form</field>
+		    <field name="search_view_id" ref="admin_affairs_account_filter"/>
+		</record>
+
+           <menuitem id="accounting_configuration_menu" 
+                     name="Accounting configuration"
+		     parent="admin_affairs_configuration_menu" 
+                     action="admin_affairs_account_action" />
+
+ 	   <menuitem id="model_configuration_menu" 
+                     name="Model configuration"
+		     parent="admin_affairs_configuration_menu" 
+                     action="admin_affairs_model_action" />
+
+                       
+     <!-- Manufacturing Year-->     
+
+                <record model="ir.ui.view" id="view_manufacturing_year_form">
+			<field name="name">manufacturing.year.form</field>
+			<field name="model">manufacturing.year</field>
+			<field name="arch" type="xml">
+				<form string="Manufacturing Year">
+					<field name="name" colspan="2" />
+				</form>
+			</field>
+		</record>
+
+			
+                 <record model="ir.ui.view" id="view_manufacturing_year_tree">
+			<field name="name">manufacturing.year.tree</field>
+			<field name="model">manufacturing.year</field>
+			<field name="arch" type="xml">
+				<tree string="Manufacturing Year">
+					<field name="name" select="1" />
+  				</tree>
+			</field>
+		 </record> 
+
+
+                <record model="ir.actions.act_window" id="action_manufacturing_year">
+			<field name="name">Manufacturing Year</field>
+			<field name="res_model">manufacturing.year</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+               <menuitem id="menu_manufacturing_year" 
+                         name="Manufacturing Year"  
+                         parent="vehicle_configuration" 
+                         action="action_manufacturing_year"/>
+                           
+
+	</data>
+</openerp>
+		

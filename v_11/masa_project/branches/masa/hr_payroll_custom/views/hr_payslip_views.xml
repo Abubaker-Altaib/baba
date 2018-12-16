@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_payslip_form" model="ir.ui.view">
+        <field name="name">hr.payslip.form</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="replace"/>
+            <xpath expr="//div[@name='button_box']" position="replace"/>
+            <xpath expr="//field[@name='credit_note']" position="replace"/>
+            <xpath expr="//field[@name='payslip_run_id']" position="replace"/>
+            <xpath expr="//field[@name='struct_id']" position="after">
+              <field name="bonus_ids" domain="[('rule_type', '=','bounes')]" widget="many2many_tags" attrs="{'invisible': [('type', '!=', 'bounes')],'required':[('type', '=', 'bounes')]}"/>
+            </xpath>
+            <xpath expr="//field[@name='number']" position="replace">
+                <field name="type" invisible="True"/>
+            </xpath>
+            <xpath expr="//field[@name='struct_id']" position="replace">
+                <field name="struct_id" />
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button string="Create Voucher" name="create_entity_voucher" type="object"/>
+            </xpath>
+
+
+
+           <xpath expr="//page[1]" position="replace">
+                <page string="Bouneses" attrs="{'invisible': [('type', '!=', 'bounes')]}">
+                        <field name="line_ids" colspan="4" nolabel="1" readonly="True">
+                            <tree string="Bounes" editable="bottom" decoration-info="total == 0">
+                                <field name="salary_rule_id" string="Bounes"/>
+                                <field name="sequence" invisible="1"/>
+                                <field name="quantity"/>
+                                <field name="rate"/>
+                                <field name="amount"/>
+                                <field name="total"/>
+                            </tree>
+                            <form string="Bounes">
+                                <group col="4">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="category_id"/>
+                                    <field name="sequence"/>
+                                    <field name="quantity"/>
+                                    <field name="rate"/>
+                                    <field name="amount"/>
+                                    <field name="total"/>
+                                    <field name="salary_rule_id"/>
+                                </group>
+                            </form>
+                        </field>
+                </page>
+                <page string="Allowances" attrs="{'invisible': [('type', '=', 'bounes')]}">
+                    <field name="allowance_ids" colspan="2" nolabel="1" readonly="True" 
+                        >
+                        <tree string="Allowances" editable="bottom" decoration-info="total == 0">
+                            <field name="salary_rule_id" string="Allowance"/>
+                            <field name="sequence" invisible="1"/>
+                            
+                            <field name="total" string="Amount" sum="Total"/>
+                        </tree>
+                        <form string="Allowances">
+                            <group col="4">
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="category_id"/>
+                                <field name="sequence"/>
+                                <field name="quantity"/>
+                                <field name="rate"/>
+                                <field name="amount"/>
+                                <field name="total"/>
+                                <field name="salary_rule_id"/>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+                <page string="Deductions" attrs="{'invisible': [('type', '=', 'bounes')]}">
+                        <field name="deduction_ids" colspan="2" nolabel="1" readonly="True"
+                            >
+                            <tree string="Deductions" editable="bottom" decoration-info="total == 0">
+                                <field name="salary_rule_id" string="Deduction"/>
+                                <field name="sequence" invisible="1"/>
+                                
+                                <field name="total" string="Amount" sum="Total"/>
+                            </tree>
+                            <form string="Deductions">
+                                <group col="4">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="category_id"/>
+                                    <field name="sequence"/>
+                                    <field name="quantity"/>
+                                    <field name="rate"/>
+                                    <field name="amount"/>
+                                    <field name="total"/>
+                                    <field name="salary_rule_id"/>
+                                </group>
+                            </form>
+                        </field>
+                       
+                </page>
+            </xpath>   
+            <xpath expr="//page[4]" position="replace">
+                <page string="Worked Days">
+                    <field name="worked_days_line_ids" readonly="True">
+                        <tree string="Worked Days" editable="bottom" >
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="number_of_days" sum="Total Working Days"/>
+                            <field name="number_of_hours"/>
+                            <field name="contract_id"/>
+                            <field name="sequence" invisible="True"/>
+                        </tree>
+                        <form string="Worked Day">
+                            <group col="4">
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="sequence"/>
+                                <field name="number_of_days"/>
+                                <field name="number_of_hours"/>
+                                <field name="contract_id"/>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </xpath>         
+            <xpath expr="//page[5]" position="replace"/>
+            <xpath expr="//page[5]" position="replace"/>
+            <xpath expr="//notebook" position="after">
+                <group col="4">
+                    <field name="total_allowance"/>
+                    <field name="total_deduction"/>
+                    <field name="net"/>
+                </group>
+             </xpath>
+        </field>
+    </record>
+    
+    <record id="view_hr_payslip_tree" model="ir.ui.view">
+        <field name="name">hr.payslip.tree</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="replace"/>
+            <xpath expr="//field[@name='date_to']" position="after">
+                <field name="total_allowance"/>
+                <field name="total_deduction"/>
+                <field name="net"/>
+                                                
+            </xpath>
+        </field>
+    </record>
+    
+    <record id="hr_payslip_run_tree" model="ir.ui.view">
+        <field name="name">hr.payslip.run.tree</field>
+        <field name="model">hr.payslip.run</field>
+        <field name="inherit_id" ref="hr_payroll.hr_payslip_run_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='credit_note']" position="replace"/>
+            
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="hr_payslip_run_inherit_custom">
+        <field name="name">hr.payslip.run.inherit.custom</field>
+        <field name="model">hr.payslip.run</field>
+        <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='%(hr_payroll.action_hr_payslip_by_employees)d']" position="replace">
+                <button name="compute_sheet" type="object" states="draft" string="Compute Sheet" class="oe_highlight"/>
+            </xpath>
+            <xpath expr="//field[@name='date_start']" position="after">
+                <field name="type" invisible="True"/>
+            </xpath>
+            <xpath expr="//button[@name='close_payslip_run']" position="replace">
+                <button name="confirm_payslip_run" type="object" string="Confirm" states="compute" class="oe_highlight"/>
+                <button name="rollback_payslip_run" type="object" string="Rollback" states="compute" class="oe_highlight"/>
+                <button name="approve_payslip_run" type="object" string="Approve" states="confirm" class="oe_highlight"/>
+                <button name="close_payslip_run" type="object" string="Close" states="approve" class="oe_highlight"/>
+                <button string="Cancel" name="cancel_payslip_run" type="object" states="confirm,approve,close"/>
+            </xpath>
+            <xpath expr="//button[@name='draft_payslip_run']" position="replace">
+                <button string="Set to Draft" name="draft_payslip_run" type="object" states="cancel" />
+            </xpath>
+            <xpath expr="//field[@name='state']" position="replace">
+            <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve,close"/>
+            </xpath>
+            
+            <xpath expr="//separator" position="replace"/>
+            <field name="credit_note" position="replace">
+                <field name="struct_id" options="{'no_create': True, 'no_open': True}"/>
+                <field name="journal_id" attrs="{'invisible':[('state','=','draft')], 'required':[('state','=','approve')]}"/>
+                <field name="bonus_ids" domain="[('rule_type', '=','bounes')]" widget="many2many_tags" attrs="{'invisible': [('type', '!=', 'bounes')],'required':[('type', '=', 'bounes')]}" colspan="4" options="{'no_create': True, 'no_open': True}"/>
+                <field name="level_ids" widget="many2many_tags" attrs="{'invisible': [('type', '!=', 'bounes')]}" colspan="4" options="{'no_create': True, 'no_open': True}"/> 
+                <field name="emp_categ_ids" widget="many2many_tags" attrs="{'invisible': [('type', '!=', 'bounes')]}" colspan="4"/> 
+                <field name="voucher_id"  attrs="{'invisible':[('voucher_id','=',False)]}"/> 
+            </field>
+            
+            <field name="slip_ids" position="replace">
+                <notebook>
+                    <page string="Details" attrs="{'invisible':[('slip_ids','=',[])]}">
+                        <field name="slip_ids">
+                        <tree decoration-info="state in ('confirm','hr_check','accont_check')" decoration-muted="state == 'cancel'" string="Payslips">
+                <field name="number"/>
+                <field name="employee_id"/>
+                <field name="total_allowance"/>
+                <field name="total_deduction"/>
+                
+                <field name="net"/>
+                <field name="state"/>
+                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                <button string="" name="compute_sheet" type="object" states="draft" icon="fa-gears"/>
+                            </tree>
+                            </field>
+                    </page> 
+                    <page string="Employees">
+                        <field name="employee_ids" />
+                    </page> 
+                    <page string="Departments">
+                        <field name="department_ids" />
+                    </page> 
+                </notebook>
+            </field>
+        </field>
+    </record>
+
+    <record id="hr_payroll.action_hr_payslip_run_tree" model="ir.actions.act_window">
+        <field name="name">Payslips Batches</field>
+        <field name="res_model">hr.payslip.run</field>
+        <field name="domain">[('type','=','salary')]</field>
+        <field name="context" eval="{'default_type': 'salary' }"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="search_view_id" ref="hr_payroll.hr_payslip_run_filter"/>
+    </record>
+    <record id="action_hr_payslip_bounes_run_tree" model="ir.actions.act_window">
+        <field name="name">Payslips Bounes Batches</field>
+        <field name="res_model">hr.payslip.run</field>
+        <field name="domain">[('type','=','bounes')]</field>
+        <field name="context" eval="{'default_type': 'bounes' }"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="search_view_id" ref="hr_payroll.hr_payslip_run_filter"/>
+    </record>
+    <record id="hr_payroll.action_view_hr_payslip_form" model="ir.actions.act_window">
+        <field name="name">Employee Payslips</field>
+        <field name="res_model">hr.payslip</field>
+        <field name="domain">[('type','=','salary')]</field>
+        <field name="context" eval="{'default_type': 'salary' }"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+    </record>
+    <record id="action_view_hr_payslip_bounes_form" model="ir.actions.act_window">
+        <field name="name">Employee Bounes Payslips</field>
+        <field name="res_model">hr.payslip</field>
+        <field name="domain">[('type','=','bounes')]</field>
+        <field name="context" eval="{'default_type': 'bounes' }"/>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+    </record>
+
+    <menuitem name="Salary Payslips" 
+        id="menu_hr_payslip_run_salary" 
+        parent="hr_payroll.menu_hr_payroll_root" sequence="1"/>
+
+    <menuitem action="hr_payroll.action_hr_payslip_run_tree" 
+         id="hr_payroll.menu_hr_payslip_run" 
+         parent="menu_hr_payslip_run_salary"
+         sequence="1"/>
+         
+    <menuitem action="hr_payroll.action_view_hr_payslip_form" 
+        id="hr_payroll.menu_department_tree" parent="menu_hr_payslip_run_salary" 
+        groups="hr_payroll.group_hr_payroll_user"
+        sequence="2"/>
+
+    <menuitem name="Bounes Payslips" 
+        id="menu_hr_payslip_run_bounes" 
+        parent="hr_payroll.menu_hr_payroll_root" sequence="2"/>
+        
+    <menuitem action="action_hr_payslip_bounes_run_tree" 
+        id="menu_hr_payslip_run1" 
+        parent="menu_hr_payslip_run_bounes"
+        sequence="3"/>
+        
+    <menuitem action="action_view_hr_payslip_bounes_form" 
+         id="menu_department_tree2" 
+         parent="menu_hr_payslip_run_bounes" 
+         groups="hr_payroll.group_hr_payroll_user"
+         sequence="4"/>
+
+</odoo>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="account_budget_operation_view_tree">
+			<field name="name">account.budget.operation.view.tree</field>
+			<field name="model">account.budget.operation</field>
+			<field name="arch" type="xml">
+				<tree
+					decoration-info="state == 'draft'" decoration-muted="state in ('done','cancel')"
+					string="Budget Operations">
+					<field name="date" />
+					<field name="name" />
+					<field name="type" />
+					<field name="from_analytic_account_id" />
+					<field name="to_analytic_account_id" />
+					<field name="amount" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="account_budget_operation_view" model="ir.ui.view">
+			<field name="name">account.budget.operation.view.form</field>
+			<field name="model">account.budget.operation</field>
+			<field name="arch" type="xml">
+				<form string="Budget Operations" version="7.0">
+					<header>
+						<button name="confirm" string="Confirm" states="draft" type="object" class="btn-primary"/>
+						<button name="done" string="Approve" states="confirm" type="object" class="btn-primary"/>
+						<button name="action_cancel_draft" states="confirm,cancel" type="object" string="Set to Draft" />
+						<button name="cancel" string="Cancel" states="confirm,done"  type="object"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,complete,done" />
+					</header>
+					<sheet string="Budget Operations">
+						<div class="oe_title">
+							<label for="name" class="oe_edit_only" />
+							<h1><field name="name" readonly="1" /></h1>
+						</div>
+						<group>
+						    <group>
+							<field name="type" widget="radio" />
+							<field name="from_analytic_account_id" 
+							   domain="[('company_id','=',company_id),('type','=','normal')]"/>
+							<field name="to_analytic_account_id" 
+							   domain="[('company_id','=',company_id),('type','=','normal')]"/>
+							<field name="amount" />
+						</group>
+                        <group>
+                            <field name="date"  />
+                            <field name="reference"/>
+                            <field name="company_id" widget="selection" groups="base.group_multi_company" />
+                            <field name="voucher_id" domain="[('state','in',['no_budget','complete'])]"/>
+                        </group>
+                        </group>
+
+
+								<field name="line_ids" nolabel="1" context="{'default_analytic_account_id_from': from_analytic_account_id,'default_analytic_account_id_to': to_analytic_account_id,'default_name': type}"
+							 	       attrs="{'readonly': [('state','!=','draft')]}">
+									<tree string="" editable="top">
+									    <field name="analytic_account_id_from" 
+									           domain="[('company_id','=',parent.company_id)]" invisible="1"/>
+									    <field name="budget_line_id_from"  
+									           domain="[('analytic_account_id','=',analytic_account_id_from),('state','=','validate')]" />
+									    <field name="analytic_account_id_to" 
+									           domain="[('company_id','=',parent.company_id)]" invisible="1"/>
+										<field name="budget_line_id_to"  
+										       domain="[('analytic_account_id','=',analytic_account_id_to),('state','=','validate')]" />
+										<field name="amount" sum="Total" />
+										<field name="name"  invisible="1"/>
+										<field name="state"  invisible="1"/>
+									</tree>
+								</field>
+							<div>
+                            <field name="note" placeholder="Notes..."/>
+                        </div>
+					</sheet>
+				</form>
+			</field>
+		</record>
+			<record id="budget_operation_filter" model="ir.ui.view">
+			<field name="name">account.budget.operation.filter</field>
+			<field name="model">account.budget.operation</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Budget Operations">
+					<group expand="0" string="Group By...">
+						<filter string="Type" icon="terp-stock_effects-object-colorize" domain="[]"
+							context="{'group_by':'type'}" />
+						<filter string="Budget Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'budget_type'}" />
+						<filter string="Status" icon="terp-stock_effects-object-colorize"  domain="[]"
+							context="{'group_by':'state'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="action_account_budget_operation_menu" model="ir.actions.act_window">
+			<field name="name">Budget Operations</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.budget.operation</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="account_budget_operation_view_tree" />
+		</record>
+
+		<menuitem name="Budget Transfer/Increase" parent="menu_account_budget"
+			action="action_account_budget_operation_menu" sequence="3" id="menu_budget_operation" />
+			
+	     <record model="ir.ui.view" id="view_operation_budget_line_tree">
+            <field name="name">account.budget.operation.line.tree</field>
+            <field name="model">account.budget.operation.line</field>
+            <field name="arch" type="xml">
+                <tree string="Budget Operations">
+                    <field name="date"/>
+                    <field name="name" />
+                    <field name="analytic_account_id_from" />
+                    <field name="analytic_account_id_to"/>
+                    <field name="budget_line_id_from" />
+                    <field name="budget_line_id_to"/>
+                    <field name="amount"/>    
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_operation_budget_line_form">
+            <field name="name">account.budget.operation.line.form</field>
+            <field name="model">account.budget.operation.line</field>
+            <field name="arch" type="xml">
+                <form string="Budget Operations">
+                    <sheet>
+                        <group col="4">
+                            <field name="date"/>
+                            <field name="name" />
+                            <field name="analytic_account_id_from"/>
+                            <field name="analytic_account_id_to"/>
+                            <field name="budget_line_id_from" />
+                            <field name="budget_line_id_to"/>
+                            <field name="amount"/>    
+                            <field name="state"/>
+                            <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_operation_budget_lines_view">
+            <field name="name">Budget Operations</field>
+            <field name="res_model">account.budget.operation.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_operation_budget_line_tree"/>
+        </record>
+
+        <menuitem parent="menu_base_budget_reporting"
+            id="menu_act_operation_budget_lines_view"
+            action="act_operation_budget_lines_view" sequence="20"/>
+
+
+
+		
+	</data>
+</openerp>

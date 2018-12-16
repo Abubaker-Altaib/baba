@@ -1,0 +1,77 @@
+<?xml version="1.0"    encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_purchase_requisition_form_inherit">
+			<field name="name">purchase.requisition.form</field>
+			<field name="model">purchase.requisition</field>
+			<field name="inherit_id"  ref="purchase_ntc.view_purchase_requisition_form" />
+			<field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                          <field name="quotation_created" invisible="1"/>
+                          <field name="suppliers_qualifications" attrs="{'required':[('state','=','in_progress')], 'readonly':[('state','not in',('in_progress'))], 'invisible':[('state','in',('draft','commite_confirm','confirm','approve','HRM_approve1','GM_approve1'))]}"/>
+
+                </xpath>   
+
+                <xpath expr="//button[@string='Request a Quotation']" position="replace">
+                   
+                     <button name="action_request_quotation" string="Create Quotations" type="object" class="oe_highlight"
+                                  attrs="{'invisible' : ['|' , '|' , ( 'quotation_created' , '=' , True ),('state' , '!=' , 'in_progress'),( 'suppliers_qualifications' , '!=' , 'not_qualified' )] }" />
+
+
+                     <button name="action_create_quotations" string="Create Quotations" type="object" class="oe_highlight"
+                                  attrs="{'invisible' : ['|' , '|' , ( 'quotation_created' , '=' , True ),('state' , '!=' , 'in_progress'),( 'suppliers_qualifications' , '!=' , 'qualified' )] }" /> 
+
+                     <button name="%(purchase_send_email_quotation.action_purchase_send_email_quotation_wizard)d" string="Send Email" type="action"  class="oe_highlight" groups="purchase_wafi.group_committee_user"  attrs="{'invisible' : ['|',('state' , '!=' , 'in_progress'),( 'suppliers_qualifications' , '!=' , 'qualified' )] }" />
+
+                   
+
+                </xpath> 
+
+  
+                <xpath expr="//page[@string='Suppliers']" position="attributes">
+					<attribute name="attrs">
+						{'required':[('state','=','in_progress'),('suppliers_qualifications','=' , 'not_qualified')], 'readonly':[('state','!=','in_progress')], 'invisible':['|' , ('state','in',('draft','confirm','approve','HRM_approve1','GM_approve1','commite_confirm')),('suppliers_qualifications','!=' , 'not_qualified')]}
+					</attribute>
+				</xpath> 
+
+
+            </field>
+        </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       <!-- Inherit res.partner.category Form To add Related Product Category -->
+
+                     <record model="ir.ui.view" id="view_res_partner_category_form_inherit">
+			<field name="name">res.partner.category.form</field>
+			<field name="model">res.partner.category</field>
+			<field name="inherit_id" ref="base.view_partner_category_form" />
+			<field name="arch" type="xml">
+                           <field name="active" position="after">
+                                  <field name="related_product_category_id" />
+                           </field>
+                      </field>
+		     </record>
+
+
+     </data>
+</openerp>
+
+

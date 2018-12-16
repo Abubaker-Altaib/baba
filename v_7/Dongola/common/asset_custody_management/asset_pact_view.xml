@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+
+  <data>
+
+
+
+
+
+  <!-- Menu Items -->
+
+      <menuitem id="menu_account_pact_root" 
+                             icon="terp-partner" 
+                             name="Custody Management" 
+                             sequence="3" 
+                             web_icon="images/pos.png" 
+                             web_icon_hover="images/pos-hover.png"
+
+                            />
+
+
+    <record model="ir.actions.act_window" id="action_account_asset_pact_order_form">
+        <field name="name">Pact Order Action</field>
+        <field name="res_model">asset.pact.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a Custody Order that you need it. 
+              </p><p>
+                Use this menu to search within your Custodies orders by
+                references, department,state. .
+              </p>
+            </field>
+ </record>
+                  <menuitem id="menu_account_pact_child" 
+                             icon="terp-partner" 
+                             name="Custody Orders" 
+                             parent="menu_account_pact_root"
+                             web_icon="images/pos.png" 
+                             web_icon_hover="images/pos-hover.png"
+                             sequence="1" />
+
+
+                  <menuitem id="menu_pact_order_form" 
+                             parent="menu_account_pact_child"
+                             name="Custody Request" 
+                             action="action_account_asset_pact_order_form" 
+                             sequence="1" />
+
+
+
+
+
+   
+  <!-- Form , Tree , Menu and Action For Pact Order -->
+    <record model="ir.ui.view" id="account_asset_pact_custom">
+		<field name="name">asset.pact.order.form</field>
+		<field name="model">asset.pact.order</field>
+		<field name="arch" type="xml">
+                <form string="Custody Request" version="7.0">
+                  <header>
+                             <button name="confirm" states="draft" string="Confirm" confirm="Are you sure you want to confirm this request?" />
+		             <button name="approve" states="confirmed" string="Approve" confirm="Are you sure you want to confirm this request?" />
+                             <button name="approve_dept" states="approved" string="Department Manager Approve" confirm="Are you sure you want to confirm this request?" />
+                             <button name="approve_support" states="approve_dept" string="Techincal Support Manager Approve" confirm="Are you sure you want to confirm this request?" />
+		             <button name="assign" states="approve_support" string="Assign Users to Pacts" />
+
+		             <button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" />
+
+	                     <button name="cancel" states="draft,confirmed,approved,approve_dept,approve_support" string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to cancel this request?" />
+                 
+                   
+                     <field name="state" widget="statusbar" readonly="1" statusbar_visible="draft,confirmed,approved,approve_dept,approve_support,assigned,cancel" />
+                  </header>
+		  <sheet>
+		       <div class="oe_title">
+		                <h1>
+		                    <label string="Custody Request " />
+		                </h1>
+		       </div>
+		       <group >
+                          <group col="2" >
+	                  <field name="name" readonly="1" colspan="2" required="1" widget="handle" /> 
+                          <field name="department_id" required="1"  colspan="2"  attrs="{'readonly' : [('state' , 'not in' , ['draft'])] }"/>
+	                  <field name="period_type"  colspan="2" required="1" attrs="{'readonly' : [('state' , 'not in' , ['draft'])] }"/>
+                          <field name="purpose" required="1"   colspan="2" attrs="{'readonly' : [('state' , 'not in' , ['draft']) ]}"/>
+                           
+                          </group >
+                          <group col="2"> 
+                          <field name="order_date" required="1" colspan="2" attrs="{'readonly' : [('state' , 'not in' , ['draft']) ]}"/>
+	                  <field name="custody_type" colspan="2" required="1" attrs="{'readonly' : [('state' , 'not in' , ['draft'])] }"/> 
+                          <field name="expacted_return_date" colspan="2" attrs="{'invisible' : [('period_type' , '!=' , 'temp' )] ,  'required' : [('period_type' , '=' , 'temp' )] ,      'readonly' : [('state' , 'not in' , ['draft']) ]}"/>
+                          <field name="user" colspan="2" readonly="1"  />
+                          </group>
+
+
+
+                         </group>
+		        
+		       <notebook >
+                          <page string="Items" colspan="4">
+		                <field name="categories_ids"  attrs="{'readonly' : [('state' , 'in' , ['approve_support','assigned'])]}">
+		                        <tree editable="bottom" string="Items">
+		                            <field name="category_id" required="1" />
+		                            <field name="quantity" required="1"/>
+
+                                 
+
+		                        </tree>           
+		                </field>
+		          </page>
+		          <page string="Pact Lines" colspan="4" attrs="{'readonly' : [('state' , 'not in' , ['approve_support'])], 'invisible' : [('state' , 'not in' , ['approve_support','assigned'])]}">
+		                <field name="pact_line_ids"  attrs="{'readonly' : [('state' , 'in' , ['assigned'])]}">
+		                        <tree editable="bottom" string="Pact Lines" create="false">
+                                            <field name="category_id"  readonly="1" />
+		                            <field name="custody_id" required="1" domain="[('category_id' , '=' , category_id),('state' , 'in' , ['draft','released'])]" select="1"/>
+		                            <field name="name"  />
+		                            <field name="custody_location_id" required="1" />
+                                            <field name="custody_type" invisible="1"/>
+
+		                            <field name="employee_id"  attrs="{'invisible' : [('custody_type' , '!=' , 'personal' )] ,  'required' : [('custody_type' , '=' , 'personal' )]}"  />
+                                 
+
+		                        </tree>           
+		                </field>
+		          </page>
+                          <page string="Notes" colspan="4" >
+                              <group>
+                                 <group >
+                                  <field name="source_document" readonly="1"/>   
+		                 </group>  
+		              </group>  
+
+
+                            
+                              <field name="notes" attrs="{'readonly' : [('state' , 'in' , ['done','cancel'])] }"/>   
+                          </page>
+		       </notebook>
+		  </sheet>
+                <div class="oe_chatter">
+					   <field name="message_follower_ids" widget="mail_followers" />
+					   <field name="message_ids" widget="mail_thread" />
+				  </div>	                     				
+	        </form>
+	     </field>
+
+   </record>
+
+                  <record id="asset_pact_order_tree" model="ir.ui.view">
+			<field name="name">asset.pact.order.tree</field>
+			<field name="model">asset.pact.order</field>
+			<field name="arch" type="xml">
+				<tree fonts="bold:message_unread==True" colors="grey:state in ('cancel','assigned');blue:state in ('draft');red:state not in ('draft','cancel','assigned')" string="Pact Orders" >
+					<field name="name" />
+					<field name="department_id"/>	
+                                        <field name="message_unread" invisible="1"/>
+                                        <field name="message_summary" invisible="1"/>
+                                        <field name="user"/>
+                                        <field name="state"/>	
+				</tree>
+ 
+			</field>
+                   </record>
+
+
+
+        <record id="custody_pact_order_search_form" model="ir.ui.view">
+            <field name="name">asset.pact.order.search.form</field>
+            <field name="model">asset.pact.order</field>
+            <field name="arch" type="xml">
+               <search string="Orders">
+                    <field name="department_id" string="Department"/>
+                    <field name="state"/>
+                    <separator/>
+                    <filter icon="terp-mail-message-new" string="Unread Messages" name="message_unread" domain="[('message_unread','=',True)]"/>
+                    <separator/>
+                    <filter name="draft" string="New Orders" domain="[('state','=','draft')]" help="New Orders" icon="terp-check"/>
+                    <group expand="0" string="Group By...">
+
+                        <filter string="Department" name="group_department_id" icon="terp-folder-violet" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter string="Categories" name="group_category_id" icon="terp-folder-violet" domain="[]" context="{'group_by':'category_id'}"/>
+                        <filter string="Period Type" name="group_period_type" icon="terp-folder-violet" domain="[]" context="{'group_by':'period_type'}"/>
+                        <filter string="Custody Type" name="group_custody_type" icon="terp-folder-violet" domain="[]" context="{'group_by':'custody_type'}"/>
+
+
+                    </group>
+           </search>
+            </field>
+        </record>
+
+
+
+
+
+ 
+
+
+
+                 
+                  
+
+                   
+
+   
+
+
+
+     </data>
+</openerp>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <template id="project_journal_items_id">
+          <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+              <t t-foreach="docs" t-as="doc">
+                 <div class="page"  t-attf-style="font-family: #{doc.company_id.report_style_id.page_fount};">
+                     <div>
+                         <p  t-attf-style="font-family: #{doc.company_id.report_style_id.header_fount};">
+                             <h3 class="text-center" t-attf-style="font-family: #{doc.company_id.report_style_id.page_fount};">
+                                 Journal Entry
+                             </h3>
+                         </p>
+                          <br></br>
+                     <table style="width:100%;">
+                     <thead>
+                        <tr >
+                            <td><strong>Name:</strong></td>
+                            <td><span t-field="doc.name"/></td>
+                        </tr>
+                        <tr name="date_row">
+                            <td><strong>Date:</strong></td>
+                            <td><span t-field="doc.date"/></td>
+                            <td><strong>Journal:</strong></td>
+                            <td><span t-field="doc.journal_id"/></td>
+                        </tr>
+                        </thead>
+                    </table>
+              <br></br>
+                         <table class="table table-bordered table-condensed" t-attf-style="font-family: #{doc.company_id.report_style_id.table_fount};">
+                            <thead t-attf-style="background-color: #{doc.company_id.report_style_id.table_fount};">
+                                <tr  >
+                                    <th class="text-center" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};">Debit</th>
+                                    <th class="text-center" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};">Credit</th>
+                                    <th class="text-center" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};">Code</th>
+                                    <th class="text-center" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};">Account</th>
+                                    <th class="text-center" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};">Label</th>
+                                    <th class="text-center" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};">Analytic Account</th>
+                                    <th class="text-center" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};">Reference</th>
+                                    <th class="text-center" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};">Due Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.line_ids" t-as="line">
+                                    <t t-if="line_even">
+                                        <tr t-attf-style="background-color: #{doc.company_id.report_style_id.even_row_color};">
+                                            <td t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.debit" /></td>
+                                            <td t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};" ><span t-field="line.credit" /></td>
+                                            <td  t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.account_id.code"/></td>
+                                            <td  t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.account_id.name"/></td>
+                                            <td  t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.name"/></td>
+                                            <td  t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.analytic_account_id.name"/></td>
+                                            <td  t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.ref"/></td>
+                                            <td  name="date_maturity_odd" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.date_maturity"/></td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="not line_even">
+                                        <tr t-attf-style="background-color: #{doc.company_id.report_style_id.odd_row_color};">
+                                            <td t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.debit" /></td>
+                                            <td t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};" ><span t-field="line.credit" /></td>
+                                            <td  t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.account_id.code"/></td>
+                                            <td  t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.account_id.name"/></td>
+                                            <td  t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.name"/></td>
+                                            <td  t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.analytic_account_id.name"/></td>
+                                            <td  t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.ref"/></td>
+                                            <td name="date_maturity_even" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.date_maturity"/></td>
+                                        </tr>
+                                    </t>
+                                </t>
+                                </tbody>
+                            <thead t-attf-style="background-color: #{doc.company_id.report_style_id.header_color};">
+                                <tr  class="text-center">
+                                    <td t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><t t-esc="sum([c.credit for c in doc.line_ids])"/></td>
+                                    <td t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><t t-esc="sum([d.debit for d in doc.line_ids])"/></td>
+                                    <td t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};" colspan="6"><strong>Total</strong></td>
+                                </tr>
+                            </thead>
+                         </table>
+                     </div>
+                </div>
+              </t>
+           </t>
+         </t>
+        </template>
+        
+    </data>
+</openerp>

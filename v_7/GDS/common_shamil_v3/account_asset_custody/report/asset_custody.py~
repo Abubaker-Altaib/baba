@@ -1,0 +1,101 @@
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+# NCTR, Nile Center for Technology Research
+# Copyfull outer (C) 2011-2012 NCTR (<http://www.nctr.sd>).
+#
+##############################################################################
+
+import time
+import pooler
+import copy
+from report import report_sxw
+import pdb
+import re
+from osv import fields, osv
+from openerp.tools.translate import _
+
+class asset_custody_sum_reports(report_sxw.rml_parse):
+    def __init__(self, cr, uid, name, context):
+        super(asset_custody_sum_reports, self).__init__(cr, uid, name, context)
+        self.localcontext.update({
+            'time': time,
+            'get_data':self._get_data,
+ 
+        })
+
+
+
+    def _get_data(self,data):
+        department_obj = self.pool.get('hr.department') 
+        pro_obj = self.pool.get('product.product') 
+        office_obj = self.pool.get('office.office') 
+        type_obj = self.pool.get('product.category')
+        date_from= data['form']['date_from']
+        date_to= data['form']['date_to']
+        executing_agency= data['form']['executing_agency']
+        self.cr.execute('''
+                select
+                        off.name as office,
+                        mod.name as model,    
+                        typ.name  as main_type ,
+                        typ.id  as main_type_id ,
+                        cus.executing_agency  as executing_agency,
+                        cus.serial  as serial,
+                        cus.request_date  as date,
+                        cus.custody_type  as type,
+                        cus.state_rm  as state_rm,
+                        cus.picking_id  as picking_id,
+                        pick.name as pick,
+                        dept.name as dept,
+                        dept.id as dept_id,
+                        emp.name_related  as emp,
+                        emp.id  as emp_id
+                    from account_asset_asset cus 
+                        left outer join office_office off on (cus.office_id=off.id)
+                        left outer join stock_picking pick on (cus.picking_id=pick.id)
+                        left outer join product_template mod on (cus.product_id=mod.id)
+                        left outer join product_product modd on (cus.product_id=modd.id)
+                        left outer join product_category typ on (mod.categ_id=typ.id)
+                        left outer join hr_department dept on (cus.department_id=dept.id)
+                        left outer join hr_employee emp on (cus.employee_id=emp.id)
+
+                 
+                
+                order by
+                     date,state_rm,dept_id,main_type
+                
+               ''')
+                
+                
+               
+        res = self.cr.dictfetchall()
+ 
+        if data['form']['date_from']:
+           res=[x for x in res if x['date']>=data['form']['date_from']]
+        if data['form']['date_to']:
+           res=[x for x in res if  x['date']<=data['form']['date_to']]
+        if data['form']['state_rm']:
+           res=[x for x in res if x['state_rm']==data['form']['state_rm']]
+        if data['form']['custody_type']:
+           res=[x for x in res if x['type']==data['form']['custody_type']]
+        if data['form']['product_id']:
+           res=[x for x in res if x['model']==data['form']['product_id'][0]]
+        if data['form']['cat_id']:
+           cat_ids =  type_obj.search(self.cr, self.uid, [('id', 'child_of',data['form']['cat_id'][0])])
+           res=[x for x in res if x['main_type_id'] in cat_ids]
+        if data['form']['department_id']:
+           department_ids =  department_obj.search(self.cr, self.uid, [('id', 'child_of',data['form']['department_id'][0])])
+           res=[x for x in res if x['dept_id'] in department_ids]
+        if data['form']['employee_id']:
+           res=[x for x in res if x['emp_id'] == data['form']['product_id'][0]]
+        #if data['office_ids']:
+         ##  print data['office_ids']
+           #res=[x for x in res if x['office_id'] in data['office_ids']]
+ 
+ 
+        return res
+
+               
+report_sxw.report_sxw('report.asset.custody.sum', 'asset.custody', 'addons/account_asset_custody/report/asset_custody.rml' ,parser=asset_custody_sum_reports ,header='custom landscape')
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

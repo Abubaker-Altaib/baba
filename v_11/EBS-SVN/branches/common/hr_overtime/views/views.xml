@@ -1,0 +1,502 @@
+<!--
+<?xml version="1.0" encoding="utf-8"?>
+-->
+<odoo>
+    <data>
+    <!--Overtime Structure Tree-->
+    <record id="tree_hr_overtime_structure_view" model="ir.ui.view">
+      <field name="name">hr.overtime.structure.tree</field>
+      <field name="model">hr.overtime.structure</field>
+      <field name="arch" type="xml">
+        <tree string="Overtime Structure">
+          <field name="name"/>
+          <field name="code"/>
+          <field name="overtime_method" invisible="1"/>
+        </tree>
+      </field>
+    </record>
+    
+    <record id="view_hr_overtime_structure_form" model="ir.ui.view">
+      <field name="name">hr.overtime.structur.form</field>
+      <field name="model">hr.overtime.structure</field>
+      <field name="arch" type="xml">
+        <form string="Overtime Structure">
+          <header>
+            <button name="apply_ov_structure" type="object" string="Apply Overtime Structure" states="draft"/>
+            <field name="state" widget="statusbar"/>
+          </header>
+          <sheet>
+            <group col="4">
+              <field name="name" attrs="{'readonly':[('state','!=','draft')]}" required="1"/>
+              <field name="code" placeholder="ov/dev" attrs="{'readonly':[('state','!=','draft')]}"/>
+              <field name="payroll_structure_ids" widget="many2many_tags" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+              <field name="overtime_method" attrs="{'readonly':[('state','!=','draft')]}" invisible="1"/>
+            </group>
+            <notebook>
+              <page string="Overtime Rules">
+                <field name="hr_ov_structure_rule_ids" attrs="{'readonly':[('state','!=','draft')]}">
+                  <tree string="Overtime Rules" editable="bottom">
+                    <field name="type"/>
+                    <field name="rate" widget="float_time"/>
+                    <field name="begin_after" widget="float_time" attrs="{'invisible': [('type', 'in', ['official_leave','weekend'])]}"/>
+                  </tree>
+                </field>
+              </page>
+              <page string="Calculation Info">
+                <group>
+                  <field name="calculation_type" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="amount" attrs="{'invisible':[('calculation_type','!=','fixed')],'required':[('calculation_type','=','fixed')],'readonly':[('state','!=','draft')]}"/>
+                  <field name="rate" attrs="{'invisible':[('calculation_type','!=','computed')],'required':[('calculation_type','!=','fixed')],'readonly':[('state','!=','draft')]}"/>
+                </group>
+                  <field name="salary_rule_ids" attrs="{'invisible':[('calculation_type','!=','computed')],'required':[('calculation_type','!=','fixed')],'readonly':[('state','!=','draft')]}"/>
+                
+              </page>
+              <page string="Accounting Info">
+                <group>
+                  <field name="overtime_account_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="overtime_journal_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                </group>
+              </page>
+              <page string="Filters">
+                <group>
+                  <field name="department_ids" widget="many2many_tags" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="category_ids" widget="many2many_tags" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="job_ids" widget="many2many_tags" attrs="{'readonly':[('state','!=','draft')]}"/>
+                </group>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+    
+    
+    <record id="action_hr_overtime_structure" model="ir.actions.act_window">
+      <field name="name">Overtime Structures</field>
+      <field name="res_model">hr.overtime.structure</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    
+  
+    
+    <!--Overtime Request Tree-->
+    <record id="tree_hr_overtime_request_line_view" model="ir.ui.view">
+      <field name="name">hr.overtime.request.line.tree</field>
+      <field name="model">hr.overtime.request.line</field>
+      <field name="arch" type="xml">
+        <tree string="Overtime Structure">
+          <field name="name"/>
+          <field name="employee_id"/>
+          <field name="user_id" invisible="1"/>
+          <field name="from_date"/>
+          <field name="to_date" invisible="1"/>
+          <field name="type"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+    
+    <!--Overtime Request Form-->
+    <record id="view_hr_overtime_request_line_form" model="ir.ui.view">
+      <field name="name">hr.overtime.request.line.form</field>
+      <field name="model">hr.overtime.request.line</field>
+      <field name="arch" type="xml">
+        <form string="Overtime Request">
+          <header>
+            <button name="action_sumbit" type="object" string="Submit" states="draft" class="oe_highlight"/>
+            <button name="action_confirm" type="object" string="Confirm" states="submit" class="oe_highlight"/>
+            <button name="action_approve" type="object" string="Approve" states="confirm" class="oe_highlight"/>
+            <button name="action_set_to_draft" type="object" string="Set To Draft" states="submit,approve"/>
+            <field name="state" widget="statusbar"/>
+          </header>
+          <sheet>
+            <group col="4">
+              <field name="name"/>
+              <field name="employee_id" attrs="{'readonly': [('state','=','approve')]}"/>           
+              <field name="department_id" readonly="True"/>
+              <field name="from_date" attrs="{'readonly': [('state','=','approve')]}"/>
+              <field name="to_date" invisible="1"/>
+              <field name="total_time" attrs="{'readonly': [('state','=','approve')]}" widget="float_time"/>
+              <field name="type"/>
+              <field name="reason"/>
+              <field name="user_id" invisible="1"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+
+    <!-- <record id="view_hr_job_overtime_inherit" model="ir.ui.view">
+      <field name="name">HR Job Overtime Inherit</field>
+      <field name="model">hr.job</field>
+      <field name="inherit_id" ref="hr.view_hr_job_form"/>
+      <field name="arch" type="xml">
+        <field name="no_of_recruitment" position="after">
+          <field name="overtime"/>
+        </field>
+      </field>
+    </record> -->
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.form.inherit.hr.overtime</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('settings')]" position="inside">
+                    <div class="app_settings_block" data-string="HR Overtime" string="HR Overtime" data-key="hr_overtime_custom" >
+
+                    <h2 >HR Overtime </h2>
+                    <div class="row mt16 o_settings_container" id="hr_overtime_custom_localization" >
+                        <div class="col-md-6 col-xs-12 o_setting_box">
+                            
+                            <group>
+                                <field name="day_max_hours" />
+                                <field name="month_max_hours" />
+                                <field name="salary_max_percentage" />
+                                <field name="salary_rule_id"/>
+                                <field name="total_hours"/>
+
+                            </group>
+                      </div>
+                    </div>
+                </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_hr_overtime_settings" model="ir.actions.act_window">
+            <field name="name">Settings</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module' : 'hr_overtime_custom'}</field>
+        </record>
+
+
+        <record id="view_hr_overtime_request_form" model="ir.ui.view">
+          <field name="name">Overtime Request Form </field>
+          <field name="model">hr.overtime.request</field>
+          <field name="arch" type="xml">
+            <form>
+              <header>
+                  <button name="confirm" type="object" string="Confirm" states="draft" class="oe_highlight"/>
+                  <button name="reject" type="object" string="Reject" states="confirm" class="oe_link"/>
+                  <button name="draft" type="object" string="Reset Draft" states="reject" class="oe_highlight"/>
+                  <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+
+              </header>
+              <sheet>
+                <group col="4">
+                  <field name="employee_id" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="department_id" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="overtime_id" domain="[('state','in',['approve'])]" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <newline/>
+                  <field name="date_from" required="1"/>
+                  <field name="date_to" required="1"/>
+                  <field name="total_hours" invisible="1"/>
+                </group>
+
+                              
+               <notebook>
+
+                  <page string="Hours Details" attrs="{'invisible':[('total_hours','=',True)]}">
+                        <field name="line_ids" context="{'default_employee_id':employee_id,'default_department_id':department_id}" attrs="{'readonly':[('state','!=','draft')],'invisible':[('total_hours','!=',False)]}">
+                        <tree editable="bottom">
+                          <field name="employee_id" invisible="1"/>
+                          <field name="department_id" invisible="1"/>
+                          <field name="from_date" required="1"/>
+                          <field name="to_date" invisible="1"/>
+                          <field name="type" required="1"/>
+                          <field name="total_time" required="1"/>
+                        </tree>
+                    </field>
+                    <!-- <field name="total_line_ids" context="{'default_employee_id':employee_id,'default_department_id':department_id}" attrs="{'readonly':[('state','!=','draft')],'invisible':[('total_hours','!=',True)]}">
+                      <tree editable="bottom">
+                        <field name="employee_id" invisible="1"/>
+                        <field name="department_id" invisible="1"/>
+                        <field name="working_day_hours"/>
+                        <field name="weekend_hours"/>
+                        <field name="official_leave_hours"/>
+                      </tree>
+                    </field> -->
+                  </page>
+                  <page string="Hours Details"  attrs="{'invisible':[('total_hours','!=',True)]}">
+                    <group>
+                      <field name="working_day_hours"/>
+                      <field name="weekend_hours"/>
+                      <field name="official_leave_hours"/>
+                    </group>
+                  
+                </page>
+                  
+                  <page string="Rejection Reasons">
+                  <field name="reject_reason"/>
+                </page>
+            
+                </notebook>
+                
+                <separator/>
+                <group>
+                  <group attrs="{'invisible':[('total_hours','=',True)]}" string="Hours Details">
+                    <field name="total_working_day_hours"/>
+                    <field name="total_weekend_hours"/>
+                    <field name="total_official_leave_hours"/>
+                  </group>
+
+                  <group string="Totals">
+                    <field name="total_time" readonly="1" string="Total Hours"/>
+                    <field name="total_amount" readonly="1"/>
+                  </group>
+                </group>
+              </sheet>
+            </form>
+          </field>
+        </record>
+
+        <record id="view_hr_overtime_request_tree" model="ir.ui.view">
+          <field name="name">Overtime Request Tree</field>
+          <field name="model">hr.overtime.request</field>
+          <field name="arch" type="xml">
+            <tree>
+              <field name="employee_id"/>
+              <field name="department_id"/>
+              <field name="total_time"/>
+              <field name="total_amount"/>
+            </tree>
+          </field>
+        </record>
+
+
+
+        <record id="view_hr_overtime_form" model="ir.ui.view">
+          <field name="name">Overtime Form</field>
+          <field name="model">hr.overtime</field>
+          <field name="arch" type="xml">
+            <form>
+              <header>
+                  <button name="confirm" type="object" string="Confirm" states="draft" class="oe_highlight"/>
+                  <button name="approve" type="object" string="Approve" states="confirm" class="oe_highlight"/>
+                  <button name="reject" type="object" string="Reject" states="confirm,approve" class="oe_link"/>
+                  <button name="draft" type="object" string="Reset Draft" states="reject" class="oe_highlight"/>
+                  <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve"/>
+                </header>
+              <sheet>
+                <group col="4">
+                  <field name="department_id" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="employee_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="date_from" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="date_to" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="overtime_structure_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="working_type" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="project_id" attrs="{'invisible':[('working_type','!=','project')],'required':[('working_type','=','project')]}"/>
+                </group>
+                <notebook>
+                  <page string="Employees">
+                    <button name="select_employees" type="object" string="Select Employees" class="oe_highlight"/>
+                    <field name="employee_ids" attrs="{'readonly':[('state','!=','draft')]}">
+                      <tree editable="bottom">
+                        <field name="employee_id" required="1" domain="[('department_id','child_of',parent.department_id),('contract_id.overtime_structure_id','=',parent.overtime_structure_id)]" context="{'employee_ids':parent.employee_ids}"/>
+                        <field name="expected_time" required="1"/>
+                      </tree>
+                    </field>
+                  </page>
+                  <page string="Overtime Reasons">
+                    <field name="reason" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  </page>
+                  <page string="Services">
+                    <field name="services" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  </page>
+                </notebook>
+              </sheet>
+            </form>
+          </field>
+        </record>
+
+
+        <record id="view_hr_overtime_tree" model="ir.ui.view">
+          <field name="name">Overtime Tree</field>
+          <field name="model">hr.overtime</field>
+          <field name="arch" type="xml">
+            <tree>
+              <field name="department_id"/>
+              <field name="employee_id"/>
+              <field name="date_from"/>
+              <field name="date_to"/>
+            </tree>
+          </field>
+        </record>
+
+
+
+
+        <record id="view_hr_overtime_confirm_form" model="ir.ui.view">
+          <field name="name">Overtime Confirm Form </field>
+          <field name="model">hr.overtime.confirm</field>
+          <field name="arch" type="xml">
+            <form>
+              <header>
+                  <button name="confirm" type="object" string="Confirm" states="draft" class="oe_highlight"/>
+                  <button name="transfer" type="object" string="Transfer" states="confirm" class="oe_highlight"/>
+                  <button name="reject" type="object" string="Reject" states="confirm" class="oe_link"/>
+                  <button name="draft" type="object" string="Reset Draft" states="reject" class="oe_highlight"/>
+                  <field name="state" widget="statusbar" statusbar_visible="draft,confirm,transfer"/>
+
+              </header>
+              <sheet>
+                <group col="4">
+                  <field name="department_id" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="employee_id" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="overtime_id" domain="[('state','=','approve')]" attrs="{'readonly':[('state','!=','draft')],'invisible':[('overtime_structure_id','!=',False)]}"/>
+                  <field name="overtime_structure_id" attrs="{'invisible':[('overtime_id','!=',False)],'readonly':[('state','!=','draft')]}"/>
+                  <field name="date_from" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="date_to" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                  <field name="voucher_id" readonly="1"/>
+                  <field name="total_hours" invisible="1"/>
+                </group>
+                <notebook>
+                  <page string="Overtimes">
+                    <field name="line_ids" domain="[('overtime_id','=',overtime_id),('state','in',['confirm'])]" context="{'default_overtime_id':overtime_id,'default_overtime_structure_id':overtime_structure_id}" attrs="{'readonly':[('state','!=','draft')],'invisible':[('total_hours','!=',False)]}" widget="many2many">
+                      <tree>
+
+                        <field name="employee_id"/>
+                        <field name="overtime_structure_id" invisible="1"/>
+                        <field name="department_id"/>
+                        <field name="date_from" invisible="1"/>
+                        <field name="date_to" invisible="1"/>
+                        <field name="total_working_day_hours"/>
+                        <field name="total_weekend_hours"/>
+                        <field name="total_official_leave_hours"/>
+                        <field name="total_time" readonly="1"/>
+                        <field name="total_amount" readonly="1"/>
+                        <field name="state" invisible="1"/>
+                        <button name="reject" type="object" string="Reject" class="oe_link" states="confirm"/>
+                      </tree>
+                    </field>
+                    
+                    <field name="total_line_ids" domain="[('overtime_id','=',overtime_id),('state','in',['draft','confirm'])]" context="{'default_overtime_id':overtime_id,'default_overtime_structure_id':overtime_structure_id}" attrs="{'readonly':[('state','!=','draft')],'invisible':[('total_hours','=',False)]}">
+                      <tree editable="bottom">
+                        <field name="overtime_id" invisible="1"/>
+                        <field name="overtime_structure_id" invisible="1"/>
+                        <field name="employee_id" required="1" domain="[('department_id','child_of',parent.department_id)]" context="{'total_line_ids':parent.total_line_ids}"/>
+                        <field name="department_id" required="1"/>
+                        <field name="date_from" invisible="1"/>
+                        <field name="date_to" invisible="1"/>
+                        <field name="working_day_hours"/>
+                        <field name="weekend_hours"/>
+                        <field name="official_leave_hours"/>
+                        <field name="total_time" readonly="1"/>
+                        <field name="total_amount" readonly="1"/>
+                      </tree>
+                    </field>
+                  </page>
+                  <page string="Accounting Info">
+                    <group>
+                      <field name="overtime_account_id" attrs="{'required':[('state','=','confirm')],'readonly':[('state','!=','confirm')]}"/>
+                      <field name="overtime_journal_id" attrs="{'required':[('state','=','confirm')],'readonly':[('state','!=','confirm')]}"/>
+                    </group>
+                  </page>
+                </notebook>
+                <group col="4">
+                  <field name="total_time" readonly="1"/>
+                  <field name="total_amount" readonly="1"/>
+                </group>
+              </sheet>
+            </form>
+          </field>
+        </record>
+
+        <record id="view_hr_overtime_confirm_tree" model="ir.ui.view">
+          <field name="name">Overtime Confirm Tree</field>
+          <field name="model">hr.overtime.confirm</field>
+          <field name="arch" type="xml">
+            <tree>
+              <field name="department_id"/>
+              <field name="employee_id"/>
+              <field name="date_from"/>
+              <field name="date_to"/>
+            </tree>
+          </field>
+        </record>
+
+
+        <record id="view_multi_employees_form" model="ir.ui.view">
+          <field name="name">Multi Employees Form</field>
+          <field name="model">hr.overtime.multi.employees</field>
+          <field name="arch" type="xml">
+            <form>
+              <sheet>
+                <field name="department_id" invisible="1"/>
+                <field name="employee_ids" domain="[('department_id','child_of',department_id)]"/>
+
+                <group>
+                  <field name="hours" style="width:20%%"/>
+                </group>
+              </sheet>
+              <footer>
+                <button name="generate" type="object" string="Generate" class="oe_highlight"/>
+              </footer>
+            </form>
+          </field>
+        </record>
+
+
+        <record id="view_overtime_reject_reason_form" model="ir.ui.view">
+          <field name="name">Overtime Reject Reason Form</field>
+          <field name="model">hr.overtime.reject.reason</field>
+          <field name="arch" type="xml">
+            <form>
+              <sheet>
+                <group>
+                  <field name="reason" placeholder="Please Fill The Rejection Reasons" required="1"/>
+                </group>
+                
+              </sheet>
+              <footer>
+                <button name="reject" type="object" string="Reject" class="oe_highlight"/>
+              </footer>
+            </form>
+          </field>
+        </record>
+
+        <act_window id="action_hr_overtime_request" name="Overtime Requests" res_model="hr.overtime.request" view_mode="tree,form"/>
+
+
+        <act_window id="action_hr_overtime" name="Overtime Plan" res_model="hr.overtime" view_mode="tree,form"/>
+
+        <act_window id="action_hr_overtime_confirm" name="Overtimes Confirm" res_model="hr.overtime.confirm" view_mode="tree,form"/>
+
+
+    <menuitem name="Overtimes"
+      id="menu_hr_overtime"/>
+    
+    <record id="action_hr_overtime_request_line" model="ir.actions.act_window">
+      <field name="name">Overtime Request Line</field>
+      <field name="res_model">hr.overtime.request.line</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    
+      
+    <!-- <menuitem name="Overtime Requests"
+      parent="menu_hr_overtime"
+      id="menu_hr_overtime_request"
+      action="action_hr_overtime"/> -->
+
+    <menuitem id="menu_hr_overtime_request" name="Overtime Requests" parent="menu_hr_overtime" action="action_hr_overtime_request" sequence="10"/>
+
+    <menuitem id="menu_hr_overtime_overtime" name="Overtime Plan" parent="menu_hr_overtime" action = "action_hr_overtime" sequence="1"/>
+
+    <menuitem id="menu_hr_overtime_confirm" name="Overtime Transfer" parent="menu_hr_overtime" action="action_hr_overtime_confirm"/>
+
+    <menuitem name="Configuration" parent="menu_hr_overtime" id="menu_hr_overtime_configuration" sequence="100"/>
+
+    <menuitem name="Overtime Structures"
+        parent="menu_hr_overtime_configuration"
+      id="menu_hr_overtime_structure"
+      action="action_hr_overtime_structure"/>
+      <menuitem id="menu_hr_overtime_global_settings" name="Settings"
+        parent="menu_hr_overtime_configuration" sequence="0" action="action_hr_overtime_settings"/>
+
+    
+  </data>
+</odoo>

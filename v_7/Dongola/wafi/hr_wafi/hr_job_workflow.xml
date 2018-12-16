@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="wkf_job" model="workflow">
+			<field name="name">hr.job.wkf</field>
+			<field name="osv">hr.job</field>
+			<field name="on_create">True</field>
+		</record>
+		<!-- Activities -->
+		<record id="act_job_draft" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_job" />
+			<field name="flow_start">True</field>
+			<field name="name">draft</field>
+		</record>
+		<record id="act_job_hr_user" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_job" />
+			<field name="name">complete</field>
+			<field name="kind">function</field>
+			<field name="action">action_request()</field>
+		</record>
+		<record id="act_job_hr_manager" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_job" />
+			<field name="name">confirm</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'confirm'})</field>
+		</record>
+		<record id="act_job_unit_manager" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_job" />
+			<field name="name">unit_manager</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'unit_manager'})</field>
+		</record>
+		<record id="act_job_minister" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_job" />
+			<field name="name">minister</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'minister'})</field>
+		</record>
+		<record id="act_job_service_manager" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_job" />
+			<field name="name">service_manager</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'service_manager'})</field>
+		</record>
+		<record id="act_job_finance_minister" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_job" />
+			<field name="name">finance_minister</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'finance_minister'})</field>
+		</record>
+		<record id="act_job_done" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_job" />
+			<field name="flow_stop">True</field>
+			<field name="name">done</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'done'})</field>
+		</record>
+		<!-- Transitions -->
+		<record id="tr1" model="workflow.transition">
+			<field name="act_from" ref="act_job_draft" />
+			<field name="act_to" ref="act_job_hr_user" />
+			<field name="signal">request</field>
+		</record>
+		<record id="tr2" model="workflow.transition">
+			<field name="act_from" ref="act_job_hr_user" />
+			<field name="act_to" ref="act_job_hr_manager" />
+			<field name="signal">confirm</field>
+		</record>
+		<record id="tr3" model="workflow.transition">
+			<field name="act_from" ref="act_job_hr_manager" />
+			<field name="act_to" ref="act_job_unit_manager" />
+			<field name="signal">unit_manager</field>
+		</record>
+		<!-- level 1 -->
+		<record id="tr4" model="workflow.transition">
+			<field name="act_from" ref="act_job_unit_manager" />
+			<field name="act_to" ref="act_job_minister" />
+			<field name="signal">minister</field>
+			<field name="condition">degree_level==1</field>
+		</record>
+		<record id="tr5" model="workflow.transition">
+			<field name="act_from" ref="act_job_minister" />
+			<field name="act_to" ref="act_job_service_manager" />
+			<field name="signal">service_manager</field>
+			<field name="condition">degree_level==1</field>
+		</record>
+		<record id="tr7" model="workflow.transition">
+			<field name="act_from" ref="act_job_service_manager" />
+			<field name="act_to" ref="act_job_finance_minister" />
+			<field name="signal">finance_minister</field>
+			<field name="condition">degree_level==1</field>
+		</record>
+		<record id="tr100" model="workflow.transition">
+			<field name="act_from" ref="act_job_finance_minister" />
+			<field name="act_to" ref="act_job_done" />
+			<field name="signal">done</field>
+			<field name="condition">degree_level==1</field>
+		</record>
+		<!--level 2 & 3 -->
+		<record id="tr6" model="workflow.transition">
+			<field name="act_from" ref="act_job_unit_manager" />
+			<field name="act_to" ref="act_job_service_manager" />
+			<field name="signal">service_manager</field>
+			<field name="condition">degree_level!=1</field>
+		</record>
+		<!--level 2 -->
+		<record id="tr90" model="workflow.transition">
+			<field name="act_from" ref="act_job_service_manager" />
+			<field name="act_to" ref="act_job_done" />
+			<field name="signal">minister</field>
+			<field name="condition">degree_level==2</field>
+		</record>
+		<!-- level 3 -->
+		<record id="tr8" model="workflow.transition">
+			<field name="act_from" ref="act_job_service_manager" />
+			<field name="act_to" ref="act_job_done" />
+			<field name="signal">ministry_agent</field>
+			<field name="condition">degree_level==3</field>
+		</record>
+	</data>
+</openerp>

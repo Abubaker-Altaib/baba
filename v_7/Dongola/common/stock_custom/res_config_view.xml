@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="view_stock_config_settings" model="ir.ui.view">
+			<field name="name">stock settings</field>
+			<field name="model">stock.config.settings</field>
+			<field name="inherit_id" ref="stock.view_stock_config_settings" />
+			<field name="arch" type="xml">
+				<xpath expr="//separator[@string='Location &amp; Warehouse']"
+					position="before">
+					<group>
+						<label for="id" string="Stock Journal" />
+						<div>
+							<div>
+								<field name="company_id" widget="selection" groups="base.group_multi_company"
+									on_change="onchange_company_id(company_id, context)" class="oe_inline" />
+								<field name="stock_journal_id" invisible="1" attrs="{'readonly':[('company_id','=',False)]}"
+									domain="[('company_id','=',company_id),('type','=','general')]"
+									class="oe_inline" />
+							</div>
+						</div>
+					</group>
+				</xpath>
+				<xpath expr="//separator[@string='Location &amp; Warehouse']"
+					position="after">
+					<group attrs="{'invisible':[('group_stock_multiple_locations','=',False)]}">
+						<label for="id" string="Inventory Location" />
+						<div>
+							<div>
+								<field name="property_stock_inventory"
+									domain="['|',('company_id','=',False),('company_id','=',company_id),('usage','like','inventory')]"
+									class="oe_inline" />
+							</div>
+						</div>
+					</group>
+				</xpath>
+                <xpath expr="//separator[@string='Traceability']"
+					position="after">
+					<group>
+						<label for="id" string="Back Order" />
+						<div>
+							<div>
+
+								<field name="backorder" attrs="{'invisible':[('company_id','=',False)]}"
+									class="oe_inline" />
+							</div>
+						</div>
+					</group>
+				</xpath>
+			</field>
+		</record>
+	</data>
+</openerp>

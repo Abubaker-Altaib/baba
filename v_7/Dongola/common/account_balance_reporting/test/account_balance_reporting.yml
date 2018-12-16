@@ -1,0 +1,87 @@
+    
+- 
+  Creating a account.balance.reporting.template record
+- 
+  !record {model: account.balance.reporting.template, id: account_balance_reporting_template_temp0}:
+    line_ids:
+      - code: TEMP1
+        current_value: TEMP11+TEMP12
+        name: Assets
+        previous_value: TEMP11+TEMP12
+      - code: TEPM11
+        current_value: 'x100'
+        name: Fixed Assets
+        previous_value: 'x100'
+      - code: TEMP12
+        current_value: 'x101'
+        name: Net Current Assets
+        previous_value: 'x101'
+      - code: TEMP2
+        current_value: TEMP21+TEMP22
+        name: Liabilities
+        previous_value: TEMP21+TEMP22
+      - code: TEMP21
+        current_value: 'x110'
+        name: Current Liabilities
+        previous_value: 'x110'
+      - code: TEMP22
+        current_value: 'x2'
+        name: NET Profit& Loss
+        previous_value: 'x2'
+    name: TEMP
+    rml: '1'
+    
+- 
+  Creating a account.balance.reporting record
+- 
+  !record {model: account.balance.reporting, id: account_balance_reporting_tempreport0}:
+    chart_account_id: account.chart0
+    company_id: base.main_company
+    current_fiscalyear_id: account.data_fiscalyear
+    current_period_ids:
+      - account.period_1
+      - account.period_2
+      - account.period_3
+      - account.period_4
+      - account.period_5
+      - account.period_6
+      - account.period_7
+      - account.period_8
+      - account.period_9
+      - account.period_10
+      - account.period_11
+      - account.period_12
+    name: TEMP Report
+    period_from: account.period_1
+    period_to: account.period_12
+    previous_fiscalyear_id: account.data_fiscalyear
+    target_move: posted
+    template_id: account_balance_reporting_template_temp0
+    
+-
+  Check that Initially Balance Reporting is in the "Draft" state
+-
+  !assert {model: account.balance.reporting, id: account_balance_reporting_tempreport0}:
+    - state == 'draft'
+
+-
+  Create the report line by clicking "Calculate" button
+-
+  !workflow {model: account.balance.reporting, action: calculate, ref: account_balance_reporting_tempreport0}
+     
+  
+-
+  Check that the report state is now "calculate"
+-
+  !assert {model: account.balance.reporting, id: account_balance_reporting_tempreport0}:
+    - state == 'calc'
+
+  
+-
+  Check that the report line has been created
+-
+  !python {model: account.balance.reporting}: |
+    report=self.browse(cr, uid, ref("account_balance_reporting_tempreport0"))
+    assert len(report.line_ids) == len(report.template_id.line_ids), "Report Lines has not been Created"
+    
+ 

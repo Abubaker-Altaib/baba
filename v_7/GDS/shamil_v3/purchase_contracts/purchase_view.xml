@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+         <record id="foreign_purchase_form" model="ir.ui.view">
+            <field name="name">purchase.order.form2</field>
+            <field name="model">purchase.order</field>
+	    <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                 <field name="company_id" colspan="2" position="after">
+                 	<field name="contract_id" colspan="2" attrs="{'invisible':[('contract_id','=',False)]}"/>
+                 </field>
+                 <!--field name="invoice_method" position="after">
+                       <field name="contract_analytic_account_id" colspan="2" 
+                              attrs="{'invisible':[('contract_id','=',False)],'required':[('contract_id','!=',False)]}"/>
+                 </field-->
+            </field>
+         </record>
+
+                        <!-- Account Voucher -->
+
+        <record id="Voucher_Purchase_Contract_form" model="ir.ui.view">
+            <field name="name">purchase.contract.voucher</field>
+            <field name="model">account.voucher</field>
+	    <field name="inherit_id" ref="account_voucher_custom.view_purchase_receipt_form"/>
+            <field name="arch" type="xml">
+            	<field name="date_due" colspan="2" position="after">
+               		 <field name="contract_id" colspan="2" />
+                </field>
+                <!--field name="invoice_method" position="after">
+                          <field name="contract_analytic_account_id" colspan="2" 
+                                 attrs="{'invisible':[('contract_id','=',False)],'required':[('contract_id','!=',False)]}"/>
+                </field-->
+            </field>
+         </record>
+         
+	 <record id="foreign_purchase_tree" model="ir.ui.view">
+            <field name="name">purchase.order.tree2</field>
+            <field name="model">purchase.order</field>
+	    <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                        <field name="partner_id" colspan="2" position="before">
+                           <field name="contract_id" colspan="2" attrs="{'invisible':[('contract_id','=',False)]}"/>
+                        </field>
+            </field>
+          </record>
+   </data>
+</openerp>

@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Hospitality Service Type Configuration-->
+		<record id="hospitality_service_type_1" model="hospitality.service.type">
+			<field name="code">1</field>
+			<field name="name">سندوتشـــات</field>
+		</record>
+		<record id="hospitality_service_type_2" model="hospitality.service.type">
+			<field name="code">2</field>
+			<field name="name">أطبــاق</field>
+		</record>
+		<record id="hospitality_service_type_3" model="hospitality.service.type">
+			<field name="code">3</field>
+			<field name="name">بوفيــه مفتوح</field>
+		</record>
+                <!-- Hospitality Service Record-->
+                <record id="hospitality_service_1" model="hospitality.service">
+			<field name="date" eval="time.strftime('%Y')+'-01-15'" />
+            		<field name="company_id" ref="base.main_company"/>
+                        <field name="department_id" ref="hr.dep_administration"/>
+			<field name="date_of_execution" eval="time.strftime('%Y')+'-01-16'"/>
+			<field name="hosplity_type">hospitality</field>                                       
+                   	<field name="partner_id" ref="base.res_partner_17"/>
+	                <field name="no_day">3</field>
+            		<field name="state">draft</field>
+			<field name="notes">الرجاء تنفيذ الطلب فى الوقت المحدد"</field>
+		</record>
+                <record id="hospitality_service_2" model="hospitality.service">
+			<field name="date" eval="time.strftime('%Y')+'-01-26'" />
+            		<field name="company_id" ref="base.main_company"/>
+                        <field name="department_id" ref="hr.dep_sales"/>
+			<field name="date_of_execution" eval="time.strftime('%Y')+'-01-29'"/>
+			<field name="hosplity_type">meeting</field>                                       
+                   	<field name="partner_id" ref="base.res_partner_1"/>
+	                <field name="no_day">5</field>
+	                <field eval="500" name="cost"/>
+            		<field name="state">draft</field>
+			<field name="notes">الإجتماع الشهرى لإدارة البرمجيـــات"</field>
+		</record>
+                <record id="order_lines_1_for_hospitality_service_2" model="order.lines">
+			<field name="service_type" ref="hospitality_service_type_2" />
+            		<field name="service_qty" eval="5.0"/>
+                        <field name="service_cost" eval="100.0"/>
+			<field name="service_sort">breakfast</field>
+			<field name="order_id" ref="hospitality_service_2" />                                       
+		</record>
+                <record id="order_lines_2_for_hospitality_service_2" model="order.lines">
+			<field name="service_type" ref="hospitality_service_type_3" />
+            		<field name="service_qty" eval="1"/>
+                        <field name="service_cost" eval="400.0"/>
+			<field name="service_sort">lunch</field>
+			<field name="order_id" ref="hospitality_service_2" />                                       
+		</record>
+
+                <record id="hospitality_service_3" model="hospitality.service">
+			<field name="date" eval="time.strftime('%Y')+'-02-7'" />
+            		<field name="company_id" ref="base.main_company"/>
+                        <field name="department_id" ref="hr.dep_management"/>
+			<field name="date_of_execution" eval="time.strftime('%Y')+'-02-8'"/>
+			<field name="hosplity_type">conferences</field>                                  
+                   	<field name="partner_id" ref="base.res_partner_17"/>
+	                <field name="no_day">1</field>
+	                <field eval="800" name="cost"/>
+            		<field name="state">cancel</field>
+			<field name="notes">اليوم العالمي للإتصالات</field>
+		</record>
+                <record id="order_lines_1_for_hospitality_service_3" model="order.lines">
+			<field name="service_type" ref="hospitality_service_type_3" />
+            		<field name="service_qty" eval="1.0"/>
+                        <field name="service_cost" eval="800.0"/>
+			<field name="service_sort">dinner</field>
+			<field name="order_id" ref="hospitality_service_3" />                                       
+		</record>
+                <!-- Hall Names Configuration-->
+		<record id="halls_names_no_1" model="halls.names">
+			<field name="code">1</field>
+			<field name="name">قاعة المدير العام</field>
+			<field name="used" eval="False"/>
+		</record>
+		<record id="halls_names_detalis_no1_for_hall_no_1" model="halls.names.detalis">
+			<field name="name">بروجكتــر</field>
+			<field name="request">1</field>
+                   	<field name="detail_id" ref="halls_names_no_1"/>
+		</record>
+		<record id="halls_names_detalis_no2_for_hall_no_1" model="halls.names.detalis">
+			<field name="name">شاشة بلازما 50 بوصة</field>
+			<field name="request">1</field>
+                   	<field name="detail_id" ref="halls_names_no_1"/>
+		</record>
+		<record id="halls_names_detalis_no3_for_hall_no_1" model="halls.names.detalis">
+			<field name="name">كراسي</field>
+			<field name="request">1</field>
+                   	<field name="detail_id" ref="halls_names_no_1"/>
+		</record>
+
+		<record id="halls_names_no_2" model="halls.names">
+			<field name="code">2</field>
+			<field name="name">قاعة الإجتماعات</field>
+			<field name="used">1</field>
+			<field name="lock_begin_date" eval="time.strftime('%Y')+'-01-15 10:00:00'"/>
+			<field name="lock_end_date" eval="time.strftime('%Y')+'-01-17 18:00:00'"/>
+		</record>
+		<record id="halls_names_detalis_no1_for_hall_no_2" model="halls.names.detalis">
+			<field name="name">شاشة بلازما 40 بوصة</field>
+			<field name="request">1</field>
+                   	<field name="detail_id" ref="halls_names_no_2"/>
+		</record>
+		<record id="halls_names_detalis_no2_for_hall_no_2" model="halls.names.detalis">
+			<field name="name">كراسي</field>
+			<field name="request">1</field>
+                   	<field name="detail_id" ref="halls_names_no_2"/>
+		</record>
+		<!-- Hall Lock Record-->
+		<record id="halls_lock_no1" model="halls.lock">
+			<field name="date" eval="time.strftime('%Y')+'-01-14'"/>
+                        <field name="department_id" ref="hr.dep_management"/>
+			<field name="hall_id" ref="halls_names_no_2"/>
+			<field name="date_from" eval="time.strftime('%Y')+'-01-15 10:00:00'"/>
+			<field name="date_to" eval="time.strftime('%Y')+'-01-17 18:00:00'"/>
+			<field name="multi_service">no_need_hospitality</field>
+			<field name="Purpose">منتدى الجودة و التميز</field>
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="state">done</field>
+			<field name="no_day">3</field>
+			<field name="emp_cordnate" ref="hr.employee_jod"/>
+			<field name="tel_cordnate">00249912388000</field>
+			<field name="member" eval="[(6,0,[ref('hr.employee_jog'),ref('hr.employee_djj'),ref('hr.employee_hne'),ref('hr.employee_jgo')])]"/>                 
+		</record>
+
+		<record id="halls_lock_no2" model="halls.lock">
+			<field name="date" eval="time.strftime('%Y')+'-05-16'"/>
+                        <field name="department_id" ref="hr.dep_sales"/>
+			<field name="hall_id" ref="halls_names_no_1"/>
+			<field name="date_from" eval="time.strftime('%Y')+'-05-20 08:00:00'"/>
+			<field name="date_to" eval="time.strftime('%Y')+'-05-20 16:00:00'"/>
+			<field name="multi_service">extrnal_hospitality_service</field>
+			<field name="Purpose">الإجتماع الإداري</field>
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="state">draft</field>
+			<field name="no_day">1</field>
+			<field name="emp_cordnate" ref="hr.employee_djj"/>
+			<field name="tel_cordnate">00249906964644</field>
+			<field name="member" eval="[(6,0,[ref('hr.employee_al'),ref('hr.employee_mit'),ref('hr.employee_niv'),ref('hr.employee_stw')])]"/>                 
+		</record>
+
+                <record id="order_lines_1_for_halls_lock_no2" model="order.lines">
+			<field name="service_type" ref="hospitality_service_type_2" />
+            		<field name="service_qty" eval="25"/>
+			<field name="service_sort">breakfast</field>
+			<field name="hall_id" ref="halls_lock_no2" />                                       
+		</record>
+                <record id="order_lines_2_for_halls_lock_no2" model="order.lines">
+			<field name="service_type" ref="hospitality_service_type_3" />
+            		<field name="service_qty" eval="1"/>
+			<field name="service_sort">lunch</field>
+			<field name="hall_id" ref="halls_lock_no2" />                                       
+		</record>
+
+		<!-- service request category confiruration -->
+		<record id="service_request_category_no_1" model="service.request.category">
+			<field name="name">خدمــــة الترحيل والشحن والتفريغ</field>
+            		<field name="company_id" ref="base.main_company"/>
+
+		</record>
+		<record id="service_request_category_no_2" model="service.request.category">
+			<field name="name">خدمــــة توزيع درمات المياه وجمعها</field>
+            		<field name="company_id" ref="base.main_company"/>
+		</record>
+		<record id="service_request_category_no_3" model="service.request.category">
+			<field name="name">خدمـــة الإتصالات</field>
+            		<field name="company_id" ref="base.main_company"/>
+		</record>
+		<!-- service request record-->
+		<record id="service_request_no1" model="service.request">
+			<field name="date" eval="time.strftime('%Y')+'-02-08'"/>
+                        <field name="department_id" ref="hr.dep_management"/>
+			<field name="date_of_execution" eval="time.strftime('%Y')+'-02-08'"/>
+                   	<field name="partner_id" ref="base.res_partner_7"/>
+			<field name="cost">200.0</field>
+			<field name="state">draft</field>
+			<field name="payment_selection">voucher</field>
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="service_category" ref="service_request_category_no_1"/>           
+		</record>
+		<record id="service_request_no2" model="service.request">
+			<field name="date" eval="time.strftime('%Y')+'-11-11'"/>
+                        <field name="department_id" ref="hr.dep_management"/>
+			<field name="date_of_execution" eval="time.strftime('%Y')+'-11-12'"/>
+                   	<field name="partner_id" ref="base.res_partner_7"/>
+			<field name="cost">200.0</field>
+			<field name="state">cancel</field>
+			<field name="payment_selection">enrich</field>
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="service_category" ref="service_request_category_no_2"/>           
+		</record>
+		<record id="service_request_no3" model="service.request">
+			<field name="date" eval="time.strftime('%Y')+'-05-16'"/>
+                        <field name="department_id" ref="hr.dep_sales"/>
+			<field name="date_of_execution" eval="time.strftime('%Y')+'-05-19'"/>
+                   	<field name="partner_id" ref="base.res_partner_9"/>
+			<field name="cost">0.0</field>
+			<field name="state">draft</field>
+			<field name="payment_selection">voucher</field>
+			<field name="notes">إجمـــالى المطالبــــات المالية لشهر مايو</field>
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="service_category" ref="service_request_category_no_3"/>           
+		</record>
+		<!-- Outside Contractor Configuration -->
+		<record id="outsite_job_config_no1" model="outsite.job.config">
+			<field name="code">1</field>
+			<field name="name">مســـتشار</field>
+			<field name="basic_salary">10000</field>
+			<field name ="total_amount">15000</field>          
+		</record>
+		<record id="outsite_job_config_no2" model="outsite.job.config">
+			<field name="code">2</field>
+			<field name="name">مـــطور</field>
+			<field name="basic_salary">7000</field>
+			<field name ="total_amount">10000</field>          
+		</record>
+		<record id="outsite_job_config_no3" model="outsite.job.config">
+			<field name="code">3</field>
+			<field name="name">ســائق</field>
+			<field name="basic_salary">1500</field>
+			<field name ="total_amount">3000</field>          
+		</record>
+		<record id="outsite_job_config_no4" model="outsite.job.config">
+			<field name="code">4</field>
+			<field name="name">متــدرب</field>
+			<field name="basic_salary">500</field>
+			<field name ="total_amount">1500</field>          
+		</record>
+
+		<record id="outsite_allow_detuct_no1" model="outsite.allow.detuct">
+			<field name="name">بــدل مأموريـــة داخلية</field>
+			<field name="allow_mount">125</field>
+		</record>
+
+		<record id="outsite_allow_detuct_no2" model="outsite.allow.detuct">
+			<field name="name">اجر إضافي</field>
+			<field name="allow_mount">40</field>
+			<field name ="overtime_holi">80</field>          
+		</record>
+
+		<record id="outsite_allow_detuct_no3" model="outsite.allow.detuct">
+			<field name="name">الغيـــاب</field>
+			<field name="allow_mount">40</field>
+		</record>
+		<record id="outsite_allow_detuct_no4" model="outsite.allow.detuct">
+			<field name="name">بــدل مأموريـــة خارجية</field>
+			<field name="allow_mount">1000</field>
+		</record>
+		<!-- outside contract personal information-->
+		<record id="outsite_contract_no_1" model="outsite.contract">
+			<field name="name">محــــمود عبدالواحد محمد أحمد</field>
+                        <field name="mobile_phon">00249129223033</field>
+			<field name="birthday_date" eval="'1988-07-04'"/>
+                   	<field name="department_id" ref="hr.dep_sales"/>
+			<field name="contract_date" eval="'2011-01-01'"/>
+			<field name="education_level">3</field>
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="job_id" ref="outsite_job_config_no1"/>
+			<field name="car_model" ref="fleet.model_classa"/>
+			<field name="marital_status">2</field>
+                   	<field name="partner_id" ref="base.res_partner_9"/>                      
+		</record>
+		<record id="outsite_contract_no_2" model="outsite.contract">
+			<field name="name">مصعـــب أحمد عبدالله أحمد</field>
+                        <field name="mobile_phon">00249906964644</field>
+			<field name="birthday_date" eval="'1986-10-17'"/>
+                   	<field name="department_id" ref="hr.dep_rd"/>
+			<field name="contract_date" eval="'2010-01-01'"/>
+			<field name="education_level">3</field>
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="job_id" ref="outsite_job_config_no2"/>
+			<field name="car_model" ref="fleet.model_a3"/>
+			<field name="marital_status">1</field>
+                   	<field name="partner_id" ref="base.res_partner_9"/>                      
+		</record>
+		<record id="outsite_contract_no_3" model="outsite.contract">
+			<field name="name">أبــوبــكر الطيــب بابكر عبــدالله</field>
+                        <field name="mobile_phon">0024992229650</field>
+			<field name="birthday_date" eval="'1988-10-17'"/>
+                   	<field name="department_id" ref="hr.dep_rd"/>
+			<field name="contract_date" eval="'2012-01-01'"/>
+			<field name="education_level">3</field>
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="job_id" ref="outsite_job_config_no2"/>
+			<field name="car_model" ref="fleet.model_a1"/>
+			<field name="marital_status">1</field>
+                   	<field name="partner_id" ref="base.res_partner_9"/>                      
+		</record>
+		<!-- outside contract overtime-->
+		<record id="overtime_contract_no_1" model="overtime.contract">
+			<field name="month">11</field>
+                        <field name="year" eval="time.strftime('%Y')"/>
+                   	<field name="overtime_name" ref="outsite_allow_detuct_no3"/>
+            		<field name="company_id" ref="base.main_company"/>
+		</record>
+		<record id="contract_payroll_amount_line_1_for_overtime_contract_no_1" model="contract.payroll.amount">
+			<field name="gross_amount">666.67</field>
+                   	<field name="employee" ref="outsite_contract_no_2"/>
+            		<field name="no_day">2</field>
+			<field name ="amount" ref="overtime_contract_no_1"/>
+		</record>
+
+		<!-- enviroment and safety contract category configuration-->
+		<record id="contract_category_no_1" model="contract.category">
+			<field name="name">إيجارات المواقع</field>
+                   	<field name="templet_id" ref="account.conf_bal"/>
+            		<field name="name_type"  ref="account.data_account_type_asset"/>
+		</record>
+		<record id="contract_category_no_2" model="contract.category">
+			<field name="name">عقــــودات النظافة</field>
+                   	<field name="templet_id" ref="account.conf_nca"/>
+            		<field name="name_type"  ref="account.data_account_type_expense"/>
+		</record>
+		<record id="contract_category_no_3" model="contract.category">
+			<field name="name">عقــــودات الحمــاية والأمن</field>
+                   	<field name="templet_id" ref="account.conf_nca"/>
+            		<field name="name_type"  ref="account.data_account_type_liability"/>
+		</record>
+		<!-- enviroment and safety contract record-->
+		<record id="environment_and_safety_no_1" model="environment.and.safety">
+			<field name="date" eval="time.strftime('%Y')+'-01-01'"/>
+                        <field name="category_id" ref="contract_category_no_1"/>
+			<field name="date_of_rent" eval="time.strftime('%Y')+'-01-01'"/>
+                   	<field name="date_of_return" eval="time.strftime('%Y')+'-12-31'"/>
+			<field name="cost_of_contract">12000000</field>
+			<field name="education_level">3</field>
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="department_id" ref="hr.dep_administration"/>
+			<field name="type_contract">rent</field>
+			<field name="building_rent">إيجار مبنى لمركز النيل للإبحاث التقنية</field>
+                   	<field name="partner_id" ref="base.res_partner_9"/>
+            		<field name="state">draft</field>
+		</record>
+
+		<record id="environment_and_safety_no_2" model="environment.and.safety">
+			<field name="date" eval="time.strftime('%Y')+'-01-01'"/>
+                        <field name="category_id" ref="contract_category_no_3"/>
+			<field name="date_of_rent" eval="time.strftime('%Y')+'-01-01'"/>
+                   	<field name="date_of_return" eval="time.strftime('%Y')+'-12-31'"/>
+			<field name="cost_of_contract">84000</field>
+			<field name="education_level">3</field>
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="type_contract">contract</field>
+                   	<field name="partner_id" ref="base.res_partner_9"/>
+            		<field name="state">draft</field>
+		</record>
+		<record id="contract_fees_no1_for_environment_and_safety_no_2" model="contract.fees">
+			<field name="fees_date" eval="time.strftime('%Y')+'-01-01'"/>
+                        <field name="contract_id" ref="environment_and_safety_no_2"/>
+			<field name="fees_amount">7000</field>
+                   	<field name="year" eval="time.strftime('%Y')"/>
+			<field name="month">1</field>
+			<field name="no_month">1</field>
+            		<field name="state">draft</field>
+		</record>
+		<!-- rented car request record-->
+		<record id="rented_cars_request_no_1" model="rented.cars.request">
+			<field name="date" eval="time.strftime('%Y')+'-01-01'"/>
+                        <field name="car_id" ref="fleet.vehicle_1"/>
+			<field name="date_of_rent" eval="time.strftime('%Y')+'-01-01'"/>
+                   	<field name="date_of_return" eval="time.strftime('%Y')+'-12-31'"/>
+			<field name="employee_id" ref="hr.employee_djj" />
+			<field name="department_id" ref="hr.dep_rd" />
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="car_type">rented</field>
+                   	<field name="partner_id" ref="base.res_partner_9"/>
+            		<field name="state">draft</field>
+		</record>
+		<record id="rented_cars_request_no_2" model="rented.cars.request">
+			<field name="date" eval="time.strftime('%Y')+'-04-25'"/>
+                        <field name="car_id" ref="fleet.vehicle_2"/>
+			<field name="date_of_rent" eval="time.strftime('%Y')+'-05-01'"/>
+                   	<field name="date_of_return" eval="time.strftime('%Y')+'-12-31'"/>
+			<field name="employee_id" ref="hr.employee_fp" />
+			<field name="department_id" ref="hr.dep_ps" />
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="car_type">rented</field>
+                   	<field name="partner_id" ref="base.res_partner_9"/>
+            		<field name="state">draft</field>
+		</record>
+		<record id="rented_cars_request_no_3" model="rented.cars.request">
+			<field name="date" eval="time.strftime('%Y')+'-01-01'"/>
+                        <field name="car_id" ref="fleet.vehicle_3"/>
+			<field name="date_of_rent" eval="time.strftime('%Y')+'-01-01'"/>
+                   	<field name="date_of_return" eval="time.strftime('%Y')+'-12-31'"/>
+			<field name="employee_id" ref="hr.employee_al" />
+			<field name="department_id" ref="hr.dep_management" />
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="car_type">rented</field>
+                   	<field name="partner_id" ref="base.res_partner_7"/>
+            		<field name="state">cancel</field>
+		</record>
+		<record id="rented_cars_request_no_4" model="rented.cars.request">
+			<field name="date" eval="time.strftime('%Y')+'-01-20'"/>
+                        <field name="car_id" ref="fleet.vehicle_4"/>
+			<field name="date_of_rent" eval="time.strftime('%Y')+'-02-01'"/>
+                   	<field name="date_of_return" eval="time.strftime('%Y')+'-12-31'"/>
+			<field name="employee_id" ref="hr.employee_mit" />
+			<field name="department_id" ref="hr.dep_rd" />
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="car_type">rented</field>
+                   	<field name="partner_id" ref="base.res_partner_5"/>
+            		<field name="state">draft</field>
+		</record>
+		<!-- rented car details record-->
+		<record id="rented_cars_no_1" model="rented.cars">
+			<field name="date" eval="time.strftime('%Y')+'-01-01'"/>
+                        <field name="car_id" ref="fleet.vehicle_5"/>
+			<field name="car_number">1-MER-001</field>
+			<field name="date_of_rent" eval="time.strftime('%Y')+'-01-01'"/>
+                   	<field name="date_of_return" eval="time.strftime('%Y')+'-12-31'"/>
+			<field name="employee_id" ref="hr.employee_niv" />
+			<field name="department_id" ref="hr.dep_administration" />
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="cost_rate">per_day</field>
+                   	<field name="partner_id" ref="base.res_partner_5"/>
+            		<field name="state">draft</field>
+			<field name="cost_of_rent">2000</field>
+			<field name="amount_untaxed">2000</field>
+			<field name="amount_total">2000</field>
+		</record>
+		<record id="rented_cars_no_2" model="rented.cars">
+			<field name="date" eval="time.strftime('%Y')+'-01-01'"/>
+                        <field name="car_id" ref="fleet.vehicle_4"/>
+			<field name="car_number">1-AUD-001</field>
+			<field name="date_of_rent" eval="time.strftime('%Y')+'-01-01'"/>
+                   	<field name="date_of_return" eval="time.strftime('%Y')+'-12-31'"/>
+			<field name="employee_id" ref="hr.employee_stw" />
+			<field name="department_id" ref="hr.dep_sales" />
+            		<field name="company_id" ref="base.main_company"/>
+			<field name="cost_rate">per_month</field>
+                   	<field name="partner_id" ref="base.res_partner_5"/>
+            		<field name="state">draft</field>
+			<field name="cost_of_rent">40000</field>
+			<field name="amount_untaxed">40000</field>
+			<field name="amount_total">40000</field>
+		</record>
+	</data>
+</openerp>

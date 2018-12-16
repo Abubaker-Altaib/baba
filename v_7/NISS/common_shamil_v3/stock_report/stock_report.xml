@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>       
+		<report id="report_exit_permit" model="stock.picking.out" name="stock.exit_permit.list" string="Exit Permit" rml="stock_report/report/exit_permit.rml"/>
+		<report id="grn_report" menu="False"  model="stock.picking.in" name="grn.report" string="GRN Report" rml="addons/stock_report/report/grn.rml" />  
+		
+        <record model="ir.ui.view" id="view_picking_in_form_inherit_GRN">
+            <field name="name">view.picking.in.form.grn</field>
+            <field name="type">form</field>
+            <field name="model">stock.picking.in</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(stock.act_stock_return_picking)d']" position="after">
+                        <button name="%(grn_report)d"  string="Print GRN" states="done"  groups="" type="action" icon="gtk-print"/>
+                </xpath>
+            </field>  
+        </record> 
+
+	</data>
+</openerp>

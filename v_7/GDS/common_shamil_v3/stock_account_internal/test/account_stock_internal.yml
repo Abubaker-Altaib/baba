@@ -1,0 +1,91 @@
+-
+  I confirm  shipment 3 .
+-
+  !workflow {model: stock.picking, action: button_confirm, ref: stock_account_internall.shipment3}
+-
+  I confirm  shipment 4.
+-
+  !workflow {model: stock.picking, action: button_confirm, ref: stock_account_internall.shipment4}
+-
+  I confirm  shipment 5.
+-
+  !workflow {model: stock.picking, action: button_confirm, ref: stock_account_internall.shipment5}
+-
+  I confirm  shipment 1.
+-
+  !workflow {model: stock.picking, action: button_confirm, ref: stock_account_internall.shipment1}
+-
+  I confirm  shipment 2.
+-
+  !workflow {model: stock.picking, action: button_confirm, ref: stock_account_internall.shipment2}
+
+-
+  I process shipment3.
+-
+  !python {model: stock.partial.picking}: |
+    context.update({'active_model': 'stock.picking', 'active_id': ref('stock_account_internall.shipment3'), 'active_ids': [ref('stock_account_internall.shipment3')]})
+-
+  !record {model: stock.partial.picking, id: partial_3}:
+    picking_id: stock_account_internall.shipment3
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_3')], context=context)
+-
+  I process shipment4.
+-
+  !python {model: stock.partial.picking}: |
+    context.update({'active_model': 'stock.picking', 'active_id': ref('stock_account_internall.shipment4'), 'active_ids': [ref('stock_account_internall.shipment4')]})
+-
+  !record {model: stock.partial.picking, id: partial_4}:
+    picking_id: stock_account_internall.shipment4
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_4')], context=context)
+-
+  I process shipment5.
+-
+  !python {model: stock.partial.picking}: |
+    context.update({'active_model': 'stock.picking', 'active_id': ref('stock_account_internall.shipment5'), 'active_ids': [ref('stock_account_internall.shipment5')]})
+-
+  !record {model: stock.partial.picking, id: partial_5}:
+    picking_id: stock_account_internall.shipment5
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_5')], context=context)
+
+-
+  I process shipment1.
+-
+  !python {model: stock.partial.picking}: |
+    context.update({'active_model': 'stock.picking', 'active_id': ref('stock_account_internall.shipment1'), 'active_ids': [ref('stock_account_internall.shipment1')]})
+-
+  !record {model: stock.partial.picking, id: partial_1}:
+    picking_id: stock_account_internall.shipment1
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_1')], context=context)
+-
+  I process shipment2.
+-
+  !python {model: stock.partial.picking}: |
+    context.update({'active_model': 'stock.picking', 'active_id': ref('stock_account_internall.shipment2'), 'active_ids': [ref('stock_account_internall.shipment2')]})
+-
+  !record {model: stock.partial.picking, id: partial_2}:
+    picking_id: stock_account_internall.shipment2
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_2')], context=context)
+      
+-
+  I confirm inventory .
+-
+  !python {model: stock.inventory}: |
+    self.action_confirm(cr, uid, [ref('stock_account_internall.stock_inventory_account')], context=context)
+    
+-
+  I close  inventory .
+-
+  !python {model: stock.inventory}: |
+    self.action_done(cr, uid, [ref('stock_account_internall.stock_inventory_account')], context=context)
+
+

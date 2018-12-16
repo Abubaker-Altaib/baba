@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		
+		<!-- Activities -->
+		
+		<record id="act_promotion_hr_user" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">hr_user</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'hr_user'})</field>
+		</record>
+        <record id="act_section_manager" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">section_manager</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'section_manager'})</field>
+		</record>
+		<record id="act_department_manager" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">department_manager</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'department_manager'})</field>
+		</record>
+		<record id="act_promotion_hr_manager" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">hr_manager</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'hr_manager'})</field>
+		</record>
+		<record id="act_promotion_unit_manager" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">unit_manager</field>
+			<field name="kind">function</field>
+			<field name="action">to_unit_manager()</field>
+		</record>
+		<record id="act_promotion_minister" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">minister</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'minister'})</field>
+		</record>
+		<record id="act_promotion_service_manager" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">service_manager</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'service_manager'})</field>
+		</record>
+
+		<!-- Transitions -->
+		<record id="wkf_3_tr1" model="workflow.transition">
+			<field name="act_from" ref="hr_custom.act_process_draft" />
+			<field name="act_to" ref="act_promotion_hr_user" />
+			<field name="signal">to_hr_user</field>
+		</record>
+		<!-- level 0 -->
+		<record id="tran_t2" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_hr_user" />
+			<field name="act_to" ref="act_section_manager" />
+			<field name="signal">to_section_manager</field>
+		</record>
+		<record id="tran_t3" model="workflow.transition">
+			<field name="act_from" ref="act_section_manager" />
+			<field name="act_to" ref="act_department_manager" />
+			<field name="signal">to_department_manager</field>
+		</record>
+	
+		<record id="tran_t4" model="workflow.transition">
+			<field name="act_from" ref="act_department_manager" />
+			<field name="act_to" ref="hr_custom.act_process_approve" />
+			<field name="signal">to_hr_manager</field>
+
+		</record>
+		<!-- ....... -->
+		<record id="wkf_3_tr2" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_hr_user" />
+			<field name="act_to" ref="act_promotion_hr_manager" />
+			<field name="signal">to_hr_manager</field>
+		</record>
+		<record id="wkf_3_tr3" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_hr_manager" />
+			<field name="act_to" ref="act_promotion_unit_manager" />
+			<field name="signal">to_unit_manager</field>
+		</record>
+		<!-- level 1 -->
+		<record id="wkf_3_tr4" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_unit_manager" />
+			<field name="act_to" ref="act_promotion_minister" />
+			<field name="signal">to_minister</field>
+		</record>
+		<record id="wkf_3_tr5" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_minister" />
+			<field name="act_to" ref="act_promotion_service_manager" />
+			<field name="signal">to_service_manager</field>
+            <field name="condition">degree_level==1</field>
+		</record>
+		<record id="wkf_3_tr6" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_service_manager" />
+			<field name="act_to" ref="hr_custom.act_process_approve" />
+			<field name="signal">to_council_ministers</field>
+		</record>
+		<!--level 2 -->
+		<record id="wkf_3_tr8" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_minister" />
+			<field name="act_to" ref="hr_custom.act_process_approve" />
+			<field name="signal">to_service_manager</field>
+            <field name="condition">degree_level==2</field>
+		</record>
+		<!-- level 3 -->
+		<record id="wkf_3_tr81" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_unit_manager" />
+			<field name="act_to" ref="hr_custom.act_process_approve" />
+			<field name="signal">to_service_manager2</field>
+		</record>
+	</data>
+</openerp>

@@ -1,0 +1,4601 @@
+<!--Custom report.-->
+<odoo>
+    <data noupdate="0">
+
+
+        <template id="requests_advance_report_document">
+
+            <div class="page">
+
+                <!--center>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1; color:black;">
+                                    <center>
+                                        <h1 width="70%" left="90">National Company For Micro-Finance</h1>
+
+                                        <h1 width="70%" left="90">rRequests Report</h1>
+
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center-->
+
+                <hr width="100%" color="black"/>
+                <table class="greyGridTable">
+                    <td>Print Time:
+                        <span t-esc="time.strftime('%Y-%m-%d %H:%M:%S')"/>
+                        - User Name:
+                        <span t-esc="user.name"></span>
+                    </td>
+                </table>
+                <table class="greyGridTable">
+                    <td>Date Start :
+                        <t t-esc="date_start"/>
+                    </td>
+                    <td>Date End :
+                        <t t-esc="date_end"/>
+                    </td>
+                </table>
+                <table class="greyGridTable">
+                    <td>
+
+                        <t t-if="visvalue[1] != 0">
+                            Customer :
+                            <t t-esc="vis[1]"/>
+
+
+                        </t>
+
+                        <t t-if="visvalue[2] != 0">
+                            Formula :
+                            <t t-esc="vis[2]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[3] != 0">
+                            Branch :
+                            <t t-esc="vis[3]"></t>
+
+                        </t>
+
+                        <t t-if="visvalue[4] != 0">
+                            Sectors :
+                            <t t-esc="vis[4]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[5] != 0">
+
+                            Finance Type :
+                            <t t-esc="vis[5]"></t>
+
+                        </t>
+
+                        <t t-if="visvalue[6] != 0">
+
+                            Officer :
+                            <t t-esc="vis[6]"></t>
+
+
+                        </t>
+                    </td>
+                </table>
+
+                <hr width="100%" color="black"/>
+
+                <div class="text-center">
+
+
+                    <table class="greyGridTable">
+                        <thead>
+                            <tr>
+                                <th>Serial</th>
+                                <t t-if="visvalue[1] != 1">
+                                    <th>Code</th>
+                                </t>
+                                <t t-if="visvalue[1] != 1">
+                                    <th>Customer Name</th>
+                                </t>
+                                <th style="white-space:pre">Date</th>
+                                <th>Project Name</th>
+                                <th>Project Address</th>
+                                <th>Amount</th>
+                                <t t-if="visvalue[2] != 1">
+                                    <th>Formula</th>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <th>Branch</th>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <th>Sector</th>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <th>Type</th>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <th>User</th>
+                                </t>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="amount_total" t-value="0"></t>
+                            <tr t-foreach="docs" t-as="doc">
+
+                                <td>
+                                    <span t-esc="doc_index + 1"/>
+                                </td>
+                                <t t-if="visvalue[1] != 1">
+                                    <td>
+                                        <t t-esc="doc.sudo().partner_id.code"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[1] != 1">
+                                    <td style="white-space:pre">
+                                        <t t-esc="doc.sudo().partner_id.name"/>
+                                    </td>
+                                </t>
+                                <td>
+                                    <t t-esc="doc.date"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.project_name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.project_address"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.amount"/>
+                                </td>
+                                <t t-if="visvalue[2] != 1">
+                                    <td>
+                                        <t t-esc="dict(doc.fields_get(allfields=['formula'])['formula']['selection'])[doc.formula]"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <td>
+                                        <t t-esc="doc.company_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <td>
+                                        <t t-esc="doc.sector_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <td>
+                                        <t t-esc="dict(doc.fields_get(allfields=['type'])['type']['selection'])[doc.type]"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <td>
+                                        <t t-esc="doc.sudo().user_id.name"/>
+                                    </td>
+                                </t>
+
+                                <t t-set="amount_total" t-value="amount_total+doc.amount"/>
+
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <t t-if="visvalue[1] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[1] != 1">
+                                    <td></td>
+                                </t>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <t t-esc="amount_total"/>
+                                </td>
+                                <t t-if="visvalue[2] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <td></td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                    <style type="text/css">
+
+
+                       
+
+                    </style>
+
+
+                </div>
+            </div>
+
+            <div class="footer">
+                <center>
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <p>صفحة
+                            <span class="page"/>
+                            من
+                            <span class="topage"/>
+                        </p>
+                        <p>
+                            <b>
+                                <u>
+                                    <t t-esc="order_num"/>
+                                </u>
+                            </b>
+                        </p>
+
+                    </div>
+                </center>
+
+            </div>
+
+        </template>
+
+
+        <template id="requests_obligation_report_document">
+            <t t-call="report.html_container">
+                <t t-call="report.internal_layout">
+
+
+                    <div class="page" style="position: relative;
+   top: 50px;">
+
+                        <!--Here start-->
+                        <html>
+
+                            <body>
+                                <head>
+                                    <!--link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'/-->
+
+                                    <link rel="stylesheet"
+                                          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+                                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+                                    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+                                    <style>
+
+                                        body {
+
+                                        }
+
+                                        h3 { font-family: "Geeza Pro", "Nadeem",
+                                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                                        "Arial", serif;
+                                        font-weight:bold;}
+                                        h5 { font-family: "Geeza Pro", "Nadeem",
+                                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                                        "Arial", serif;}
+
+
+                                        <![CDATA[
+/* Arvo */
+@font-face {
+  font-family: 'KacstFarsiMedium';
+  font-style: normal;
+  font-weight: 400;
+  src: url(/microfinance/static/font/KacstFarsi.ttf);
+}
+]]>
+
+                                        .table.table-borderless td, .table.table-borderless th {
+                                        border: 0 !important;
+                                        }
+
+                                        .table.table-borderless {
+                                        margin-bottom: 0px;
+                                        }
+
+                                        p {
+                                        font-family: 'KacstFarsiMedium';
+                                        font-weight: normal;
+                                        font-style: normal;
+                                        }
+                                        td {font-size:23px !important;
+                                        font-family: "Geeza Pro", "Nadeem",
+                                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                                        "Arial", serif;
+                                        }
+                                    </style>
+                                </head>
+                                <!--beginnig-->
+
+                                <center>
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                                    <center>
+                                                        <img src="/microfinance/static/wa_report/logo.png" width="30%"/>
+                                                    </center>
+                                                </td>
+                                                <td style="background:white; border-right: 0px solid #C1C3D1; color:black;">
+                                                    <center>
+                                                        <h1 width="30%" left="90">المؤسسة الوطنيه للتمويل الأصغر</h1>
+
+                                                        <h1 width="30%" left="90">إقرار العميل</h1>
+
+                                                    </center>
+                                                </td>
+                                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                                    <center>
+                                                        <img src="/microfinance/static/wa_report/logo.png" width="30%"/>
+                                                    </center>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </center>
+                                <hr width="100%" color="black"/>
+
+
+                                <t t-foreach="docs" t-as="doc">
+                                    <div>
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td>رقم الطلب :
+                                                    <span>
+                                                        <t t-esc="doc.name"/>
+                                                    </span>
+                                                </td>
+                                                <td>رقم التمويل :
+                                                    <span>
+                                                        <t t-esc="doc.CBOS_id"/>
+                                                    </span>
+                                                </td>
+                                                <td>تاريخ تقديم الطلب :
+                                                    <span>
+                                                        <t t-esc="doc.date"/>
+                                                    </span>
+                                                </td>
+                                                <td>الفرع :
+                                                    <span>
+                                                        <t t-esc="doc.company_id.name"/>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <h2 dir="rtl">أولا : معلومات شخصية عن الزبون :</h2>
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <center>
+                                                        <t t-esc="doc.partner_id.ar_forth_name"/>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <t t-esc="doc.partner_id.ar_third_name"/>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <t t-esc="doc.partner_id.ar_second_name"/>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>
+                                                        <t t-esc="doc.partner_id.ar_first_name"/>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>إسم العميل</center>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="well well-sm">
+                                        <h3 dir="rtl" style="text-align: right;">
+                                            <span>عنوان السكن</span>
+                                        </h3>
+                                        <div dir="rtl">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <td>
+                                                        المحليه :
+                                                        <span>
+                                                            <t t-esc="doc.state_id.name"/>
+                                                        </span>
+                                                    </td>
+
+
+                                                    <td>
+                                                        الحي/القريه :
+                                                        <span>
+                                                            <t t-esc="doc.partner_id.neighborhood"/>
+                                                        </span>
+                                                    </td>
+
+
+                                                    <td>
+                                                        المنزل :
+                                                        <span>
+                                                            <t t-esc="doc.partner_id.home_number"/>
+                                                        </span>
+                                                    </td>
+
+
+                                                    <td>
+                                                        نوع السكن :
+                                                        <span>
+                                                            <t t-esc="dict(doc.partner_id.fields_get(allfields=['address_type'])['address_type']['selection'])[doc.partner_id.address_type]"/>
+                                                        </span>
+                                                    </td>
+
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <h3 dir="rtl">وصف السكن</h3>
+                                        <div dir="rtl">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <td>
+                                                        <t t-esc="doc.partner_id.address_description"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <h3 dir="rtl">
+                                        <span>الهاتف</span>
+                                    </h3>
+                                    <div dir="rtl">
+                                        <table class="table table-borderless">
+                                            <tr>
+
+                                                <td>
+                                                    1-
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.phone"/>
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    2-
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.mobile"/>
+                                                    </span>
+                                                </td>
+
+
+                                                <td>
+                                                    3-
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.phone3"/>
+                                                    </span>
+                                                </td>
+
+                                            </tr>
+                                        </table>
+                                    </div>
+
+
+                                    <h3 dir="rtl">إثبات الشخصية</h3>
+
+
+                                    <div dir="rtl">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td>
+                                                    نوعها :
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.identity_id.name"/>
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    رقمها :
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.identity_number"/>
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    جهة الإصدار :
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.identity_location"/>
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    تاريخ الإصدار :
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.identity_date"/>
+                                                    </span>
+                                                </td>
+
+
+                                                <td>
+                                                    تاريخ الإنتهاء :
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.identity_exp_date"/>
+                                                    </span>
+                                                </td>
+
+                                            </tr>
+                                        </table>
+                                    </div>
+
+
+                                    <h3 dir="rtl">الميلاد</h3>
+
+                                    <div dir="rtl">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td>
+                                                    المكان :
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.place_of_birth"/>
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    التاريخ :
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.date_of_birth"/>
+                                                    </span>
+                                                </td>
+
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <div dir="rtl">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td>
+                                                    إسم الشهرة :
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.fame_name"/>
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    إسم الوالدة:
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.mother_name"/>
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    الحاله الإجتماعية :
+                                                    <span>
+                                                        <t t-esc="dict(doc.partner_id.fields_get(allfields=['social_status'])['social_status']['selection'])[doc.partner_id.social_status]"/>
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    المستوى التعليمي :
+                                                    <span>
+                                                        <t t-esc="dict(doc.partner_id.fields_get(allfields=['education_level'])['education_level']['selection'])[doc.partner_id.education_level]"/>
+                                                    </span>
+                                                </td>
+
+
+                                                <td>
+                                                    إسم الزوج/ة :
+                                                    <span>
+                                                        <t t-esc="doc.partner_id.sbouse_name"/>
+                                                    </span>
+                                                </td>
+
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <div class="well well-sm">
+                                        <h3 dir="rtl">عدد العاملين من الأسرة</h3>
+
+
+                                        <div dir="rtl">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <td>
+                                                        عدد الزوجات :
+                                                        <span>
+                                                            <t t-esc="doc.partner_id.number_of_wives"/>
+                                                        </span>
+                                                    </td>
+
+                                                    <td>
+                                                        الأبناء:
+                                                        <span>
+                                                            <t t-esc="doc.partner_id.number_of_children"/>
+                                                        </span>
+                                                    </td>
+
+                                                    <td>
+                                                        الوالدين :
+                                                        <span>
+                                                            <t t-esc="doc.partner_id.number_of_parents"/>
+                                                        </span>
+                                                    </td>
+
+
+                                                    <td>
+                                                        الأشقاء :
+                                                        <span>
+                                                            <t t-esc="doc.partner_id.number_of_sibling"/>
+                                                        </span>
+                                                    </td>
+
+                                                </tr>
+                                            </table>
+                                        </div>
+
+                                        <h3 dir="rtl">مكان العمل</h3>
+
+
+                                        <div dir="rtl">
+                                            <table class="table table-borderless">
+                                                <tr>
+
+
+                                                    <td>
+                                                        جهة العمل
+                                                        <span>
+                                                            <t t-esc="doc.partner_id.number_of_sibling"/>
+                                                        </span>
+                                                    </td>
+
+                                                </tr>
+                                            </table>
+                                        </div>
+
+
+                                        <h3 dir="rtl">مصادر الدخل الشخصي</h3>
+                                        <table class="table table-bordered" cellspacing="1" cellpadding="1">
+
+                                            <tr>
+                                                <th>
+                                                    <center>المبلغ بالجنيه</center>
+                                                </th>
+
+                                                <th>
+                                                    <center>المصدر</center>
+                                                </th>
+
+                                            </tr>
+                                            <t t-set="income_total" t-value="0"/>
+                                            <t t-foreach="docs.income_resources_ids" t-as="docinc">
+                                                <tr>
+                                                    <td style="width: 186px;">
+                                                        <center>
+                                                            <t t-esc="docinc.amount"/>
+                                                        </center>
+                                                    </td>
+                                                    <td style="width: 188px;">
+                                                        <center>
+                                                            <t t-esc="docinc.name_type.name"/>
+                                                        </center>
+                                                    </td>
+                                                </tr>
+                                                <t t-set="income_total" t-value="income_total + docinc.amount"></t>
+                                            </t>
+                                            <tr>
+                                                <td>
+                                                    <center>
+                                                        <t t-esc="income_total"/>
+                                                    </center>
+                                                </td>
+                                                <td>
+                                                    <center>المجموع</center>
+                                                </td>
+                                            </tr>
+
+                                        </table>
+                                    </div>
+                                    <h3 dir="rtl"><![CDATA[&nbsp;]]></h3>
+                                    <br></br>
+                                    <br></br>
+                                    <br></br>
+                                    <br></br>
+                                    <br></br>
+                                    <br></br>
+                                    <br></br>
+                                    <br></br>
+                                    <div class="well well-sm">
+                                        <h2 dir="rtl">ثانيا : بيانات المشروع (النشاط) :</h2>
+                                        <div dir="rtl">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <td>
+                                                        إسم المشروع :
+                                                        <span>
+                                                            <t t-esc="doc.project_name"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        القطاع :
+                                                        <span>
+                                                            <t t-esc="doc.sector_id.name"/>
+                                                        </span>
+                                                    </td>
+
+                                                    <td>
+                                                        حالة المشروع:
+                                                        <span>
+                                                            <t t-esc="dict(doc.fields_get(allfields=['project_status'])['project_status']['selection'])[doc.project_status]"/>
+                                                        </span>
+                                                    </td>
+
+                                                    <td>
+                                                        سنوات الخبرة في العمل :
+                                                        <span>
+                                                            <t t-esc="doc.years_of_experiance"/>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+
+
+                                        <h3 dir="rtl">وصف موقع المشروع<![CDATA[&nbsp;]]> </h3>
+                                        <div dir="rtl">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <td>
+                                                        <span>
+                                                            <t t-esc="doc.project_address"/>
+                                                        </span>
+                                                    </td>
+
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <h3 dir="rtl">عدد العاملين</h3>
+                                        <div dir="rtl">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <td>
+                                                        من العائلة :
+                                                        <span>
+                                                            <t t-esc="doc.from_family"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        من خارج العائلة :
+                                                        <span>
+                                                            <t t-esc="doc.out_of_family"/>
+                                                        </span>
+                                                    </td>
+
+                                                    <td>
+                                                        كلي :
+                                                        <span>
+                                                            <t t-esc="doc.from_family +  doc.out_of_family"/>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+
+
+                                        <h3 dir="rtl">بيانات التمويل</h3>
+
+                                        <div dir="rtl">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <td>
+                                                        حجم التمويل المطلوب :
+                                                        <span>
+                                                            <t t-esc="doc.amount"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        الصيغة :
+                                                        <span>
+                                                            <t t-esc="dict(doc.fields_get(allfields=['formula'])['formula']['selection'])[doc.formula]"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        فترة التمويل :
+                                                        <span>
+                                                            <t t-esc="doc.funding_period"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        طريقة السداد :
+                                                        <span>
+                                                            <t t-esc="doc.payment_method_ids.name"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        عدد الأقساط :
+                                                        <span>
+                                                            <t t-esc="doc.installments_number"/>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+
+
+                                        <h3 dir="rtl">الضمانات المقدمه (نوع الضمان و قيمته) :</h3>
+
+
+                                        <div dir="rtl">
+                                            <table class="table table-bordered">
+
+
+                                                <tr>
+                                                    <th>
+                                                        <center>قيمته</center>
+                                                    </th>
+                                                    <th>
+                                                        <center>نوع الضمان</center>
+                                                    </th>
+                                                </tr>
+                                                <t t-foreach="docs.guarantee_line_ids" t-as="docg">
+                                                    <tr>
+                                                        <td>
+                                                            <center>
+                                                                <t t-esc="docg.guarantee_value"/>
+                                                            </center>
+                                                        </td>
+                                                        <td>
+                                                            <center>
+                                                                <t t-esc="docg.guarantee_type.name"/>
+                                                            </center>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+
+                                            </table>
+                                        </div>
+
+
+                                    </div>
+                                    <h3 dir="rtl">الأصول</h3>
+                                    <table class="table table-bordered">
+
+                                        <tr>
+                                            <th style="width: 90px;">
+                                                <center>القيمة السوقية</center>
+                                            </th>
+                                            <th style="width: 90px;">
+                                                <center>عدد</center>
+                                            </th>
+                                            <th style="width: 90px;">
+                                                <center>نوع الأصل</center>
+                                            </th>
+                                        </tr>
+                                        <t t-foreach="docs.visit_id.asset_line_ids" t-as="docass">
+                                            <tr>
+                                                <td style="width: 90px;">
+                                                    <center>
+                                                        <t t-esc="docass.market_value"/>
+                                                    </center>
+                                                </td>
+                                                <td style="width: 90px;">
+                                                    <center>
+                                                        <t t-esc="docass.number"/>
+                                                    </center>
+                                                </td>
+                                                <td style="width: 90px;">
+                                                    <center>
+                                                        <t t-esc="docass.asset_type"/>
+                                                    </center>
+                                                </td>
+                                            </tr>
+                                        </t>
+
+                                    </table>
+                                    <div dir="rtl">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td>
+                                                    إحمالي قيمه الأصول الثابتة :
+                                                    <span>
+                                                        <t t-esc="doc.visit_id.fix_value"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    إجمالي قيمه الأصول المتداولة :
+                                                    <span>
+                                                        <t t-esc="doc.visit_id.current_value"/>
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    الأصول
+                                                    <span>
+                                                        <t t-esc="doc.visit_id.asset_value"/>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+
+                                    <div dir="rtl">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td>
+                                                    متوسط قيمه المبيعات الشهرية المتوقة :
+                                                    <span>
+                                                        <t t-esc="doc.visit_id.avg_sale"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    متوسط صافي الأرباح الشهريه المتوقعة بعد التمويل :
+                                                    <span>
+                                                        <t t-esc="doc.visit_id.avg_prof"/>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+
+                                    <h3 dir="rtl">إقرار العميل</h3>
+                                    <center>
+                                        <h5 dir="rtl" style="font-size:20px">أقر أنا
+                                            <strong>
+                                                <span>
+
+
+                                                    <t t-esc="doc.partner_id.ar_first_name"/>
+                                                    <t t-esc="doc.partner_id.ar_second_name"/>
+                                                    <t t-esc="doc.partner_id.ar_third_name"/>
+                                                    <t t-esc="doc.partner_id.ar_forth_name"/>
+
+                                                </span>
+                                            </strong>
+                                            بصحة البيانات الواردة أعلاة و ألتزم بكافة الأسس و اللوائح المعمول بها في
+                                            المؤسسة .
+                                        </h5>
+                                    </center>
+                                    <br></br>
+                                    <br></br>
+                                    <h5 dir="rtl" style="text-align: center; font-size:20px">التوقيع
+                                        ............................................<![CDATA[&nbsp;]]>
+                                        <![CDATA[&nbsp;]]> <![CDATA[&nbsp;]]>التاريخ
+                                        ............................................
+                                    </h5>
+                                    <h5 dir="rtl"><![CDATA[&nbsp;]]></h5>
+                                    <h3 dir="rtl"><![CDATA[&nbsp;]]></h3>
+                                    <h3 dir="rtl"><![CDATA[&nbsp;]]></h3>
+
+                                </t>
+                                <!--end-->
+
+
+                            </body>
+                        </html>
+                        <!--Here End-->
+
+
+                    </div>
+                </t>
+                <div class="footer">
+                    <center>
+                        <div class="text-center" style="border-top: 1px solid black;">
+                            <p>صفحة
+                                <span class="page"/>
+                                من
+                                <span class="topage"/>
+                            </p>
+                            <p>
+                                <b>
+                                    <u>
+                                        <t t-esc="order_num"/>
+                                    </u>
+                                </b>
+                            </p>
+
+                        </div>
+                    </center>
+
+                </div>
+            </t>
+        </template>
+
+
+        <template id="requests_report_document">
+            <t t-call="report.html_container">
+                <t t-call="report.internal_layout">
+
+                    <div class="page">
+                        <!--div style="position:absolute;top:850px; page-break-inside: avoid;">
+     Your Custom Content
+</div-->
+                        <center>
+
+                            <h1 left="90">National Company For Micro-Finance</h1>
+                            <h1 left="90">Requests Report</h1>
+
+                        </center>
+
+                        <hr width="100%" color="black"/>
+                        <table>
+                            <td>Print Time:
+                                <span t-esc="time.strftime('%Y-%m-%d %H:%M:%S')"/>
+                                - User Name:
+                                <span t-esc="user.name"></span>
+                            </td>
+                        </table>
+                        <table>
+                            <td>Date Start :
+                                <t t-esc="date_start"/>
+                            </td>
+                            <td>Date End :
+                                <t t-esc="date_end"/>
+                            </td>
+                        </table>
+                        <table>
+                            <tr>
+
+                            </tr>
+                            <t t-if="vis[1] != 1">
+                                <tr></tr>
+                                <td>Customer :
+                                    <t t-esc="vis[1]"/>
+                                </td>
+
+
+                            </t>
+
+                            <t t-if="vis[2] != 1">
+                                <tr></tr>
+                                <td>Formula :
+                                    <t t-esc="vis[2]"></t>
+
+                                </td>
+                            </t>
+
+                            <t t-if="vis[3] != 1">
+                                <tr></tr>
+                                <td>Branch :
+                                    <t t-esc="vis[3]"></t>
+
+                                </td>
+                            </t>
+
+                            <t t-if="vis[4] != 1">
+                                <tr></tr>
+                                <td>Sectors :
+                                    <t t-esc="vis[4]"></t>
+
+                                </td>
+                            </t>
+
+                            <t t-if="vis[5] != 1">
+                                <tr></tr>
+                                <td>Finance Type :
+                                    <t t-esc="vis[5]"></t>
+
+                                </td>
+                            </t>
+
+                            <t t-if="vis[6] != 1">
+                                <tr></tr>
+                                <td>Officer :
+                                    <t t-esc="vis[6]"></t>
+
+                                </td>
+                            </t>
+
+                        </table>
+
+
+                        <hr width="100%" color="black"/>
+
+                        <div class="text-center">
+
+
+                            <table class="minimalistBlack">
+                                <thead>
+                                    <tr>
+                                        <t t-if="vis[1] == 1">
+                                            <th>Code</th>
+                                        </t>
+                                        <t t-if="vis[1] == 1">
+                                            <th>Customer Name</th>
+                                        </t>
+                                        <th style="white-space:pre">Date</th>
+                                        <th>Project Name</th>
+                                        <th>Project Address</th>
+                                        <th>Amount</th>
+                                        <t t-if="vis[2] == 1">
+                                            <th>Formula</th>
+                                        </t>
+                                        <t t-if="vis[3] == 1">
+                                            <th>Branch</th>
+                                        </t>
+                                        <t t-if="vis[4] == 1">
+                                            <th>Sector</th>
+                                        </t>
+                                        <t t-if="vis[5] == 1">
+                                            <th>Type</th>
+                                        </t>
+                                        <t t-if="vis[6] == 1">
+                                            <th>User</th>
+                                        </t>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr t-foreach="docs" t-as="doc">
+                                        <t t-if="vis[1] == 1">
+                                            <td>
+                                                <t t-esc="doc.sudo().partner_id.code"/>
+                                            </td>
+                                        </t>
+                                        <t t-if="vis[1] == 1">
+                                            <td style="white-space:pre">
+                                                <t t-esc="doc.sudo().partner_id.name"/>
+                                            </td>
+                                        </t>
+                                        <td>
+                                            <t t-esc="doc.date"/>
+                                        </td>
+                                        <td style="white-space:pre">
+                                            <t t-esc="doc.project_name"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="doc.project_address"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="doc.amount"/>
+                                        </td>
+                                        <t t-if="vis[2] == 1">
+                                            <td>
+                                                <t t-esc="dict(doc.fields_get(allfields=['formula'])['formula']['selection'])[doc.formula]"/>
+                                            </td>
+                                        </t>
+                                        <t t-if="vis[4] == 1">
+                                            <td>
+                                                <t t-esc="doc.sector_id.name"/>
+                                            </td>
+                                        </t>
+                                        <t t-if="vis[5] == 1">
+                                            <td>
+                                                <t t-esc="dict(doc.fields_get(allfields=['type'])['type']['selection'])[doc.type]"/>
+                                            </td>
+                                        </t>
+                                        <t t-if="vis[6] == 1">
+                                            <td>
+                                                <t t-esc="doc.sudo().user_id.name"/>
+                                            </td>
+                                        </t>
+                                        <t t-if="vis[3] == 1">
+                                            <td>
+                                                <t t-esc="doc.company_id.name"/>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+                            <style type="text/css">
+
+                                body {
+                                font-family: "Roboto", helvetica, arial, sans-serif;
+                                font-size: 16px;
+                                font-weight: 400;
+                                text-rendering: optimizeLegibility;
+                                }
+
+                                div.table-title {
+                                display: block;
+                                margin: auto;
+                                max-width: 600px;
+                                padding:5px;
+                                width: 100%;
+                                }
+
+                                .table-title h3 {
+                                color: #fafafa;
+                                font-size: 30px;
+                                font-weight: 400;
+                                font-style:normal;
+                                font-family: "Roboto", helvetica, arial, sans-serif;
+                                text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+                                text-transform:uppercase;
+                                }
+
+
+                                /*** Table Styles **/
+
+                                .table-fill {
+                                background: white;
+                                border-radius:3px;
+                                border-collapse: collapse;
+                                height: 320px;
+                                margin: auto;
+                                max-width: 600px;
+                                padding:5px;
+                                width: 100%;
+                                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                                animation: float 5s infinite;
+                                }
+
+                                th {
+                                background-color: #999999;
+                                color: black;
+                                font-weight: bold;
+                                padding: 20px 30px;
+                                text-align: center;
+                                }
+
+                                th:first-child {
+                                border-top-left-radius:3px;
+                                }
+
+                                th:last-child {
+                                border-top-right-radius:3px;
+                                border-right:none;
+                                }
+
+                                tr {
+                                border-top: 1px solid #C1C3D1;
+                                border-bottom-: 1px solid #C1C3D1;
+                                color:#666B85;
+                                font-size:16px;
+                                font-weight:normal;
+                                text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+                                }
+
+                                tr:hover td {
+                                background:#4E5066;
+                                color:#FFFFFF;
+                                border-top: 1px solid #22262e;
+                                }
+
+                                tr:first-child {
+                                border-top:none;
+                                }
+
+                                tr:last-child {
+                                border-bottom:none;
+                                }
+
+                                tr:nth-child(odd) td {
+                                background:#EBEBEB;
+                                }
+
+                                tr:nth-child(odd):hover td {
+                                background:#4E5066;
+                                }
+
+                                tr:last-child td:first-child {
+                                border-bottom-left-radius:3px;
+                                }
+
+                                tr:last-child td:last-child {
+                                border-bottom-right-radius:3px;
+                                }
+
+                                td {
+                                background:#FFFFFF;
+                                padding:20px;
+                                text-align:left;
+                                vertical-align:middle;
+                                font-weight:300;
+                                font-size:18px;
+                                text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+                                border-right: 1px solid #C1C3D1;
+                                }
+
+                                td:last-child {
+                                border-right: 0px;
+                                }
+
+                                th.text-left {
+                                text-align: left;
+                                }
+
+                                th.text-center {
+                                text-align: center;
+                                }
+
+                                th.text-right {
+                                text-align: right;
+                                }
+
+                                td.text-left {
+                                text-align: left;
+                                }
+
+                                td.text-center {
+                                text-align: center;
+                                }
+
+                                td.text-right {
+                                text-align: right;
+                                }
+
+                            </style>
+
+
+                        </div>
+                    </div>
+                </t>
+                <div class="footer">
+                    <center>
+                        <div class="text-center" style="border-top: 1px solid black;">
+                            <p>صفحة
+                                <span class="page"/>
+                                من
+                                <span class="topage"/>
+                            </p>
+                            <p>
+                                <b>
+                                    <u>
+                                        <t t-esc="order_num"/>
+                                    </u>
+                                </b>
+                            </p>
+
+                        </div>
+                    </center>
+
+                </div>
+            </t>
+        </template>
+
+
+        <template id="approvals_advance_report_document">
+
+
+            <div class="page">
+                <!--div style="position:absolute;top:850px; page-break-inside: avoid;">
+     Your Custom Content
+</div-->
+                <center>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1; color:black;">
+                                    <center>
+                                        <h1 width="70%" left="90">National Company For Micro-Finance</h1>
+
+                                        <h1 width="70%" left="90">Approvals Report</h1>
+
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center>
+
+                <hr width="100%" color="black"/>
+                <table class="greyGridTable">
+                    <td>Print Time:
+                        <span t-esc="time.strftime('%Y-%m-%d %H:%M:%S')"/>
+                        - User Name:
+                        <span t-esc="user.name"></span>
+                    </td>
+                </table>
+                <table class="greyGridTable">
+                    <td>Date Start :
+                        <t t-esc="date_start"/>
+                    </td>
+                    <td>Date End :
+                        <t t-esc="date_end"/>
+                    </td>
+                </table>
+                <table class="greyGridTable">
+                    <td>
+                        <t t-if="visvalue[1] != 0">
+
+
+                            Approval :
+                            <t t-esc="vis[1]"/>
+
+
+                        </t>
+
+                        <t t-if="visvalue[2] != 0">
+
+
+                            Formula :
+                            <t t-esc="vis[2]"/>
+
+
+                        </t>
+
+                        <t t-if="visvalue[3] != 0">
+
+
+                            Branch :
+                            <t t-esc="vis[3]"></t>
+
+                        </t>
+
+                        <t t-if="visvalue[4] != 0">
+
+
+                            Sectors :
+                            <t t-esc="vis[4]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[5] != 0">
+
+
+                            Finance Type :
+                            <t t-esc="vis[5]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[6] != 0">
+
+
+                            Officer :
+                            <t t-esc="vis[6]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[7] != 0">
+
+
+                            Approve Amount :
+                            <t t-esc="vis[7]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[8] != 0">
+
+
+                            Approved By :
+                            <t t-esc="vis[8]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[9] != 0">
+
+                            Portfolio :
+                            <t t-esc="vis[9]"></t>
+
+
+                        </t>
+                    </td>
+                </table>
+
+
+                <hr width="100%" color="black"/>
+
+                <div class="text-center">
+
+
+                    <table class="greyGridTable">
+                        <thead>
+                            <tr>
+                                <th>Serial</th>
+                                <th>Code</th>
+                                <th>Customer Name</th>
+                                <t t-if="visvalue[1] != 1">
+                                    <th>Approval Name</th>
+                                </t>
+                                <th style="white-space:pre">Date</th>
+                                <th>Project Name</th>
+                                <t t-if="visvalue[7] != 1">
+                                    <th>Approve Amount</th>
+                                </t>
+                                <th>Profit Marigin</th>
+                                <th>Profit</th>
+                                <th>Total</th>
+                                <th>Installment Number</th>
+                                <th>Installment Amount</th>
+                                <t t-if="visvalue[9] != 1">
+                                    <th>Portfolio</th>
+                                </t>
+                                <t t-if="visvalue[2] != 1">
+                                    <th>Formula</th>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <th>Branch</th>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <th>Sector</th>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <th>Type</th>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <th>Officer</th>
+                                </t>
+                                <t t-if="visvalue[8] != 1">
+                                    <th>Approved By</th>
+                                </t>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="approve_amount_total" t-value="0"></t>
+                            <t t-set="profit_margin_total" t-value="0"></t>
+                            <t t-set="profit_total" t-value="0"></t>
+                            <t t-set="total_app_profm_prof_total" t-value="0"></t>
+                            <t t-set="installment_no_total" t-value="0"></t>
+                            <t t-set="ins_after_prof_total" t-value="0"></t>
+                            <tr t-foreach="docs" t-as="doc">
+                                <td>
+                                    <span t-esc="doc_index + 1"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.visit_id.order_id.sudo().partner_id.code"/>
+                                </td>
+                                <td style="width:10%;white-space:pre;">
+                                    <t t-esc="doc.visit_id.order_id.sudo().partner_id.name"/>
+                                </td>
+                                <t t-if="visvalue[1] != 1">
+                                    <td>
+                                        <t t-esc="doc.name"/>
+                                    </td>
+                                </t>
+                                <td style="white-space:pre">
+                                    <t t-esc="doc.visit_id.date"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.project_id.name"/>
+                                </td>
+                                <t t-if="visvalue[7] != 1">
+                                    <td>
+                                        <t t-esc="doc.approve_amount"/>
+                                    </td>
+                                </t>
+                                <td>
+                                    <t t-esc="doc.profit_margin"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.profit"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.approve_amount+doc.profit+doc.profit_margin"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.installment_no"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.ins_after_profit"/>
+                                </td>
+                                <t t-if="visvalue[9] != 1">
+                                    <td style="white-space:pre">
+                                        <t t-esc="doc.visit_id.order_id.portfolio_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[2] != 1">
+                                    <td>
+                                        <t t-esc="dict(doc.fields_get(allfields=['formula'])['formula']['selection'])[doc.formula]"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.company_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.sector_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <td>
+                                        <t t-esc="dict(doc.visit_id.order_id.fields_get(allfields=['type'])['type']['selection'])[doc.visit_id.order_id.type]"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <td style="white-space:pre">
+                                        <t t-esc="doc.visit_id.order_id.sudo().user_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[8] != 1">
+                                    <td style="white-space:pre">
+                                        <t t-esc="doc.sudo().user_id.name"/>
+                                    </td>
+                                </t>
+
+                                <t t-set="approve_amount_total" t-value="approve_amount_total + doc.approve_amount"></t>
+                                <t t-set="profit_margin_total" t-value="profit_margin_total + doc.profit_margin"></t>
+                                <t t-set="profit_total" t-value="profit_total + doc.profit"></t>
+                                <t t-set="total_app_profm_prof_total"
+                                   t-value="total_app_profm_prof_total + doc.approve_amount+doc.profit+doc.profit_margin"></t>
+                                <t t-set="installment_no_total" t-value="installment_no_total + doc.installment_no"></t>
+                                <t t-set="ins_after_prof_total"
+                                   t-value="ins_after_prof_total + doc.ins_after_profit"></t>
+
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td></td>
+                                <td></td>
+                                <t t-if="visvalue[1] != 1">
+                                    <td></td>
+                                </t>
+                                <td></td>
+                                <td></td>
+                                <t t-if="visvalue[7] != 1">
+                                    <td>
+                                        <t t-esc="approve_amount_total"></t>
+                                    </td>
+                                </t>
+                                <td>
+                                    <t t-esc="profit_margin_total"></t>
+                                </td>
+                                <td>
+                                    <t t-esc="profit_total"></t>
+                                </td>
+                                <td>
+                                    <t t-esc="total_app_profm_prof_total"></t>
+                                </td>
+                                <td>
+                                    <t t-esc="installment_no_total"/>
+                                </td>
+                                <td>
+                                    <t t-esc="ins_after_prof_total"/>
+                                </td>
+                                <t t-if="visvalue[9] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[2] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[8] != 1">
+                                    <td></td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                    <style type="text/css">
+                        table.steelBlueCols {
+
+                        background-color: #555555;
+                        width: 400px;
+                        text-align: center;
+                        border-collapse: collapse;
+                        width:100%;
+                        }
+                        table.steelBlueCols td, table.steelBlueCols th {
+                        border: 1px solid #555555;
+                        padding: 5px 10px;
+                        }
+                        table.steelBlueCols tbody td {
+                        font-size: 17px;
+                        font-weight: bold;
+                        color: #FFFFFF;
+                        }
+                        table.steelBlueCols td:nth-child(even) {
+                        background: #398AA4;
+                        }
+                        table.steelBlueCols thead {
+                        background: #398AA4;
+                        border-bottom: 10px solid #398AA4;
+                        }
+                        table.steelBlueCols thead th {
+                        font-size: 15px;
+                        font-weight: bold;
+                        color: #FFFFFF;
+                        text-align: center;
+                        border-left: 2px solid #398AA4;
+                        }
+                        table.steelBlueCols thead th:first-child {
+                        border-left: none;
+                        }
+
+                        table.steelBlueCols tfoot td {
+                        font-size: 13px;
+                        }
+                        table.steelBlueCols tfoot .links {
+                        text-align: right;
+                        }
+                        table.steelBlueCols tfoot .links a{
+                        display: inline-block;
+                        background: #FFFFFF;
+                        color: #398AA4;
+                        padding: 2px 8px;
+                        border-radius: 5px;
+                        }
+
+
+                        h1 { font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;}
+
+                        table.greyGridTable {
+                        border: 2px solid #FFFFFF;
+                        width: 100%;
+                        text-align: center;
+                        border-collapse: collapse;
+                        }
+                        table.greyGridTable td, table.greyGridTable th {
+                        border: 0px solid #FFFFFF;
+                        padding: 3px 4px;
+                        font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;
+                        }
+                        table.greyGridTable tbody td {
+                        font-size: 17px;
+                        }
+                        table.greyGridTable tr:nth-child(even) {
+                        background: #EBEBEB;
+                        }
+                        table.greyGridTable thead {
+                        background: #FFFFFF;
+                        border-bottom: 1px solid #333333;
+                        }
+                        table.greyGridTable thead th {
+                        font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;
+                        font-size: 15px;
+                        font-weight: bold;
+                        color: #333333;
+                        text-align: center;
+                        border-left: 1px solid #333333;
+                        }
+                        table.greyGridTable thead th:first-child {
+                        border-left: none;
+                        }
+
+                        table.greyGridTable tfoot {
+                        font-size: 14px;
+                        font-weight: bold;
+                        color: #333333;
+                        border-top: 4px solid #333333;
+                        }
+                        table.greyGridTable tfoot td {
+                        font-size: 14px;
+                        }
+
+                    </style>
+
+
+                </div>
+            </div>
+
+            <div class="footer">
+                <center>
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <p>صفحة
+                            <span class="page"/>
+                            من
+                            <span class="topage"/>
+                        </p>
+                        <p>
+                            <b>
+                                <u>
+                                    <t t-esc="order_num"/>
+                                </u>
+                            </b>
+                        </p>
+
+                    </div>
+                </center>
+
+            </div>
+
+        </template>
+
+
+        <template id="approvals_approve_report_document">
+
+
+            <div class="page">
+                <!--div style="position:absolute;top:850px; page-break-inside: avoid;">
+     Your Custom Content
+</div-->
+
+                <center>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1; color:black;">
+                                    <center>
+                                        <h1 width="70%" left="90">National Company For Micro-Finance</h1>
+
+                                        <h1 width="70%" left="90">Approval approve Report</h1>
+
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center>
+                <hr width="100%" color="black"/>
+                <table>
+                    <td>Code :
+                        <t t-esc="vis[0]"/>
+                    </td>
+                    <td>Customer :
+                        <t t-esc="vis[1]"/>
+                    </td>
+                </table>
+
+
+                <hr width="100%" color="black"/>
+
+
+                <table class="minimalistBlack">
+                    <thead>
+                        <tr>
+                            <t t-if="visvalue[1] != 1">
+                                <th>Code</th>
+                            </t>
+                            <t t-if="visvalue[1] != 1">
+                                <th>Customer Name</th>
+                            </t>
+                            <th>Serial</th>
+                            <th>Approval Name</th>
+                            <th style="white-space:pre">Date</th>
+                            <th>Project Name</th>
+                            <th>Approve Amount</th>
+                            <th>Profit Marigin</th>
+                            <th>Profit</th>
+                            <th>Total</th>
+                            <th>Installment Number</th>
+                            <th>Installment Amount</th>
+                            <th>Portfolio</th>
+                            <th>Formula</th>
+                            <th>Branch</th>
+                            <th>Sector</th>
+                            <th>Type</th>
+                            <th>Officer</th>
+                            <th>Approved By</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="docs" t-as="doc">
+                            <td>
+                                <span t-esc="doc_index + 1"/>
+                            </td>
+                            <t t-if="visvalue[1] != 1">
+                                <td>
+                                    <t t-esc="doc.visit_id.order_id.sudo().partner_id.code"/>
+                                </td>
+                            </t>
+                            <t t-if="visvalue[1] != 1">
+                                <td style="white-space:pre">
+                                    <t t-esc="doc.visit_id.order_id.sudo().partner_id.name"/>
+                                </td>
+                            </t>
+                            <td>
+                                <t t-esc="doc.name"/>
+                            </td>
+                            <td>
+                                <t t-esc="doc.visit_id.date"/>
+                            </td>
+                            <td>
+                                <t t-esc="doc.project_id.name"/>
+                            </td>
+                            <td>
+                                <t t-esc="doc.approve_amount"/>
+                            </td>
+                            <td>
+                                <t t-esc="doc.profit_margin"/>
+                            </td>
+                            <td>
+                                <t t-esc="doc.profit"/>
+                            </td>
+                            <td>
+                                <t t-esc="doc.approve_amount+doc.profit+doc.profit_margin"/>
+                            </td>
+                            <td>
+                                <t t-esc="doc.installment_no"/>
+                            </td>
+                            <td>
+                                <t t-esc="doc.ins_after_profit"/>
+                            </td>
+                            <td>
+                                <t t-esc="doc.visit_id.order_id.portfolio_id.name"/>
+                            </td>
+                            <td>
+                                <t t-esc="dict(doc.fields_get(allfields=['formula'])['formula']['selection'])[doc.formula]"/>
+                            </td>
+                            <td>
+                                <t t-esc="doc.visit_id.order_id.company_id.name"/>
+                            </td>
+                            <td>
+                                <t t-esc="doc.visit_id.order_id.sector_id.name"/>
+                            </td>
+                            <td>
+                                <t t-esc="dict(doc.visit_id.order_id.fields_get(allfields=['type'])['type']['selection'])[doc.visit_id.order_id.type]"/>
+                            </td>
+                            <td style="white-space:pre">
+                                <t t-esc="doc.visit_id.order_id.sudo().user_id.name"/>
+                            </td>
+                            <td style="white-space:pre">
+                                <t t-esc="doc.sudo().user_id.name"/>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="text-center">
+                    <div style="font-size:15pt; font-family:times new roman; white-space:pre; color:#23238e;">Manager
+                        Approval: ......................................................................................
+                        ...........................................................................................................
+                    </div>
+                    <div style="font-size:15pt; font-family:times new roman; font-weight:bold; font-style:italic; white-space:pre">
+                        Sign ....................................................... Date ...........................
+                    </div>
+
+
+                    <style type="text/css">
+                        body {
+                        font-family: "Roboto", helvetica, arial, sans-serif;
+                        font-size: 16px;
+                        font-weight: 400;
+                        text-rendering: optimizeLegibility;
+                        }
+
+                        div.table-title {
+                        display: block;
+                        margin: auto;
+                        max-width: 600px;
+                        padding:5px;
+                        width: 100%;
+                        }
+
+                        .table-title h3 {
+                        color: #fafafa;
+                        font-size: 30px;
+                        font-weight: 400;
+                        font-style:normal;
+                        font-family: "Roboto", helvetica, arial, sans-serif;
+                        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+                        text-transform:uppercase;
+                        }
+
+
+                        /*** Table Styles **/
+
+                        .table-fill {
+                        background: white;
+                        border-radius:3px;
+                        border-collapse: collapse;
+                        height: 320px;
+                        margin: auto;
+                        max-width: 600px;
+                        padding:5px;
+                        width: 100%;
+                        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                        animation: float 5s infinite;
+                        }
+
+                        th {
+                        background-color: #999999;
+                        color: black;
+                        font-weight: bold;
+                        padding: 20px 30px;
+                        text-align: center;
+                        }
+
+                        th:first-child {
+                        border-top-left-radius:3px;
+                        }
+
+                        th:last-child {
+                        border-top-right-radius:3px;
+                        border-right:none;
+                        }
+
+                        tr {
+                        border-top: 1px solid #C1C3D1;
+                        border-bottom-: 1px solid #C1C3D1;
+                        color:#666B85;
+                        font-size:16px;
+                        font-weight:normal;
+                        text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+                        }
+
+                        tr:hover td {
+                        background:#4E5066;
+                        color:#FFFFFF;
+                        border-top: 1px solid #22262e;
+                        }
+
+                        tr:first-child {
+                        border-top:none;
+                        }
+
+                        tr:last-child {
+                        border-bottom:none;
+                        }
+
+                        tr:nth-child(odd) td {
+                        background:#EBEBEB;
+                        }
+
+                        tr:nth-child(odd):hover td {
+                        background:#4E5066;
+                        }
+
+                        tr:last-child td:first-child {
+                        border-bottom-left-radius:3px;
+                        }
+
+                        tr:last-child td:last-child {
+                        border-bottom-right-radius:3px;
+                        }
+
+                        td {
+                        background:#FFFFFF;
+                        padding:20px;
+                        text-align:left;
+                        vertical-align:middle;
+                        font-weight:300;
+                        font-size:18px;
+                        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+                        border-right: 1px solid #C1C3D1;
+                        }
+
+                        td:last-child {
+                        border-right: 0px;
+                        }
+
+                        th.text-left {
+                        text-align: left;
+                        }
+
+                        th.text-center {
+                        text-align: center;
+                        }
+
+                        th.text-right {
+                        text-align: right;
+                        }
+
+                        td.text-left {
+                        text-align: left;
+                        }
+
+                        td.text-center {
+                        text-align: center;
+                        }
+
+                        td.text-right {
+                        text-align: right;
+                        }
+
+                    </style>
+
+
+                </div>
+            </div>
+
+            <div class="footer">
+                <center>
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <p>صفحة
+                            <span class="page"/>
+                            من
+                            <span class="topage"/>
+                        </p>
+                        <p>
+                            <b>
+                                <u>
+                                    <t t-esc="order_num"/>
+                                </u>
+                            </b>
+                        </p>
+
+                    </div>
+                </center>
+
+            </div>
+
+        </template>
+
+
+        <template id="cheques_advance_report_document">
+
+
+            <div class="page">
+
+
+                <center>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1; color:black;">
+                                    <center>
+                                        <h1 width="70%" left="90">National Company For Micro-Finance</h1>
+
+                                        <h1 width="70%" left="90">Cheques Report</h1>
+
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center>
+
+                <hr width="100%" color="black"/>
+                <table class="greyGridTable">
+                    <td>Print Time:
+                        <span t-esc="time.strftime('%Y-%m-%d %H:%M:%S')"/>
+                        - User Name:
+                        <span t-esc="user.name"></span>
+                    </td>
+                </table>
+                <table class="greyGridTable">
+                    <td>Date Start :
+                        <t t-esc="date_start"/>
+                    </td>
+                    <td>Date End :
+                        <t t-esc="date_end"/>
+                    </td>
+                </table>
+                <table class="greyGridTable">
+                    <td>
+                        <t t-if="visvalue[1] != 0">
+
+
+                            Approval :
+                            <t t-esc="vis[1]"/>
+
+
+                        </t>
+
+                        <t t-if="visvalue[2] != 0">
+
+
+                            Formula :
+                            <t t-esc="vis[2]"/>
+
+
+                        </t>
+
+                        <t t-if="visvalue[11] != 0">
+
+
+                            Cheque State :
+                            <t t-esc="vis[11]"/>
+
+
+                        </t>
+
+                        <t t-if="visvalue[3] != 0">
+
+
+                            Branch :
+                            <t t-esc="vis[3]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[4] != 0">
+
+
+                            Sectors :
+                            <t t-esc="vis[4]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[5] != 0">
+
+
+                            Finance Type :
+                            <t t-esc="vis[5]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[6] != 0">
+
+
+                            Officer :
+                            <t t-esc="vis[6]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[7] != 0">
+
+
+                            Approve Amount :
+                            <t t-esc="vis[7]"></t>
+
+
+                        </t>
+
+
+                        <t t-if="visvalue[9] != 0">
+
+
+                            Cheaque Amount :
+                            <t t-esc="vis[9]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[10] != 0">
+
+
+                            Portfolio :
+                            <t t-esc="vis[10]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[12] != 0">
+
+
+                            Bank :
+                            <t t-esc="vis[12]"></t>
+
+
+                        </t>
+                    </td>
+                </table>
+
+
+                <hr width="100%" color="black"/>
+
+                <div class="text-center">
+                    <!--h2>Sale Details</h2>
+                            <h1>ok <t t-esc="data"></t> ok</h1-->
+
+
+                    <table class="greyGridTable">
+                        <thead>
+                            <tr>
+                                <th>Serial</th>
+                                <th>Code</th>
+                                <th>Customer Name</th>
+                                <th>Project Name</th>
+                                <t t-if="visvalue[7] != 1">
+                                    <th>Approve Amount</th>
+                                </t>
+
+
+                                <t t-if="visvalue[9] != 1">
+                                    <th>Cheque Amounts</th>
+                                </t>
+                                <th style="white-space:pre">Date</th>
+                                <th>Benaficiary</th>
+                                <t t-if="visvalue[10] != 1">
+                                    <th>Portfolio</th>
+                                </t>
+
+
+                                <t t-if="visvalue[2] != 1">
+                                    <th>Formula</th>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <th>Branch</th>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <th>Sector</th>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <th>Type</th>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <th>Officer</th>
+                                </t>
+
+                                <t t-if="visvalue[12] != 1">
+                                    <th>Bank</th>
+                                </t>
+                                <t t-if="visvalue[11] != 1">
+                                    <th>Cheque State</th>
+                                </t>
+
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="approve_amount_total" t-value="0"></t>
+                            <t t-set="is_same_approval" t-value="0"></t>
+                            <t t-set="amount_total" t-value="0"></t>
+
+                            <tr t-foreach="docs" t-as="doc">
+                                <td>
+                                    <span t-esc="doc_index + 1"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.approval_id.visit_id.order_id.sudo().partner_id.code"/>
+                                </td>
+                                <td style="white-space:pre">
+                                    <t t-esc="doc.approval_id.visit_id.order_id.sudo().partner_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.approval_id.project_id.name"/>
+                                </td>
+                                <t t-if="visvalue[7] != 1">
+                                    <td>
+                                        <t t-esc="doc.approval_id.approve_amount"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[9] != 1">
+                                    <td>
+                                        <t t-esc="doc.amount"/>
+                                    </td>
+                                </t>
+                                <td style="white-space:pre">
+                                    <t t-esc="doc.date"/>
+                                </td>
+                                <td style="white-space:pre">
+                                    <t t-esc="doc.benaficiary_id.name"/>
+                                </td>
+                                <t t-if="visvalue[10] != 1">
+                                    <td style="white-space:pre">
+                                        <t t-esc="doc.approval_id.visit_id.order_id.portfolio_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[2] != 1">
+                                    <td>
+                                        <t t-esc="dict(doc.approval_id.fields_get(allfields=['formula'])['formula']['selection'])[doc.approval_id.formula]"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <td>
+                                        <t t-esc="doc.approval_id.visit_id.order_id.company_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <td>
+                                        <t t-esc="doc.approval_id.visit_id.order_id.sector_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <td>
+                                        <t t-esc="dict(doc.approval_id.visit_id.order_id.fields_get(allfields=['type'])['type']['selection'])[doc.approval_id.visit_id.order_id.type]"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <td style="white-space:pre">
+                                        <t t-esc="doc.approval_id.visit_id.order_id.sudo().user_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[12] != 1">
+                                    <td style="white-space:pre">
+                                        <t t-esc="doc.payment_id.journal_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[11] != 1">
+                                    <td>
+                                        <t t-esc="doc.state"/>
+                                    </td>
+                                </t>
+
+                                <t t-if="is_same_approval !=  doc.approval_id.id">
+                                    <t t-set="approve_amount_total"
+                                       t-value="approve_amount_total + doc.approval_id.approve_amount"></t>
+                                </t>
+                                <t t-set="is_same_approval" t-value="doc.approval_id.id"></t>
+                                <t t-set="amount_total" t-value="amount_total + doc.amount"></t>
+
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <t t-if="visvalue[7] != 1">
+                                    <td>
+                                        <t t-esc="approve_amount_total"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[9] != 1">
+                                    <td>
+                                        <t t-esc="amount_total"/>
+                                    </td>
+                                </t>
+                                <td></td>
+                                <td></td>
+                                <t t-if="visvalue[10] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[2] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[12] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[11] != 1">
+                                    <td></td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <style type="text/css">
+                        table.steelBlueCols {
+
+                        background-color: #555555;
+                        width: 400px;
+                        text-align: center;
+                        border-collapse: collapse;
+                        width:100%;
+                        }
+                        table.steelBlueCols td, table.steelBlueCols th {
+                        border: 1px solid #555555;
+                        padding: 5px 10px;
+                        }
+                        table.steelBlueCols tbody td {
+                        font-size: 17px;
+                        font-weight: bold;
+                        color: #FFFFFF;
+                        }
+                        table.steelBlueCols td:nth-child(even) {
+                        background: #398AA4;
+                        }
+                        table.steelBlueCols thead {
+                        background: #398AA4;
+                        border-bottom: 10px solid #398AA4;
+                        }
+                        table.steelBlueCols thead th {
+                        font-size: 15px;
+                        font-weight: bold;
+                        color: #FFFFFF;
+                        text-align: center;
+                        border-left: 2px solid #398AA4;
+                        }
+                        table.steelBlueCols thead th:first-child {
+                        border-left: none;
+                        }
+
+                        table.steelBlueCols tfoot td {
+                        font-size: 13px;
+                        }
+                        table.steelBlueCols tfoot .links {
+                        text-align: right;
+                        }
+                        table.steelBlueCols tfoot .links a{
+                        display: inline-block;
+                        background: #FFFFFF;
+                        color: #398AA4;
+                        padding: 2px 8px;
+                        border-radius: 5px;
+                        }
+
+
+                        h1 { font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;}
+
+                        table.greyGridTable {
+                        border: 2px solid #FFFFFF;
+                        width: 100%;
+                        text-align: center;
+                        border-collapse: collapse;
+                        }
+                        table.greyGridTable td, table.greyGridTable th {
+                        border: 0px solid #FFFFFF;
+                        padding: 3px 4px;
+                        font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;
+                        }
+                        table.greyGridTable tbody td {
+                        font-size: 17px;
+                        }
+                        table.greyGridTable tr:nth-child(even) {
+                        background: #EBEBEB;
+                        }
+                        table.greyGridTable thead {
+                        background: #FFFFFF;
+                        border-bottom: 1px solid #333333;
+                        }
+                        table.greyGridTable thead th {
+                        font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;
+                        font-size: 15px;
+                        font-weight: bold;
+                        color: #333333;
+                        text-align: center;
+                        border-left: 1px solid #333333;
+                        }
+                        table.greyGridTable thead th:first-child {
+                        border-left: none;
+                        }
+
+                        table.greyGridTable tfoot {
+                        font-size: 14px;
+                        font-weight: bold;
+                        color: #333333;
+                        border-top: 4px solid #333333;
+                        }
+                        table.greyGridTable tfoot td {
+                        font-size: 14px;
+                        }
+
+                    </style>
+
+
+                </div>
+            </div>
+
+            <div class="footer">
+                <center>
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <p>صفحة
+                            <span class="page"/>
+                            من
+                            <span class="topage"/>
+                        </p>
+                        <p>
+                            <b>
+                                <u>
+                                    <t t-esc="order_num"/>
+                                </u>
+                            </b>
+                        </p>
+
+                    </div>
+                </center>
+
+            </div>
+
+        </template>
+
+
+        <template id="approvals_advance_done_report_document">
+
+
+            <div class="page">
+                <!--div style="position:absolute;top:850px; page-break-inside: avoid;">
+     Your Custom Content
+</div-->
+
+                <center>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1; color:black;">
+                                    <center>
+                                        <h1 width="70%" left="90">National Company For Micro-Finance</h1>
+
+                                        <h1 width="70%" left="90">Approvals Done Report</h1>
+
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center>
+                <hr width="100%" color="black"/>
+                <table class="greyGridTable">
+                    <td>Print Time:
+                        <span t-esc="time.strftime('%Y-%m-%d %H:%M:%S')"/>
+                        - User Name:
+                        <span t-esc="user.name"></span>
+                    </td>
+                </table>
+                <table class="greyGridTable">
+                    <td>Date Start :
+                        <t t-esc="date_start"/>
+                    </td>
+                    <td>Date End :
+                        <t t-esc="date_end"/>
+                    </td>
+                </table>
+                <table class="greyGridTable">
+                    <td>
+                        <t t-if="visvalue[1] != 0">
+
+
+                            Approval :
+                            <t t-esc="vis[1]"/>
+
+
+                        </t>
+
+                        <t t-if="visvalue[2] != 0">
+
+
+                            Formula :
+                            <t t-esc="vis[2]"/>
+
+
+                        </t>
+
+                        <t t-if="visvalue[3] != 0">
+
+                            Branch :
+                            <t t-esc="vis[3]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[4] != 0">
+
+                            Sectors :
+                            <t t-esc="vis[4]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[5] != 0">
+
+
+                            Finance Type :
+                            <t t-esc="vis[5]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[6] != 0">
+
+
+                            Officer :
+                            <t t-esc="vis[6]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[7] != 0">
+
+
+                            OutStanding Balance :
+                            <t t-esc="vis[7]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[8] != 0">
+
+                            Approved By :
+                            <t t-esc="vis[8]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[9] != 0">
+
+
+                            Portfolio :
+                            <t t-esc="vis[9]"></t>
+
+
+                        </t>
+                    </td>
+
+                </table>
+
+
+                <hr width="100%" color="black"/>
+
+                <div class="text-center">
+                    <table class="greyGridTable">
+                        <thead>
+                            <tr>
+                                <th>Serial</th>
+                                <th>Code</th>
+                                <th>Customer Name</th>
+                                <th>Project Name</th>
+                                <th style="white-space:pre">Date</th>
+                                <t t-if="visvalue[7] != 1">
+                                    <th>Standing Balance</th>
+                                </t>
+                                <th>Profit Marigin</th>
+                                <th>Profit</th>
+                                <th>Total</th>
+                                <th>Grace Period</th>
+                                <th>Installment Number</th>
+                                <th>Installment Amount</th>
+                                <t t-if="visvalue[9] != 1">
+                                    <th>Portfolio</th>
+                                </t>
+                                <t t-if="visvalue[2] != 1">
+                                    <th>Formula</th>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <th>Type</th>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <th>Branch</th>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <th>Sector</th>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <th>Officer</th>
+                                </t>
+                                <t t-if="visvalue[8] != 1">
+                                    <th>Approved By</th>
+                                </t>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="standing_balance_total" t-value="0"></t>
+                            <t t-set="profit_margin_total" t-value="0"></t>
+                            <t t-set="profit_total" t-value="0"></t>
+                            <t t-set="mar_prof_total" t-value="0"></t>
+                            <t t-set="installment_no" t-value="0"></t>
+                            <t t-set="ins_after_profit" t-value="0"></t>
+
+                            <tr t-foreach="docs" t-as="doc">
+                                <td>
+                                    <span t-esc="doc_index + 1"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.visit_id.order_id.sudo().partner_id.code"/>
+                                </td>
+                                <td style="white-space:pre">
+                                    <t t-esc="doc.visit_id.order_id.sudo().partner_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.project_id.name"/>
+                                </td>
+                                <td style="white-space:pre">
+                                    <t t-esc="doc.done_date"/>
+                                </td>
+                                <t t-if="visvalue[7] != 1">
+                                    <td>
+                                        <t t-esc="doc.standing_balance"/>
+                                    </td>
+                                </t>
+                                <td>
+                                    <t t-esc="doc.profit_margin"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.profit"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.profit+doc.profit_margin"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.grace_period"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.installment_no"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.ins_after_profit"/>
+                                </td>
+                                <t t-if="visvalue[9] != 1">
+                                    <td style="white-space:pre">
+                                        <t t-esc="doc.visit_id.order_id.portfolio_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[2] != 1">
+                                    <td>
+                                        <t t-esc="dict(doc.fields_get(allfields=['formula'])['formula']['selection'])[doc.formula]"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <td>
+                                        <t t-esc="dict(doc.visit_id.order_id.fields_get(allfields=['type'])['type']['selection'])[doc.visit_id.order_id.type]"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.company_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.sector_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <td style="white-space:pre">
+                                        <t t-esc="doc.visit_id.order_id.sudo().user_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[8] != 1">
+                                    <td style="white-space:pre">
+                                        <t t-esc="doc.sudo().user_id.name"/>
+                                    </td>
+                                </t>
+
+                                <t t-set="standing_balance_total"
+                                   t-value="standing_balance_total +doc.standing_balance"></t>
+                                <t t-set="profit_margin_total" t-value="profit_margin_total +doc.profit_margin"></t>
+                                <t t-set="profit_total" t-value="profit_total + doc.profit"></t>
+                                <t t-set="bal_mar_prof_total"
+                                   t-value="mar_prof_total + doc.profit+doc.profit_margin"></t>
+                                <t t-set="installment_no" t-value="installment_no + doc.installment_no"></t>
+                                <t t-set="ins_after_profit" t-value="ins_after_profit + doc.ins_after_profit"></t>
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <t t-if="visvalue[7] != 1">
+                                    <td>
+                                        <t t-esc="standing_balance_total"/>
+                                    </td>
+                                </t>
+                                <td>
+                                    <t t-esc="profit_margin_total"/>
+                                </td>
+                                <td>
+                                    <t t-esc="profit_total"/>
+                                </td>
+                                <td>
+                                    <t t-esc="bal_mar_prof_total"/>
+                                </td>
+                                <td>
+                                    <t t-set="bal_mar_prof_total"/>
+                                </td>
+
+                                <td>
+                                    <t t-esc="installment_no"/>
+                                </td>
+                                <td>
+                                    <t t-esc="ins_after_profit"/>
+                                </td>
+                                <t t-if="visvalue[9] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[2] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <td></td>
+                                </t>
+                                <t t-if="visvalue[8] != 1">
+                                    <td></td>
+                                </t>
+
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <style type="text/css">
+                        table.steelBlueCols {
+
+                        background-color: #555555;
+                        width: 400px;
+                        text-align: center;
+                        border-collapse: collapse;
+                        width:100%;
+                        }
+                        table.steelBlueCols td, table.steelBlueCols th {
+                        border: 1px solid #555555;
+                        padding: 5px 10px;
+                        }
+                        table.steelBlueCols tbody td {
+                        font-size: 17px;
+                        font-weight: bold;
+                        color: #FFFFFF;
+                        }
+                        table.steelBlueCols td:nth-child(even) {
+                        background: #398AA4;
+                        }
+                        table.steelBlueCols thead {
+                        background: #398AA4;
+                        border-bottom: 10px solid #398AA4;
+                        }
+                        table.steelBlueCols thead th {
+                        font-size: 15px;
+                        font-weight: bold;
+                        color: #FFFFFF;
+                        text-align: center;
+                        border-left: 2px solid #398AA4;
+                        }
+                        table.steelBlueCols thead th:first-child {
+                        border-left: none;
+                        }
+
+                        table.steelBlueCols tfoot td {
+                        font-size: 13px;
+                        }
+                        table.steelBlueCols tfoot .links {
+                        text-align: right;
+                        }
+                        table.steelBlueCols tfoot .links a{
+                        display: inline-block;
+                        background: #FFFFFF;
+                        color: #398AA4;
+                        padding: 2px 8px;
+                        border-radius: 5px;
+                        }
+
+
+                        h1 { font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;}
+
+                        table.greyGridTable {
+                        border: 2px solid #FFFFFF;
+                        width: 100%;
+                        text-align: center;
+                        border-collapse: collapse;
+                        }
+                        table.greyGridTable td, table.greyGridTable th {
+                        border: 0px solid #FFFFFF;
+                        padding: 3px 4px;
+                        font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;
+                        }
+                        table.greyGridTable tbody td {
+                        font-size: 17px;
+                        }
+                        table.greyGridTable tr:nth-child(even) {
+                        background: #EBEBEB;
+                        }
+                        table.greyGridTable thead {
+                        background: #FFFFFF;
+                        border-bottom: 1px solid #333333;
+                        }
+                        table.greyGridTable thead th {
+                        font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;
+                        font-size: 15px;
+                        font-weight: bold;
+                        color: #333333;
+                        text-align: center;
+                        border-left: 1px solid #333333;
+                        }
+                        table.greyGridTable thead th:first-child {
+                        border-left: none;
+                        }
+
+                        table.greyGridTable tfoot {
+                        font-size: 14px;
+                        font-weight: bold;
+                        color: #333333;
+                        border-top: 4px solid #333333;
+                        }
+                        table.greyGridTable tfoot td {
+                        font-size: 14px;
+                        }
+                    </style>
+
+
+                </div>
+            </div>
+
+            <div class="footer">
+                <center>
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <p>صفحة
+                            <span class="page"/>
+                            من
+                            <span class="topage"/>
+                        </p>
+                        <p>
+                            <b>
+                                <u>
+                                    <t t-esc="order_num"/>
+                                </u>
+                            </b>
+                        </p>
+
+                    </div>
+                </center>
+
+            </div>
+
+        </template>
+
+
+        <template id="visit_sign_report_document">
+
+
+            <div class="page">
+
+                <html>
+                    <head>
+                        <style>
+
+                            .s{ border-style: solid;}
+
+                            body,h2,h3 {
+
+                            font-family: "DejaVu Serif"
+
+                            }
+
+                            table, td, th {
+                            border: 1px solid black;
+                            }
+
+                            td { font-weight: bold;
+                            text-align:right;
+                            }
+
+                            table { display:inline-table;
+                            border-collapse: collapse;
+
+                            }
+                            table.full{width: 100%;}
+
+                            th { background-color: #eae1e1;
+                            text-align:center;
+                            height: 30px;
+                            }
+                        </style>
+                    </head>
+                    <body>
+
+
+                        <center>
+                            <table style="border: 0px solid #C1C3D1;">
+                                <tbody>
+                                    <tr>
+
+                                        <td style="background:white; border: 0px solid #C1C3D1; color:black;">
+                                            <center>
+                                                <img class="img img-responsive"
+                                                     src="/microfinance/static/wa_report/wa.png"/>
+                                            </center>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </center>
+
+                        <br/>
+                        <center>
+                            <b>
+                                <h2>المؤسسة الوطنية للتمويل الأصغر</h2>
+                            </b>
+                        </center>
+                        <center>
+                            <table>
+                                <tr>
+                                    <th style="width: 30%;">الفرع</th>
+                                    <td>
+                                        <t t-esc="branch"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </center>
+
+                        <center>
+                            <b>
+                                <h3>ملخص الزيارة</h3>
+                            </b>
+                        </center>
+                        <hr width="100%" color="black"/>
+                        <br/>
+                        <br/>
+
+                        <t t-foreach="docs" t-as="doc">
+                            <table class="full">
+                                <tr>
+                                    <th style="width: 17%;">إسم المستخدم</th>
+                                    <td>
+                                        <t t-esc="user.name"/>
+                                    </td>
+                                    <th style="width: 14.8%;">وقت الطباعة</th>
+                                    <td style="width: 17%;">
+                                        <h6>
+                                            <t t-esc="current_date"/>
+                                        </h6>
+                                    </td>
+                                    <th style="width: 16%;">تاريخ الزيارة</th>
+                                    <td>
+                                        <t t-esc="doc.visit_id.date"/>
+                                    </td>
+                                </tr>
+
+
+                            </table>
+
+                            <br/>
+                            <br/>
+
+                            <table>
+                                <tr>
+                                    <table align="left" style="width:40.3%">
+                                        <th style="width:40%">رقم العميل</th>
+                                        <td>
+                                            <t t-esc="doc.visit_id.order_id.partner_id.code"/>
+                                        </td>
+                                    </table>
+                                </tr>
+
+                            </table>
+
+
+                            <table>
+
+
+                            </table>
+
+
+                            <table align="right" style="width:43%">
+                                <tr>
+                                    <th style="width:40%">الإسم</th>
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.partner_id.name"/>
+                                    </td>
+
+                                </tr>
+                                <tr>
+
+                                </tr>
+                            </table>
+                            <br/>
+                            <br/>
+                            <table align="left" style="width:40.3%">
+                                <tr>
+                                    <th style="width:40%">مكان المشروع</th>
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.zone_id.name"/>
+                                    </td>
+
+                                </tr>
+                                <tr>
+
+                                </tr>
+                            </table>
+
+                            <table align="right" style="width:43%">
+                                <tr>
+                                    <th style="width:40%">إسم المشروع</th>
+                                    <td>
+                                        <t t-esc="doc.project_id.name"/>
+                                    </td>
+
+                                </tr>
+                                <tr>
+
+                                </tr>
+                            </table>
+                            <br/>
+                            <br/>
+                            <br/>
+
+                            <table align="left" style="width:33%">
+                                <tr>
+                                    <th style="width:40%">صيغة التمويل</th>
+                                    <td>
+                                        <t t-esc="dict(doc.fields_get(allfields=['formula_clone'])['formula_clone']['selection'])[doc.formula_clone]"/>
+                                    </td>
+
+                                </tr>
+                            </table>
+                            <table align="right" style="width:33%">
+                                <tr>
+                                    <th style="width:40%">القطاع</th>
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.sector_id.name"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+                            <br/>
+                            <br/>
+                            <br/>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">أصل المبلغ</th>
+                                    <td>
+                                        <t t-esc="doc.approve_amount"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">الهامش الشهري</th>
+                                    <td>
+                                        <t t-esc="doc.profit_margin"/>
+                                        %
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">التأمين</th>
+                                    <td>
+                                        <t t-esc="doc.insurance_amount"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <br/>
+                            <br/>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">فترة السداد</th>
+                                    <td>
+                                        <t t-esc="doc.payment_method_id.number_of_days"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">فترة السماح</th>
+                                    <td>
+                                        <t t-esc="doc.grace_period"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">عدد الأقساط</th>
+                                    <td>
+                                        <t t-esc="doc.installment_no"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <br/>
+                            <br/>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">إجمالي التمويل</th>
+                                    <td>
+                                        <t t-esc="doc.total_funding"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">هامش الربح</th>
+                                    <td>
+                                        <t t-esc="doc.total_funding - doc.approve_amount"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">القسط الشهري</th>
+                                    <td>
+                                        <t t-esc="doc.ins_before_profit"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <br/>
+
+                            <center>
+
+
+                                <table style="
+     width:33%">
+                                    <tr>
+                                        <th style="width:40%">إسم المنتج</th>
+                                        <td>
+                                            <t t-esc="doc.visit_id.product_id.name"/>
+                                        </td>
+
+                                    </tr>
+
+                                </table>
+                            </center>
+
+
+                            <br/>
+                            <br/>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">المساحه</th>
+                                    <td></td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <table style="
+     width:66%">
+                                <tr>
+                                    <th style="width:20%;font-size:12;">وصف مواد البناء</th>
+                                    <td></td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <br/>
+                            <br/>
+
+
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+
+
+                            <center>
+
+                                <h5 dir="rtl" style="text-align: center; font-size:20px">إسم الأخصائي:
+                                    <t t-esc="doc.visit_id.user_id.name"/>
+                                    <![CDATA[&nbsp;]]> <![CDATA[&nbsp;]]> <![CDATA[&nbsp;]]> إسم المدير المصدق :
+                                    <t t-esc="doc.user_id.name"/>
+                                </h5>
+
+
+                            </center>
+
+
+                        </t>
+                    </body>
+                </html>
+
+
+            </div>
+
+            <div class="footer">
+                <center>
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <p>صفحة
+                            <span class="page"/>
+                            من
+                            <span class="topage"/>
+                        </p>
+                        <p>
+                            <b>
+                                <u>
+                                    <t t-esc="order_name"/>
+                                </u>
+                            </b>
+                        </p>
+
+                    </div>
+                </center>
+
+
+            </div>
+        </template>
+
+
+        <template id="visit_advance_report_document">
+
+
+            <div class="page">
+
+                <center>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1; color:black;">
+                                    <center>
+                                        <h1 width="70%" left="90">National Company For Micro-Finance</h1>
+
+                                        <h1 width="70%" left="90">Visits Report</h1>
+
+                                    </center>
+                                </td>
+                                <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                    <center>
+                                        <img src="/microfinance/static/wa_report/logo.png" width="70%"/>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </center>
+
+                <hr width="100%" color="black"/>
+                <table class="greyGridTable">
+                    <td>Print Time:
+                        <span t-esc="time.strftime('%Y-%m-%d %H:%M:%S')"/>
+                        - User Name:
+                        <span t-esc="user.name"></span>
+                    </td>
+                </table>
+                <table class="greyGridTable">
+                    <td>Date Start :
+                        <t t-esc="date_start"/>
+                    </td>
+                    <td>Date End :
+                        <t t-esc="date_end"/>
+                    </td>
+                </table>
+                <table class="greyGridTable">
+                    <td>
+                        <t t-if="visvalue[1] != 0">
+
+
+                            Approval :
+                            <t t-esc="vis[1]"/>
+
+
+                        </t>
+
+                        <t t-if="visvalue[2] != 0">
+
+
+                            Formula :
+                            <t t-esc="vis[2]"/>
+
+
+                        </t>
+
+                        <t t-if="visvalue[3] != 0">
+
+
+                            Branch :
+                            <t t-esc="vis[3]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[4] != 0">
+
+
+                            Sectors :
+                            <t t-esc="vis[4]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[5] != 0">
+
+
+                            Finance Type :
+                            <t t-esc="vis[5]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[6] != 0">
+
+
+                            Officer :
+                            <t t-esc="vis[6]"></t>
+
+
+                        </t>
+
+                        <t t-if="visvalue[7] != 0">
+
+
+                            Approve Amount :
+                            <t t-esc="vis[7]"></t>
+
+
+                        </t>
+                    </td>
+
+
+                </table>
+                <hr width="100%" color="black"/>
+
+                <div class="text-center">
+
+                    <table class="greyGridTable">
+                        <thead>
+                            <tr>
+                                <th>Serial</th>
+                                <th>Code</th>
+                                <th>Customer Name</th>
+                                <t t-if="visvalue[1] != 1">
+                                    <th>Approval Name</th>
+                                </t>
+                                <th style="white-space:pre">Date</th>
+                                <th>Project Name</th>
+                                <t t-if="visvalue[7] != 1">
+                                    <th>Approve Amount</th>
+                                </t>
+                                <th>Profit Marigin</th>
+                                <th>Profit</th>
+                                <th>Total</th>
+                                <th>Installment No</th>
+                                <th>Installment Amount</th>
+                                <t t-if="visvalue[2] != 1">
+                                    <th>Formula</th>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <th>Branch</th>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <th>Sector</th>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <th>Type</th>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <th>Officer</th>
+                                </t>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="approve_amount_total" t-value="0"></t>
+                            <t t-set="profit_margin_total" t-value="0"></t>
+                            <t t-set="profit_total" t-value="0"></t>
+                            <t t-set="am_prof_mar_total" t-value="0"></t>
+                            <t t-set="installment_no_total" t-value="0"></t>
+                            <t t-set="ins_after_profit_total" t-value="0"></t>
+                            <tr t-foreach="docs" t-as="doc">
+                                <td>
+                                    <span t-esc="doc_index + 1"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.visit_id.order_id.sudo().partner_id.code"/>
+                                </td>
+                                <td style="white-space:pre">
+                                    <t t-esc="doc.visit_id.order_id.sudo().partner_id.name"/>
+                                </td>
+                                <t t-if="visvalue[1] != 1">
+                                    <td>
+                                        <t t-esc="doc.name"/>
+                                    </td>
+                                </t>
+                                <td style="white-space:pre">
+                                    <t t-esc="doc.visit_id.date"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.project_id.name"/>
+                                </td>
+                                <t t-if="visvalue[7] != 1">
+                                    <td>
+                                        <t t-esc="doc.approve_amount"/>
+                                    </td>
+                                </t>
+                                <td>
+                                    <t t-esc="doc.profit_margin"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.profit"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.approve_amount+doc.profit+doc.profit_margin"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.installment_no"/>
+                                </td>
+                                <td>
+                                    <t t-esc="doc.ins_after_profit"/>
+                                </td>
+                                <t t-if="visvalue[2] != 1">
+                                    <td>
+                                        <t t-esc="dict(doc.fields_get(allfields=['formula'])['formula']['selection'])[doc.formula]"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[3] != 1">
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.company_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[4] != 1">
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.sector_id.name"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[5] != 1">
+                                    <td>
+                                        <t t-esc="dict(doc.visit_id.order_id.fields_get(allfields=['type'])['type']['selection'])[doc.visit_id.order_id.type]"/>
+                                    </td>
+                                </t>
+                                <t t-if="visvalue[6] != 1">
+                                    <td style="white-space:pre">
+                                        <t t-esc="doc.visit_id.order_id.sudo().user_id.name"/>
+                                    </td>
+                                </t>
+
+
+                                <t t-set="approve_amount_total" t-value="approve_amount_total + doc.approve_amount"></t>
+                                <t t-set="profit_margin_total" t-value="profit_margin_total + doc.profit_margin"></t>
+                                <t t-set="profit_total" t-value="profit_total + doc.profit"></t>
+                                <t t-set="am_prof_mar_total"
+                                   t-value="am_prof_mar_total + doc.approve_amount+doc.profit+doc.profit_margin"></t>
+                                <t t-set="installment_no_total" t-value="installment_no_total + doc.installment_no"></t>
+                                <t t-set="ins_after_profit_total"
+                                   t-value="ins_after_profit_total + doc.ins_after_profit"></t>
+
+
+                            </tr>
+                        </tbody>
+                        <tr>
+                            <td>Total</td>
+                            <td></td>
+                            <td></td>
+                            <t t-if="visvalue[1] != 1">
+                                <td></td>
+                            </t>
+                            <td></td>
+                            <td></td>
+                            <t t-if="visvalue[7] != 1">
+                                <td>
+                                    <t t-esc="approve_amount_total"/>
+                                </td>
+                            </t>
+                            <td>
+                                <t t-esc="profit_margin_total"/>
+                            </td>
+                            <td>
+                                <t t-esc="profit_total"/>
+                            </td>
+                            <td>
+                                <t t-esc="am_prof_mar_total"/>
+                            </td>
+                            <td>
+                                <t t-esc="installment_no_total"/>
+                            </td>
+                            <td>
+                                <t t-esc="ins_after_profit_total"/>
+                            </td>
+                            <t t-if="visvalue[2] != 1">
+                                <td></td>
+                            </t>
+                            <t t-if="visvalue[3] != 1">
+                                <td></td>
+                            </t>
+                            <t t-if="visvalue[4] != 1">
+                                <td></td>
+                            </t>
+                            <t t-if="visvalue[5] != 1">
+                                <td></td>
+                            </t>
+                            <t t-if="visvalue[6] != 1">
+                                <td></td>
+                            </t>
+                        </tr>
+                    </table>
+                    <style type="text/css">
+                        table.steelBlueCols {
+
+                        background-color: #555555;
+                        width: 400px;
+                        text-align: center;
+                        border-collapse: collapse;
+                        width:100%;
+                        }
+                        table.steelBlueCols td, table.steelBlueCols th {
+                        border: 1px solid #555555;
+                        padding: 5px 10px;
+                        }
+                        table.steelBlueCols tbody td {
+                        font-size: 17px;
+                        font-weight: bold;
+                        color: #FFFFFF;
+                        }
+                        table.steelBlueCols td:nth-child(even) {
+                        background: #398AA4;
+                        }
+                        table.steelBlueCols thead {
+                        background: #398AA4;
+                        border-bottom: 10px solid #398AA4;
+                        }
+                        table.steelBlueCols thead th {
+                        font-size: 15px;
+                        font-weight: bold;
+                        color: #FFFFFF;
+                        text-align: center;
+                        border-left: 2px solid #398AA4;
+                        }
+                        table.steelBlueCols thead th:first-child {
+                        border-left: none;
+                        }
+
+                        table.steelBlueCols tfoot td {
+                        font-size: 13px;
+                        }
+                        table.steelBlueCols tfoot .links {
+                        text-align: right;
+                        }
+                        table.steelBlueCols tfoot .links a{
+                        display: inline-block;
+                        background: #FFFFFF;
+                        color: #398AA4;
+                        padding: 2px 8px;
+                        border-radius: 5px;
+                        }
+
+
+                        h1 { font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;}
+
+                        table.greyGridTable {
+                        border: 2px solid #FFFFFF;
+                        width: 100%;
+                        text-align: center;
+                        border-collapse: collapse;
+                        }
+                        table.greyGridTable td, table.greyGridTable th {
+                        border: 0px solid #FFFFFF;
+                        padding: 3px 4px;
+                        font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;
+                        }
+                        table.greyGridTable tbody td {
+                        font-size: 17px;
+                        }
+                        table.greyGridTable tr:nth-child(even) {
+                        background: #EBEBEB;
+                        }
+                        table.greyGridTable thead {
+                        background: #FFFFFF;
+                        border-bottom: 1px solid #333333;
+                        }
+                        table.greyGridTable thead th {
+                        font-family: "Geeza Pro", "Nadeem",
+                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                        "Arial", serif;
+                        font-size: 15px;
+                        font-weight: bold;
+                        color: #333333;
+                        text-align: center;
+                        border-left: 1px solid #333333;
+                        }
+                        table.greyGridTable thead th:first-child {
+                        border-left: none;
+                        }
+
+                        table.greyGridTable tfoot {
+                        font-size: 14px;
+                        font-weight: bold;
+                        color: #333333;
+                        border-top: 4px solid #333333;
+                        }
+                        table.greyGridTable tfoot td {
+                        font-size: 14px;
+                        }
+
+                    </style>
+
+                </div>
+            </div>
+
+            <div class="footer">
+                <center>
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <p>صفحة
+                            <span class="page"/>
+                            من
+                            <span class="topage"/>
+                        </p>
+                        <p>
+                            <b>
+                                <u>
+                                    <t t-esc="order_num"/>
+                                </u>
+                            </b>
+                        </p>
+
+                    </div>
+                </center>
+
+            </div>
+
+        </template>
+
+
+        <template id="approval_sign_report_document">
+
+
+            <div class="page">
+
+                <html>
+                    <head>
+                        <style>
+
+                            .s{ border-style: solid;}
+
+                            body,h2,h3 {
+
+                            font-family: "DejaVu Serif"
+
+                            }
+
+                            table, td, th {
+                            border: 1px solid black;
+                            }
+
+                            td { font-weight: bold;
+                            text-align:right;
+                            }
+
+                            table { display:inline-table;
+                            border-collapse: collapse;
+
+                            }
+                            table.full{width: 100%;}
+
+                            th { background-color: #eae1e1;
+                            text-align:center;
+                            height: 30px;
+                            }
+                        </style>
+                    </head>
+                    <body>
+
+
+                        <center>
+                            <table style="border: 0px solid #C1C3D1;">
+                                <tbody>
+                                    <tr>
+
+                                        <td style="background:white; border: 0px solid #C1C3D1; color:black;">
+                                            <center>
+                                                <img class="img img-responsive"
+                                                     src="/microfinance/static/wa_report/wa.png"/>
+                                            </center>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </center>
+
+                        <br/>
+                        <center>
+                            <b>
+                                <h2>المؤسسة الوطنية للتمويل الأصغر</h2>
+                            </b>
+                        </center>
+                        <center>
+                            <table>
+                                <tr>
+                                    <th style="width: 30%;">الفرع</th>
+                                    <td>
+                                        <t t-esc="branch"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </center>
+
+                        <center>
+                            <b>
+                                <h3>ملخص التصديق</h3>
+                            </b>
+                        </center>
+                        <hr width="100%" color="black"/>
+                        <br/>
+                        <br/>
+
+                        <t t-foreach="docs" t-as="doc">
+                            <table class="full">
+                                <tr>
+                                    <th style="width: 17%;">إسم المستخدم</th>
+                                    <td>
+                                        <t t-esc="user.name"/>
+                                    </td>
+                                    <th style="width: 14.8%;">وقت الطباعة</th>
+                                    <td style="width: 17%;">
+                                        <h6>
+                                            <t t-esc="current_date"/>
+                                        </h6>
+                                    </td>
+                                    <th style="width: 16%;">التاريخ</th>
+                                    <td>
+                                        <t t-esc="doc.visit_id.date"/>
+                                    </td>
+                                </tr>
+
+
+                            </table>
+
+                            <br/>
+                            <br/>
+
+                            <table>
+                                <tr>
+                                    <table align="left" style="width:40.3%">
+                                        <th style="width:40%">رقم العميل</th>
+                                        <td>
+                                            <t t-esc="doc.visit_id.order_id.partner_id.code"/>
+                                        </td>
+                                    </table>
+                                </tr>
+
+                            </table>
+
+
+                            <table>
+
+
+                            </table>
+
+
+                            <table align="right" style="width:43%">
+                                <tr>
+                                    <th style="width:40%">الإسم</th>
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.partner_id.name"/>
+                                    </td>
+
+                                </tr>
+                                <tr>
+
+                                </tr>
+                            </table>
+                            <br/>
+                            <br/>
+                            <table align="left" style="width:40.3%">
+                                <tr>
+                                    <th style="width:40%">مكان المشروع</th>
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.zone_id.name"/>
+                                    </td>
+
+                                </tr>
+                                <tr>
+
+                                </tr>
+                            </table>
+
+                            <table align="right" style="width:43%">
+                                <tr>
+                                    <th style="width:40%">إسم المشروع</th>
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.project_name"/>
+                                    </td>
+
+                                </tr>
+                                <tr>
+
+                                </tr>
+                            </table>
+                            <br/>
+                            <br/>
+                            <br/>
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">صيغة التمويل</th>
+                                    <td>
+                                        <t t-esc="dict(doc.fields_get(allfields=['formula_clone'])['formula_clone']['selection'])[doc.formula_clone]"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">مصدر التمويل</th>
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.portfolio_id.name"/>
+                                        %
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">القطاع</th>
+                                    <td>
+                                        <t t-esc="doc.visit_id.order_id.sector_id.name"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <br/>
+                            <br/>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">أصل المبلغ</th>
+                                    <td>
+                                        <t t-esc="doc.approve_amount"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">الهامش الشهري</th>
+                                    <td>
+                                        <t t-esc="doc.profit_margin"/>
+                                        %
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">التأمين</th>
+                                    <td>
+                                        <t t-esc="doc.insurance_amount"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <br/>
+                            <br/>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">فترة السداد</th>
+                                    <td>
+                                        <t t-esc="doc.payment_method_id.number_of_days"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">فترة السماح</th>
+                                    <td>
+                                        <t t-esc="doc.grace_period"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">عدد الأقساط</th>
+                                    <td>
+                                        <t t-esc="doc.installment_no"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <br/>
+                            <br/>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">إجمالي التمويل</th>
+                                    <td>
+                                        <t t-esc="doc.total_funding"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">هامش الربح</th>
+                                    <td>
+                                        <t t-esc="doc.total_funding - doc.approve_amount"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <table style="
+     width:33%">
+                                <tr>
+                                    <th style="width:40%">القسط الشهري</th>
+                                    <td>
+                                        <t t-esc="doc.ins_before_profit"/>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+
+                            <br/>
+                            <center>
+
+
+                                <table style="
+     width:33%">
+                                    <tr>
+                                        <th style="width:40%">إسم المنتج</th>
+                                        <td>
+                                            <t t-esc="doc.visit_id.product_id.name"/>
+                                        </td>
+
+                                    </tr>
+
+                                </table>
+                            </center>
+
+
+                            <br/>
+                            <br/>
+
+
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+
+
+                            <center>
+
+                                <h5 dir="rtl" style="text-align: center; font-size:20px">إسم الأخصائي:
+                                    <t t-esc="doc.visit_id.user_id.name"/>
+                                    <![CDATA[&nbsp;]]> <![CDATA[&nbsp;]]> <![CDATA[&nbsp;]]> إسم المدير المصدق :
+                                    <t t-esc="doc.user_id.name"/>
+                                </h5>
+
+
+                            </center>
+
+
+                        </t>
+                    </body>
+                </html>
+
+
+            </div>
+
+            <div class="footer">
+                <center>
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <p>صفحة
+                            <span class="page"/>
+                            من
+                            <span class="topage"/>
+                        </p>
+                        <p>
+                            <b>
+                                <u>
+                                    <t t-esc="order_name"/>
+                                </u>
+                            </b>
+                        </p>
+
+                    </div>
+                </center>
+
+
+            </div>
+        </template>
+
+
+        <template id="approval_payments_sign_report_document">
+
+
+            <div class="page">
+
+                <html>
+                    <head>
+                        <style>
+
+                            .s{ border-style: solid;}
+
+                            body,h2,h3 {
+
+                            font-family: "DejaVu Serif"
+
+                            }
+
+                            table, td, th {
+                            border: 1px solid black;
+                            }
+
+                            td { font-weight: bold;
+                            text-align:center;
+                            }
+
+                            table { display:inline-table;
+                            border-collapse: collapse;
+
+                            }
+                            table.full{width: 100%;}
+
+                            th { background-color: #eae1e1;
+                            text-align:center;
+                            height: 30px;
+                            }
+                        </style>
+                    </head>
+                    <body>
+
+
+                        <center>
+                            <table style="border: 0px solid #C1C3D1;">
+                                <tbody>
+                                    <tr>
+
+                                        <td style="background:white; border: 0px solid #C1C3D1; color:black;">
+                                            <center>
+                                                <img class="img img-responsive"
+                                                     src="/microfinance/static/wa_report/wa.png"/>
+                                            </center>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </center>
+
+                        <br/>
+                        <center>
+                            <b>
+                                <h2>المؤسسة الوطنية للتمويل الأصغر</h2>
+                            </b>
+                        </center>
+                        <center>
+                            <table>
+                                <tr>
+                                    <th style="width: 30%;">الفرع</th>
+                                    <td>
+                                        <t t-esc="branch"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </center>
+
+                        <center>
+                            <b>
+                                <h3>ملخص مراحل التنفيذ</h3>
+                            </b>
+                        </center>
+                        <hr width="100%" color="black"/>
+                        <br/>
+                        <br/>
+
+
+                        <table class="full">
+                            <tr>
+                                <th style="width: 25%;">إسم المستخدم</th>
+                                <td>
+                                    <t t-esc="user.name"/>
+                                </td>
+                                <th style="width: 22.8%;">وقت الطباعة</th>
+                                <td style="width: 17%;">
+                                    <h6>
+                                        <t t-esc="current_date"/>
+                                    </h6>
+                                </td>
+
+                            </tr>
+
+
+                        </table>
+                        <br/>
+                        <br/>
+                        <t t-foreach="docs" t-as="doc">
+
+
+                            <table class="full">
+                                <tr>
+                                    <th>رقم العميل</th>
+                                    <th>
+                                        <t t-esc="doc.visit_id.order_id.partner_id.code"/>
+                                    </th>
+                                    <th>إسم العميل</th>
+                                    <th colspan="2">
+                                        <t t-esc="doc.visit_id.order_id.partner_id.name"/>
+                                    </th>
+                                    <th>المبلغ المصدق</th>
+                                    <th>
+                                        <t t-esc="doc.approve_amount"/>
+                                    </th>
+                                    <th colspan="2">
+                                        <t t-esc="dict(doc.fields_get(allfields=['formula_clone'])['formula_clone']['selection'])[doc.formula_clone]"/>
+                                    </th>
+
+                                </tr>
+                                <tr>
+                                    <th colspan="2">إسم المورد</th>
+                                    <td>رقم الشيك</td>
+                                    <td>المبلغ المدفوع</td>
+                                    <td>تاريخ الشيك</td>
+                                    <td colspan="2">تاريخ التفيذ</td>
+                                    <td>تاريخ الإستلام</td>
+                                    <td>حالة الشيك</td>
+
+
+                                </tr>
+                                <t t-foreach="docs.payment_ids" t-as="payment">
+                                    <tr>
+                                        <th colspan="2">
+                                            <t t-esc="payment.benaficiary_id.name"/>
+                                        </th>
+                                        <td>
+                                            <t t-esc="payment.payment_id.journal_id.name"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="payment.amount"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="payment.date"/>
+                                        </td>
+                                        <td colspan="2">
+                                            <t t-esc="payment.date"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="payment.payment_id.payment_date"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="dict(payment.fields_get(allfields=['state'])['state']['selection'])[payment.state]"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+
+
+                        </t>
+                    </body>
+                </html>
+
+
+            </div>
+
+            <div class="footer">
+                <center>
+                    <div class="text-center" style="border-top: 1px solid black;">
+                        <p>صفحة
+                            <span class="page"/>
+                            من
+                            <span class="topage"/>
+                        </p>
+                        <p>
+                            <b>
+                                <u>
+                                    <t t-esc="order_name"/>
+                                </u>
+                            </b>
+                        </p>
+
+                    </div>
+                </center>
+
+
+            </div>
+        </template>
+
+
+    </data>
+</odoo>

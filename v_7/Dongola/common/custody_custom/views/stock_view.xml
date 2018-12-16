@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <openerp>
+       
+   <data>
+
+      <record id="view_picking_out_form" model="ir.ui.view">
+        <field name="name">stock.picking.out.form</field>
+        <field name="model">stock.picking.out</field>
+        <field name="inherit_id" ref="stock_custom.view_picking_out_form"/>
+        <field name="arch" type="xml">
+                <xpath expr="/form/header//button[@name='%(stock.act_stock_return_picking)d']" position="after">
+                     <button name="create_custody_line" string="Create Custody Lines"   type="object" class="oe_highlight"  icon="gtk-execute" 
+   attrs="{'invisible' : ['|', ('state',  '!=', 'draft'),('period_type' , 'not in' , ['temp','const'] )] }"   groups="purchase_ntc.group_administrative_user,purchase_ntc.group_technical_user,base_custom.group_section_manager"/>
+                </xpath>
+
+                <xpath expr="//field[@name='category_id']" position="after">
+                      <field name="period_type" required="1"  attrs="{'readonly' : [('state' , 'not in' , ['draft']  ) ]}"  />  
+
+                      <field name="custody_type"  attrs="{'invisible' : [ ( 'period_type' , 'not in' , ['temp','const'] )] ,  'required' : [('period_type' , 'in' , ['temp','const'] )],   'readonly' : [('state' , 'not in' , ['draft']  ) ]}"  /> 
+ 
+                </xpath>
+
+                
+                <xpath expr="//field[@name='location_id']" position="after">
+                             <field name="expacted_return_date"  attrs="{'invisible' : [('period_type' , '!=' , 'temp' )] ,  'required' : [('period_type' , '=' , 'temp' )] ,      'readonly' : [('state' , 'not in' , ['draft']) ]}" />  
+
+                             <field name="signed" readonly="1" invisible="1"/>
+
+                </xpath>
+
+               <field name="min_date" position="after">
+                            <field name="order_type" required="1" invisible="1"/>
+               </field> 
+
+        </field>
+     </record>
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+       <record id="id_view_picking_out_form_inherit" model="ir.ui.view">
+            <field name="name">Custodies Out picking Inherited</field>
+            <field name="model">stock.picking.out</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_out_form"/>
+            <field name="arch" type="xml">
+
+
+                
+                <xpath expr="//field[@name='min_date']" position="replace">
+                    <field name="min_date" />  
+                </xpath>
+
+                
+
+               
+
+                <xpath expr="/form/sheet/notebook/page[@string='Additional Info']"  position="after">
+
+
+                    <page string="Custodies Info" attrs="{'invisible' : [('period_type' , 'not in' , ['temp','const'] )] }">
+                     <button name="sign_custody_lines" attrs="{'invisible' : [('state',  '!=', 'confirmed'),('signed' , '=' , True )] }" string="Sign Custodies " type="object" class="oe_highlight" icon="gtk-execute" groups="purchase_ntc.group_administrative_user,purchase_ntc.group_technical_user,base_custom.group_warehouse_user" />
+
+                     
+                                <field name="custody_line_ids" attrs="{'readonly' : [('signed' , '=' , True )] }">
+                                      <tree editable="bottom" string="Custodies" create="false">
+                                            <field name="category_id"  readonly="1" />
+                                            <field name="order_state" invisible="1"/>
+
+		                                    <field name="custody_id" attrs="{ 'readonly' : [('order_state' , 'not in' , ['complete','confirmed'] )] }"   domain="[('category_id' , '=' , category_id),('state' , 'in' , ['draft','released']),('stock_location_id' , '=' , parent.location_id)]" select="1" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+		                                    <field name="name"  />
+		                                    <field name="custody_location_id" required="1" attrs="{'readonly' : [('order_state' , '!=' , 'draft' )] }"  options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+                                            <field name="custody_type" invisible="1"/>
+		                                    <field name="employee_id"  attrs="{'invisible' : [('custody_type' , '!=' , 'personal' )] ,  'required' : [('custody_type' , '=' , 'personal' )] , 'readonly' : [('order_state' , '!=' , 'draft' )] }" options="{'limit': 10, 'create': false,
+'create_edit': false}" />
+                                 
+
+		                              </tree>         
+                             
+		                        </field>  
+
+                        
+
+
+
+     
+                    </page>
+
+                </xpath>
+
+            </field>
+        </record>
+
+
+
+     
+      
+
+
+
+       </data>
+
+   </openerp>

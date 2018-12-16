@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<document filename="promotion_group_by_job.pdf">
+    <template pageSize="(842.0,595.0)" title="Movements Job Request Notification" author="NCTR" allowSplitting="20" showBoundary="0">
+        <pageTemplate id="first">
+            <frame id="first" x1="57.0" y1="28.0" width="481" height="786" />
+        </pageTemplate>
+    </template>
+    <stylesheet>
+        <blockTableStyle id="Table_grid_less">
+            <blockTopPadding length="8" />
+            <blockBottomPadding length="4" />
+        </blockTableStyle>
+
+        <blockTableStyle id="Table_grid">
+            <lineStyle kind="GRID" colorName="#2F4F4F" />
+            <blockTopPadding length="8" />
+            <blockBottomPadding length="4" />
+        </blockTableStyle>
+
+        <paraStyle name="P12" fontName="Helvetica-Bold" fontSize="12.0" leading="10" alignment="CENTER" spaceBefore="6.0" spaceAfter="6.0"
+        />
+        <paraStyle name="P12_RIGHT" fontName="Helvetica-Bold" fontSize="12.0" leading="10" alignment="RIGHT" spaceBefore="6.0" spaceAfter="6.0"
+        />
+
+        <paraStyle name="P12_LEFT" fontName="Helvetica-Bold" fontSize="12.0" leading="10" alignment="LEFT" spaceBefore="6.0" spaceAfter="6.0"
+        />
+        <paraStyle name="P12_table" fontName="Helvetica-Bold" fontSize="10.0" leading="10" alignment="CENTER" spaceBefore="6.0" spaceAfter="6.0"
+        />
+        <paraStyle name="P12_table_RIGHT" fontName="Helvetica-Bold" fontSize="10.0" leading="10" alignment="RIGHT" spaceBefore="6.0"
+            spaceAfter="6.0" />
+        <paraStyle name="P12_table_left" fontName="Helvetica-Bold" fontSize="10.0" leading="10" alignment="LEFT" spaceBefore="6.0"
+            spaceAfter="6.0" />
+
+    </stylesheet>
+    <story>
+        <!-- <para style="P31">[[ repeatIn(objects,'req') ]]</para> -->
+        <para style="P12"> بسم الله الرحمن الرحيم</para>
+
+        <blockTable colWidths="200,200,200,200" style="Table_grid_less">
+            <tr>
+                <td>
+                    <para style="P12_LEFT"> جهاز اﻷمن و المخابرات الوطني</para>
+                    <para style="P12_LEFT"> هيئة اﻹدارة</para>
+                    <para style="P12_LEFT"> الدائرة الإدارية</para>
+                    <para style="P12_LEFT"> إدارة شئون العضوية</para>
+                    <para style="P12_LEFT">التاريخ [[ formatLang(time.strftime("%Y-%m-%d"), date=True) ]] </para>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td>
+                </td>
+                <td>
+                    <para style="P12_RIGHT"> من العام [[ data['form']['year'] ]]</para>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+
+
+            <tr>
+                <td>
+
+                </td>
+                <td>
+                    <para style="P12_RIGHT">إلى تاريخ [[ data['form']['end_date'] ]] </para>
+                </td>
+                <td>
+                    <para style="P12_RIGHT">من تاريخ [[ data['form']['start_date'] ]] </para>
+                </td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td>
+
+                </td>
+                <td></td>
+                <td>
+                    <para style="P12_RIGHT">الرتبة [[ data['form']['degree_id'][1] ]] </para>
+                    <para style="P12_RIGHT">الإجمالي الكلي [[ job_groups_len(data) ]] </para>
+                </td>
+                <td></td>
+            </tr>
+
+        </blockTable>
+
+        <para style="P12_RIGHT"></para>
+        <blockTable colWidths="60,80,80,100,150,150,60,60,60" style="Table_grid">
+            <tr>
+                <td>
+                    <para style="P12_table"> تاريخ الإستحقاق القادم</para>
+                </td>
+                <td>
+                    <para style="P12_table"> وضع الخدمة</para>
+                </td>
+                <td>
+                    <para style="P12_table"> تاريخ الدخول في الرتبة الحالية</para>
+                </td>
+                <td>
+                    <para style="P12_table"> الوظيفة</para>
+                </td>
+                <td>
+                    <para style="P12_table"> اﻹدارة</para>
+                </td>
+                <td>
+                    <para style="P12_table"> اﻹسم</para>
+                </td>
+                <td>
+                    <para style="P12_table"> الرتبة</para>
+                </td>
+                <td>
+                    <para style="P12_table"> ر.البطاقة</para>
+                </td>
+                <td>
+                    <para style="P12_table"> م</para>
+                </td>
+            </tr>
+        </blockTable>
+        <section>
+            <para style="P2">[[repeatIn(job_groups(),'job')]]</para>
+
+
+            <blockTable colWidths="200,200,200,200" style="Table_grid_less">
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <para style="P12_RIGHT">اﻹجمالي [[ job_groups_len_by_one(job.id) ]] </para>
+                    </td>
+                    <td>
+                        <para style="P12_RIGHT">مجموعة الوظيفة [[ job.name ]] </para>
+                    </td>
+                </tr>
+            </blockTable>
+
+            <blockTable colWidths="60,80,80,100,150,150,60,60,60" style="Table_grid">
+                <tr>[[repeatIn(job_groups_data_by_one(job.id),'job_data')]]
+                    <td>
+                        <para style="P12_table"> تاريخ الإستحقاق القادم</para>
+                    </td>
+                    <td>
+                        <para style="P12_table"> [[ job_data.employee_id.service_state_id.name ]]</para>
+                    </td>
+                    <td>
+                        <para style="P12_table"> [[ job_data.approve_date ]]</para>
+                    </td>
+                    <td>
+                        <para style="P12_table"> [[ job_data.employee_id.job_id.name ]]</para>
+                    </td>
+                    <td>
+                        <para style="P12_table"> [[ job_data.employee_id.department_id.name ]]</para>
+                    </td>
+                    <td>
+                        <para style="P12_table"> [[ job_data.employee_id.name ]]</para>
+                    </td>
+                    <td>
+                        <para style="P12_table"> [[ data['form']['degree_id'][1] ]]</para>
+                    </td>
+                    <td>
+                        <para style="P12_table"> [[ job_data.employee_id.otherid ]]</para>
+                    </td>
+                    <td>
+                        <para style="P12_table">
+                            <seq id="L1" />
+                        </para>
+                    </td>
+                </tr>
+            </blockTable>
+
+            <para>
+                <seqReset id="L1" />
+            </para>
+
+        </section>
+    </story>
+</document>

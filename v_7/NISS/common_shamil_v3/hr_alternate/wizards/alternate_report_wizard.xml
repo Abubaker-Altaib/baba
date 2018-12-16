@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="hr_alternate_report_all" model="ir.ui.view">
+            <field name="name">alternate report</field>
+            <field name="model">hr.alternate.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="alternate report" version="7.0">
+                    <group>
+                        <field name="start_date"/>
+                        <field name="alternative_setting_ids"/>
+                    </group>
+                    <footer>
+                        <button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight"/>                        or                        
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="alternate_report_wizard_action" model="ir.actions.act_window">
+            <field name="name">alternate report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.alternate.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_alternate_report_all" />
+            <field name="target">new</field>
+        </record>
+
+        <menuitem name="Alternate reports" parent="hr_custom.menu_hr_reports" id="main_menu_alternate_report" groups="hr_custom_military.hr_emp_process_user"/>
+        <menuitem name="alternate report" action="alternate_report_wizard_action" id="alternate_report_wizard_menu" parent="main_menu_alternate_report"/>
+
+        <report
+         auto="False"
+         menu="True" 
+         id="alternate_report"
+         model="hr.alternative.process"
+         name="alternate_report.report"
+         file="hr_alternate/reports/alternate_report.mako"
+         string="alternate report" 
+         report_type="webkit"  header="True" />
+
+    </data>
+</openerp>

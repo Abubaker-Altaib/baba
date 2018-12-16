@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="view_employee_salary_addendum_form" model="ir.ui.view">
+			<field name="name">hr.employee.salary.addendum.form.inherit</field>
+			<field name="model">hr.employee.salary.addendum</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_employee_salary_addendum_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//page[@string='Addendum']" position="replace">
+					<page string="Addendum" attrs="{'invisible':[('type','=','salary')]}">
+					<group >
+			               <field name="basic_salary" attrs="{'invisible':[('type','!=','backdated_salary')]}" />
+					 <field name="addendum_ids" nolabel="1"
+                               attrs="{'required':[('type','!=','salary')]}" />
+                        </group>
+			         </page>
+				
+		
+					
+				</xpath>
+				<xpath expr="//group[@col=4]" position="after">
+				   <div>
+					<group colspan="2" attrs="{'invisible':[('type','not in',( 'backdated_salary','backdated_addendum'))]}">
+                        <field name="to_month" nolabel="1"  placeholder="Select Month" class="oe_inline" attrs="{'required':[('type','in',( 'backdated_salary','backdated_addendum'))]}"/>
+                        <field name="to_year" nolabel="1"   placeholder="Year" class="oe_inline" attrs="{'required':[('type','in',( 'backdated_salary','backdated_addendum'))]}"/>
+                    </group>
+                    </div>
+				</xpath>
+				
+			</field>
+		</record>
+
+
+
+	</data>
+</openerp>

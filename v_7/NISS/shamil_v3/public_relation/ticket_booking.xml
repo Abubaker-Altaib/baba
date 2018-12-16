@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+		<!-- Ticket Booking Record Form,Tree View & Action -->
+
+		<record id="view_ticket_booking_view_form" model="ir.ui.view">
+			<field name="name">ticket.booking.form</field>
+			<field name="model">ticket.booking</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Ticket Booking" version="7.0">
+<header col="4">
+
+
+				      
+				                               
+
+								<button name="dept_confirm" states="draft" string="Section Approval"
+									confirm="Are you sure you want to Approve this Ticket Booking?"  /><!--groups="base.group_admin_affairs_manager"-->
+								<button name="admin_affiars_confirm" states="dept_confirm" string="Genral Department Approval"
+									confirm="Are you sure you want to Approve this Ticket Booking?"  /><!--groups="base.group_admin_affairs_manager"-->
+								<button name="confirmed" states="admin_affiars_confirm" string="GM Approval"
+									confirm="Are you sure you want to Approve this Ticket Booking?"  /><!--groups="base.group_admin_affairs_manager"-->
+								<button name="approved" states="confirmed" string=" PRM Section Maneger Approval"
+									confirm="Are you sure you want to approve this Record?" /><!--groups="base.group_media_section_manager"-->
+								<button name="done" states="approved" string="PRM officer"
+									confirm="Are you sure you want to approve this Ticket Booking?" /><!--groups="base.group_media_section_officer"-->
+								<button name="cancel" states="draft,dept_confirm,admin_affiars_confirm,confirmed,approved,done" string="Cancel Request"
+									icon="gtk-cancel" confirm="Are you sure you want to Cancel this Ticket Booking?"  /><!--groups="base.group_media_section_manager"-->
+								<button name="ir_action_cancel_draft" states="cancel"
+									string="Set to Draft" type="object" icon="gtk-convert"/>
+								<button name="modify_ticket" states="done"
+									string="Modify" type="object" icon="gtk-convert"/>
+								<field name="state" widget="statusbar" statusbar_visible="draft,done,cancel" />
+							</header>
+                                                        <sheet>
+					<group col="4">
+						<field name="name" />				
+						<field name="date" />
+						<field name="department_id" attrs="{'required':[('travel_purpose','!=','training')]}"/>
+						<field name="procedure_for" />
+						<field name="type" colspan="2"/>
+						<field name="travel_purpose" />												
+
+						<field name="date_of_travel"  required="1" />
+						<field name="date_of_return"  required="1" />
+						<field name="travel_route"   attrs="{'required':[('state','=','approved'),('type','=','internal')],'invisible':[('type','!=','internal')]}"/>
+						<field name="user_id" />
+						<field name="country_route"   attrs="{'required':[('state','=','approved'),('type','!=','internal')],'invisible':[('type','=','internal')]}"/>
+				   
+						<!--field name="voucher_no" colspan="2" /-->
+ 						<field name="payment_selection" colspan="2" attrs="{'invisible':[('state','not in',('approved','done'))],'required':[('state','=','approved')]}"/>
+						<field name="travel_agency" colspan="2"  attrs="{'required':[('state','=','approved'),('payment_selection','!=','enrich')]}"/>
+						<field name="cost_of_travel" colspan="2" attrs="{'required':[('state','=','approved')]}"/>
+                   			       
+						<field name="enrich_category" colspan="2" attrs="{'invisible':['!',('state','not in',('approved','done')),('payment_selection','!=','enrich')],'required':[('state','=','approved'),('payment_selection','==','enrich')]}" domain="[('state','=','confirmed'),('company_id','=',company_id)]"/>
+						<field name="carrier" colspan="2" attrs="{'required':[('state','=','approved')]}"/>
+						<field name="company_id"  />
+						
+				   </group>
+						
+					
+					<notebook colspan="4">
+						<page string="Foreigners" attrs="{'invisible':[('procedure_for','!=','foreigners')]}">
+							<field colspan="4" name="foreigners_lines_id" nolabel="1" required="1"
+									 >
+									<tree editable="bottom" string="Lines">
+										<field name="foreigner_id" />
+										<field name="foreigner_name"  />
+										<field name="passport_num"  />
+										<field name="name" />
+									</tree>
+									<form string="Lines">
+										<field name="foreigner_id"/>
+										<field name="foreigner_name"  />
+										<field name="passport_num"  />
+										<field name="name" colspan="6"/>
+									</form>
+								</field>
+						</page>
+						<page string="Employees" attrs="{'invisible':[('procedure_for','!=','sudanese')]}">
+							<field name="employee_ids" colspan="4" nolabel="1" domain="[('department_id', '=', department_id)]" />
+						</page>
+						<page string="Mission or Training Information" attrs="{'invisible':[('procedure_for','!=','sudanese')]}">
+							<field name="info" colspan="4" nolabel="1" />
+						</page>
+												
+						<page string="Notes">
+							<field name="notes" colspan="4" nolabel="1" />
+						</page>
+						<page string="Account" attrs="{'invisible':[('state','not in',('cancel','done')),('payment_selection','==','enrich')]}">
+							<field name="account_voucher_ids" colspan="4" nolabel="1" />
+						</page>
+					</notebook>
+					                                        </sheet>	 
+
+				</form>
+			</field>
+		</record>
+
+
+		<record id="view_ticket_booking_tree" model="ir.ui.view">
+			<field name="name">ticket.booking.tree</field>
+			<field name="model">ticket.booking</field>
+			<field name="arch" type="xml">
+				<tree string="Ticket Booking">
+						<field name="name" colspan="2" />				
+						<field name="date" colspan="2" />
+						<field name="department_id" colspan="2"/>
+						<field name="type" colspan="2"/>
+						<field name="travel_purpose" colspan="2"/>
+						<field name="state" colspan="2"/>
+				</tree>
+			</field>
+		</record>
+
+
+
+		<!-- Ticket Booking Search Filter -->
+
+		<record id="view_public_relation_foreigners_filter" model="ir.ui.view">
+			<field name="name">ticket.booking.list.select</field>
+			<field name="model">ticket.booking</field>
+			<field name="arch" type="xml">
+				<search string="Search for Press Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="date" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="department_id" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="travel_purpose" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="type" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="procedure_for"/>
+
+					<newline />
+
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Department" icon="terp-personal"
+							domain="[]" context="{'group_by':'department_id'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+						<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					    <separator orientation="vertical"/>
+					    <filter string="Travel purpose" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'travel_purpose'}" />
+					</group>
+
+				</search>
+			</field>
+		</record>
+
+		<!-- Menu -->
+
+		<record id="ticket_booking_action" model="ir.actions.act_window">
+			<field name="res_model">ticket.booking</field>
+			<field name="domain">[]</field>
+		</record>
+
+       <menuitem id="ticket_booking" name="Ticket Booking"
+			parent="id_public_relation" sequence= "3" />
+
+       <menuitem id="ticket_booking_menu" name="Ticket Booking"
+			parent="ticket_booking" action="ticket_booking_action" />
+
+
+
+
+	</data>
+</openerp>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <record id="view_certificate_quotations_form" model="ir.ui.view">
+        <field name="name">sale.certificate.quotations.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_custom.view_certificate_quotations_form" />
+        <field name="arch" type="xml">
+          <xpath expr="//form/header/button[@name='certificate_button_confirm']" position="after">
+
+                <button name="certificate_button_review" string="Review" states="confirm" type="object" class="oe_highlight" groups="crm_custom.group_crm_supervisor" />
+                
+                <button name="certificate_button_draft" string="Set to Draft" states="confirm" type="object" groups="crm_custom.group_crm_supervisor" />
+                
+                <button name="certificate_button_approve" string="Approve" states="review" type="object" class="oe_highlight" groups="crm_custom.group_crm_department_manager" />
+                
+                <button name="certificate_button_cancel" string="Cancel" states="review" type="object" groups="crm_custom.group_crm_department_manager" confirm="Are you sure you want to cancel this record?" />
+<!--                 
+                <button name="certificate_button_validate" string="Validate" states="approve" type="object" class="oe_highlight" groups="crm_custom.group_crm_financial_manager" />
+                
+                <button name="certificate_button_cancel" string="Cancel" states="approve" type="object" groups="crm_custom.group_crm_financial_manager" confirm="Are you sure you want to cancel this record?" />
+ -->                
+          </xpath>
+          <xpath expr="//field[@name='certificate']" position="after">
+            <field name="crm" invisible="1" />
+          </xpath>
+        </field>
+    </record>
+
+
+    <record id="action_certificate_quotations" model="ir.actions.act_window">
+        <field name="name">Certificate Quotations</field>
+        <field name="res_model">sale.order</field>
+        <field name="context">{'default_crm':True}</field>
+        <field name="domain">[('crm','=',True)]</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="certificate_tree_action" model="ir.actions.act_window.view">
+      <field name="sequence" eval="0"/>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="sale_custom.view_certificate_quotations_tree"/>
+      <field name="act_window_id" ref="action_certificate_quotations"/>
+    </record>
+
+   <!-- certificate quotations action for form -->
+    <record id="certificate_form_action" model="ir.actions.act_window.view">
+      <field eval="1" name="sequence"/>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="sale_custom.view_certificate_quotations_form"/>
+      <field name="act_window_id" ref="action_certificate_quotations"/>
+    </record>
+  </data>
+</odoo>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	<!--  Inherit from media service order view -->
+	<record id="view_media_order_form_inherit" model="ir.ui.view">
+           <field name="name">media.order.form.inherit</field>
+           <field name="model">media.order</field>
+           <field name="inherit_id" ref="media.view_media_order_form"/>
+           <field name="arch" type="xml">
+                <field name="voucher_no" position="after">
+		    <group col="3" colspan="4">
+                        <field name="purchase_state" 
+                               attrs="{'invisible':['|',('state','!=','done'),('execution_type','!=','internal')]}"/>
+                        <field name="product_category_id" domain="[('type','!=','view')]" on_change="onchange_category_check_purchase_line(product_category_id,purchase_lines)"
+                     attrs="{'invisible':['|',('state','!=','done'),('execution_type','!=','internal')],
+                     		'readonly':[('purchase_state','=','purchased')]}"/>
+		    </group>
+                </field>
+                <field name="user_id" position="after">
+                   <field name="ireq_no" attrs="{'invisible':['|',('state','!=','done'),('execution_type','!=','internal')]}"/>
+                </field>
+                <page string="Service types" position="after">
+                     <page string="Items"
+                     	attrs="{'invisible':['|',('state','!=','done'),('execution_type','!=','internal')]}">
+                        <field colspan="4" name="purchase_lines" nolabel="1" 
+                           	 attrs="{'readonly':[('purchase_state','!=','2bpurchased')]}"> 
+                                <tree editable="bottom" string="Items Lines">
+                                    <field name="product_id" 
+                                    on_change="onchange_product_id(product_id)" domain="[('categ_id','=',parent.product_category_id)]"/>
+                                    <field name="name" invisible="True"/>
+                                    <field name="product_uom" />
+                                    <field name="product_qty"/>
+                                </tree>
+                        </field>
+                  	    	<button colspan="2" name="action_create_purchase"  string="Create purchase requistion" type="object" icon="terp-gtk-go-back-rtl"
+                     			confirm="Are you sure you want to create purchase requisition?" attrs="{'invisible':[('purchase_state','!=','2bpurchased')]}"/>
+                        </page>
+                 </page>
+           </field>
+        </record>
+        
+        <!--  Media purchase line form, tree view -->
+        
+         <record id="media_purchase_line_form" model="ir.ui.view">
+            <field name="name">media.purchase.line.form</field>
+            <field name="model">media.purchase.line</field>
+            <field name="arch" type="xml">
+                <form string="Items" version="7.0">
+                   <sheet>
+                   <notebook colspan="4">
+                      <page string="Items">
+                         <group>
+		                <field name="product_id" on_change="onchange_product_id(product_id)" colspan="4"
+		                       domain="[('categ_id','=',parent.product_category_id)]"/>
+		                <field name="name" colspan="4"/>
+		                <field name="product_qty" colspan="2"/>
+		                <field name="product_uom" colspan="2" />
+		                <field name="desc" colspan="4"/>
+                         </group>
+                      </page>
+                   </notebook>
+                   </sheet>
+                </form>
+            </field>
+         </record>
+         <record id="media_purchase_line_tree" model="ir.ui.view">
+            <field name="name">media.purchase.line.tree</field>
+            <field name="model">media.purchase.line</field>
+            <field name="arch" type="xml">
+                <tree string="Items">
+                        <field name="product_id" on_change="onchange_product_id(product_id)" domain="[('categ_id','=',parent.cat_id)]"/>
+                        <field name="name"/>
+                        <field name="product_uom" />
+                        <field name="product_qty"/>
+                </tree>
+            </field>
+         </record>
+     </data>
+</openerp>

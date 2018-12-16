@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="id_request_financial_ratification_report_view" model="ir.ui.view">
+            <field name="name">Request Financial Ratification Report Wizard Form</field>
+            <field name="model">request.financial.ratification</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Request Financial Ratification Report" version="7.0">
+        			<separator string="Request Financial Ratification Report" colspan="4"/>
+            			<group  col="2">
+
+            			<group colspan="2" >
+	    				 <field name="report_type"/>
+                                        <field name="purchase_purposes"/>  
+                        </group>
+            			<group colspan="2" >
+                                        <field name="company_id" />
+                                        <field name="executing_agency"/>  
+            			</group>
+                        <group colspan="2">
+            			      <field name="request_financial_ids" domain="[('state','in',['in_progress_fin_request','completed_fin_request','closed_fin_request']),('executing_agency','=', executing_agency)]"/>
+            			</group>
+            			</group>
+	    			<footer>
+          	    	<button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight" colspan="2"/>
+                        or
+			<button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link" colspan="2"/>
+                        	</footer>
+               </form>
+            </field>
+	    </record>
+
+        <record id="action_request_financial_ratification_report_wizard" model="ir.actions.act_window">
+            <field name="name">Action Request Financial Ratification Report Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">request.financial.ratification</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="id_request_financial_ratification_report_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Request Financial Ratification Report"
+                parent="purchase_report.menu_purchase_advance_reports"
+                action="action_request_financial_ratification_report_wizard"
+                id="menu_request_financial_ratification_report_wizard"
+                />
+
+    </data>
+</openerp>

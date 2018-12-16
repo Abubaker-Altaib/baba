@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="wkf_transportation_order" model="workflow">
+            <field name="name">wkf.transportation.order</field>
+            <field name="osv">transportation.order</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_transportation_order_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_transportation_order"/>
+            <field name="flow_start"> True</field>
+            <field name="name">draft</field>
+
+        </record>
+        <record id="wkf_transportation_order_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_transportation_order"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>            
+        </record>
+
+
+        <record id="wkf_transportation_order_send" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_transportation_order"/>
+            <field name="name">send</field>
+            <field name="kind">function</field>
+            <field name="action">send()</field>            
+        </record>
+
+        <record id="wkf_transportation_order_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_transportation_order"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+            <!--field name="flow_stop">False</field-->
+        </record>
+        <record id="wkf_transportation_order_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_transportation_order"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>
+            <field name="flow_stop">True</field>
+        </record>
+
+
+
+
+
+        <record id="wkf_transportation_order_trans_draft_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_transportation_order_draft"/>
+            <field name="act_to" ref="wkf_transportation_order_confirmed"/>
+            <field name="signal">confirmed</field>
+        </record>
+       
+        <record id="wkf_transportation_order_trans_confirmed_supply?????" model="workflow.transition">
+            <field name="act_from" ref="wkf_transportation_order_confirmed"/>
+            <field name="act_to" ref="wkf_transportation_order_supply"/>
+            <field name="signal">supply</field>
+        </record>
+
+
+        <record id="wkf_transportation_order_trans_trans_manager_send" model="workflow.transition">
+            <field name="act_from" ref="wkf_transportation_order_trans_manager?????"/>
+            <field name="act_to" ref="wkf_transportation_order_send"/>
+            <field name="signal">send</field>
+        </record>
+
+        <!--record id="wkf_transportation_order_trans_draft_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_transportation_order_draft"/>
+            <field name="act_to" ref="wkf_transportation_order_confirmed"/>
+            <field name="signal">confirmed</field>
+        </record-->
+
+        <record id="wkf_transportation_order_trans_receive_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_transportation_order_receive"/>
+            <field name="act_to" ref="wkf_transportation_order_done"/>
+            <field name="signal">done</field>
+        </record>
+        <record id="wkf_transportation_order_trans_conf_d2_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_transportation_order_confirmed"/>
+            <field name="act_to" ref="wkf_transportation_order_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_transportation_order_trans_conf_send_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_transportation_order_send"/>
+            <field name="act_to" ref="wkf_transportation_order_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <!--record id="wkf_transportation_order_trans_conf_d2_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_transportation_order_confirmed"/>
+            <field name="act_to" ref="wkf_transportation_order_cancel"/>
+            <field name="signal">cancel</field>
+        </record-->
+        <record id="from_cancel_to_direct" model="workflow.transition">
+            <field name="act_from" ref="wkf_transportation_order_cancel"/>
+            <field name="act_to" ref="wkf_transportation_order_confirmed"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+
+
+    </data>
+</openerp>
+

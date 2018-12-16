@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<!-- Bank Reconciliation -->
+		<record id="view_bank_statement_form_invoice" model="ir.ui.view">
+			<field name="name">account.bank.statement.invoice.form.inherit</field>
+			<field name="model">account.bank.statement</field>
+			<field name="inherit_id" ref="account_voucher.view_bank_statement_form_invoice" />
+			<field name="arch" type="xml">
+				<xpath expr="//div[@name='import_buttons']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_no_wafi_account
+					</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<!-- Fiscal Year Closing -->
+		<record id="view_account_fiscalyear_form" model="ir.ui.view">
+			<field name="name">account.fiscalyear.form</field>
+			<field name="model">account.fiscalyear</field>
+			<field name="inherit_id" ref="account_custom_wafi.view_account_fiscalyear_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<button name="action_close_extension_period" position="replace">
+					<button
+						name="%(account_voucher_wafi.action_account_fiscalyear_cancel_payment_wizard)d"
+						states="open_ext_period" string="Close Extension Period"
+						type="action" />
+				</button>
+			</field>
+		</record>
+	</data>
+</openerp>

@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<!--inherit add to holiday.status check default -->
+
+		
+
+		<!--inherit add to holiday.status check default -->
+		<record id="hr_inherit_holidays_status" model="ir.ui.view">
+			<field name="name">hr.holidays.status.absence</field>
+			<field name="model">hr.holidays.status</field>
+			<field name="inherit_id" ref="hr_holidays_custom.hr_holidays_status_absence" />
+			<field name="arch" type="xml">
+				<!-- <xpath expr="//field[@name='absence']" position="after">
+					<field name="scape_days" attrs="{'required':[('absence','=',True)], 'invisible':[('absence','!=',True)]}"/>
+                </xpath> -->
+				<xpath expr="//field[@name='absence']" position="attributes">
+					<attribute name="invisible">1</attribute>
+                </xpath>
+				
+			</field>
+		</record>
+
+		<record id="hr_inherit_holidays_status" model="ir.ui.view">
+			<field name="name">hr.holidays.status.form.inherit</field>
+			<field name="model">hr.holidays.status</field>
+			<field name="inherit_id" ref="hr_holidays_custom.hr_inherit_holidays_status" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//group[@string='Leave Details']" position="inside">
+					<field name="sick_leave" />
+                </xpath>
+				<xpath expr="//field[@name='save_years']" position="after">
+					<field name="advance_leave" />
+					<field name="advance_leave_days" attrs="{'invisible':[('advance_leave','=',False)], 'required':[('advance_leave','=',True)]}" />
+				</xpath>
+			</field>
+		</record>
+
+		<!--inherit add to holiday view -->
+		<record id="hr_inherit_holidays" model="ir.ui.view">
+			<field name="name">hr.holidays.form.inherit2</field>
+			<field name="model">hr.holidays</field>
+			<field name="inherit_id" ref="hr_holidays_custom.hr_inherit_holidays" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='holiday_status_id']" position="attributes">
+					<attribute name="required">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='postpone']" position="after">
+					<field name="sick_leave" invisible="1"/>
+					<field name="illness_id" readonly="1" attrs="{'invisible':[('sick_leave','!=',True)]}"/>
+					<field name="advance_leave2" invisible="1" />
+					<field name="advance_leave" attrs="{'invisible':[('advance_leave2','!=',True)],'readonly': [('state','!=','draft')]}"/>
+				</xpath>
+				<xpath expr="//field[@name='holiday_status_id']" position="after">
+					<field name="remaining_days" />
+				</xpath> 
+				<xpath expr="//field[@name='notes']" position="replace">
+				</xpath >
+				<xpath expr="//group[last()]" position="after">
+					<notebook>
+						
+						<page string="Details">
+							<group col="4">
+								<field name="place_type" attrs="{'readonly' : [('state' , '!=' , 'draft')]}" />
+								<field name="source_place" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+								<field name="holiday_place" attrs="{'readonly' : [('state' , '!=' , 'draft')]}" />
+								<field name="return_place" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+								<field name="road_days" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+							</group>
+						</page>
+						<page string="Notes">
+							<field name="notes" />
+						</page>
+					</notebook>
+				</xpath>
+			</field>
+		</record>
+
+		<!-- inherit absence view -->
+		<record id="hr_absence_form_custom" model="ir.ui.view">
+			<field name="name">hr.holidays.absence.custom</field>
+			<field name="model">hr.holidays.absence</field>
+			<!--field name="inherit_id" ref="hr_holidays_custom.hr_absence_form" /-->
+			<field name="arch" type="xml">
+				<form string="Employee Absence" version="7.0">
+                    <header>
+            			<button string="Confirm" name="confirm" states="draft" type="object"
+						icon="gtk-apply" colspan="2" />
+						<button string="Cancel" name="cancel" confirm="Do You Really Want To Cancel This Record ?" states="confirmed" type="object"
+						icon="gtk-no" colspan="2" />
+						<button string="Set To Draft" name="set_to_draft" states="cancel" type="object"
+						icon="gtk-convert" colspan="2" />
+                    	<field name="state" widget="statusbar"
+                    	statusbar_visible="draft,confirmed" statusbar_colors='{"draft":"blue","confirmed":"blue"}'/>
+        		    </header>
+					<sheet string="Employee Absence">
+							<group col="4">
+								<field name="employee_id" domain="[('state','=','approved')]" on_change="onchange_employee(employee_id)" 
+									required="1" attrs="{'readonly':[('state','!=','draft')]}" />
+								<field name="degree_id" groups="base.group_hr_user" readonly="1"/>
+								<field name="department_id" groups="base.group_hr_user" readonly="1"/>
+								<field name="company_id" groups="base.group_multi_company" readonly="1"/>
+								<field name="deduction_id" required="1" 
+									domain="[('name_type','=','deduct'),('absence_deduction','=',True),('special','=',True),('in_salary_sheet','=',True)]" 
+									attrs="{'readonly':[('state','!=','draft')]}" />
+								<field name="type" invisible="1" />
+							</group>
+							<group>
+								<!--field name="holiday_status_id" 
+									domain="[('absence','=',True)]" 
+									context="{'employee_id':employee_id}" />
+								<label for="number_of_days_temp" string="Duration"
+									help="The default duration interval between the start date and the end date is 8 hours.=0" />
+								<div>
+									<group col="3">
+										<field name="date_from" nolabel="1"
+											on_change="onchange_date_from(date_to, date_from,holiday_status_id, employee_id,number_of_days_temp)"
+											required="1" class="oe_inline" />
+										<label string="-" class="oe_inline" />
+										<field name="date_to" nolabel="1"
+											on_change="onchange_date_to(date_to, date_from)" required="1"
+											class="oe_inline" />
+									</group>
+									<div>
+										<field name="number_of_days_temp" class="oe_inline" />
+										days
+									</div>
+								</div-->
+								<group col="6">	
+									<field name="date_from"
+										on_change="onchange_date_from(date_from, date_to, days_number,'date_from')"
+										required="1" 
+										attrs="{'readonly':[('state','!=','draft')]}"/>
+									<field name="date_to" 
+										on_change="onchange_date_from(date_from, date_to, days_number,'date_to')" 
+										attrs="{'readonly':[('state','!=','draft')]}" />
+									<field name="days_number" string="Number of Days" 
+										on_change="onchange_date_from(date_from, date_to, days_number,'days')" 
+										attrs="{'readonly':[('state','!=','draft')]}" />
+											days
+								</group>
+								<newline/>
+								<group col="2" string="Absence Situations">
+									<field name="in_absence" attrs="{'readonly':[('state','!=','draft')]}"/>
+									<field name="first_week" attrs="{'readonly':[('state','!=','draft')]}"/>
+									<field name="second_week" attrs="{'readonly':[('state','!=','draft')]}"/>
+								</group>
+							</group>
+						<group col="6">
+							<field name="reference_num" attrs="{'readonly':[('state','!=','draft')]}"/>
+							<field name="sequence" readonly="1" />
+						</group>
+						<group col="1">
+							<field name="reference" attrs="{'readonly':[('state','!=','draft')]}"/>
+						</group>
+							
+					</sheet>
+				</form>
+				
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_absence_tree">
+			<field name="name">hr.holidays.absence.absence.tree</field>
+			<field name="model">hr.holidays.absence</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Absence">
+					<field name="employee_id" domain="[('state','=','approved')]" />
+					<field name="department_id" />
+					<field name="absence" />
+					<field name="date_from" />
+					<field name="date_to" />
+					<field name="days_number" string="Number of Days" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+		
+		<record model="ir.actions.act_window" id="hr_absence_action_custom">
+			<field name="name">absences</field>
+			<field name="res_model">hr.holidays.absence</field>
+			<field name="view_type">form</field>
+           	<field name="view_mode">tree,form</field>
+			<field name="view_id" eval="False"/>
+			<field name="domain">[('type','=','absence')]</field>
+			<field name="context">{'default_type': 'absence'}</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a absence.
+				</p>
+			</field>
+		</record>
+             
+        <record id="action_absence_form" model="ir.actions.act_window.view">
+		    <field eval="2" name="sequence"/>
+		    <field name="view_mode">form</field>
+		    <field name="view_id" ref="hr_absence_form_custom"/>
+		    <field name="act_window_id" ref="hr_absence_action_custom"/>
+		</record>
+
+		<record id="action_absence_tree" model="ir.actions.act_window.view">
+		    <field eval="1" name="sequence"/>
+		    <field name="view_mode">tree</field>
+		    <field name="view_id" ref="view_absence_tree"/>
+		    <field name="act_window_id" ref="hr_absence_action_custom"/>
+		</record>
+		
+		<menuitem name="Absence" parent="hr_holidays.menu_open_ask_holidays"
+			id="hr_holidays_custom.menu_absence" action="hr_absence_action_custom" sequence="40" />
+
+		<!-- Escape -->
+		<record id="hr_escape_form" model="ir.ui.view">
+			<field name="name">Escape</field>
+			<field name="model">hr.holidays.absence</field>
+			<field name="arch" type="xml">
+				<form string="Escape" version="7.0">
+                  <header>
+                    	<button string="Confirm" name="confirm" states="draft" type="object"
+						icon="gtk-apply" colspan="2" />
+						<button string="End Escape" name="end_escape" confirm="Do You Really Want To End This Escape ?" states="draft" type="object"
+						icon="gtk-apply" colspan="2" />
+						<button string="Cancel" confirm="Do You Really Want To Cancel This Record ?" name="cancel" states="confirmed" type="object"
+						icon="gtk-no" colspan="2" />
+						<button string="Set To Draft" name="set_to_draft" states="cancel" type="object"
+						icon="gtk-convert" colspan="2" />
+                    	<field name="state" widget="statusbar"
+                    	statusbar_visible="draft,confirmed,done" statusbar_colors='{"draft":"blue","confirmed":"blue"}'/>
+                  </header>
+				  <sheet string="Escape Situations">
+							<group col="4">
+								<field name="employee_id" domain="[('state','=','approved')]" on_change="onchange_employee(employee_id)" 
+									required="1" attrs="{'readonly':[('state','!=','draft')]}" />
+								<field name="degree_id" groups="base.group_hr_user" readonly="1"/>
+								<field name="department_id" groups="base.group_hr_user" readonly="1"/>
+								<field name="company_id" groups="base.group_multi_company" readonly="1"/>
+								<field name="type" invisible="1" />
+							</group>
+							<newline/>
+							<group col="4">	
+								<field name="absence" required="1"  domain="[('type','=','absence'),('employee_id','=',employee_id)]" 
+									on_change="onchange_holiday_seq(absence)" 
+									context="{'default_type':'absence','default_employee_id':employee_id}" 
+									attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="sequence" string="Absence Number" readonly="1" />
+							</group>
+							<group col="6">	
+								<field name="date_from"
+									on_change="onchange_date_from(date_from, date_to, days_number,'date_from')"
+									required="1" 
+									attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="date_to" 
+									on_change="onchange_date_from(date_from, date_to, days_number,'date_to')" 
+									attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="days_number" string="Number of Days" attrs="{'readonly':[('state','!=','draft')]}"
+									on_change="onchange_date_from(date_from, date_to, days_number,'days')" />
+										days
+							</group>
+							
+							<group>
+								<group col="2">
+									<field name="action_state" attrs="{'readonly':[('state','!=','draft')]}"/>
+									<field name="action" attrs="{'readonly':[('state','!=','draft')]}" />
+								</group>
+							</group>
+							
+					</sheet>
+			    </form>
+		    </field>
+	    </record>
+		
+		<record model="ir.ui.view" id="view_escape_tree">
+			<field name="name">hr.holidays.absence.escape.tree</field>
+			<field name="model">hr.holidays.absence</field>
+			<field name="arch" type="xml">
+				<tree string="Escape">
+					<field name="employee_id" domain="[('state','=','approved')]" />
+					<field name="department_id" />
+					<field name="absence" />
+					<field name="date_from" />
+					<field name="date_to" />
+					<field name="days_number" string="Number of Days" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+		
+		<record model="ir.actions.act_window" id="hr_escape_action">
+			<field name="name">Escapes</field>
+			<field name="res_model">hr.holidays.absence</field>
+			<field name="view_type">form</field>
+           	<field name="view_mode">tree,form</field>
+			<field name="view_id" eval="False"/>
+			<field name="domain">[('type','=','escape')]</field>
+			<field name="context">{'default_type': 'escape'}</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a scape.
+				</p>
+			</field>
+		</record>
+             
+        <record id="action_escape_form" model="ir.actions.act_window.view">
+		    <field eval="2" name="sequence"/>
+		    <field name="view_mode">form</field>
+		    <field name="view_id" ref="hr_escape_form"/>
+		    <field name="act_window_id" ref="hr_escape_action"/>
+		</record>
+
+		<record id="action_escape_tree" model="ir.actions.act_window.view">
+		    <field eval="1" name="sequence"/>
+		    <field name="view_mode">tree</field>
+		    <field name="view_id" ref="view_escape_tree"/>
+		    <field name="act_window_id" ref="hr_escape_action"/>
+		</record>
+		
+		<menuitem name="Escape" parent="hr_holidays.menu_open_ask_holidays"
+			id="menu_escape" action="hr_escape_action" sequence="20" />
+
+
+		<!-- hr_allowance_deduction -->
+		<record model="ir.ui.view" id="view_allowance_deduction_form">
+			<field name="name">hr.allowance.deduction.form</field>
+			<field name="model">hr.allowance.deduction</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_allowance_deduction_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='special']" position="after">
+					<field name="absence_deduction" attrs="{'invisible':[('name_type','!=','deduct')]}" />
+                </xpath>
+			</field>
+		</record>
+
+		
+
+		
+
+	</data>
+</openerp>

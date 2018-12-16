@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.module.category" id="module_category_hr_training">
+			<field name="name">Training</field>
+		</record>
+		<record id="base.group_training_user" model="res.groups">
+			<field name="name">Training / User</field>
+			<field name="category_id" ref="hr_training.module_category_hr_training"/>
+		</record>
+		<record id="base.group_training_manager" model="res.groups">
+			<field name="name">Training / Manager</field>
+			<field name="category_id" ref="hr_training.module_category_hr_training"/>
+			<field eval="[(6,0,[ref('base.group_training_user')])]" name="implied_ids" />
+		</record>
+
+		<record id="ir_rule_trainingenrichmanager0" model="ir.rule">
+			<field name="model_id" ref="hr_training.model_hr_employee_training_line" />
+			<field name="domain_force">[('employee_id.user_id','=',user.id)]</field>
+			<field name="name">training enrich for user</field>
+			<field eval="[(6,0,[ref('base.group_user')])]" name="groups" />
+		</record>
+		<record id="ir_rule_hr_employee_training_line_departmen_unit_manager" model="ir.rule">
+			<field name="model_id" ref="hr_training.model_hr_employee_training_line" />
+			<field name="domain_force">
+			['|',('department_id','child_of',[user.context_department_id.id]),('department_id.parent_id','child_of',[user.context_department_id.id])]
+			</field>
+			<field name="name">department and unit manager</field>
+			<field eval="[(6,0,[ref('base.group_department_manager'),ref('base.group_unit_manager')])]" name="groups" />
+		</record>
+		<record id="ir_rule_trailokookkkager0" model="ir.rule">
+			<field name="model_id" ref="hr_training.model_hr_training_course" />
+			<field name="domain_force">[(1,'=',1)]</field>
+			<field name="name">training approved manager</field>
+			<field eval="[(6,0,[ref('base.group_training_user'),ref('base.group_training_manager')])]" name="groups" />
+		</record>
+        <record id="ir_rule_employee_training" model="ir.rule">
+            <field name="model_id" ref="hr.model_hr_employee" />
+            <field name="domain_force">['|','|',('company_id','=',False),('company_id','child_of',[user.company_id.id]),('company_id','in',[g.id
+                for g in user.company_ids])]</field>
+            <field name="name">Employee</field>
+            <field eval="[(6,0,[ref('base.group_training_user')])]" name="groups" />
+        </record>
+        <record id="ir_rule_employee_training_line" model="ir.rule">
+            <field name="model_id" ref="hr_training.model_hr_employee_training_line" />
+            <field name="domain_force">['|','|',('training_employee_id.company_id','=',False),('training_employee_id.company_id','child_of',[user.company_id.id]),('training_employee_id.company_id','in',[g.id
+                for g in user.company_ids])]</field>
+            <field name="name">Employee Training Line</field>
+            <field eval="[(6,0,[ref('base.group_training_user')])]" name="groups" />
+        </record>
+	</data>
+</openerp>

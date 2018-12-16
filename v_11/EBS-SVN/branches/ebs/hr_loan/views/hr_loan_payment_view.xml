@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data> 
+<!-- Loan Payment -->
+		<record id="view_loan_paid_detail" model="ir.ui.view">
+			<field name="name">Employee Loan Payment</field>
+			<field name="model">hr.employee.loan.paid</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="prepare Loans">
+                	<header>
+	                    <button string="Confirm" name="confirm" states="draft"  class="oe_highlight" type='object' />
+
+	       
+	                    <field name="state" widget="statusbar" 
+                                   statusbar_visible="draft"/>
+                    </header>
+					<sheet>
+						<!--h1>
+							<field name="name" class="oe_inline"
+								attrs="{'invisible': [('name','=','/')]}" readonly="1" />
+						</h1-->
+ 
+						<group col="4" colspan="4">
+								
+							<field name="employee_id" required='True' />
+							
+							<field name="date" />
+							
+							<field name="emp_loan_id" required='True' domain="[('employee_id','=',employee_id),('state','=','paid')]"/>
+							
+							<field name="pay_type" required='True'/>
+
+							<field name='installment_type' attrs="{'invisible':[('pay_type','!=','installment')], 
+								                                    'required':[('pay_type','=','installment')]}"/>
+							
+							<field name="loan_amount" attrs="{'invisible':[('pay_type','!=','once')]}"/>
+							
+							
+
+							<field name='loan_amount2' attrs="{'invisible':['|',('installment_type','!=','reduce_installment'),('pay_type','!=','installment')] ,'required':[('installment_type','=','reduce_installment')]}"/>
+                            
+                            <field name="voucher_id" readonly="True" attrs="{'invisible':[('state','=','draft')]}" context="{'form_view_ref':'account_voucher.view_sale_receipt_form'}"/>
+
+							
+							<!--<field name="installment_no" attrs="{'invisible': [('pay_type','!=','installment')]}" />-->
+								<!--<field name="refund_remain_from" />-->
+ 								<!--<field name="year" />
+								<field name="month" />-->
+                                <!--<field name="rais"
+									on_change="onchange_pay_type(loan_id,pay_type,loan_amount)"
+									attrs="{'invisible': [('pay_type','!=','installment')]}" />-->
+							<!--<field name="employee_id" domain="[('state','=','approved')]"
+									on_change="onchange_employee(employee_id)" />-->		
+                             
+						</group>
+						<notebook attrs="{'invisible':['|',('installment_type','!=','pay_installment'),('pay_type','!=','installment')]}">
+							<page  string="Installments To pay" >
+								<field name='loan_arc_ids' options="{'no_create':True}" attrs="{'required':[('installment_type','=','reduce_installment')]}" domain="[('state','=','draft'),('loan_request_id','=',emp_loan_id)]"/>
+							</page>
+						</notebook>
+
+						<!--field name="note" placeholder="Add an internal note..."
+							class="oe_inline" /-->
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_employee_loan_paid_tree_view">
+			<field name="name">hr.employee.loan.tree</field>
+			<field name="model">hr.employee.loan.paid</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Loan Payment">
+					<field name="date" />
+					<field name="employee_id" />
+					<field name="emp_loan_id" />
+					<field name="pay_type" />
+					<!--<field name="loan_amount" />
+					<field name="loan_amount2" />-->
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="hr_employee_loan_paid_action" model="ir.actions.act_window">
+			<field name="name">Employee Loan Payment</field>
+			<field name="res_model">hr.employee.loan.paid</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_employee_loan_paid_tree_view" />
+		</record>
+
+		<menuitem id="menu_paid_loan" parent="hr_loan.hr_loan_menu" name="Loan Request Payment"
+			action="hr_employee_loan_paid_action"/>
+
+
+
+	</data>
+</odoo>

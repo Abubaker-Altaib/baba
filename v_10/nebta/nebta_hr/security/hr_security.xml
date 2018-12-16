@@ -1,0 +1,65 @@
+<odoo>
+    <data>
+        <!-- Groups -->
+
+      <record id="category_hr" model="ir.module.category">
+            <field name="name">HR</field>
+        </record>
+        	<!-- Microfinance Hr Manager -->
+    	<record id="group_manager" model="res.groups">
+	    <field name="name">Employee Manager</field>
+	    <field name="comment">the manager will have an access to only employee under him</field>
+	    <field name="category_id" ref="nebta_hr.category_hr"/>
+	    <field name="implied_ids" eval="[(4, ref('hr.group_hr_user'))]"/>
+	    <field name="users" eval="[(4, ref('base.user_root'))]"/>
+    	</record>
+		<!-- Microfinance Hr Coach -->
+    	<record id="group_coach" model="res.groups">
+	    <field name="name">Employee Coach</field>
+	    <field name="comment">the coach will have an access to only employee under him.</field>
+	    <field name="category_id" ref="nebta_hr.category_hr"/>
+	    <field name="implied_ids" eval="[(4, ref('hr.group_hr_user'))]"/>
+	    <field name="users" eval="[(4, ref('base.user_root'))]"/>
+    	</record>
+		<!-- Microfinance Hr Manager Rule -->
+	<record id="hr_manager_employee_rule" model="ir.rule">
+            <field name="name">Employee Manager</field>
+            <field ref="hr.model_hr_employee" name="model_id" />
+            <field name="groups" eval="[(4, ref('group_manager'))]"/>
+            <field name="domain_force">
+            ['|',('user_id','=',user.id),('parent_id.user_id','=',user.id)]
+	        </field>
+        </record>
+
+		<!-- Microfinance Hr Manager Holiday Rule -->
+	<record id="hr_manager_employee_holiday_rule" model="ir.rule">
+            <field name="name">Employee Manager Holiday</field>
+            <field ref="hr_holidays.model_hr_holidays" name="model_id" />
+            <field name="groups" eval="[(4, ref('group_manager'))]"/>
+            <field name="domain_force">
+            ['|',('user_id','=',user.id),('employee_id.parent_id.user_id','=',user.id)]
+	        </field>
+        </record>
+
+		<!-- Microfinance Hr Coach Rule-->
+	<record id="hr_coach_employee_rule" model="ir.rule">
+            <field name="name">Employee Coach</field>
+            <field ref="hr.model_hr_employee" name="model_id" />
+            <field name="groups" eval="[(4, ref('group_coach'))]"/>
+            <field name="domain_force">
+            ['|',('user_id','=',user.id),('coach_id.user_id','=',user.id)]
+	        </field>
+        </record>
+	
+		<!-- Microfinance Hr Coach Holiday Rule-->
+	<record id="hr_coach_employee_holiday_rule" model="ir.rule">
+            <field name="name">Employee Coach Holiday</field>
+            <field ref="hr_holidays.model_hr_holidays" name="model_id" />
+            <field name="groups" eval="[(4, ref('group_coach'))]"/>
+            <field name="domain_force">
+            ['|',('user_id','=',user.id),('employee_id.coach_id.user_id','=',user.id)]
+	        </field>
+        </record>
+
+    </data>
+</odoo>

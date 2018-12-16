@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="wkf_foreigners_request" model="workflow">
+            <field name="name">wkf.foreigners.procedures.request</field>
+            <field name="osv">foreigners.procedures.request</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="wkf_foreigners_request_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_foreigners_request"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+        <record id="wkf_foreigners_request_request" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_foreigners_request"/>
+            <field name="name">requested</field>
+            <field name="kind">function</field>
+            <field name="action">requested()</field>  
+        </record>
+        <record id="wkf_foreigners_request_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_foreigners_request"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>  
+        </record>
+        <record id="wkf_foreigners_request_second_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_foreigners_request"/>
+            <field name="name">second_confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">second_confirmed()</field>  
+        </record>
+        <record id="wkf_foreigners_request_approve" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_foreigners_request"/>
+            <field name="name">approved</field>
+            <field name="kind">function</field>
+            <field name="action">approved()</field>  
+        </record>
+        <record id="wkf_foreigners_request_second_approve" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_foreigners_request"/>
+            <field name="name">second_approved</field>
+            <field name="kind">function</field>
+            <field name="action">second_approved()</field>  
+        </record>
+        <!--record id="wkf_foreigners_request_process" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_foreigners_request"/>
+            <field name="name">process</field>
+            <field name="kind">function</field>
+        </record-->
+        <record id="wkf_foreigners_request_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_foreigners_request"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>  
+            <field name="flow_stop">True</field>          
+        </record>
+        <record id="wkf_foreigners_request_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_foreigners_request"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel()</field>  
+        </record>
+
+
+
+        <record id="wkf_foreigners_request_requested" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_draft"/>
+            <field name="act_to" ref="wkf_foreigners_request_request"/>
+            <field name="signal">requested</field>
+        </record>
+        <record id="wkf_foreigners_request_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_request"/>
+            <field name="act_to" ref="wkf_foreigners_request_confirm"/>
+            <field name="signal">confirmed</field>
+        </record>
+        <record id="wkf_foreigners_request_second_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_confirm"/>
+            <field name="act_to" ref="wkf_foreigners_request_second_confirm"/>
+            <field name="signal">second confirmed</field>
+        </record>
+        <record id="wkf_foreigners_request_approved" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_second_confirm"/>
+            <field name="act_to" ref="wkf_foreigners_request_approve"/>
+            <field name="signal">approved</field>
+        </record>
+        <record id="wkf_foreigners_request_second_approved" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_approve"/>
+            <field name="act_to" ref="wkf_foreigners_request_second_approve"/>
+            <field name="signal">second approved</field>
+        </record>
+        <!--record id="wkf_foreigners_request_processed" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_second_approve"/>
+            <field name="act_to" ref="wkf_foreigners_request_process"/>
+            <field name="signal">processed</field>
+        </record-->
+         <record id="wkf_foreigners_request_done_req" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_second_approve"/>
+            <field name="act_to" ref="wkf_foreigners_request_done"/>
+            <field name="signal">done</field>
+        </record>
+
+        <record id="wkf_foreigners_request_request_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_request"/>
+            <field name="act_to" ref="wkf_foreigners_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        <record id="wkf_foreigners_request_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_confirm"/>
+            <field name="act_to" ref="wkf_foreigners_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        <record id="wkf_foreigners_request_second_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_second_confirm"/>
+            <field name="act_to" ref="wkf_foreigners_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        <record id="wkf_foreigners_request_approve_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_approve"/>
+            <field name="act_to" ref="wkf_foreigners_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        <record id="wkf_foreigners_request_second_approve_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_second_approve"/>
+            <field name="act_to" ref="wkf_foreigners_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        <record id="wkf_foreigners_request_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_foreigners_request_cancel"/>
+            <field name="act_to" ref="wkf_foreigners_request_draft"/>
+            <field name="signal">cancel</field>
+        </record>
+
+    </data>
+</openerp>
+

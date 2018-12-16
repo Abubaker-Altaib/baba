@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_compare_fuel" model="ir.ui.view">
+            <field name="name">Compare Monthly Fuel</field>
+            <field name="model">compare.fuel</field>
+            <field name="arch" type="xml">
+                <form string="Compare Monthly Fuel" version="7.0">
+                    <group>
+                        <separator string="between" colspan="4"/>
+                        <field name="first_month" colspan="2"/>
+                        <field name="first_year" colspan="2"/>
+                        <separator string="And" colspan="4"/>
+                        <field name="second_month" colspan="2"/>
+                        <field name="second_year" colspan="2"/>
+                    </group>
+                    <footer>
+                        <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight"/>
+                                or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_wizard_compare_fuel" model="ir.actions.act_window">
+            <field name="name">Compare Fuel</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">compare.fuel</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_compare_fuel"/>
+            <field name="target">new</field>
+        </record>
+ <menuitem
+             
+                name="Fuel Reports"
+	        parent="admin_affairs.fleet_report"
+                id="fuel_report_menu"
+                />
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Fuel Monthly Compare"
+                parent="fuel_report_menu"
+                action="action_wizard_compare_fuel"
+                id="menu_wizard_compare_fuel"
+                />
+
+    
+
+
+    </data>
+</openerp>

@@ -1,0 +1,334 @@
+<?xml version="1.0"?>
+<document filename="total_allownces.pdf">
+	<template pageSize="(595.0,842.0)" title="Total Allownces"
+		allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="3.0" y1="3.0" width="565"
+				height="800" />
+		</pageTemplate>
+	</template>
+	<stylesheet>
+		<blockTableStyle id="Table_with_header">
+			<blockAlignment value="LEFT" />
+			<blockValign value="TOP" />
+			<!--  Header -->
+			<lineStyle kind="GRID" thickness="0.3" colorName="#000000"/>
+			<blockBackground colorName="#ffffff" start="0,0"
+				stop="0,-1" />
+			<blockBackground colorName="#e6e6e6" start="1,0"
+				stop="1,-1" />
+			<blockBackground colorName="#ffffff" start="2,0"
+				stop="2,-1" />
+			<blockBackground colorName="#e6e6e6" start="3,0"
+				stop="3,-1" />
+			<blockBackground colorName="#ffffff" start="0,1"
+				stop="0,-1" />
+			<blockBackground colorName="#e6e6e6" start="1,1"
+				stop="1,-1" />
+			<blockBackground colorName="#ffffff" start="2,1"
+				stop="2,-1" />
+			<blockBackground colorName="#e6e6e6" start="3,1"
+				stop="3,-1" />
+		</blockTableStyle>
+		<blockTableStyle id="Table_title">
+			<blockAlignment value="RIGHT" />
+			<blockValign value="TOP" />
+		</blockTableStyle>
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		<paraStyle name="space_after_line" fontName="Helvetica-Bold"
+			fontSize="7.0" leading="3" alignment="CENTER" spaceBefore="5.0"
+			spaceAfter="3.0" />
+		<paraStyle name="col_Right" fontName="Helvetica" fontSize="9.0"
+			leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" />
+		<paraStyle name="small_col_Right" fontName="Helvetica"
+			fontSize="9" leading="11" alignment="RIGHT" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="P13" fontName="Helvetica-Bold" fontSize="8.0"
+			leading="7" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" />
+	</stylesheet>
+
+	<story>
+		<blockTable colWidths="180,50,250,50"
+			style="Table_with_header">
+			<tr>
+				<td>
+					<para style="col_Right"></para>
+				</td>
+				<td>
+					<para style="col_Right">النمرة</para>
+				</td>
+				<td>
+					<para style="col_Right">[[ formatLang(time.strftime('%Y-%m-%d'),date=True) ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">التاريخ</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para>[[ repeatIn( objects ,'p') ]]</para>
+		<para style="space_after_line"></para>
+		<!-- +++++++++++++++++++++++++++++++++ begin line ++++++++++++++++++++++++++++++ -->
+		<hr spaceBefore="5" width="100%" thickness="0.5" color="#000066" />
+		<!-- +++++++++++++++++++++++++++++++++  end line  ++++++++++++++++++++++++++++++ -->
+		<para style="space_after_line"></para>
+		<blockTable colWidths="450" style="Table_title">
+			<tr>
+				<td>
+					<para style="P13">معلومات الموظف</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="space_after_line"></para>
+		<blockTable colWidths="150,100,200,100"
+			style="Table_with_header">
+			<tr>
+				<td>
+					<para style="col_Right">[[ p.employee_id.emp_code ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">رقم المرتب</para>
+				</td>
+				<td>
+					<para style="col_Right">[[ p.employee_id.name ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">الإسم</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="col_Right">[[ p.employee_id.department_id.name ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">القسم</para>
+				</td>
+				<td>
+					<para style="col_Right">
+						[[ p.employee_id.department_id.parent_id and p.employee_id.department_id.parent_id.name ]]
+					</para>
+				</td>
+				<td>
+					<para style="col_Right">الادارة</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="col_Right">[[ p.employee_id.job_id.name ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">الوظيفة</para>
+				</td>
+				<td>
+					<para style="col_Right">
+						[[ p.employee_id.employment_date ]]
+					</para>
+				</td>
+				<td>
+					<para style="col_Right">تاريخ التعيبن</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="0,0,450,100" style="Table_with_header">
+			<tr>
+				<td>
+					<para style="col_Right"></para>
+				</td>
+				<td>
+					<para style="col_Right"></para>
+				</td>
+				<td>
+					<para style="col_Right">
+						[[ p.employee_id.degree_id.name ]]
+					</para>
+				</td>
+				<td>
+					<para style="col_Right">الدرجة</para>
+				</td>
+			</tr>
+		</blockTable>
+
+		<para style="space_after_line"></para>
+		<blockTable colWidths="450" style="Table_title">
+			<tr>
+				<td>
+					<para style="P13">معلومات المخالفة</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="space_after_line"></para>
+		<blockTable colWidths="100,80,300,80" style="Table_with_header">
+			<tr>
+				<td>
+					<para style="col_Right">[[ p.violation_date ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">تاريخها</para>
+				</td>
+				<td>
+					<para style="col_Right">[[ p.violation_id and p.violation_id.name ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">المخالفة</para>
+				</td>
+			</tr>
+
+		</blockTable>
+		<blockTable colWidths="0,0,480,80" style="Table_with_header">
+			<tr>
+				<td>
+					<para style="col_Right"></para>
+				</td>
+				<td>
+					<para style="col_Right"></para>
+				</td>
+				<td>
+					<para style="col_Right">[[ p.violation_descr ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">حيثيات المخالفة</para>
+				</td>
+			</tr>
+		</blockTable>
+
+		<para style="space_after_line"></para>
+		<blockTable colWidths="450" style="Table_title">
+			<tr>
+				<td>
+					<para style="P13">
+						قائمة العقوبات لهذه المخالفة
+					</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="space_after_line"></para>
+		<blockTable colWidths="0,0,480,80" style="Table_with_header">
+			<tr>
+				<td>
+					<para style="col_Right"></para>
+				</td>
+				<td>
+					<para style="col_Right"></para>
+				</td>
+				<td>
+					<para style="col_Right">إسم العقوبة</para>
+				</td>
+				<td>
+					<para style="col_Right">الرقم</para>
+				</td>
+			</tr>
+			<tr>[[repeatIn(p.violation_id.violation_punish_ids,'w')]]
+				<td>
+					<para style="col_Right"></para>
+				</td>
+				<td>
+					<para style="col_Right"></para>
+				</td>
+				<td>
+					<para style="col_Right"> [[ w.punishment_id.name ]] </para>
+				</td>
+				<td>
+					<para style="col_Right"> [[ str(w.sequence) ]] </para>
+				</td>
+			</tr>
+		</blockTable>
+
+		<para style="space_after_line"></para>
+		<blockTable colWidths="450" style="Table_title">
+			<tr>
+				<td>
+					<para style="P13">معلومات العقوبة</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="space_after_line"></para>
+		<blockTable colWidths="100,80,300,80" style="Table_with_header">
+			<tr>
+				<td>
+					<para style="col_Right">[[ p.decision_date  or '/' ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">تاريخها</para>
+				</td>
+				<td>
+					<para style="col_Right">[[ p.punishment_id and p.punishment_id.name ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">العقوبة</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="col_Right">[[ p.start_date  or '/' ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">تاريخ الجزاء</para>
+				</td>
+				<td>
+					<para style="col_Right">[[ p.penalty_amount or '0' ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">الجزاءالمالي</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="0,0,480,80" style="Table_with_header">
+			<tr>
+				<td>
+					<para style="col_Right"></para>
+				</td>
+				<td>
+					<para style="col_Right"></para>
+				</td>
+				<td>
+					<para style="col_Right">[[ p.decision_descr ]]</para>
+				</td>
+				<td>
+					<para style="col_Right">حيثيات العقوبة</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="space_after_line"></para>
+		<para style="space_after_line"></para>
+
+		<!-- +++++++++++++++++++++++++++++++++ begin line ++++++++++++++++++++++++++++++ -->
+		<hr spaceBefore="5" width="100%" thickness="0.5" color="#000066" />
+		<!-- +++++++++++++++++++++++++++++++++  end line  ++++++++++++++++++++++++++++++ -->
+
+		<para style="space_after_line"></para>
+		<blockTable colWidths="450" style="Table_title">
+			<tr>
+				<td>
+					<para style="P13">إعضاء اللجنة</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="186,186,186">
+			<tr>
+				<td>
+					<para style="small_col_Right">..........................:/3</para>
+				</td>
+				<td>
+					<para style="small_col_Right">...........................:/2</para>
+				</td>
+				<td>
+					<para style="small_col_Right">...........................:/1</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="small_col_Right">..........................:/6</para>
+				</td>
+				<td>
+					<para style="small_col_Right">...........................:/5</para>
+				</td>
+				<td>
+					<para style="small_col_Right">...........................:/4</para>
+				</td>
+			</tr>
+		</blockTable>
+		<!-- +++++++++++++++++++++++++++++++++ End repeating ++++++++++++++++++++++++++++++ -->
+	</story>
+</document>
+

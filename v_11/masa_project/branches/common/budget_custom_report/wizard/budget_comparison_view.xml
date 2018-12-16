@@ -1,0 +1,87 @@
+
+
+<odoo>
+    <data>
+
+        <record id="view_budget_comparison_report_wizard" model="ir.ui.view">
+            <field name="name">Budget Comparison Reports</field>
+            <field name="model">budget.custom.report.comparison</field>
+            <field name="arch" type="xml">
+                <form string="Budget Comparison Report">
+                    <group col="2" colspan="2">
+
+                        <field name="budget_type"/>
+                    </group>
+<group col="2" colspan="2">
+                    <group string="First Date">
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+
+
+                    <group string="Seconde Date">
+                        <field name="date_from_s"/>
+                        <field name="date_to_s"/>
+                    </group>
+                    </group>
+
+                    <notebook>
+                        <!--page string="Budetry Positions" >
+                            <field name="budgetry_position_ids" domain="[('type','=',budget_type)]"/>
+                        </page-->
+                        <page string="Analytic Accounts" >
+                            <field name="analytic_account_ids" />
+                        </page>
+
+                    </notebook>
+                     <footer>
+                        <button name="print_report" string="Print" type="object" default_focus="1"
+                                class="oe_highlight"/>
+                        <button string="Cancel" class="btn btn-default" special="cancel"/>
+
+                    </footer>
+
+
+                </form>
+            </field>
+        </record>
+
+
+
+
+        <record id="budget_comparison_report_wizard_action" model="ir.actions.act_window">
+            <field name="name">Budget Comparison Reports</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">budget.custom.report.comparison</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_budget_comparison_report_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+
+
+
+        <menuitem
+                name="Budget Comparison Reports"
+                id="budget_comparison_report_menu"
+                parent="account_budget_custom.menu_budget_reporting"
+                action="budget_comparison_report_wizard_action"
+                groups="account_budget_custom.group_budget_user,account_budget_custom.group_budget_accountant"
+        />
+
+
+        <report
+                id="action_budget_comparison_report"
+                string="Budget Comparison Report"
+                model="crossovered.budget"
+                report_type="qweb-pdf"
+                name="budget_custom_report.budget_comparison_report_tamplate"
+                file="budget_custom_report.budget_comparison_report_tamplate"
+                menu="False"/>
+
+
+
+
+    </data>
+</odoo>

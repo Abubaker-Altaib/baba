@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+               
+        <!-- Action of Fuel Plan -->
+
+        <record id="action_planed_approv" model="ir.actions.act_window">
+            <field name="name">action.plan.approv</field>
+            <field name="res_model">fuel.plan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state','=','approve')]</field>  
+        </record>
+         
+       <!-- Action of Rented Car Request -->
+        <record id="action_Rent_Car_approv" model="ir.actions.act_window">
+            <field name="name">action.Rent.approv</field>
+            <field name="res_model">rented.cars.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+              <field name="domain">[('state','=','process')]</field>  
+        </record>
+
+        <!-- Action of media services Request -->
+        <record id="action_media_order" model="ir.actions.act_window">
+            <field name="name">action.media.order</field>
+            <field name="res_model">media.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+              <field name="domain">[('state','=','approve')]</field>  
+        </record>
+        
+        <!-- Action of occasion services Request -->
+        <record id="action_occasion_services_order" model="ir.actions.act_window">
+            <field name="name">action.occasion.services.order</field>
+            <field name="res_model">occasion.services</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+              <field name="domain">[('state','=','confirmed')]</field>  
+        </record>
+ 
+	<!-- Action of hotel_service Request -->
+        <record id="action_hotel_service_order" model="ir.actions.act_window">
+            <field name="name">action.hotel.service.order</field>
+            <field name="res_model">hotel.service</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+              <field name="domain">[('state','=','draft')]</field>  
+        </record>
+         
+	<!-- Action of car maintenance request Request -->
+        <record id="action_car_maintenance_request_order" model="ir.actions.act_window">
+            <field name="name">action.car.maintenance.request</field>
+            <field name="res_model">car.maintenance.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+              <field name="domain">[('state','=','draft')]</field>  
+        </record>
+        
+        <!-- Action of hospitality service request Request -->
+        <record id="action_hospitality_request_order" model="ir.actions.act_window">
+            <field name="name">action.hospitality.service</field>
+            <field name="res_model">hospitality.service</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+              <field name="domain">[('state','=','confirmed')]</field>  
+        </record>
+         
+        
+        <!-- Dashboard of Aministrative affiars -->
+        <record id="board_plan_view" model="ir.ui.view">
+            <field name="name">board.admin.view</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Admin Dashboard">
+                    <board style="1-1">
+                        <column>
+                            <action name="%(action_hospitality_request_order)d" string="hospitality Services"/>
+                            <action name="%(action_planed_approv)d" string="Fuel Plan to Approv"/>
+                            <action name="%(action_occasion_services_order)d" string="Occasion Services"/>
+			    <action name="%(action_car_maintenance_request_order)d" string="Car Maintenance"/>
+                        </column>
+
+                        <column>
+                            <action name="%(action_Rent_Car_approv)d" string="Rented Car Request"/>
+                            <action name="%(action_media_order)d" string="Media Services"/>
+                            <action name="%(action_hotel_service_order)d" string="Hotel Services"/>
+                        </column>
+
+                        <!--column>
+                            <action name="%(action_media_order)d" string="Media Services"/>
+                        </column-->
+                    </board>
+                   
+                </form>
+            </field>
+        </record>
+        
+        <!--  Action for Employee Dashboard -->
+        
+        <record id="action_plan_board" model="ir.actions.act_window">
+            <field name="name">Admin Dashboard</field>
+            <field name="res_model">board.board</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="board_plan_view"/>
+        </record>
+        
+        <!--  Menu for Dashboard -->
+        
+        <menuitem id="menu_emp_board" action="action_plan_board" parent="admin_affairs.menu_administrative_affairs_root"/>
+        
+    </data>
+</openerp>

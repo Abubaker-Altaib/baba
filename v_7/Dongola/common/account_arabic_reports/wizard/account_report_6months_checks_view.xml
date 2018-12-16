@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<record id="account_report_6months_checks" model="ir.ui.view">
+			<field name="name">Print Six Month Checks</field>
+			<field name="model">account.6months.checks.arabic</field>
+			<field name="inherit_id" ref="account.account_common_report_view" />
+			<field name="arch" type="xml">
+				<field name="chart_account_id" position="replace">
+					<field name="sort_selection" />
+				</field>
+				<field name="target_move" position="replace"></field>
+				<xpath expr="/form/label[@string='']" position="replace">
+					<separator string="Six Month Checks" colspan="4" />
+					<label nolabel="1" colspan="4"
+						string="This report allows you to see checks not reconciled for six months" />
+				</xpath>
+				<page string="Filters" position="replace">
+				</page>
+				<page string="Journals" position="replace">
+				</page>
+			</field>
+		</record>
+
+		<record id="action_account_6months_checks" model="ir.actions.act_window">
+			<field name="name">Print Six Month Checks</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.6months.checks.arabic</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+			<field name="view_id" ref="account_report_6months_checks" />
+		</record>
+
+		<menuitem name="Six Months Checks" parent="account.final_accounting_reports"
+			action="action_account_6months_checks" id="menu_account_6months_checks"
+			icon="STOCK_PRINT" />
+
+	</data>
+</openerp>

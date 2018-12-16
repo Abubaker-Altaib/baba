@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>       
+		<report id="report_exit_permit" model="stock.picking" name="stock.exit_permit.list" string="Exit Permit" rml="stock_report/report/exit_permit.rml"/>
+		<report id="grn_report" menu="False"  model="stock.picking.in" name="grn.report" string="GRN Report" rml="addons/stock_report/report/grn.rml" />  
+		
+        <record model="ir.ui.view" id="view_picking_in_form_inherit_GRN">
+            <field name="name">view.picking.in.form.grn</field>
+            <field name="type">form</field>
+            <field name="model">stock.picking.in</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(stock.act_stock_return_picking)d']" position="after">
+                        <button name="%(grn_report)d"  string="Print GRN" states="done"  groups="" type="action" icon="gtk-print"/>
+                </xpath>
+            </field>  
+        </record> 
+        <report id="stock.report_picking_list" 
+                model="stock.picking" 
+                name="stock_report.picking.list" 
+                string="Packing list" 
+                rml="stock_report/report/picking.rml"/>
+
+         <report id="stock.report_picking_list_in" 
+                model="stock.picking.in" 
+                name="stock_report.picking.list.in" 
+                string="Receipt Slip" 
+                rml="stock_report/report/picking.rml"/>
+
+         <report id="stock.report_picking_list_out" 
+                model="stock.picking.out" 
+                name="stock_report.picking.list.out" 
+                string="Delivery Slip" 
+                rml="stock_report/report/picking.rml"/>
+
+        <report id="stock.report_stock_inventory_move" 
+				model="stock.inventory" 
+				name="stock.inventory.move" 
+				string="Stock Inventory" 
+				rml="stock_report/report/stock_inventory_move.rml"/>
+
+		<report auto="False"  
+				id="stock.report_location_overview" 
+				model="stock.location"
+                name="lot.stock.overview" 
+				string="Location Inventory Overview" 
+				rml="stock_report/report/lot_overview.rml"/>
+
+        <report id="stock.report_location_overview_all" 
+				model="stock.location" 
+				name="lot.stock.overview_all"
+ 				string="Location Content" 
+				rml="stock_report/report/lot_overview_all.rml"/>
+	</data>
+</openerp>

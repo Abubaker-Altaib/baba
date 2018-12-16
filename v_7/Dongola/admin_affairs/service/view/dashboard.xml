@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Contracts dashboard -->
+        <record id="action_quotation_for_contracts" model="ir.actions.act_window">
+            <field name="name">General Contracts</field>
+            <field name="res_model">fleet.vehicle.log.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('contract_type','=','contract')]</field>
+            <field name="view_id" ref="service.all_contracts_tree"/>
+            <field name="context">{'dashboard':True,'type':'g_contracts','default_payment_method':'voucher','default_contract_type':'contract'}</field>
+        </record>
+        
+
+        <record model="ir.actions.act_window.view" id="all_contract_action_tree_dashboard">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="service.all_contracts_tree"/>
+            <field name="act_window_id" ref="action_quotation_for_contracts"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="all_contract_action_form_dashboard">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="service.all_contracts_form"/>
+            <field name="act_window_id" ref="action_quotation_for_contracts"/>
+        </record>
+
+
+
+
+
+
+
+
+
+        <record id="action_quotation_for_services" model="ir.actions.act_window">
+            <field name="name">General Services</field>
+            <field name="res_model">fleet.vehicle.log.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('contract_type','=','service'),('cat_subtype','not in',('contract','service','both','license','insurance','building'))]</field>
+            <field name="view_id" ref="service.fleet_vehicle_log_contract_custom_tree"/>
+            <field name="context">{'dashboard':True,'type':'g_services','default_payment_method':'voucher','default_contract_type':'service','action':'service.contract_custom_menu'}</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="contract_form_customact_dashboard">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="service.fleet_vehicle_log_contract_custom_form"/>
+            <field name="act_window_id" ref="action_quotation_for_services"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="contract_tree_customact_dashboard">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="service.fleet_vehicle_log_contract_custom_tree"/>
+            <field name="act_window_id" ref="action_quotation_for_services"/>
+        </record>
+        
+
+
+
+
+
+
+
+
+
+
+
+        <record id="action_quotation_for_building" model="ir.actions.act_window">
+            <field name="name">General Buildings</field>
+            <field name="res_model">fleet.vehicle.log.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('cost_subtype_id.category','=','building')]</field>
+            <field name="view_id" ref="service.contract_building_tree"/>
+            <field name="context">{'dashboard':True,'type':'g_buildings','default_payment_method':'voucher'}</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="contract_building_act_tree_dashboard">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="service.contract_building_tree"/>
+            <field name="act_window_id" ref="action_quotation_for_building"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="contract_building_act_form_dashboard">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="service.contract_building_form"/>
+            <field name="act_window_id" ref="action_quotation_for_building"/>
+        </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <record id="action_quotation_for_vehicle" model="ir.actions.act_window">
+            <field name="name">General Vehicles</field>
+            <field name="res_model">fleet.vehicle.log.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('cost_subtype_id.category','in',('contract','both'))]</field>
+            <field name="view_id" ref="service.fleet_vehicle_log_contract_custom_tree"/>
+            <field name="context">{'dashboard':True,'type':'g_vehicles'}</field>
+        </record>
+
+        <record id="board_sales_form" model="ir.ui.view">
+            <field name="name">board.sales.form</field>
+            <field name="model">board.board</field>
+            <field name="arch" type="xml">
+                <form string="Sales Dashboard" version="7.0">
+                    <board style="2-1">
+                        <column>
+                            <action name="%(action_quotation_for_contracts)d" string="Contracts Management"/>
+                            <action name="%(action_quotation_for_building)d" string="Buildings Management"/>
+                        </column>
+                        <column>
+                            <action name="%(action_quotation_for_services)d" string="Services Management"/>
+                            <action name="%(action_quotation_for_vehicle)d" string="Vehicles Management"/>
+                        </column>
+                    </board>
+                </form>
+            </field>
+        </record>
+
+        <record id="open_board_sales" model="ir.actions.act_window">
+            <field name="name">Dashboard</field>
+            <field name="res_model">board.board</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="board_sales_form"/>
+        </record>
+
+        <menuitem id="menu_dashboard_sales"
+                  sequence="1"
+                  parent="admin_affairs_service_menu"
+                  action="open_board_sales"
+                  groups="admin_affairs.group_admin_affair_manager"/>
+
+    </data>
+</openerp>

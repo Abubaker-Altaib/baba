@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data noupdate="0">
+
+    <record id="group_stock_invoice" model="res.groups">
+        <field name="name"> Stock/ Invoice</field>
+    </record>
+    
+     <record id="ir_model_access_stock_order_line" model="ir.model.access">
+			<field name="model_id" ref="purchase.model_purchase_order_line"/>
+			<field eval="0" name="perm_read"/>
+			<field name="name">purchase.order.line</field>
+			<field eval="0" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="0" name="perm_create"/>
+			<field name="group_id" ref="group_stock_invoice"/>
+		</record>
+
+    <record model="ir.rule" id="stock.stock_location_comp_rule">
+        <field name="name">Location multi-company</field>
+        <field name="model_id" ref="model_stock_location"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|','|',('company_id','=',False),('company_id','child_of',[user.company_id.id]),('company_id','in',[g.id for g in user.company_ids])]
+</field>
+    </record>
+    
+    <record model="ir.rule" id="stock.stock_picking_rule">
+        <field name="name">stock_picking multi-company</field>
+        <field name="model_id" search="[('model','=','stock.picking')]" model="ir.model"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|','|',('company_id','=',False),('company_id','child_of',[user.company_id.id]),('company_id','in',[g.id for g in user.company_ids])]</field>
+    </record>
+    
+    <record model="ir.rule" id="stock.stock_move_rule">
+        <field name="name">stock_move multi-company</field>
+        <field name="model_id" search="[('model','=','stock.move')]" model="ir.model"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|','|',('company_id','=',False),('company_id','child_of',[user.company_id.id]),('company_id','in',[g.id for g in user.company_ids])]</field>
+     </record>
+     
+<!-- multi -->
+
+</data>
+</openerp>

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!--Occasion Services Activity-->
+
+        <record id="wkf_occasion_services" model="workflow">
+            <field name="name">wkf.occasion.services</field>
+            <field name="osv">occasion.services</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_occasion_services_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+
+        <record id="wkf_occasion_services_dept_manager" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">dept_manager</field>
+            <field name="kind">function</field>
+            <field name="action">dept_manager()</field>  
+        </record>
+
+
+        <record id="wkf_occasion_services_genral_dept" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">genral_dept</field>
+            <field name="kind">function</field>
+            <field name="action">genral_dept()</field>  
+        </record>
+
+
+        <record id="wkf_occasion_services_gm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">gm</field>
+            <field name="kind">function</field>
+            <field name="action">gm()</field>  
+        </record>
+
+        <record id="wkf_occasion_services_process" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">process</field>
+            <field name="kind">function</field>
+            <field name="action">process()</field>  
+        </record>
+
+        <record id="wkf_occasion_services_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>  
+        </record>
+
+        <record id="wkf_occasion_services_service" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">service</field>
+            <field name="kind">function</field>
+            <field name="action">service()</field>  
+        </record>
+
+        <record id="wkf_occasion_services_admin_outside" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">admin_outside</field>
+            <field name="kind">function</field>
+            <field name="action">admin_outside()</field>  
+        </record>
+
+        <record id="wkf_occasion_services_dept_manager_outside" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">dept_manager_outside</field>
+            <field name="kind">function</field>
+            <field name="action">dept_manager_outside()</field>  
+        </record>
+
+        <record id="wkf_occasion_services_admin_outside_process" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">admin_outside_process</field>
+            <field name="kind">function</field>
+            <field name="action">admin_outside_process()</field>  
+        </record>
+
+
+        <record id="wkf_occasion_services_officer" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">officer</field>
+            <field name="kind">function</field>
+            <field name="action">officer()</field>  
+        </record>
+
+        <record id="wkf_occasion_services_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>  
+            <field name="flow_stop">True</field>          
+        </record>
+        <record id="wkf_occasion_services_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_occasion_services"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+        </record>
+
+<!--Occasion Services Transition-->
+
+        <record id="wkf_occasion_services_darft_dept_manager" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_draft"/>
+            <field name="act_to" ref="wkf_occasion_services_dept_manager"/>
+            <field name="signal">dept_manager</field>
+	    <field name="condition">is_hq()</field>
+        </record>
+<!-- not hq trans -->
+        <record id="wkf_occasion_services_darft_services_admin_outside" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_draft"/>
+            <field name="act_to" ref="wkf_occasion_services_admin_outside"/>
+            <field name="signal">dept_manager</field>
+	    <field name="condition">not is_hq()</field>
+        </record>
+
+        <record id="wkf_occasion_services_admin_outside_dept_manager_outside" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_admin_outside"/>
+            <field name="act_to" ref="wkf_occasion_services_dept_manager_outside"/>
+            <field name="signal">dept_manager_outside</field>
+        </record>
+
+        <record id="wkf_occasion_services_dept_manager_outside_admin_outside_process" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_dept_manager_outside"/>
+            <field name="act_to" ref="wkf_occasion_services_admin_outside_process"/>
+            <field name="signal">admin_outside_process</field>
+        </record>
+
+        <record id="wkf_occasion_services_admin_outside_process_to_officer" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_admin_outside_process"/>
+            <field name="act_to" ref="wkf_occasion_services_officer"/>
+            <field name="signal">officer</field>
+        </record>
+<!-- end of not Hq transtion -->
+        <record id="wkf_occasion_services_dept_manager_genral_dept" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_dept_manager"/>
+            <field name="act_to" ref="wkf_occasion_services_genral_dept"/>
+            <field name="signal">genral_dept</field>
+        </record>
+
+        <record id="wkf_occasion_services_genral_dept_gm" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_genral_dept"/>
+            <field name="act_to" ref="wkf_occasion_services_gm"/>
+            <field name="signal">gm</field>
+        </record>
+
+        <record id="wkf_occasion_services_gm_process" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_gm"/>
+            <field name="act_to" ref="wkf_occasion_services_process"/>
+            <field name="signal">process</field>
+        </record>
+
+        <record id="wkf_occasion_services_process_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_process"/>
+            <field name="act_to" ref="wkf_occasion_services_confirmed"/>
+            <field name="signal">confirmed</field>
+        </record>
+
+        <record id="wkf_occasion_services_confirmed_service" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_confirmed"/>
+            <field name="act_to" ref="wkf_occasion_services_service"/>
+            <field name="signal">service</field>
+        </record>
+
+        <record id="wkf_occasion_services_service_officer" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_service"/>
+            <field name="act_to" ref="wkf_occasion_services_officer"/>
+            <field name="signal">officer</field>
+        </record>
+
+        <record id="wkf_occasion_services_officer_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_officer"/>
+            <field name="act_to" ref="wkf_occasion_services_done"/>
+            <field name="signal">done</field>
+        </record>
+<!-- Cancel Transition-->
+        <record id="wkf_occasion_services_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_draft"/>
+            <field name="act_to" ref="wkf_occasion_services_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_occasion_services_process_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_confirmed"/>
+            <field name="act_to" ref="wkf_occasion_services_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_occasion_services_done_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_process"/>
+            <field name="act_to" ref="wkf_occasion_services_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_occasion_services_dept_manager_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_dept_manager"/>
+            <field name="act_to" ref="wkf_occasion_services_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_occasion_services_genral_dept_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_genral_dept"/>
+            <field name="act_to" ref="wkf_occasion_services_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_occasion_services_gm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_gm"/>
+            <field name="act_to" ref="wkf_occasion_services_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_occasion_services_service_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_service"/>
+            <field name="act_to" ref="wkf_occasion_services_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_occasion_services_officer_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_officer"/>
+            <field name="act_to" ref="wkf_occasion_services_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+<!-- not Hq cancel-->
+
+        <record id="wkf_occasion_services_admin_outside_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_admin_outside"/>
+            <field name="act_to" ref="wkf_occasion_services_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_occasion_services_dept_manager_outside_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_dept_manager_outside"/>
+            <field name="act_to" ref="wkf_occasion_services_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_occasion_services_admin_outside_process_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_admin_outside_process"/>
+            <field name="act_to" ref="wkf_occasion_services_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+<!-- end of not hq cancel -->
+
+        <record id="wkf_occasion_services_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_occasion_services_cancel"/>
+            <field name="act_to" ref="wkf_occasion_services_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>
+

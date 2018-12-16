@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!--Employee -->
+		<!--record id="view_employee_form_inherit2" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_custom.view_employee_form_inherit" />
+			<field name="arch" type="xml">
+			
+				<xpath expr="//page[@string='Employee Salary']"
+					position="inside" version="7.0">
+
+						<group>
+							<field name="promotion_date" />
+						</group>
+						
+
+				</xpath>
+			</field>
+		</record-->
+
+       <record id="view_income_form" model="ir.ui.view">
+            <field name="name">hr.employee.form</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <form string="Income" version="7.0">
+                    <header>
+                        <button name="approve" string="Approve" states="draft,experiment" type="workflow" class="oe_highlight" groups="base.group_user"/>                
+                        <button name="refuse" string="Refuse" states="approved,experiment" type="workflow" class="oe_highlight" groups="base.group_user"/>
+                        <button string="Set to Draft" name="set_to_draft" states="refuse" type="workflow"  icon="gtk-convert"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,refuse"/>
+                    </header>
+                    <sheet>
+                        <field name="image_medium" widget='image' class="oe_left oe_avatar"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+            	            <field name="name" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                            </h1>
+                        <group  col="2" colspan="4">
+			    <field name="emp_code" srting="Contractor code"/>
+		            <field name="sequence"/>
+		            <field name="employee_type" invisible="1"/>
+                            <field name="external_transfer" required="1"/>
+                            <field name="previous_institute" required="1"/>
+                            <field name="decion_number" required="1"/>
+                        </group>
+                        
+                            <label for="category_ids" class="oe_edit_only" groups="base.group_hr_user"/>
+                            <field name="category_ids" widget="many2many_tags" placeholder="e.g. Part Time" groups="base.group_hr_user"/>
+                        </div>
+                        <div class="oe_right oe_button_box" name="button_box">
+                            <!-- Put here related buttons -->
+                        </div>
+                        <notebook>
+                    <!--page string="بيانات الرقم الوطني">
+		        <group>
+		             <group>
+		                <field name="identification_id2"/>
+		                <field name="name2"/>
+		                <field name="birthday2"/>
+		                <field name="birth_place2"/>
+		              </group>
+		              <group>
+		                <field name="ex_date"/>
+		                <field name="ex_place" />
+		                <field name="mother_name2" />
+		              </group>
+		           </group>
+	 
+		        </page-->
+                            <page string="Public Information">
+                                <group>
+                                    <group string="Contact Information">
+                                        <field name="address_id" on_change="onchange_address_id(address_id)" context="{'show_address': 1}" options='{"always_reload": True, "highlight_first_line": True}'/>
+                                        <field name="work_email" widget="email"/>
+                                        <field name="work_phone"/>
+                                        <field name="mobile_phone"/>
+                                        <field name="work_location"/>
+                                    </group>
+                                    <group string="Position">
+            	                        <field name="department_id" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                        <field name="job_id" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                        <field name="parent_id" on_change="onchange_department_id(department_id)" />
+                                        <field name="coach_id"/>
+                                    </group>
+                                    <group>
+            	                        <field name="company_id" groups="base.group_multi_company" on_change="onchange_company(company_id)" attrs="{'readonly':[('state','not in','draft')]}"/>
+            	                        <field name="user_id" on_change="onchange_user(user_id)" groups="base.group_system"/>
+                                    </group>
+                                </group>
+                                <field name="notes" placeholder="Other Information ..." colspan="4"/>
+                            </page>
+                            <page string="Personal Information" groups="base.group_hr_user">
+                                <group>
+                                    <group string="Citizenship &amp; Other Info">
+                                        <field name="country_id" options='{"no_open": True}'/>
+                                        <field name="identification_id" groups="base.group_hr_user"/>
+                                        <field name="passport_id" groups="base.group_hr_user"/>
+                                        <field name="bank_account_id"/>
+                                        <field name="otherid" groups="base.group_hr_user"/>
+		                        <field name="nationality_no"/>
+		                        <field name="nationality_date"/>
+		                        <field name="religion"/>
+                                    </group>
+                                    <group string="Contact Information">
+                                        <field name="address_home_id" context="{'show_address': 1}" options='{"always_reload": True, "highlight_first_line": True}'/>
+		                        <field name="house_type"/>
+		                        <field name="emergency_data"/>
+		                        <field name="blood_type"/>
+                                    </group>
+                                    <group string="Status">
+            	                        <field name="gender" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+            	                        <field name="marital" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                    </group>
+                                    <group string="Birth">
+            	                        <field name="birthday" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                        <field name="birth_place"/>
+		                        <field name="birthday_certificate_id"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="HR Settings" groups="base.group_hr_user">
+                                <group>
+		                       <group string="Periods Dates">
+                                            <field name="employment_date"/>
+                                            <field name="end_date" required="0"/>
+                                            <field name="first_employement_date" invisible="1"/>
+                                            <field name="re_employment_date"/>
+                                            <field name="participate_date"/>
+                                        </group>
+                                       
+                                        
+                                        <group string="File Info">
+                                            <field name="file_no"/>
+                                            <field name="job_letter_no"/>
+                                            <field name="job_letter_date"/>
+                                        </group>
+                                        <group string="National Service Info">
+                                            <field name="nation_srevice"/>
+                                            <field name="nation_ser_date"/>
+                                        </group>
+                                        <group string="Active" name="active_group">
+                                            <field name="active"/>
+                                            <label for="period"/>
+                                            <div>
+                                            <field name="period" class="oe_inline"/> Months </div> 
+                                        </group>
+                                </group>
+                                <group string="Salary">
+                                                <field name="payroll_type" on_change="onchange_payroll_type(payroll_type)" required="1"/>
+                                                <field name="salary_suspend" />
+                                </group>
+						<group attrs="{'invisible':[('payroll_type','!=', ('paied'))]}" cols="2">
+							<field name="payroll_id" on_change="onchange_payroll(payroll_id,degree_id,False)" required="0"  attrs="{'required':[('payroll_type','=', ('paied'))]}"/>
+							<field name="degree_id" on_change="onchange_payroll(payroll_id,degree_id,True)" required="0" attrs="{'required':[('payroll_type','=', ('paied'))]}"/>
+							<field name="bonus_id" required="0" attrs="{'required':[('payroll_type','=', ('paied'))]}"/>
+<field name="sector_id" required="0" />
+<field name="payroll_employee_id" required="0" attrs="{'required':[('payroll_type','=', ('paied'))]}"/>
+							
+					        </group>
+                                                 
+                       </page>
+                       <page string="Finger Print">
+		                <group col="6" colspan="2">
+		                    <field name="hand"/>
+		                    <field name="finger"/>
+		                    <button string="Register Finger Print" name="register_finger_print"
+		                    type="object" class="oe_highlight" />
+		                </group>
+		                <group col="6" colspan="2" string="Right Hand"> 
+		                    <field name="right_thumb_lc" widget='local_image' class="oe_left oe_avatar"/>
+		                    <field name="right_Index_lc" widget='local_image' class="oe_left oe_avatar"/>
+		                    <field name="right_middle_finger_lc" widget='local_image' class="oe_left oe_avatar"/>
+		                    <field name="right_ring_finger_lc" widget='local_image' class="oe_left oe_avatar"/>
+		                    <field name="right_Pinkie_lc" widget='local_image' class="oe_left oe_avatar"/>
+		                </group>
+		                <group col="6" colspan="2" string="Left Hand"> 
+		                    <field name="left_thumb_lc" widget='local_image' class="oe_left oe_avatar"/>
+		                    <field name="left_Index_lc" widget='local_image' class="oe_left oe_avatar"/>
+		                    <field name="left_middle_finger_lc" widget='local_image' class="oe_left oe_avatar"/>
+		                    <field name="left_ring_finger_lc" widget='local_image' class="oe_left oe_avatar"/>
+		                    <field name="left_Pinkie_lc" widget='local_image' class="oe_left oe_avatar"/>
+		                </group>
+                        </page>
+
+                        <!--page string="Training">
+						<field name="training" />
+						<field colspan="4" name="course_ids" nolabel="1">
+							<form>
+								<field name="course_id" select="1" colspan="2" />
+								<field name="start_date" />
+								<field name="end_date" />
+							</form>
+							<tree>
+								<field name="course_id" select="1" colspan="2" />
+								<field name="start_date" />
+								<field name="end_date" />
+							</tree>
+						</field>
+			</page-->
+
+                        <page string="Employee Salary" groups="hr_payroll_custom.group_payroll_user">
+						<field colspan="4" name="emp_salary_ids" nolabel="1">
+							<tree string="Employee Salary">
+								<field name="allow_deduct_id" />
+								<field name="type" />
+								<field name="amount" />
+								<field name="holiday_amount" />
+								<field name="tax_deducted" groups="hr_payroll_custom.group_tax" />
+							</tree>
+						</field>
+			</page>
+                        <page string="Qualifications">
+                     	       <field name="qualification_ids" nolabel="1">
+                        	<form string="Employee Qualifications">
+				        <field name="emp_qual_id" colspan="2"/>
+				        <field name="qual_date" colspan="2" />
+				        <field name="organization" colspan="2"/>
+				        <field name="specialization"  colspan="2"/>
+				        <field name="state" colspan="2"/>
+                                </form>
+                                <tree string="Employee Qualifications">
+				        <field name="emp_qual_id" />
+				        <field name="qual_date"  />
+				        <field name="organization" />
+				        <field name="specialization"  />
+				        <field name="state" />
+                                </tree>
+                               </field>
+                        </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+
+
+
+
+           <record id="view_income_filter" model="ir.ui.view">
+            <field name="name">Income</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <search string="Income">
+                    <field name="name" string="Income"/>
+                    <field name="department_id" />
+                    <field name="category_ids" groups="base.group_hr_user"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Manager" icon="terp-personal" domain="[]" context="{'group_by':'parent_id'}"/>
+                        <filter string="Coach" icon="terp-personal" domain="[]" context="{'group_by':'coach_id'}"/>
+                        <filter string="Department" icon="terp-personal+" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter string="Job" icon="terp-gtk-select-all" domain="[]" context="{'group_by':'job_id'}"/>
+                        <filter string="Previous Institute" icon="terp-gtk-select-all" domain="[]" context="{'group_by':'previous_institute'}"/>
+                         <filter string="Group" icon="terp-gtk-select-all" domain="[]" context="{'group_by':'payroll_employee_id'}"/>
+                        <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+                </search>
+             </field>
+         </record>
+
+
+
+    <record model="ir.ui.view" id="hr_kanban_view_income">
+        <field name="name">HR - Income Kanban</field>
+        <field name="model">hr.employee</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="last_login"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_employee_vignette">
+                            <div class="oe_employee_image">
+                                <a type="open"><img t-att-src="kanban_image('hr.employee', 'image_medium', record.id.value)" class="oe_employee_picture"/></a>
+                            </div>
+                            <div class="oe_employee_details">
+                                <h4>
+                                    <a type="open"><field name="name"/><t t-if="record.login.raw_value"> (<field name="login"/>)</t></a>
+                                </h4>
+                                <ul>
+                                    <li id="last_login">
+                                        <span t-if="record.last_login.raw_value &amp;&amp; record.last_login.raw_value.is().today()" class="oe_kanban_button" style="font-size: 100%%">
+                                              <t t-esc="record.last_login.raw_value.toString('HH:mm')"/>
+                                        </span>
+                                    </li>
+                                    <li t-if="record.job_id.raw_value"><field name="job_id"/></li>
+                                    <li t-if="record.work_location.raw_value"><field name="work_location"/></li>
+                                    <li t-if="record.work_phone.raw_value">Tel: <field name="work_phone"/></li>
+                                    <li t-if="record.mobile_phone.raw_value">Mobile: <field name="mobile_phone"/></li>
+                                    <li t-if="record.work_email.raw_value"><a t-attf-href="mailto:#{record.work_email.value}"><field name="work_email"/></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <script>
+                            $('.oe_employee_picture').load(function() { if($(this).width() > $(this).height()) { $(this).addClass('oe_employee_picture_wide') } });
+                        </script>
+                    </t>
+                </templates>
+            </kanban>
+           </field>
+           </record>
+
+
+
+        <record id="view_income_tree" model="ir.ui.view">
+            <field name="name">hr.income.tree</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                    <tree colors="red:state in ('refuse');blue:state in ('draft');black:state in ('approved')" string="employee" >
+                    <field name="emp_code" select="1"/>
+                    <field name="degree_id"/>
+                    <field name="name"/>
+                    <field name="payroll_employee_id" />
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="open_view_income_list_my" model="ir.actions.act_window">
+            <field name="name">Incomes</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('employee_type','=','from_out')]</field>
+            <field name="context">{'employee_type':'from_out'}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="view_income_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new employee.
+              </p><p>
+                With just a quick glance on the OpenERP employee screen, you
+                can easily find all the information you need for each person;
+                contact data, job position, availability, etc.
+              </p>
+            </field>
+        </record>
+
+
+
+
+        <record id="action_income_kanban" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="hr_kanban_view_income"/>
+            <field name="act_window_id" ref="open_view_income_list_my"/>
+        </record>
+        <record id="action_income_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_income_form"/>
+            <field name="act_window_id" ref="open_view_income_list_my"/>
+        </record>
+        <record id="open_view_income_tree" model="ir.actions.act_window">
+            <field name="name">Income Structure</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">tree</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_income_tree"/>
+            <field name="domain">[('parent_id','=',False)]</field>
+            <field name="search_view_id" ref="view_income_filter"/>
+        </record>
+
+        <menuitem action="open_view_income_list_my" id="menu_open_view_income_list_my" sequence="5" parent="hr.menu_hr_main"/>
+		
+
+
+   <!--Locations -->
+
+
+		<record id="hr_employee_location_form" model="ir.ui.view">
+			<field name="name">locations</field>
+			<field name="model">process.destin</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="locations" version="7.0">
+						<group col="4">
+							<field name="name" />
+					                <!--field name="medical_number" /-->
+						</group>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_emp_location_tree">
+			<field name="name">locations</field>
+			<field name="model">process.destin</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="locations">
+					<field name="name" />
+					<!--field name="medical_number" /-->
+				</tree>
+			</field>
+		</record>
+		<record id="hr_emp_location_act" model="ir.actions.act_window">
+			<field name="name">locations</field>
+			<field name="res_model">process.destin</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		<menuitem id="hr_emp_location_menu" name="locations" parent="hr_custom.menu_hr_main_configuration" action="hr_emp_location_act"/>
+
+
+	</data>
+</openerp>

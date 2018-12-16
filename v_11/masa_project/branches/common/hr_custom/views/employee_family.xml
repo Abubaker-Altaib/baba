@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <odoo>
+    <data>
+       <!--   Hr Employee Family action -->
+       <record id="hr_employee_family_action" model="ir.actions.act_window">
+           <field name="name">Employee Family</field>
+           <field name="res_model">hr.employee.family</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree,form</field>
+       </record>
+       <!-- Hr Employee Family form -->
+       <record id="hr_employee_family_form" model="ir.ui.view">
+           <field name="name">Employee Family</field>
+           <field name="model">hr.employee.family</field>
+           <field name="arch" type="xml">
+               <form string="Employee Family">
+                   <sheet>
+                       <div id="o_employee_container"><div id="o_employee_main">
+                           <field name="image" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;:&quot;image_medium&quot;}"/>
+                       <div class="oe_title">
+                           <label for="name" class="oe_edit_only"/>
+                            <h1>
+                               <field name="name" placeholder="Sponsor's Name" required="True"/>
+                            </h1>
+                       </div>
+                       <group>
+                           <group >
+                               <field name ="employee_id"/>
+                               <field name ="relation"/>
+                               <field name ="birthday"/>
+                           </group>
+                           <br></br>
+                           <separator string="Insurance Information"/>
+                           <br></br>
+                           <group>
+                               <field name ="insurance_comp"/>
+                               <field name ="insurance_contract_no"/>
+                               <field name ="medical_insurance_no"/>
+                           </group>
+                           <group>
+                               <field name ="date_of_start_medical_insurance"/>
+                               <field name ="date_of_end_medical_insurance"/>
+                           </group>
+                       </group>
+                    </div></div>
+                   </sheet>
+               </form>
+          </field>
+      </record>
+      <!-- Hr Employee Family tree for menu -->
+      <record id="hr_employee_family_tree" model="ir.ui.view">
+          <field name="name">Employee Family</field>
+          <field name="model">hr.employee.family</field>
+          <field name="priority" eval="50"/>
+          <field name="arch" type="xml">
+              <tree string="Employee Family">
+                  <field name ="name"/>
+                  <field name ="relation"/>
+                  <field name ="birthday"/>
+                  <field name ="insurance_comp"/>
+                  <field name ="insurance_contract_no"/>
+                  <field name ="medical_insurance_no"/>
+              </tree>
+          </field>
+      </record>
+      <!-- Hr Employee tree for employee record -->
+      <record id="hr_employee_family2_tree" model="ir.ui.view">
+          <field name="name">Employee Family</field>
+          <field name="model">hr.employee.family</field>
+          <field name="arch" type="xml">
+              <tree string="Employee Family">
+                  <field name ="name"/>
+                  <field name ="relation"/>
+                  <field name ="birthday"/>
+              </tree>
+          </field>
+      </record>
+      <!-- Inherited form view of hr employee -->
+      <record model="ir.ui.view" id="hr_employee_form_inherit">
+          <field name="name">hr employee inherit</field>
+          <field name="model">hr.employee</field>
+          <field name="inherit_id" ref="hr.view_employee_form" />
+          <field name="arch" type="xml">
+              <xpath expr="//page[@name='hr_settings']" position="after">
+                  <page string="Employee Family">
+
+                          <field name="family_ids" nolabel="1" attrs="{'readonly':[('state', 'not in', ['draft'])]}"/>
+
+                  </page>
+              </xpath>
+          </field>
+      </record>
+      <!-- Action for Hr Employee Family tree for menu-->
+      <record id="action_hr_employee_family_tree" model="ir.actions.act_window.view">
+          <field eval="1" name="sequence" />
+          <field name="view_mode">tree</field>
+          <field name="view_id" ref="hr_employee_family_tree" />
+          <field name="act_window_id" ref="hr_employee_family_action" />
+      </record>
+      <!-- Menuitem-->
+      <menuitem
+          name="Employee Family"
+          id="menu_hr_family"
+          action="hr_employee_family_action"
+          parent="hr_custom.menu_hr_management"
+          sequence="10"/>
+    </data>
+</odoo>

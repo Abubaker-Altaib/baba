@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Create Menu From view -->
+
+        <record id="view_create_partial_picking_report" model="ir.ui.view">
+            <field name="name">create partial picking report</field>
+            <field name="model">create.partial.picking.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+              <form string="Partial Picking Report" version="7.0">
+                    <separator string="Partial Picking Report" colspan="6"/>
+                    <newline />
+                    <group col="6" colspan="6">
+		            <field name="current_date"/>
+		            <field name="purchase_order_ref"/>
+		            <field name="picking_id" required="1" domain="[('purchase_id', '=', purchase_order_ref )]"/>
+                    </group>
+                    <newline />
+                    <footer> 
+                           <button name="print_report" string="Print" default_focus="1" type="object" class="oe_highlight"/>
+                             or
+                           <button string="Cancel" special="cancel" class="oe_link"/> 
+                    </footer>
+             </form>
+            </field>
+        </record>
+
+       <act_window name="create partial picking report"
+            res_model="create.partial.picking.report"
+            src_model="purchase.order"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"
+            id="action_create_partial_picking_report"/>
+    </data>
+</openerp>

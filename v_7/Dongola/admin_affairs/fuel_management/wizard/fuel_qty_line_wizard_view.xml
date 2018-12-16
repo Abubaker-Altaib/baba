@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+	<!-- Fuel Qty Line Form-->
+    	<record id="fuel_qty_line_wizard_view" model="ir.ui.view">
+            <field name="name">Fuel Qty Line</field>
+            <field name="model">fuel.qty.line.wizard</field>
+            <field name="arch" type="xml">
+            	<form string="Fuel Qty Line" version="7.0">
+			<group>
+				<field name="qty" colspan="2"
+				attrs="{'invisible':[('process','=','transfer')]}"/>
+				<field name="process" colspan="2"/>
+				<field name="transfer_id" colspan="2"
+				attrs="{'invisible':[('process','!=','transfer')]}"
+				domain="[('type_plan','=','mission_extra')]" />
+			</group>
+			<footer>
+               	 		<button name="Done" string="Done" type="object" default_focus="1" class="oe_highlight" />
+					or
+				<button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+        	</form>
+            </field>
+	</record>
+
+
+	<!-- Fuel Qty Line Action-->
+        <record id="fuel_qty_line_wizard_action" model="ir.actions.act_window">
+            <field name="name">Fuel Qty Line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fuel.qty.line.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fuel_qty_line_wizard_view"/>
+            <field name="target">new</field>
+        </record>
+
+
+    </data>
+</openerp>

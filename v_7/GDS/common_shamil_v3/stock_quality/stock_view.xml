@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="action_picking_tree5" model="ir.actions.act_window">
+            <field name="name">Incoming Shipments Quality</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="domain">[('type','=','quality')]</field>
+            <field name="context">{'default_type': 'quality','contact_display': 'partner_address',"search_default_available":1,'type':'quality'}</field>
+            <field name="search_view_id" ref="stock.view_picking_in_search"/>
+            <field name="help">The Incoming Shipments is the list of all orders you will receive from your supplier. An incoming shipment contains a list of products to be received according to the original purchase order. You can validate the shipment totally or partially.</field>
+        </record>
+
+        <record id="action_invoice_tree5_view11" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="stock.view_picking_in_tree"/>
+            <field name="act_window_id" ref="action_picking_tree5"/>
+        </record>
+
+        <record id="view_picking_quality_form" model="ir.ui.view">
+            <field name="name">stock.picking.quality.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//field[@name='move_lines']" position="replace">
+                    <field name="move_lines" context="{'address_out_id': partner_id, 'picking_type': 'quality', 'form_view_ref':'stock.view_move_picking_form', 'tree_view_ref':'stock.view_move_picking_tree'}" options='{"reload_on_button": true}'/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_invoice_tree5_view21" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_picking_quality_form"/>
+            <field name="act_window_id" ref="action_picking_tree5"/>
+        </record>
+
+        <record id="action_invoice_tree5_view2_cal1" model="ir.actions.act_window.view">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">calendar</field>
+            <field name="act_window_id" ref="action_picking_tree5"/>
+        </record>
+
+        <menuitem action="action_picking_tree5" id="menu_action_picking_tree5" parent="stock.menu_stock_warehouse_mgmt" sequence="2"/>
+
+        <record id="view_picking_in_form" model="ir.ui.view">
+            <field name="name">stock.picking.in.form</field>
+            <field name="model">stock.picking</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_in_form"/>
+            <field name="arch" type="xml">
+	      	   
+                 <xpath expr='//button[@name="action_process" ]' position="attributes">
+                    <attribute name="groups">stock.group_stock_user,stock.group_stock_hq</attribute>
+            	 </xpath>
+                 <xpath expr='//button[@name="%(stock.act_stock_return_picking)d" ]' position="attributes">
+                    <attribute name="groups">stock.group_stock_user,stock.group_stock_hq</attribute>
+            	 </xpath>
+                
+            </field>
+        </record>
+    </data>
+</openerp>

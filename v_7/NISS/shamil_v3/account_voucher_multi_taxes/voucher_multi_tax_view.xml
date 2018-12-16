@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		
+		<!-- Purchase Voucher Multi Taxes -->
+		
+		<record model="ir.ui.view" id="view_voucher_multi_taxes_form">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_check_writing_custom.view_purchase_receipt_form" />
+			<field name="arch" type="xml" >
+ 		             <xpath expr="//button[@string='Pay Bill']" position="replace">
+                                   <button name="%(account_voucher.act_pay_bills)d" context="{'narration':narration, 'title':'Bill Payment','reference':reference , 'type':'payment', 'partner_id': partner_id,'amount':residual, 'move':move_ids[0] }" type="action" string="Pay Bill" attrs="{'invisible':['|',('pay_now','=','pay_now'),'|',('state','!=','posted'), ('paid','=',True)]}" class="oe_highlight"/>
+                             </xpath>
+                             <xpath expr="//field[@name='pay_now']" position="replace"/>
+                             <xpath expr="//field[@name='date']" position="replace">
+                            <field name="date" string="Date" on_change="onchange_date(date, currency_id, currency_id, amount, company_id, context)" required="1"
+                                   attrs="{'readonly':[('state','=','posted')]}"/>
+                             </xpath>
+		             <xpath expr="//field[@name='partner_id']" position="replace">
+                                <field string="Supplier" name="partner_id"
+                              on_change="onchange_part(partner_id, journal_id, amount, currency_id, type, date, pay_now)"
+                              context="{'default_customer': 0, 'search_default_supplier': 1, 'default_supplier': 1}"
+                              domain="[('supplier','=', True)]" required="1" attrs="{'readonly':[('state','=','posted')]}"/>
+                                   
+                             </xpath>
+                             <xpath expr="//field[@name='date_due']" position="replace"/>
+                             <xpath expr="//field[@name='reference']" position="replace">
+                                  <field name="pay_now" on_change="onchange_payment(pay_now, journal_id, partner_id)" required="1" attrs="{'readonly':[('state','=','posted')]}"/></xpath>
+                             <xpath expr="//field[@name='currency_id']" position="replace">
+                                  <field name="currency_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                             </xpath>
+                             <xpath expr="//field[@name='company_id']" position="replace"/>
+                             <xpath expr="//field[@name='pay_journal_id']" position="replace"/>
+                             <xpath expr="//field[@name='journal_id']" position="after">
+                                <field name="pay_journal_id" domain="[('type','in',['cash','bank']),('special','=',False)]" attrs="{'readonly': [('state','=','posted')],'required': [('state','in',['draft','approved']),('pay_now','=','pay_now')],'invisible': [('pay_now','=','pay_later')]}" on_change="onchange_journal_id(journal_id, pay_journal_id, line_dr_ids, tax_id, partner_id, date, amount, type, company_id,pay_now)"/></xpath>
+                            <xpath expr="//field[@name='account_id']" position="replace">
+                                <field name="account_id" invisible="1"/>
+			    </xpath>
+
+
+		             <xpath expr="//page[@string='Bill Information']/group" position="replace">
+		             
+                                <group col="2" colspan="4">
+                                   <field name="narration" placeholder="Internal Notes" nolabel="1"/>
+
+                                   <div>
+
+                                      <field name="tax_id" on_change="onchange_price(line_dr_ids, tax_id, partner_id)" domain="[('type_tax_use','=','purchase')]"/>
+                                      <field name="tax_amount" nolabel="0"/>
+                                      <label for="amount_tax"/>
+                                      <button name="compute_tax" string="(Compute)" class="oe_link oe_edit_only" type="object" help="Recompute taxes and total"/>
+                                   </div>
+                                   <field name="amount" class="oe_subtotal_footer_separator" nolabel="0" options="{'currency_field': 'currency_id'}"/>
+				   <field name="residual" />
+                               </group>
+			    </xpath>	
+                            <xpath expr="/form/sheet/notebook/page[@string='Journal Items']" position="replace"/>	           
+                            <xpath expr="/form/sheet/notebook/page[@string='Bill Information']" position="after">
+                                <page string="Other Info">
+                                      <group col="2" >
+                                         <group>
+                                            <field name="date_due"/>
+                                            <field name="period_id"/>
+                                          </group>
+                                          <group>
+                                            <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+				            <field name="payment_term" widget="selection"/>
+                                            <field name="reference"/>
+                                          </group>
+                                         <group colspan="8">
+						    <field name="move_ids" readonly="1" nolabel="1" attrs="{'invisible': [('state','!=','posted')]}">
+						       <tree string="Journal Items">
+						           <field name="move_id"/>
+						           <field name="date"/>
+						           <field name="partner_id"/>
+						           <field name="account_id"/>
+						           <field name="name"/>
+						           <field name="debit"/>
+						           <field name="credit"/>
+						           <field name="state"/>
+						           <field name="reconcile_id"/>
+						           <field name="amount_currency"/>
+						           <field name="currency_id"/>
+						       </tree>
+						    </field>
+                                              </group>
+                                      </group>
+                                  </page>
+                                  <page string="Payments" attrs="{'invisible': [('state','!=','posted')]}">
+					<field name="payment_ids" colspan="4" nolabel="1">
+					    <tree string="Payments" >
+					        <field name="date"/>
+					        <field name="ref"/>
+					        <field name="name"/>
+					        <field name="journal_id" groups="base.group_user"/>
+					        <field name="debit"/>
+					        <field name="credit"/>
+					        <field name="amount_currency"/>
+					        <field name="currency_id"/>
+					    </tree>
+					</field>
+				    </page>
+			      </xpath>
+			    
+		                  </field>
+	                     </record>
+
+                             <record model="ir.ui.view" id="view_sale_receipt_form">
+				<field name="name">account.voucher.sale.form</field>
+				<field name="model">account.voucher</field>
+				<field name="inherit_id" ref="account_check_writing_custom.view_sale_receipt_form" />
+				<field name="arch" type="xml">	
+                                   <xpath expr="//button[@string='Validate Payment']" position="replace">
+		                         <button name="%(account_voucher.act_pay_voucher)d" context="{'narration':narration, 'title':'Customer Payment' , 'type':'receipt', 'partner_id': partner_id,'amount':amount,'reference':reference  }" type="action" string="Receipt Voucher" attrs="{'invisible':['|',('pay_now','=','pay_now'),'|',('state','=','draft'), ('paid','=',True)]}" class="oe_highlight"/>
+                                    </xpath>
+			            <xpath expr="//field[@name='currency_id']" position="replace"/>			
+			            <xpath expr="//field[@name='pay_type']" position="replace"/>			
+			            <xpath expr="//field[@name='partner_id']" position="replace">
+                                         <field name="partner_id" domain="[('customer','=',True)]" string="Customer" on_change="onchange_part(partner_id, journal_id, amount, currency_id, type, date, pay_now)" context="{'search_default_customer':1}" options='{"always_reload": True}' required="1"/>
+
+                                    </xpath>
+			            <xpath expr="//field[@name='pay_now']" position="replace">
+                                         <field name="pay_now" on_change="onchange_payment(pay_now, journal_id, partner_id)" required="1" attrs="{'readonly':[('state','!=','draft')]}" />                                        
+                                    </xpath>
+                                    <xpath expr="//field[@name='period_id']" position="replace">
+                                    </xpath>       
+                                    <xpath expr="//field[@name='date']" position="replace">
+                                        <field name="date" string="Date" on_change="onchange_date(date, currency_id, currency_id, amount, company_id, context)" required="1" attrs="{'readonly':[('state','=','posted')]}"/>
+                                          <field name="period_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    </xpath>
+		                    <xpath expr="//field[@name='reference']" position="replace"/>
+		                    <xpath expr="//field[@name='journal_id']" position="replace">
+                                         <field name="journal_id" string="Collect Type" domain="[('type','in',['sale'])]" widget="selection" on_change="onchange_journal_id(journal_id, pay_journal_id, line_cr_ids, tax_id, partner_id, date, amount, type, company_id,pay_now)" />
+                                    </xpath>    
+                                              
+			            <xpath expr="//field[@name='name']" position="after">
+
+                                          <field name="pay_type" />
+                                          <field name="currency_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                          <field name="account_id" invisible="1"/>
+                                    </xpath>
+		                    
+                                    <xpath expr="//page[@string='Sales Information']" position="replace">
+                                         <page string="Sales Information">
+                                               <field name="line_cr_ids" on_change="onchange_price(line_cr_ids, tax_id, partner_id)" context="{'journal_id':journal_id, 'type':type, 'partner_id':partner_id}">
+                                                      <tree string="Sales Lines" editable="bottom">
+                                                             <field name="account_id" domain="[('user_type.report_type','=','income'),('type','!=','view')]" required="1"/>
+								<field name="name"/>
+							        <field name="amount" sum="Total" required="1"/>
+							        <!--field name="account_analytic_id" groups="analytic.group_analytic_accounting" /-->
+                                                    </tree>
+                                              </field>
+                                         <group col="2" colspan="4">
+                                             <field name="narration" placeholder="Internal Notes" nolabel="1"/>
+                                             <div>
+                                                 <field name="tax_id" on_change="onchange_price(line_cr_ids, tax_id, partner_id)" domain="[('type_tax_use','=','sale')]"/>
+                                                 <field name="tax_amount" nolabel="0"/>
+                                                 <label for="amount_tax"/>
+                                                 <button name="compute_tax" string="(Compute)" class="oe_link oe_edit_only" type="object" help="Recompute taxes and total"/>
+                                             </div>
+                                             <field name="amount" class="oe_subtotal_footer_separator" nolabel="0" options="{'currency_field': 'currency_id'}"/>
+				   	<field name="residual" />
+                                         </group>
+                                     </page>
+			            </xpath>	
+		               </field>
+		          </record>
+		          <record model="ir.ui.view" id="view_voucher_tree_custom">
+			      <field name="name">account.voucher.tree</field>
+			      <field name="model">account.voucher</field>
+			      <field name="inherit_id" ref="account_voucher_custom.view_voucher_tree" />
+			      <field name="arch" type="xml">
+                                  <xpath expr="//field[@name='partner_id']" position="attributes">
+					<attribute name="string">Customer</attribute>
+				  </xpath>
+                              </field>
+                          </record>
+ 
+	</data>
+</openerp>

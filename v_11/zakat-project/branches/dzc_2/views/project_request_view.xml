@@ -1,0 +1,509 @@
+
+<odoo>
+  <data>
+   <!-- Tree view for individual project request dzc_2 model -->
+   <!-- ********************************************-->
+
+   <record model='ir.ui.view' id='projects_request_tree'>
+
+    <field name='name'>dzc2.project.request.tree</field>
+    <field name='model'>dzc2.project.request</field>
+    <field name='arch' type='xml'>
+      <tree string='Project Request Tree' create="false">
+
+        <!-- <field name="name_req"/> -->
+        <field name="individual_partner" />
+        <field name="type_of_project"/>
+        <field name="project_state"/>
+        <field name="project_sectors"/>
+        <field name="project_local_state"/>
+        <field name="part_cost"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+<!-- tree view for collective project request -->
+  <record model='ir.ui.view' id='projects_request_collective_tree'>
+
+    <field name='name'>dzc2.project.request.tree</field>
+    <field name='model'>dzc2.project.request</field>
+    <field name='arch' type='xml'>
+      <tree string='Project Request Tree' create="false" >
+
+       <!--  <field name="name_req"/> -->
+        <field name="type_of_project"/>
+        <field name="project_state"/>
+        <field name="project_sectors"/>
+        <field name="project_local_state"/>
+        <field name="part_cost"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+<!-- Tree view for service project request--> 
+ <record model='ir.ui.view' id='projects_request_service_tree'>
+
+    <field name='name'>dzc2.project.request.tree</field>
+    <field name='model'>dzc2.project.request</field>
+    <field name='arch' type='xml'>
+      <tree string='Project Request Tree' create="false" >
+
+       <!--  <field name="name_req"/> -->
+       <field name="support_organization_name" />
+        <field name="type_of_project"/>
+        <field name="project_state"/>
+        <field name="project_sectors"/>
+        <field name="project_local_state"/>
+        <field name="part_cost"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+
+
+  <!-- Search View For dzc_2 PROJECT REQUEST model -->
+  <record id="view_project_request_search" model="ir.ui.view">
+    <field name="name">Project Request Search</field>
+    <field name="model">dzc2.project.request</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="project_conf"/>
+        <!-- <field name="complete_project_name"/> -->
+        <field name="type_of_project"/>
+        <field name="project_state"/>
+        <field name="project_sectors"/>
+        <field name="project_local_state"/>
+
+        <field name="individual_partner"/>
+        <field name="collective_partner"/>
+        <field name="service_partner"/>
+
+        <group expand="0" string="Group By">
+          <filter string="State" context="{'group_by': 'state'}"/>
+          <filter string="Project Name" context="{'group_by': 'project_conf'}"/>
+          <filter string="Type of project " context="{'group_by': 'type_of_project'}"/>
+          <filter string="Sector" context="{'group_by': 'project_sectors'}"/>
+          <filter string="Local State" context="{'group_by': 'project_local_state'}"/>
+          <filter string="Company" context="{'group_by': 'company_id'}"/>
+          <filter string="Users" context="{'group_by': 'user_id'}"/>
+
+        </group>
+      </search>
+    </field>
+  </record>
+  
+  <!-- Form view for project request dzc_2 model -->
+  <!-- ********************************************-->
+  <record id="project_request_view_form" model="ir.ui.view">
+    <field name="name">Project Request Form</field>
+    <field name="model">dzc2.project.request</field>
+    <field name="arch" type="xml">
+      <form create="false">
+        <!-- **********STATES WORKFLOW*********-->
+
+        <header>
+         <button name="apply"			string="Apply"		    type="object" class="oe_highlight" attrs="{'invisible':['|',('state' , '!=' , 'draft') ,('created_in', '=', 'amana')]}"/>
+         <button name="accept"			  string="Accept"			type="object" class="oe_highlight" 
+          attrs="{'invisible':['|',('state' , '!=' , 'applied'),
+          ('created_in', 'in', ('amana'),('type_of_project','!=','service'))] }"/>
+
+         <button name="confirm" string="Confirm"  type="object" class="oe_highlight" 
+          attrs="{'invisible':['|',('state','!=','draft'),
+          ('created_in', 'not in', ('amana'))] }"/>
+         <button name="confirm"			string="Confirm"	states="accepted" 	  type="object" class="oe_highlight" attrs="{'invisible':[('state' , '!=' , 'accepted')] }"/>
+         <button name="recommend"			string="Recommed"	states="confirmed"  type="object" class="oe_highlight" attrs="{'invisible':['|',('state' , '!=' , 'confirmed'), 
+          ('created_in', 'in', ('amana'))]}"/>
+
+        <!--  <button name="approve"     string="Approve"  type="object" class="oe_highlight" attrs="{'invisible':['|',('state' , '!=' , 'confirmed'),('created_in', 'in', ('amana'))] }"/> -->
+         
+         <button name="approve"			string="Approve"	states="recommended" 	type="object" class="oe_highlight"  attrs="{'invisible':[('state' , '!=' , 'recommended')] }"/>
+         
+         <button name="cancel"			  string="Cancel"		states="draft,accepted,confirmed,recommended" 
+          type="object" class="oe_highlight" attrs="{'invisible':[('state' , '=' , 'done')]}"/>
+
+         <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,recomended,done,cancel"/>     
+       </header>
+       <!-- **************====OUTER FORM FIELDS======***************-->
+
+       <sheet>
+        <group col="4" colspan="2" >
+          <field name="name" readonly="1" />
+          <field name="date" required="1" attrs="{'readonly':[('state', '=', 'done')]}" />
+        </group>
+
+        <group string="About Project" col="4" colspan="2">
+         <field name="type_of_project" required="1" readonly="1"/>
+         <!-- <field name="project_status" required="1" attrs="{'readonly':[('state', '=', 'done')]}" /> -->
+         <field name="created_in" required="1" attrs="{'readonly':[('state', '=', 'done')],'required':[('type_of_project' ,'in',('individual_production','collective_production'))]}" />
+         <field name="address_id" required="1"/>
+       </group>
+       <group col="2" colspan="2">
+
+        <field name="individual_partner" context="{'default_zakat_partner': 1, 'partner_id' : individual_partner }" attrs="{'invisible':[('type_of_project', '!=', 'individual_production')],'required':[('type_of_project' , '=' ,'individual_production')],'readonly':[('state', '=', 'done')] }" domain="[('state' , '=' ,'done')]"/>
+
+        <field name="collective_partner" attrs="{'invisible':[('type_of_project', '!=', 'collective_production')],'required':[('type_of_project' , '=' ,'collective_production')],'readonly':[('state', '=', 'done')] }" widget="many2many_tags" context="{'default_zakat_partner': 1}" domain="[('state' , '=' ,'done')]"/>
+
+        <field name="service_partner" attrs="{'invisible':[('type_of_project', '!=', 'service')],'readonly':[('state', '=', 'done')] }" widget="many2many_tags" context="{'default_zakat_partner': 1}" domain="[('state' , '=' ,'done')]"/>
+
+      </group>
+
+      <group col="4" colspan="2">
+
+        <field name="project_conf" required="1" domain="[('view_type' , '=' , 'normal') , ('project_type' , '=' , type_of_project)]" attrs="{'readonly':[('state', '=', 'done')] }"/>
+
+
+
+        <field name="is_complete_project" readonly ="1" 
+         />
+
+        <!-- <field name="complete_project_name" attrs="{'invisible':[('is_complete_project' , '!=' , True)], 'required': [('is_complete_project' , '=' ,True)],'readonly':[('state', '=', 'done')]}"
+         /> -->
+
+
+          <field name="project_state" required="1" attrs="{'readonly':[('state', '=', 'done')]}" domain="[('company_id' ,'=' , company_id)]"/>
+
+          <field name="project_sectors" required="1" domain="[('sector_state' , '=' , project_state)] "  attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+          <field name="project_local_state" required="1" attrs="{'readonly':[('state', '=', 'done')]}" />
+
+          <field name="project_village"  attrs="{'readonly':['|',('state', '=', 'done')]}"/>
+
+          <field name="support_organization_name" attrs="{'invisible':[('type_of_project' , '!=' , 'service')],'required': [('type_of_project', '==', 'service')],'readonly':[('state', '=', 'done')]}" />
+        </group>
+
+        <group col="4" colspan="2">
+         <field name="from_organization" widget="radio"  options="{'horizontal': true}" attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+         <field name="organization_name" domain="[('channel_type' ,'=' ,'projects')]" attrs="{'invisible':[('from_organization', '!=', 'yes')],
+           'required': [('from_organization', '==', 'yes')] , 'readonly':[('state', '=', 'done')]}"/>
+
+
+         </group>
+         <group>
+          <field name="state_description" attrs="{'invisible':[('type_of_project' , '!=' , 'individual_production')] ,'required':[('type_of_project' , '==' ,'individual_production')] ,'readonly':[('state', '=', 'done')]}" />
+          
+          
+        </group>
+        <group><field name="support_cancel_date"  readonly="1" /></group>
+        <group col="4" colspan="2">
+          <field name="company_id" required="1" readonly="1"/>
+          <field name="user_id" required="1" readonly="1"/>
+          <field name="name_req" invisible="1"/>
+
+        </group>
+
+        <!-- ********************************************-->
+        <!-- *************PAGES CONTENT******************-->
+        <!-- ********************************************-->
+
+        <notebook>
+          <!-- **************BASIC INFORMATIONS***************-->
+          <page string="Basic Info" >
+
+            <group col="4" colspan="2">
+
+              <field name="finance_type" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+              <field name="relation_of_benefitaries" attrs="{ 'required': [('type_of_project', '!=', 'service')], 'invisible' :[('type_of_project' , '==' ,'service')],'readonly':[('state', '=', 'done')]}" widget="many2many_tags"/>
+
+              <field name="staff_nums" attrs="{'invisible':[('type_of_project' , '==' , 'service')],'required': [('type_of_project', '!=', 'service')],'readonly':[('state', '=', 'done')]} "/>
+
+            </group>
+            <group col="4" colspan="2">
+             <field name="organization_do_study" attrs="{'invisible':[('type_of_project' , '!=' , 'service')],'required': [('type_of_project', '==', 'service')],'readonly':[('state', '=', 'done')]}" />
+
+             <field name="project_need" attrs="{'invisible':[('type_of_project' , '!=' , 'service')],'required': [('type_of_project', '==', 'service')],'readonly':[('state', '=', 'done')]}" />
+           </group>
+
+           <group>
+            <field name="comment" attrs="{'invisible':[('type_of_project' , '==' , 'service')],'readonly':[('state', '=', 'done')]}" placeholder="For More Details You Can Comment ."/>
+          </group>
+        </page>
+
+   <!-- *************SUPPORT INFO**********************-->
+   <page string="Support Info">
+    <group col="2" colspan="2">
+
+      <group>
+       <field name="support_type" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+       <field name="part_cost" attrs="{'readonly':['|',('support_type', '==', 'material'),('state', '=' , 'done')] , 'required':[('support_type', '!=', 'material')] }"/>
+
+       <field name="total_cost" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+
+     </group>
+     <group>
+       <field name="operation_ores" attrs="{'invisible' :['|',('type_of_project' , '==' , 'service')] ,'required':[('type_of_project' , '!=' , 'service')],'readonly':[('state', '=', 'done')]}"/>
+
+       <field name="product_id"  attrs="{'readonly':[('state', '=', 'done')], 'invisible':[('support_type' , '!=' , 'material')],'required':[('support_type' , '=' ,'material')]}" widget="many2many_tags"/> 
+
+       <field name="other_supporter" attrs="{'invisible':[('type_of_project' , '!=' , 'service')],'readonly':[('state', '=', 'done')]}"/>
+
+     </group>
+     <group >
+       <field name="zakat_project_relation" attrs="{ 'required':[('type_of_project' , '!=' , 'service')],'readonly':[('state', '=', 'done')],'invisible':[('type_of_project' , '=' , 'service')]}"/>
+
+
+       <field name="society_acceptance" widget="radio" options="{'horizontal': true}" attrs="{ 'required':[('type_of_project' , '!=' , 'service')],'readonly':[('state', '=', 'done')],'invisible':[('type_of_project' , '=' , 'service')]}"/>
+     </group>
+
+
+     <group >
+
+      <field name="project_experience" attrs="{'required': [('type_of_project', '==', 'individual_production')] , 'invisible':[('type_of_project' , '!=' ,'individual_production')],'readonly':[('state', '=', 'done')]}"/>
+
+      <field name="training_type" attrs="{'required':[('project_experience' , '!=' , 'there_is_no')] , 'invisible':['|',('project_experience' , '==' ,'there_is_no'),('type_of_project' ,'!=' ,'individual_production')],'readonly':[('state', '=', 'done')]}"/>
+
+    </group>
+    <group>
+      <field name="training_organization" attrs="{'required': [('project_experience', '!=', 'there_is_no')] , 'invisible' :['|',('project_experience' , '==' , 'there_is_no') , ('type_of_project' ,'!=' ,'individual_production')],'readonly':[('state', '=', 'done')]}"/>
+
+    </group>
+
+  </group>
+
+</page>
+
+<!-- **************ADVANCE INFO****************-->
+<page string="Advance Info" attrs="{'invisible':[('type_of_project' , '==' , 'service')]}">
+
+  <group col="2" colspan="2" >
+
+    <group>
+      <field name="legal_constrains"  attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+    </group>
+
+    <group>
+      <field name="validity_period"  attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+      <field name="project_manager" attrs="{'required':[('type_of_project' , '!=' ,'service')],'readonly':[('state', '=', 'done')]}"/>
+
+      <field name="zakat_pay_manner" attrs="{'required':[('type_of_project' , '!=' ,'service')],'readonly':[('state', '=', 'done')]}"/>
+    </group>
+  </group>
+  <group>
+    <field name="comment_2" placeholder="For More Details You Can Comment" attrs="{'readonly':[('state', '=', 'done')]}"/>
+  </group>
+</page>
+
+<!-- **************DOCUMENTS****************-->
+<page string="Documents">
+
+  <group col="4" colspa="2">
+    <field name="has_casestudy" widget="radio" attrs="{'readonly':[('state', '=', 'done')]}"/>
+    <field name="managment_ability_confirmation" attrs="{'invisible':[('r_managment_ability_confirmation' , '!=' , True)],'readonly':[('state', 'in', ('done','cancel'))]}"/>
+    <field name="project_licence" attrs="{'invisible':[('r_project_licence' , '!=' , True)],'readonly':[('state', 'in', ('done','cancel'))]}"/>
+    <field name="implementation_contracts" attrs="{'invisible':[('r_implementation_contracts' , '!=' , True)],'readonly':[('state', 'in', ('done','cancel'))]}"/>
+    <field name="experience_certificate" attrs="{'invisible':[('r_experience_certificate' , '!=' , True)],'readonly':[('state', 'in', ('done','cancel'))]}"/>
+    <field name="practicing_certificate" attrs="{'invisible':[('r_practicing_certificate' , '!=' , True)],'readonly':[('state', 'in', ('done','cancel'))]}"/>
+    <field name="residence_certificate" attrs="{'invisible':[('r_residence_certificate' , '!=' , True)],'readonly':[('state', 'in', ('done','cancel'))]}"/>
+    <field name="feasibility_study" attrs="{ 'invisible':[('has_casestudy' , '!=' ,'yes')],'readonly':[('state', '=', 'done')]}"/>
+	<field name="r_managment_ability_confirmation" invisible="1"/>
+    <field name="r_project_licence" invisible="1"/>
+    <field name="r_implementation_contracts" invisible="1"/>
+    <field name="r_experience_certificate" invisible="1"/>
+    <field name="r_practicing_certificate" invisible="1"/>
+    <field name="r_residence_certificate" invisible="1"/>
+  </group>
+</page>
+<!-- **************RECOMMENDATIONS****************-->
+<page string="Recommendations" attrs="{'invisible' :[('created_in','=','amana')]}">
+  <group>
+
+
+   <field name="msaref_manager_comment" attrs="{'invisible' :
+      ['|',('type_of_project' , '=' ,'service'),('state' , 'in' , ('draft'))],'readonly':[('state', '=', 'done')] ,'required':['&amp;',('state' , 'in' , ('applied')),('type_of_project','in',('individual_production','collective_production'))]}" />
+  </group>
+  <group>
+    <field name="lstate_manager_recommendation" attrs="{'invisible' :['|',('type_of_project' , '=' ,'service'),('state' , 'in' , ('draft','applied'))],'readonly':[('state', '=', 'done')],'required':['&amp;',('state' , 'in' , ('accepted')),('type_of_project','in',('individual_production','collective_production'))] }"  placeholder="Recommend ,.."/>
+
+    <field name="project_manager_recommend" attrs="{'readonly':[('state', '=', 'done')],'invisible' :['&amp;',('state' , 'in' , ('draft','accepted','applied')),('type_of_project' , '=' ,'service')],'required':[('state' , 'in' , ('confirmed'))] }" />
+
+    <field name="state_secretary_decision"  attrs="{'invisible' :['|',('state' , 'in' , ('draft','accepted','applied','confirmed')),('type_of_project','=','service')],'readonly':[('state', '=', 'done')],'required':['&amp;',('created_in','=','wlaya'),('state' , 'in' , ('recommended')),('type_of_project','in',('individual_production','collective_production'))]}" />
+
+  </group>
+
+</page>
+
+<page string="Recommendations" attrs="{'invisible' :[('created_in','!=','amana')]}">
+  <group>
+
+
+   <!---field name="msaref_manager_comment" attrs="{'invisible' :
+      ['|',('type_of_project' , '=' ,'service'),('state' , 'in' , ('draft'))],'readonly':[('state', '=', 'done')] ,'required':['&amp;',('state' , 'in' , ('applied')),('type_of_project','in',('individual_production','collective_production'))]}" />
+  </group>
+ <field name="project_manager_reco"  />
+  <group>
+    <field name="lstate_manager_recommendation" attrs="{'invisible' :['|',('type_of_project' , '=' ,'service'),('state' , 'in' , ('draft','applied'))],'readonly':[('state', '=', 'done')],'required':['&amp;',('state' , 'in' , ('accepted')),('type_of_project','in',('individual_production','collective_production'))] }"  placeholder="Recommend ,.."/-->
+
+    <field name="project_manager_recommend" attrs="{'readonly':[('state', '=', 'done')],'invisible' :['&amp;',('state' , 'in' , ('draft','accepted','applied')),('type_of_project' , '=' ,'service')],'required':[('state' , 'in' , ('confirmed'))] }" />
+
+    <field name="state_secretary_decision"  attrs="{'invisible' :['|','&amp;',('state' , 'in' , ('draft','accepted','applied','confirmed')),('type_of_project','=','service'),('type_of_project','in',('individual_production','collective_production')),('created_in','=','amana')],'readonly':[('state', '=', 'done')],'required':['&amp;',('state' , 'in' , ('recommended')),('created_in','=','wlaya'),('type_of_project','in',('individual_production','collective_production'))]}" />
+
+    <!--field name="state_secretary_rcom" attrs="{'invisible' :['|',('state' , 'in' , ('draft','accepted','applied','confirmed')),('type_of_project','!=','service'),('created_in','!=','amana')],'readonly':[('state', '=', 'done')],'required':['&amp;',('created_in','=','amana'),('state' , 'in' , ('recommended'))]}"/-->
+
+      <field name="general_secretary_recom" attrs="{'invisible' :['|',('state' , 'in' , ('draft','accepted','applied')),('type_of_project','!=','service'),('created_in','!=','amana')],'readonly':[('state', '=', 'done')],'required':['&amp;',('created_in','=','amana'),('state' , 'in' , ('recommended'))]}"/>
+ 
+
+  </group>
+
+</page>
+<!-- <page string="Produacts to Purchase"  attrs="{'invisible':[('require_purchase_order' , '!=' , True)]}">
+    <field name="product_p_ids" >
+        <tree editable="bottom">
+            <field name="product_id" required="1" />
+            <field name="product_qty" required="1" />
+        </tree>
+    </field>
+    <field name="require_purchase_order" invisible="1"/>
+</page>
+<page string="Produacts to Exchange" attrs="{'invisible':[('require_exchange_order' , '!=' , True)]}" >
+    <field name="product_e_ids" >
+        <tree editable="bottom">
+            <field name="product_id" required="1" />
+            <field name="product_qty" required="1" />
+        </tree>
+    </field>
+    <field name="require_exchange_order" invisible="1"/>
+</page> -->
+</notebook>
+</sheet>
+</form>
+</field>
+</record>
+
+<record id="project_benefitaries_relation_view_form" model="ir.ui.view">
+    <field name="name">Project Benefitaries Relation Form</field>
+    <field name="model">dzc2.benefitaries.relation</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group col="4" colspan="2">
+           <field name="name" required="1"/>
+             <field name="company_id" invisible="1"/>
+           </group>
+
+        </sheet>
+
+
+      </form>
+    </field>
+  </record>
+
+
+<record id="project_need_view_form" model="ir.ui.view">
+    <field name="name">Project Need Form</field>
+    <field name="model">dzc2.project.need</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group col="4" colspan="2">
+           <field name="name" required="1"/>
+             <field name="company_id" invisible="1"/>
+           </group>
+
+        </sheet>
+
+
+      </form>
+    </field>
+  </record>
+
+  <record id="project_zakat_relation_view_form" model="ir.ui.view">
+    <field name="name">Project Zakat Relation Form</field>
+    <field name="model">dzc2.zakat.project.relation</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group col="4" colspan="2">
+           <field name="name" required="1"/>
+             <field name="company_id" invisible="1"/>
+           </group>
+
+        </sheet>
+
+
+      </form>
+    </field>
+  </record>
+
+  <record id="project_finance_type_view_form" model="ir.ui.view">
+    <field name="name">Project Benefitaries Relation Form</field>
+    <field name="model">dzc2.finance.type</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group col="4" colspan="2">
+           <field name="name" required="1"/>
+             <field name="company_id" invisible="1"/>
+           </group>
+
+        </sheet>
+
+
+      </form>
+    </field>
+  </record>
+<!-- dzc_2 Main form action-->
+<!-- ********************************************-->
+
+<!-- <record id="almsakeen_action" model="ir.actions.act_window">
+  <field name="name">Project Request</field>
+  <field name="res_model">dzc2.project.request</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record> -->
+
+<record id="almsakeen_action" model="ir.actions.act_window">
+            <field name="name">Individual Project Request</field>
+            <field name="res_model">dzc2.project.request</field>
+            <field name="domain">[('type_of_project' , '=' ,'individual_production')]</field>
+            <field name="context">{'default_type_of_project': 'individual_production'}</field>
+            <field name="view_id" ref="projects_request_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+<record id="almsakeen_action_2" model="ir.actions.act_window">
+            <field name="name">Productive Collective Project Request</field>
+            <field name="res_model">dzc2.project.request</field>
+            <field name="domain">[('type_of_project' , '=' ,'collective_production')]</field>
+            <field name="context">{'default_type_of_project': 'collective_production'}</field>
+            <field name="view_id" ref="projects_request_collective_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+<record id="almsakeen_action_3" model="ir.actions.act_window">
+            <field name="name">Service Project Request</field>
+            <field name="res_model">dzc2.project.request</field>
+            <field name="domain">[('type_of_project' , '=' ,'service')]</field>
+            <field name="context">{'default_type_of_project': 'service'}</field>
+            <field name="view_id" ref="projects_request_service_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+
+
+<menuitem name="Productive Individual Project Request"
+  id="almsakeen_form_menu_action"
+  parent="almsakeen_menu"
+  action="almsakeen_action"
+  sequence="2" />
+<menuitem name="Productive Collective Project Request"
+  id="collective_request_menu_action"
+  parent="almsakeen_menu"
+  action="almsakeen_action_2"
+  sequence="3" />
+<menuitem name="Service Project Request"
+  id="service_request_menu_action"
+  parent="almsakeen_menu"
+  action="almsakeen_action_3"
+  sequence="4" />
+
+
+</data>
+</odoo>

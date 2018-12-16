@@ -1,0 +1,404 @@
+<?xml version="1.0"?>
+<document filename="General Ledger.pdf">
+	<template pageSize="(842.0,595.0)" title="General Ledger"
+		author="NCTR" allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="1.3cm" y1="0.9cm" width="786" height="450" />
+			<header>
+				<pageGraphics>
+					<!-- You Logo - Change X,Y,Width and Height -->
+					<image x="1.4cm" y="16.3cm" height='70'>[[ company.logo or removeParentNode('image') ]]</image>
+				</pageGraphics>
+			</header>
+		</pageTemplate>
+	</template>
+
+	<stylesheet>
+
+		<blockTableStyle id="Header_Table">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Inner_Header_Table">
+			<blockAlignment value="LEFT" />
+			<blockValign value="CENTER" />
+			<lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0"
+				stop="1,-1" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Content_Table">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table_header">
+			<blockAlignment value="RIGHT" />
+			<blockValign value="CENTER" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table">
+			<blockAlignment value="CENTER" />
+			<blockRightPadding length="0" />
+			<blockLeftPadding length="0" />
+			<blockTopPadding length="12" />
+			<blockTopPadding length="0" start="0,0" stop="-1,0" />
+			<blockBottomPadding length="0" />
+			<lineStyle kind="LINEBELOW" colorName="#e6e6e6" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Tab">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<blockRightPadding length="7" />
+			<blockLeftPadding length="0" />
+			<blockTopPadding length="12" />
+			<lineStyle kind="LINEBELOW" colorName="#e6e6e6" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Tab2">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<blockRightPadding length="7" />
+			<blockLeftPadding length="2" />
+			<lineStyle kind="LINEBELOW" colorName="#e6e6e6" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+
+		<paraStyle name="terp_default_Right_7" fontName="Helvetica"
+			fontSize="6.5" leading="11" alignment="RIGHT" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="terp_default_Right" fontName="Helvetica-Bold"
+			fontSize="7" leading="11" alignment="RIGHT" spaceBefore="0.0"
+			spaceAfter="0.0" textColor="#000000" />
+		<paraStyle name="terp_tblheader_Details_Center" fontName="Helvetica-Bold"
+			fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="6.0"
+			spaceAfter="6.0" />
+		<paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0"
+			alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0" />
+		<paraStyle name="Header_Table_Header_Centre" fontName="Helvetica-Bold"
+			fontSize="9.0" alignment="CENTER" />
+		<paraStyle name="Header_Table_Detail_Centre" fontName="Helvetica"
+			fontSize="9.0" alignment="CENTER" />
+
+	</stylesheet>
+	<story>
+		<para>
+			<font color="white">
+			</font>
+		</para>
+		<para>[[ repeatIn(objects, 'a') ]]</para>
+		<para style="Tilte">دفتر الأستاذ العام </para>
+			    <para style="terp_tblheader_Details_Center">
+      <font color="white"> </font>
+    </para>
+
+		<blockTable colWidths="170.0,130.0,160.0,120.0,100.0,100.0" style="Header_Table">
+			<tr>
+				<td>
+					<para style="Header_Table_Header_Centre">المعاملات المقصودة</para>
+				</td>
+				<td>
+					<para style="Header_Table_Header_Centre">ترتيب المدخلات حسب</para>
+				</td>
+				<td>
+					<para style="Header_Table_Header_Centre">فلترة حسب [[get_filter(data)]] [[ get_filter(data)!='No Filters' and
+						get_filter_Trans(data) ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Header_Centre">عرض الحسابات</para>
+				</td>
+				<td>
+					<para style="Header_Table_Header_Centre">السنة المالية</para>
+				</td>
+
+				<td>
+					<para style="Header_Table_Header_Centre">[[ get_label_according_model(data) ]]</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_target_move(data) ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_sortby_gl(data) ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_filter(data)=='بدون فلتر' and
+						get_filter_Trans(data) or removeParentNode('blockTable') ]]</para>
+
+
+					<blockTable colWidths="58.0,58.0" style="Inner_Header_Table">
+						[[ get_filter(data)=='التاريخ' or removeParentNode('blockTable') ]]
+						<tr>
+							<td>
+								<para style="Header_Table_Header_Centre">تاريخ النهاية</para>
+							</td>
+							<td>
+								<para style="Header_Table_Header_Centre">تاريخ البداية</para>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_end_date(data) ]]</para>
+							</td>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_start_date(data) ]]</para>
+							</td>
+						</tr>
+					</blockTable>
+					<blockTable colWidths="58.0,58.0" style="Inner_Header_Table">
+						[[ get_filter(data)=='الفترات' or removeParentNode('blockTable') ]]
+						<tr>
+							<td>
+								<para style="Header_Table_Header_Centre">الفترة النهائية</para>
+							</td>
+							<td>
+								<para style="Header_Table_Header_Centre">الفترة الإبتدائية</para>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_end_period(data)]]</para>
+							</td>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_start_period(data)]]</para>
+							</td>
+						</tr>
+					</blockTable>
+			
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_display_account(data) ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_fiscalyear(data) or '' ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_account(data) or '' ]]</para>
+				</td>
+			</tr>
+		</blockTable>
+
+		<para><font color="white"></font></para>
+		<para><font color="white"></font></para>
+			    <para style="terp_tblheader_Details_Center">
+      <font color="white"> </font>
+    </para>
+		<!--  With Currency -->
+		<section> [[ data['form'].get('amount_currency',False) or removeParentNode('section')]]
+			<blockTable colWidths="70.0,90.0,75.0,75.0,85.0,120.0,80.0,120.0,65.0" repeatRows="1" style="Header_Table">
+				<tr>
+					<td>
+						<para style="terp_tblheader_Details_Center">العملة</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">الرصيد</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">دائن</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">مدين</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">المعاملة</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">عنوان المعاملة</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">المرجع</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">الشريك</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">التاريخ</para>
+					</td>
+				</tr>
+			</blockTable>
+			<section>
+				<para>[[ repeatIn(get_children_accounts(a), 'o') ]]</para>
+				<blockTable colWidths="70.0,90.0,75.0,75.0,470.0" style="Tab">
+					<tr>
+						<td>
+	
+							<para style="terp_default_Right">[[ o.currency_id and
+								formatLang(sum_currency_amount_account(o),
+								digits=get_digits(dp='Account')) + o.currency_id.symbol or '' ]]
+							</para>
+						</td>
+						<td>
+							<para style="terp_default_Right">[[ formatLang(sum_balance_account(o),
+								digits=get_digits(dp='Account')) ]] [[ company.currency_id.symbol
+								]]</para>
+						</td>
+						<td>
+							<para style="terp_default_Right">[[ formatLang(sum_credit_account(o),
+								digits=get_digits(dp='Account')) ]]</para>
+						</td>
+						<td>
+							<para style="terp_default_Right">[[ formatLang(sum_debit_account(o),
+								digits=get_digits(dp='Account')) ]]</para>
+						</td>
+						<td>
+							<para style="terp_default_Right">[[ o.name ]] [[ o.code ]]
+								[[(get_multi_company(data,o.id)) ]]</para>
+						</td>
+					</tr>
+				</blockTable>
+				<section>[[  data['form'].get('move',False) or removeParentNode('section') ]]
+
+					<para>[[ repeatIn(lines(o), 'line') ]]</para>
+					<blockTable colWidths="70.0,90.0,75.0,75.0,85.0,120.0,80.0,120.0,65.0" style="Tab2">
+						<tr>
+							<td>
+								<para style="terp_default_Right_7">
+									<font>[[ (line.has_key('currency_id') and
+										line['currency_id']==None or line['amount_currency']==None) and
+										removeParentNode('font') ]] [[
+										formatLang(line['amount_currency'])]] [[ line['currency_code']
+										or '']]</font>
+								</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ formatLang(line['progress'],
+									digits=get_digits(dp='Account')) ]] [[
+									company.currency_id.symbol ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ formatLang(line['credit'],
+									digits=get_digits(dp='Account')) ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ formatLang(line['debit'],
+									digits=get_digits(dp='Account')) ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[line['move'] ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ line['lname'] ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ line['lref'] ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ line['partner_name'] ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ formatLang(line['ldate'],date=True) ]]</para>
+							</td>
+						</tr>
+					</blockTable>
+				</section>
+			</section>
+		</section>
+		
+		<!-- Without Currency -->
+		<section>[[ not data['form'].get('amount_currency',False) or removeParentNode('section')]]
+			<blockTable colWidths="100.0,100.0,100.0,90.0,120.0,80.0,120.0,70.0"
+				repeatRows="1" style="Header_Table">
+				<tr>
+					<td>
+						<para style="terp_tblheader_Details_Center">الرصيد</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">دائن</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">مدين</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">المعاملة</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">عنوان المعاملة</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">المرجع</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">الشريك</para>
+					</td>
+					<td>
+						<para style="terp_tblheader_Details_Center">التاريخ</para>
+					</td>
+				</tr>
+			</blockTable>
+			<section>
+				<para>[[ repeatIn(get_children_accounts(a), 'o') ]]</para>
+				<blockTable colWidths="100.0,100.0,100.0,480.0" style="Tab">
+					<tr>
+						<td>
+							<para style="terp_default_Right">[[ formatLang(sum_balance_account(o),
+								digits=get_digits(dp='Account')) ]] [[ company.currency_id.symbol
+								]]</para>
+						</td>
+						<td>
+							<para style="terp_default_Right">[[ formatLang(sum_credit_account(o),
+								digits=get_digits(dp='Account')) ]]</para>
+						</td>
+						<td>
+							<para style="terp_default_Right">[[ formatLang(sum_debit_account(o),
+								digits=get_digits(dp='Account')) ]]</para>
+						</td>
+						<td>
+							<para style="terp_default_Right">[[ o.name ]] [[ o.code ]]
+								[[(get_multi_company(data,o.id)) ]]</para>
+						</td>
+					</tr>
+				</blockTable>
+				<section>
+					<para>[[ repeatIn(lines(o), 'line') ]]</para>
+					<blockTable colWidths="100.0,100.0,100.0,90.0,120.0,80.0,120.0,70.0" style="Tab2">
+						<tr>
+							<td>
+								<para style="terp_default_Right_7">[[ formatLang(line['progress'],
+									digits=get_digits(dp='Account')) ]] [[
+									company.currency_id.symbol ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ formatLang(line['credit'],
+									digits=get_digits(dp='Account')) ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ formatLang(line['debit'],
+									digits=get_digits(dp='Account')) ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[line['move'] ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ strip_name(line['name'],25) ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ line['lref'] ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ line['partner_name'] ]]</para>
+							</td>
+							<td>
+								<para style="terp_default_Right_7">[[ formatLang(line['ldate'],date=True) ]]</para>
+							</td>
+						</tr>
+					</blockTable>
+				</section>
+			</section>
+		</section>
+	</story>
+</document>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="report_account_statement">
+    <t t-call="report.html_container">
+        <t t-set="data_report_margin_top" t-value="12"/>
+        <t t-set="data_report_header_spacing" t-value="9"/>
+        <t t-set="data_report_dpi" t-value="110"/>
+        <t t-foreach="docs" t-as="o">
+        <t t-call="report.internal_layout">
+	     <div class="page">
+<style>
+		#table_layout {
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 18px;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+
+		#table_layout td, #table_layout th {
+		    border: 1px solid #ddd;
+                    text-align: left;
+		    padding: 8px;
+		}
+
+		#table_layout tr:nth-child(even){background-color: #f2f2f2;}
+
+		#table_layout tr:hover {background-color: #ddd;}
+
+		#table_layout th {
+		    padding-top: 12px;
+		    padding-bottom: 12px;
+		    text-align: left;
+		    background-color: #008080;
+		    color: white;
+		}
+              
+
+		#final_calculations {
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 18px;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+		#final_calculations tr:hover {background-color: #ddd;}
+
+		#final_calculations tr:nth-child(even){background-color: #f2f2f2;}
+
+		#final_calculations td {
+		    border: 1px solid #ddd;
+		    padding: 8px;
+		    padding-top: 12px;
+		    padding-bottom: 12px;
+		    text-align: left;
+                    font-weight: bold;
+
+		}
+		
+		.filters {
+
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 16px;
+		    border-collapse: collapse;
+		    width: 100%;
+		} 
+		
+		.title {
+
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 28px;
+                    color: #008080;
+                    font-weight: bold;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+		.init_bal {
+
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 20px;
+                    font-weight: bold;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+
+		</style>
+                    <br/><br/>
+                <center>
+                <h2 class= "title"> Account Statement</h2><br/>
+                <div class="title">
+                          <p t-esc="data['account_id'][1]"/>
+                </div>
+                </center>
+                    <br/><br/><br/><br/>
+                <div class="filters">
+                    <!--div class="col-xs-4">
+                        <strong>Journals:</strong>
+                          <p t-esc="', '.join([ lt or '' for lt in print_journal ])"/>
+                    </div-->
+                    <div class="col-xs-4">
+                        <strong>Display Account</strong>
+                        <p>
+                            <span t-if="data['display_account'] == 'all'">All accounts'</span>
+                            <span t-if="data['display_account'] == 'movement'">With movements</span>
+                            <span t-if="data['display_account'] == 'not_zero'">With balance not equal to zero</span>
+                        </p>
+                    </div>
+                    <div class="col-xs-4">
+                        <strong>Target Moves:</strong>
+                        <p t-if="data['target_move'] == 'all'">All Entries</p>
+                        <p t-if="data['target_move'] == 'posted'">All Posted Entries</p>
+                    </div>
+                </div>
+                <div class="filters">
+                    <div class="col-xs-4">
+                        <strong>Sorted By:</strong>
+                        <p t-if="data['sortby'] == 'sort_date'">Date</p>
+                        <p t-if="data['sortby'] == 'sort_journal_partner'">Journal and Partner</p>
+                    </div>
+                    <div class="col-xs-4">
+                        <t t-if="data['date_from']"><strong>Date from :</strong> <span t-esc="data['date_from']"/><br/></t>
+                        <t t-if="data['date_to']"><strong>Date to :</strong> <span t-esc="data['date_to']"/></t>
+                    </div>
+                </div>
+                <br/><br/><br/><br/>
+                <br/><br/>
+                    <div class="init_bal" t-if="data['initial_balance'] == 1">
+                        <strong>Initial Balance = </strong>
+                        <span  t-esc="get_initial_balance" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+
+                    </div>
+                <br/><br/>
+                <table id="table_layout" class="table table-condensed">
+                    <thead>
+                        <tr class="text-center">
+                            <th>Date</th>
+                            <th>JRNL</th>
+                            <th>Partner</th>
+                            <th>Ref</th>
+                            <th>Move</th>
+                            <th>Entry Label</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Balance</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                       
+                            
+                            <tr t-foreach="Accounts" t-as="line">
+                                <td><span t-esc="line['ldate']"/></td>
+                                <td><span t-esc="line['journal']"/></td>
+                                <td><span t-esc="line['partner_name']"/></td>
+                                <td><span t-if="line['lref']" t-esc="line['lref']"/></td>
+                                <td><span t-esc="line['move_name']"/></td>
+                                <td><span t-esc="line['lname']"/></td>
+                                <td class="text-right">
+                                    <span t-esc="line['debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="line['credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="get_initial_balance + line['progress']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                </td>
+                               
+                            </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </t>
+</t>
+    </t>
+</template>
+</odoo>

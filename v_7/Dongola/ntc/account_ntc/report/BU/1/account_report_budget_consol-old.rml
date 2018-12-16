@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<document filename="Account Budget consol.pdf">
+  <template pageSize="(595.0,842.0)" title="Account Budget Consol" author="NCTR" allowSplitting="40">
+    <pageTemplate id="first">
+      <frame id="first" x1="57.0" y1="57.0" width="550" height="728"/>
+    </pageTemplate>
+  </template>
+
+  <stylesheet>
+
+    <blockTableStyle id="Content_Table">
+	<blockValign value="CENTER"/>
+	<blockAlignment value="CENTER"/>
+ 
+	<lineStyle kind="GRID" colorName="#e6e6e6"/>
+	<blockTopPadding length="8"/>
+	<blockBottomPadding length="10"/>
+	<blockRightPadding length="8"/>
+    </blockTableStyle>
+
+
+<blockTableStyle id="Content_Table2">
+	<blockValign value="CENTER"/>
+	<blockAlignment value="CENTER"/>
+	<blockRightPadding length="2"/>
+	<lineStyle kind="GRID" colorName="white"/>
+      <blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+ 
+    </blockTableStyle>
+
+<blockTableStyle id="Table3">
+			<blockAlignment value="LEFT" />
+			<lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0"
+				stop="1,-1" />
+		</blockTableStyle>
+
+<blockTableStyle id="Standard_Outline">
+			<blockAlignment value="LEFT" />
+			<blockValign value="TOP" />
+		</blockTableStyle>
+
+    <blockTableStyle id="Header_Table">
+	<blockAlignment value="CENTER"/>
+	<!--blockValign value="CENTER"/-->
+      <blockBackground colorName="#e6e6e6" start="0,0" stop="-1,0"/>
+      <lineStyle kind="GRID" colorName="#e6e6e6"/>
+    </blockTableStyle>
+
+    <initialize>
+	<paraStyle name="all" alignment="justify"/>
+    </initialize>
+
+    <paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="12.0" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Tilte1" fontName="Arial" fontSize="9" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Tilte11" fontName="Helvetica-Bold" fontSize="10" alignment="RIGHT" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Tilte3" fontName="Helvetica-Bold" fontSize="12" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Header_Table_Header_Centre" fontName="Helvetica" fontSize="9.0" alignment="CENTER"/>
+    <paraStyle name="Header_Table_Header_Centre2" fontName="Helvetica-Bold" fontSize="11" alignment="CENTER"/>
+    <paraStyle name="Header_Table_Header_Centre22" fontName="Helvetica-Bold" fontSize="11" alignment="CENTER"/>
+    <paraStyle name="Header_Table_Detail_Centre" fontName="Helvetica" fontSize="9.0" alignment="CENTER"/>
+    <paraStyle name="Content_Table_Detail" fontName="Helvetica" fontSize="8.0" alignment="RIGHT" rightIndent="3"/>
+    <paraStyle name="Content_Table_Header" fontName="Helvetica" fontSize="8.0" alignment="CENTER"/>
+    <paraStyle name="Content_Table_Header3" fontName="Helvetica-Bold" fontSize="11" alignment="CENTER"/>
+    <paraStyle name="terp_default_Right" fontName="Helvetica" fontSize="9" leading="13" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" />
+
+    <images/>
+  </stylesheet>
+
+  <story>
+
+    <!--para> <font color="white"> </font> </para-->
+    <para style="Tilte1">بسم الله الرحمن الرحيم</para>
+    <para style="Tilte">تقرير  الموازنة</para>
+    <para style="Tilte">[[company.name]]</para>
+ 
+    <section>  [[ repeatIn(budgets(data['form']), 'budget') ]]
+ 
+
+      <para style="Tilte">     ملخص  [[  budget['name'] ]]  </para>
+    <para style="Tilte3">  
+  			    للفترة من  [[ data['form'].get('date_from') or ' / ' ]] الي [[ data['form'].get('date_to') or ' / ' ]] </para>
+      <para style="Tilte">     الإيضاح  ( [[ get_account_code(data['form']) ]] )   </para>
+     <para style="Tilte11">التاريخ: [[time.strftime('%Y/%m/%d')]]    </para>
+    	<para> <font color="white"> </font> </para>
+ 
+	<blockTable colWidths="75,75.0,75.0,75,200.0,55" style="Content_Table2" repeatRows="1">
+	    <tr>
+		<td>[[  view['account_code'] ]]
+		   <para style="Content_Table_Header3">نسبة الاداء</para>
+		</td>
+		 
+		<td>
+		   	<para style="Content_Table_Header3"> الصرف الفعلي</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header3">الاعتماد النسبي</para>/para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header3">الإعتماد المصدق</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header3">البيان</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header3">الرمز</para>
+		</td>
+		
+	    </tr>
+</blockTable>
+  
+<section>[[ repeatIn(budgets_line_view(data['form'], budget['child_ids'] ), 'view') ]]
+
+	<blockTable colWidths="75,75,75.0,75,200.0,55" rowHeights="25" style="Header_Table" repeatRows="1">
+      <tr>
+          <td>			
+              <para style="Header_Table_Header_Centre2">
+
+ <font>[[ (view['ratio']  &gt;100 and setTag('para','para',{'textColor':"blue"}) or removeParentNode('font')) ]]</font>
+ [[  view['ratio'] or '0.00']] % 
+</para>
+          </td>
+          
+ <td>
+	      <para style="Header_Table_Header_Centre2">
+ <font>[[ (view['ratio']  &gt;100 and setTag('para','para',{'textColor':"blue"}) or removeParentNode('font')) ]]</font>
+
+ [[  formatLang(view['balance'] or '0.00')]] </para>
+          </td>
+ <td>
+	      <para style="Header_Table_Header_Centre2"> 
+ <font>[[ (view['ratio']  &gt;100 and setTag('para','para',{'textColor':"blue"}) or removeParentNode('font')) ]]</font>
+[[  formatLang(view['relative'] )]] </para>
+          </td>
+ <td>
+	      <para style="Header_Table_Header_Centre2"> 
+ <font>[[ (view['ratio']  &gt;100 and setTag('para','para',{'textColor':"blue"}) or removeParentNode('font')) ]]</font>
+[[  formatLang(view['planned']+ view['total_operation']) ]] </para>
+          </td>
+ <td>
+              <para style="Header_Table_Header_Centre22"> [[  view['account_name'] or removeParentNode('tr') ]]</para>
+          </td>
+ <td>
+	      <para style="Header_Table_Header_Centre22">
+[[  view['account_code'] ]] </para>
+          </td>
+	   
+      </tr>
+ </blockTable>
+
+<section>[[ repeatIn(budgets_line(data['form'], budget['child_ids'],view['account_id']), 'line') ]]
+
+	<blockTable colWidths="75,75,75.0,75,200.0,55"  rowHeights="20" style="Content_Table" repeatRows="1">
+
+	    <tr>				
+		<td>
+		   <para style="Header_Table_Header_Centre2"> 
+ <font>[[ (line['ratio']  &gt; 100 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+ 
+[[ formatLang(line['ratio']) ]]% 
+
+		   </para>
+		</td>
+		 
+		<td>
+		   <para style="Header_Table_Header_Centre2"> 
+  <font>[[ (line['ratio']  &gt; 100 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+[[ formatLang(line['balance']) ]] 
+ 
+		   </para>
+		</td>
+		<td>
+		   <para style="Header_Table_Header_Centre2"> 
+ <font>[[ (line['ratio']  &gt; 100 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+ 
+[[ formatLang(line['relative']) ]] 
+ 
+		   </para>
+		</td>	
+		<td>
+		   <para style="Header_Table_Header_Centre2">
+  <font>[[ (line['ratio']  &gt; 100 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+ [[ formatLang(line['planned']+line['total_operation']) ]] 
+ 
+		   </para>
+		</td>
+		<td>
+		   <para style="Header_Table_Header_Centre22"  >
+
+
+			[[  line['account_name'] or removeParentNode('tr') ]]
+ 
+		   </para>
+		</td>
+		<td>
+		   <para style="Header_Table_Header_Centre22"> 			[[  line['account_code'] ]]
+ 
+		   </para>
+		</td>	
+	    </tr> 
+</blockTable></section> 
+
+ 
+
+
+ 
+</section>
+ <!--TOTALS-->
+
+
+<section>
+
+
+[[ repeatIn(budget_total(data['form'],budget['child_ids']), 'total') ]]
+	<blockTable colWidths="75,75,75.0,75.0,255" style="Content_Table2" repeatRows="1">
+
+	    <tr>
+        	<td>
+	   	   <para style="Header_Table_Header_Centre2"> [[ formatLang(total['ratio']/data['form'].get('accuracy',1)) ]] %</para>
+		</td>
+		<td>
+		   <para style="Header_Table_Header_Centre2"> [[ formatLang((total['balance'])/data['form'].get('accuracy',1)) ]] </para>
+		</td>
+		<td>
+	     	   <para style="Header_Table_Header_Centre2"> [[ formatLang(total['relative']/data['form'].get('accuracy',1)) ]] </para>
+		</td>
+		 
+		<td>
+		   <para style="Header_Table_Header_Centre2"> [[ formatLang((total['planned']+total['total_operation'])/data['form'].get('accuracy',1)) ]] </para>
+		</td>
+		<td>
+		   <para style="Header_Table_Header_Centre2">  المجمـــــــــــــــوع </para>
+		</td>
+	    </tr>
+	</blockTable>
+	</section>	
+<section>
+	 	<pageBreak/>
+		<para style="terp_default_Right">[[ len(budgets(data['form'])) ==1 and removeParentNode('section')]]</para>
+ 	</section>
+ 
+
+
+</section>
+  </story>
+</document>

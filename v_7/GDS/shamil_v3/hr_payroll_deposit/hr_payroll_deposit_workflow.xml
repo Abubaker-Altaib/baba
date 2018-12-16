@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="wkf_hr_payroll_deposit" model="workflow">
+            <field name="name">wkf.hr.payroll.deposit</field>
+            <field name="osv">hr.payroll.deposit</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_hr_payroll_deposit_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hr_payroll_deposit"/>
+            <field name="flow_start"> True</field>
+            <field name="name">draft</field>
+        </record>
+        <record id="wkf_hr_payroll_deposit_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hr_payroll_deposit"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirm()</field>            
+        </record>
+        <record id="wkf_hr_payroll_deposit_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hr_payroll_deposit"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel()</field>
+        </record>
+	<record id="wkf_hr_payroll_deposit_treasury" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hr_payroll_deposit"/>
+            <field name="name">treasury</field>
+            <field name="kind">function</field>
+            <field name="action">trans2treasury()</field>
+        </record>
+        <record id="wkf_hr_payroll_deposit_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hr_payroll_deposit"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>
+            <field name="flow_stop">True</field>
+        </record>
+        <record id="wkf_hr_payroll_deposit_trans_draft_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_hr_payroll_deposit_draft"/>
+            <field name="act_to" ref="wkf_hr_payroll_deposit_confirmed"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record id="wkf_hr_payroll_deposit_trans_confirmed_treasury" model="workflow.transition">
+            <field name="act_from" ref="wkf_hr_payroll_deposit_confirmed"/>
+            <field name="act_to" ref="wkf_hr_payroll_deposit_treasury"/>
+            <field name="signal">trans2treasury</field>
+        </record>
+	<record id="wkf_hr_payroll_deposit_trans_treasury_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_hr_payroll_deposit_treasury"/>
+            <field name="act_to" ref="wkf_hr_payroll_deposit_done"/>
+            <field name="signal">done</field>
+        </record>
+        <record id="wkf_hr_payroll_deposit_trans_confirmed_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_hr_payroll_deposit_confirmed"/>
+            <field name="act_to" ref="wkf_hr_payroll_deposit_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+       
+    </data>
+</openerp>
+

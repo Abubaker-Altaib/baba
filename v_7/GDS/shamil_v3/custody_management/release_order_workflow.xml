@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<openerp>
+  <data>
+    <!--Work Flow Intialization-->
+    <record id="id_release_order_workflow" model="workflow">
+       <field name="name">Release Order WorkFlow</field>
+       <field name="osv">custody.release.order</field>
+       <field name="on_create">True</field>
+    </record>
+    <!--Work Flow Activites Intialization-->
+    <record id="id_wkf_release_order_draft" model="workflow.activity">
+        <field name="wkf_id" ref="id_release_order_workflow"/>
+        <field name="flow_start">True</field>
+        <field name="name">draft</field>
+    </record>
+    <record id="id_wkf_release_order_confirm" model="workflow.activity">
+        <field name="wkf_id" ref="id_release_order_workflow"/>
+        <field name="name">confirm</field>
+        <field name="kind">function</field>
+        <field name="action">confirm()</field>
+   </record>
+   <record id="id_wkf_release_order_verify" model="workflow.activity">
+       <field name="wkf_id" ref="id_release_order_workflow"/>
+       <field name="name">verify</field>
+       <field name="kind">function</field>
+       <field name="flow_stop">True</field>
+       <field name="action">verify()</field>
+   </record>
+
+   <record id="id_wkf_release_order_cancel" model="workflow.activity">
+       <field name="wkf_id" ref="id_release_order_workflow"/>
+       <field name="name">cancel</field>
+       <field name="kind">function</field>
+       <field name="action">cancel()</field>
+   </record>
+  <!--Work Flow Transitions Intialization-->
+  <record id="id_wkf_release_order_draft_confirm" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_release_order_draft" />
+     <field name="act_to" ref="id_wkf_release_order_confirm" />
+     <field name="signal">confirm</field>
+  </record>
+  <record id="id_wkf_release_order_confirm_verify" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_release_order_confirm" />
+     <field name="act_to" ref="id_wkf_release_order_verify" />
+     <field name="signal">verify</field>
+  </record>
+  
+
+  <record id="id_wkf_release_order_draft_cancel" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_release_order_draft" />
+     <field name="act_to" ref="id_wkf_release_order_cancel" />
+     <field name="signal">cancel</field>
+   </record>
+
+  </data>
+</openerp>

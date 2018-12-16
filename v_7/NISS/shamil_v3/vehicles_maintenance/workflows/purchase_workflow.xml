@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- wkf_ireq_m customization -->
+
+        <record id="wkf_spare_purchase_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">spare_cancel</field>
+            <field name="kind">function</field>
+            <field name="action">spare_cancel()</field>
+            <field name="flow_stop">True</field>
+        </record>
+
+        <record id="wkf_wait_invoice" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">wait_invoice</field>
+            <field name="kind">function</field>
+            <field name="action">wait_invoice()</field>
+        </record>
+
+        <record id="wkf_wait_accountant" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">wait_accountant</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'wait_accountant'})</field>
+        </record>
+
+        <record id="wkf_wait_workshop" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">wait_workshop</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'wait_workshop'})</field>
+        </record>
+
+        <record id="wkf_wait_purchase" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">wait_purchase</field>
+            <field name="kind">function</field>
+            <field name="action">create_spare_purchase_order()</field>
+        </record>
+
+        <record id="wkf_purchase_officer" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">purchase_officer</field>
+            <field name="kind">function</field>
+            <field name="action">create_spare_purchase_order()</field>
+        </record>
+
+        <record id="wkf_purchase_done" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">purchase_done</field>
+            <field name="kind">function</field>
+            <field name="action">spare_purchase_order_done()</field>
+        </record>
+
+        <record id="wkf_purchase_done_partial" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">purchase_done_partial</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'purchase_done'})</field>
+        </record>
+
+        <record id="wkf_draft_2_wait_invoice" model="workflow.transition">
+            <field name="act_from" ref="purchase_custom.wkf_ireq_m_draft"/>
+            <field name="act_to" ref="wkf_wait_invoice"/>
+            <field name="signal">to_wait_invoice</field>
+        </record>
+
+        <record id="wkf_wait_invoice_2_wait_accountant" model="workflow.transition">
+            <field name="act_from" ref="wkf_wait_invoice"/>
+            <field name="act_to" ref="wkf_wait_accountant"/>
+             <field name="condition">check_invoice_complete()</field>
+            <field name="signal">invoice_complete</field>
+        </record>
+
+        <record id="wkf_wait_accountant_2_wait_workshop" model="workflow.transition">
+            <field name="act_from" ref="wkf_wait_accountant"/>
+            <field name="act_to" ref="wkf_wait_workshop"/>
+            <field name="condition">hq</field>
+            <field name="signal">to_workshop</field>
+        </record>
+
+        <record id="wkf_wait_invoice_2_wait_workshop" model="workflow.transition">
+            <field name="act_from" ref="wkf_wait_invoice"/>
+            <field name="act_to" ref="wkf_wait_workshop"/>
+            <field name="condition">hq</field>
+            <field name="signal">to_workshop</field>
+        </record>
+
+        <record id="wkf_wait_accountant_2_wait_purchase" model="workflow.transition">
+            <field name="act_from" ref="wkf_wait_accountant"/>
+            <field name="act_to" ref="wkf_wait_purchase"/>
+            <field name="condition">not hq and check_spare_invoice()</field>
+            <field name="signal">to_purchase</field>
+        </record>
+
+        <record id="wkf_wait_workshop_2_purchase_officer" model="workflow.transition">
+            <field name="act_from" ref="wkf_wait_workshop"/>
+            <field name="act_to" ref="wkf_purchase_officer"/>
+            <field name="signal">workshop_approve</field>
+        </record>
+
+        <record id="purchase_officer_2_purchase_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_purchase_officer"/>
+            <field name="act_to" ref="wkf_purchase_done"/>
+            <field name="signal">purchase_done</field>
+        </record>
+
+        <record id="purchase_officer_2_purchase_done_partial" model="workflow.transition">
+            <field name="act_from" ref="wkf_purchase_officer"/>
+            <field name="act_to" ref="wkf_purchase_done_partial"/>
+            <field name="signal">purchase_done_partial</field>
+        </record>
+
+        <record id="wkf_wait_purchase_2_purchase_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_wait_purchase"/>
+            <field name="act_to" ref="wkf_purchase_done"/>
+            <field name="signal">purchase_done</field>
+        </record>
+
+        <record id="wkf_wait_accountant_2_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_wait_accountant"/>
+            <field name="act_to" ref="wkf_spare_purchase_cancel"/>
+            <field name="condition">not hq</field>
+            <field name="signal">spare_cancel</field>
+        </record>
+
+        <record id="wkf_wait_accountant_2_wkf_wait_invoice" model="workflow.transition">
+            <field name="act_from" ref="wkf_wait_accountant"/>
+            <field name="act_to" ref="wkf_wait_invoice"/>
+            <field name="condition">hq</field>
+            <field name="signal">spare_cancel_temp</field>
+        </record>
+
+        <record id="wkf_wait_workshop_2_wkf_wait_invoice" model="workflow.transition">
+            <field name="act_from" ref="wkf_wait_workshop"/>
+            <field name="act_to" ref="wkf_spare_purchase_cancel"/>
+            <field name="condition">hq</field>
+            <field name="signal">spare_cancel</field>
+        </record>
+
+        <!-- wkf_pur_quote customization -->
+
+        <record id="wkf_quote_approved" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.pur_quote"/>
+            <field name="name">done</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">quote_approved()</field>
+        </record>
+
+        <record id="pur_quote_trans_confirmed_done" model="workflow.transition">
+            <field name="act_from" ref="purchase_custom.pur_quote_confirmed"/>
+            <field name="act_to" ref="wkf_quote_approved"/>
+            <field name="signal">quote_approved</field>
+        </record>
+
+    </data>
+</openerp>

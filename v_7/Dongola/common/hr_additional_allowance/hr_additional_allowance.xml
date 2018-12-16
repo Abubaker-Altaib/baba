@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_allowance_deduction_form">
+			<field name="name">hr.allowance.deduction.form</field>
+			<field name="model">hr.allowance.deduction</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_allowance_deduction_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='allowance_type']" position="after">
+					<field name="week_factor"
+						attrs="{'invisible':[('allowance_type','!=','in_cycle')]}" />
+					<field name="holiday_factor"
+						attrs="{'invisible':[('allowance_type','!=','in_cycle')]}" />
+					<field name="days"
+						attrs="{'invisible':[('allowance_type','!=','in_cycle')]}" />
+				</xpath>
+			</field>
+		</record>
+
+		<!-- additional Allowances -->
+		<record model="ir.ui.view" id="view_additional_allowance_form">
+			<field name="name">hr.additional.allowance.form</field>
+			<field name="model">hr.additional.allowance</field>
+			<field name="arch" type="xml">
+				<form string="Additional Allowances" version="7.0">
+					<header>
+						<button name="confirm" string="Confirm" states="draft" />
+						<button name="validate" string="Approve" states="confirm" />
+						<button name="second_validate" string="Second Approve"
+							states="validate" groups="base.group_hr_user" />
+						<button name="third_validate" string="Third Approve" states="second_validate"
+							groups="base.group_hr_manager" />
+						<button string="Set to Draft" name="set_to_draft" states="refuse"
+							type="object" groups="base.group_hr_manager" />
+						<button name="refuse" string="Refuse"
+							states="confirm,validate,second_validat,approved" groups="base.group_hr_user,base.group_hr_manager" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate,approved" />
+					</header>
+					<sheet string="Additional Allowances">
+						<group>
+							<group>
+								<field name="allowance_id" attrs="{'readonly':[('state','!=','draft')]}"
+									on_change="onchange_data(line_ids ,period_id, allowance_id, department_id, month,'allowance_id')"
+									context="{'default_name_type':'allow','default_allowance_type':'in_cycle'}" />
+								<field name="department_id" attrs="{'readonly':[('state','!=','draft')]}" 
+									on_change="onchange_data(line_ids ,period_id, allowance_id, department_id, month, 'department_id')"/>
+							</group>
+							<group>
+								<field name="company_id" widget="selection" groups="base.group_multi_company"
+									attrs="{'readonly':[('state','!=','draft')]}"
+									on_change="onchange_company_id(line_ids,company_id)" />
+								<field name="period_id" attrs="{'readonly':[('state','!=','draft')]}"
+									required="1" on_change="onchange_data(line_ids ,period_id, allowance_id, department_id,month,'period_id')"/>
+								<field name="month" attrs="{'readonly':[('state','!=','draft')]}"
+									required="1" on_change="onchange_data(line_ids ,period_id, allowance_id, department_id,month, 'month')"/>
+								<field name="voucher_number" context="{'form_view_ref':'account_voucher.view_purchase_receipt_form'}" />
+							</group>
+						</group>
+						<notebook>
+							<page string="Employees">
+								<button type="object" icon="terp-stock_format-scientific"
+									name="create_lines" class="oe_link oe_edit_only" string="(Add Item)"/>
+								<button type="object" icon="terp-stock_format-scientific"
+									name="import_lines" class="oe_link oe_edit_only" string="(Import)"
+									attrs="{'invisible': [('state','!=','draft')]}" />
+								<button type="object" icon="terp-stock_format-scientific"
+									name="recompute_lines" class="oe_link oe_edit_only" string="(Recompute)"
+									attrs="{'invisible': [('state','!=','draft')]}" />
+								<field name="line_ids"
+									context="{'default_allowance_id':allowance_id,'default_department_id':department_id,'default_period_id':period_id}"
+									nolabel="1">
+									<form string="Employee Overtime" version="7.0">
+										<header>
+											<button name="complete" string="Complete" states="draft"
+												type="object" />
+											<!--button name="confirm" string="Confirm" states="complete"
+												type="object" />
+											<button name="cancel" string="cancel" states="complete"
+												type="object" />
+											<button string="Set to Draft" name="set_to_draft" states="cancel"
+												type="object" /-->
+											<field name="state" widget="statusbar"
+												statusbar_visible="draft,complete" />
+										</header>
+										<sheet>
+											<group>
+												<group>
+													<field name="employee_id" required="1"
+														on_change="onchange_employee_id(employee_id,allowance_id)"
+														domain="[('department_id','=',department_id),('state','=','approved')]" 
+														attrs="{'readonly':[('state','in',['confirm','implement','cancel','complete'])]}"/>
+													<field name="department_id" required="1"
+														domain="[('company_id','=',company_id)]" 
+														on_change="onchange_department_id(department_id)"
+														attrs="{'readonly':[('state','in',['confirm','implement','cancel',''])]}" invisible="1"/>
+													
+												    <field name="allow_exceeding" invisible="1" />
+												    <field name="exceed_max_hrs" invisible="1"/>	
+												</group>
+												<group>
+													<field name="company_id" groups="base.group_multi_company" 
+														attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}" invisible="1"/>
+													<field name="allowance_id" required="1"
+														on_change="onchange_allowance_id_2(parent.department_id)" attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}" invisible="1"/>
+													<field name="period_id" required="1"
+														domain="[('company_id','=',company_id),('state','!=','done')]" attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}" on_change="onchange_period_2(parent.department_id,parent.allowance_id,parent.month)" 
+														invisible="1"/>
+													<field name="month" required="1" attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}" 
+														invisible="1"/>
+												</group>
+
+
+											</group>
+											<group string="Additional Allowance Hours Details" col="4">
+												<field name="allowance_detail_ids" nolabel="1" 
+													on_change="onchange_hour(allowance_detail_ids,employee_id,allowance_id)" attrs="{'readonly':[('state','in',['confirm','implement','cancel','complete'])]}">
+												</field>
+											</group>
+											<group col="4">
+												<field name="holiday_hours"
+													on_change="onchange_hour(allowance_detail_ids,employee_id,allowance_id)" 
+													attrs="{'readonly':[('state','in',['confirm','implement','cancel','complete'])]}"/>
+												<field name="week_hours"
+													on_change="onchange_hour(allowance_detail_ids,employee_id,allowance_id)" 
+													attrs="{'readonly':[('state','in',['confirm','implement','cancel','complete'])]}"/>
+											</group>
+										</sheet>
+									</form>
+									<tree colors="red:amounts_value &lt; 0;blue:exceed_max_hrs == True" 
+										string="Employees" create="false">
+										<field name="employee_id" required="1"
+											domain="[('department_id','=',parent.department_id),('state','=','approved')]"
+											on_change="onchange_employee_id(employee_id,parent.allowance_id)" />
+										<field name="department_id" invisible="1" />
+										<field name="period_id" invisible="1" />
+										<field name="holiday_hours" />
+										<field name="week_hours" />
+										<field name="no_hours" readonly="True" />
+										<field name="amounts_hours" readonly="True" />
+										<field name="gross_amount" readonly="True" />
+										<field name="tax" readonly="True" />
+										<field name="imprint" readonly="True" />
+										<field name="amounts_value" readonly="True" />
+										<field name="state" invisible="1" />
+								        <field name="exceed_max_hrs" invisible="1"/>
+
+									</tree>
+								</field>
+							</page>
+							<page string="Work Need after working hours">
+								<separator string="Work Need after working hours"
+									colspan="4" />
+								<field name="work_need" nolabel="1" required="1"/>
+								<separator string="Work Reasons after working hours"
+									colspan="4" />
+								<field name="work_resons" nolabel="1" />
+							</page>
+							<page string="Reasons for rejection" 
+				            	attrs="{'invisible':[('state','not in',('confirm','validate','second_validat','approved','cancel'))]}">
+				            	<field name="reasons" nolabel="1" colspan="4" attrs="{'readonly':[('state','not in',('confirm','approve'))]}"/>
+			            </page>
+						</notebook>
+					</sheet>
+					<div class="oe_chatter">
+	                    <field name="message_follower_ids" widget="mail_followers"/>
+	                    <field name="message_ids" widget="mail_thread"/>
+	                </div>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_additional_allowance_tree">
+			<field name="name">hr.additional.allowance.tree</field>
+			<field name="model">hr.additional.allowance</field>
+			<field name="arch" type="xml">
+				<tree string="additional Allowances">
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="allowance_id" />
+					<field name="period_id" />
+					<field name="month" />
+					<field name="department_id" />
+					<field name="voucher_number" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_additional_allowance_filter" model="ir.ui.view">
+			<field name="name">hr.additional.allowance.filter </field>
+			<field name="model">hr.additional.allowance</field>
+			<field name="arch" type="xml">
+				<search string="additional Allowances">
+					<group col='8' colspan='4'>
+						<field name="allowance_id" widget="selection" />
+						<field name="period_id" />
+						<field name="month" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="action_additional_allowance" model="ir.actions.act_window">
+			<field name="name">additional Allowances</field>
+			<field name="res_model">hr.additional.allowance</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_additional_allowance_tree" />
+		</record>
+
+		<record id="view_additional_allowance_line_form" model="ir.ui.view">
+			<field name="name">hr.additional.allowance.line.form</field>
+			<field name="model">hr.additional.allowance.line</field>
+			<field name="arch" type="xml">
+				<form string="Employee Overtime" version="7.0">
+					<header>
+						<button name="complete" string="Complete" states="draft"
+							type="object" />
+						<button name="confirm" string="Confirm" states="complete"
+							type="object" />
+						<button name="cancel" string="cancel" states="complete"
+							type="object" />
+						<button string="Set to Draft" name="set_to_draft" states="cancel"
+							type="object" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,complete,confirm,implement" />
+					</header>
+					<sheet>
+						<group>
+							<group>
+								<field name="company_id" groups="base.group_multi_company" 
+									attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}"/>
+								<field name="allowance_id" required="1"
+									on_change="onchange_allowance_id(allowance_id)" attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}" />
+								<field name="period_id" required="1"
+									domain="[('company_id','=',company_id),('state','!=','done')]" attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}" />
+								<field name="month" required="1" attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}"/>
+							</group>
+							<group>
+								<field name="department_id" required="1"
+									domain="[('company_id','=',company_id)]" 
+									on_change="onchange_department_id(department_id)"
+									attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}"/>
+								<field name="employee_id"
+									on_change="onchange_employee_id(employee_id,allowance_id)"
+									domain="[('department_id','=',department_id),('state','=','approved')]" 
+									attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}"/>
+							    <field name="allow_exceeding" invisible="1" />
+							    <field name="exceed_max_hrs" invisible="1"/>	
+							</group>
+
+						</group>
+						<field name="allowance_detail_ids" nolabel="1"
+							on_change="onchange_hour(allowance_detail_ids,employee_id,allowance_id)" attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}">
+							<!--tree editable="top" string="Detail">
+								<field name="date" widget="date" on_change="onchange_date(date)" />
+								<field name="hour" />
+								<field name="dayofweek" on_change="onchange_date(date)" />
+							</tree-->
+						</field>
+						<group col="4">
+							<field name="holiday_hours"
+								on_change="onchange_hour(allowance_detail_ids,employee_id,allowance_id)" 
+								attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}"/>
+							<field name="week_hours"
+								on_change="onchange_hour(allowance_detail_ids,employee_id,allowance_id)" 
+								attrs="{'readonly':[('state','in',['confirm','implement','cancel'])]}"/>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="hr_additional_allowance_detail_form" model="ir.ui.view">
+            <field name="name">hr.additional.allowance.detail</field>
+            <field name="model">hr.additional.allowance.detail</field>
+            <field name="arch" type="xml">
+                <form string="Detail form" version="7.0">
+                    <group>
+                        <field name="date" widget="date" on_change="onchange_date(date)" />
+						<field name="hour" />
+						<field name="flage" />
+						<field name="dayofweek" on_change="onchange_date(date)" />
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="hr_additional_allowance_detail_tree" model="ir.ui.view">
+            <field name="name">hr.additional.allowance.detail</field>
+            <field name="model">hr.additional.allowance.detail</field>
+            <field name="arch" type="xml">
+                <tree string="Detail" version="7.0">
+                        <field name="date" widget="date"/>
+						<field name="hour" />
+						<field name="flage" />
+						<field name="dayofweek" />
+                </tree>
+            </field>
+        </record>
+
+
+		<record model="ir.ui.view" id="view_additional_allowance_line_tree">
+			<field name="name">hr.additional.allowance.line.tree</field>
+			<field name="model">hr.additional.allowance.line</field>
+			<field name="arch" type="xml">
+				<tree string="Overtime">
+					<field name="employee_id" />
+			        <field name="allow_exceeding" />
+                    <field name="exceed_max_hrs"  invisible="1" />
+					<field name="allowance_id" />
+					<field name="period_id" />
+					<field name="holiday_hours" />
+					<field name="week_hours" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_additional_allowance_line" model="ir.actions.act_window">
+			<field name="name">Overtime</field>
+			<field name="res_model">hr.additional.allowance.line</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<!--field name="view_id" ref="view_additional_allowance_line_tree" /-->
+		</record>
+
+		<menuitem id="menu_hr_overtime" name="Additional Allowances" parent="hr.menu_hr_root"
+			sequence="4"
+			groups="base.group_hr_overview,base.group_hr_manager,base.group_hr_user" />
+
+		<menuitem id="additional_allowance_menu" name="Additional Allowances"
+			parent="menu_hr_overtime" action="action_additional_allowance"
+			groups="base.group_hr_manager,base.group_hr_user" />
+
+		<menuitem id="additional_allowance_line_menu" name="Overtime"
+			parent="menu_hr_overtime" action="action_additional_allowance_line" />
+
+
+
+		<record id="bonus_report" model="ir.ui.view">
+            <field name="name">Bonus Notification</field>
+            <field name="model">employee.additional.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="additional wage Notification" version="7.0">
+                    <group col="4" colspan="2">
+                        <field name="period_id" required="1"/>
+                        <field name="month" required="1"/>
+                    </group>
+                            <footer>
+                                <button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight" groups="base.group_hr_user,purchase_ntc.group_internal_auditor"/>
+                                or
+                                <button string="Cancel" class="oe_link" special="cancel"/>
+                            </footer>
+
+               
+                </form>
+            </field>
+        </record>
+
+
+
+		<record id="additional_report_action" model="ir.actions.act_window">
+            <field name="name">additional wage Notification</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">employee.additional.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="context">{'model_id':active_id}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.values" id="employees_salary_report_value">
+            <field name="model_id" ref="hr_additional_allowance.model_hr_additional_allowance" />
+            <field name="name">additional wage Notification</field>
+            <field name="key2">client_print_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('additional_report_action'))" />
+            <field name="key">action</field>
+            <field name="model">hr.additional.allowance</field>
+        </record>
+
+
+
+
+
+	</data>
+</openerp>

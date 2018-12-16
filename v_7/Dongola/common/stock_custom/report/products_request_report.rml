@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<document filename="customerinvoice.pdf">
+	<template pageSize="(700.0,580.0)" title="Product Request Report"
+		author="NCTR" allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="1.3cm" y1="0.9cm" width="750" height="500" />
+			<pageGraphics>
+				<image x="85" y="490" height="95" width="600">
+					[[ company.logo or removeParentNode('image') ]]
+				</image>
+			</pageGraphics>
+		</pageTemplate>
+	</template>
+
+	<stylesheet>
+		<blockTableStyle id="Table1">
+			<blockValign value="RIGHT"/>
+			<blockAlignment value="RIGHT"/>
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="9" />
+			<blockBottomPadding length="15" />
+		</blockTableStyle>
+		
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		
+		<paraStyle name="Main_header" alignment="CENTER"
+			fontName="Microsoft Sans Serif-Bold" fontSize="20.0" spaceBefore="0.0"
+			spaceAfter="20.0" />
+			
+		<paraStyle name="col_Right" fontName="Microsoft Sans Serif-Bold"
+			fontSize="14" leading="17" alignment="RIGHT" spaceBefore="15.0"
+			spaceAfter="15.0" rightIndent="90"/>
+			
+		<paraStyle name="P8" fontName="Helvetica-Bold" fontSize="12.0"
+			leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" />
+			
+		<paraStyle name="P9" fontName="Helvetica" fontSize="12.0"
+			leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" />
+
+		<images />
+	</stylesheet>
+	<story>
+	    
+		<para style="col_Right">أورنيك مخازن نمرة: [[ repeatIn(objects,'stock') ]] [[ stock.name or '0.0' ]]</para>
+		<para style="Main_header" rightIndent="90">طلب محلي لأصناف مختلفة</para>
+		
+        <para style="col_Right">
+          <font color="white"> </font>
+        </para>
+		<para style="col_Right">الجهة الطالبة:..................................................................</para>
+		<para style="col_Right">التاريخ:..........................................................................</para>
+		<blockTable colWidths="150.0,120.0,290.0" style="Table1" >
+			<tr>
+				<td>
+					<para style="P8">الكمية المصدقة </para>
+				</td>
+				<td>
+					<para style="P8">الكمية المطلوبة</para>
+				</td>
+				<td>
+					<para style="P8">إسم الصنف</para>
+				</td>
+			</tr>
+			<tr> [[ repeatIn(stock.move_lines,'move') ]]
+				<td>
+					<para style="P9">[[ move.qty or '0.0' ]]</para>
+				</td>
+				<td>
+					<para style="P9">[[ move.product_qty or '0.0' ]]</para>
+				</td>
+				<td>
+					<para style="P9">[[ move.product_id.name ]]</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable  colWidths="150.0,120.0,290.0" style="Table1">
+         <tr> 
+             <td> 
+                <para style="P9">..........</para>  
+             </td>
+	         <td> 
+	            <para style="P9">..........</para> 
+	         </td>
+	         <td> 
+	            <para style="P9">توقيع الجهة الطالبة:.....................</para> 
+	         </td>
+        </tr>
+        </blockTable>
+        
+		<para style="col_Right">المصدق بالصرف ..........................................................................</para>
+		<para style="col_Right">إستلمت الأصناف المذكورة أعلاه</para>
+		<para style="col_Right">إمضاء ..........................................................................</para>
+	</story>
+</document>

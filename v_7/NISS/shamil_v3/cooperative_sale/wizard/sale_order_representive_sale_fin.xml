@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="id_sale_order_representive_wiz_fin_view" model="ir.ui.view">
+            <field name="name">sale order representive fin Form</field>
+            <field name="model">sale.order.representive.fin</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Sale Order representive Wizard" version="7.0">
+        			<separator string="Sale Order Representive Process" colspan="4"/>
+            			<group>
+            			<group col="4" colspan="4">
+            		    		<field name="process_type"  />
+            				<!--field name="payment_type" /-->
+                        	</group>
+            			<group col="4" colspan="4">
+            				<field name="order_cancel_lines" domain="[('state','=','invoice')]"/>
+
+            			</group>
+            			</group>
+	    			<footer>
+	 		<!--button name="order_process" string="Execute" type="object" 
+                               class="oe_highlight" groups="cooperative_sale.group_co_operative_sales_financial" attrs="{'invisible': [('process_type','==','False')]}"/-->
+
+	 		<button name="order_print" string="Print order" type="object" 
+                               class="oe_highlight" groups="cooperative_sale.group_co_operative_sales_financial" attrs="{'invisible': [('process_type','==','True')]}"/>
+                        or
+			<button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link" colspan="2"/>
+                        	</footer>
+               </form>
+            </field>
+	    </record>
+
+        <record id="action_sale_order_representive_fin_wiz" model="ir.actions.act_window">
+            <field name="name">sale order representive fin action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.representive.fin</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="id_sale_order_representive_wiz_fin_view"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem
+                parent="base.menu_base_partner" 
+               id="menu_act_sale_order_representive_fin"
+               name="Sale Financial Process"
+			   groups="cooperative_sale.group_co_operative_sales_financial,cooperative_sale.group_co_operative_sales_admin" 
+                />
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Process Sale Financial"
+                parent="menu_act_sale_order_representive_fin"
+                action="action_sale_order_representive_fin_wiz"
+                id="act_sale_order_representive_fin"
+                />
+
+    </data>
+</openerp>

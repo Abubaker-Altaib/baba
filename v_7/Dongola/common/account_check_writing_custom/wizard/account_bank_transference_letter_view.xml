@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Bank Transference Letter Wizard Form -->
+		<record id="view_bank_transference_letter" model="ir.ui.view">
+			<field name="name">Bank Transference Letter</field>
+			<field name="model">wizard.bank.transference.letter</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Bank Transference Letter" version="7.0">
+					<group colspan="4" col="6">
+						<field name="name1" />
+						<newline />
+						<field name="name2" />
+						<newline />
+						<field name="bank" />
+						<newline />
+						<!--field name="seq_id" /><newline/> <field name="bank_letter_seq" 
+							/><newline/> <field name="seq" /><newline/ -->
+					</group>
+					<separator string="" colspan="4" />
+					<footer>
+						<button name="act_bank_letter" string="Print" type="object"
+							class="oe_highlight" />
+						or
+						<button string="Cancel" class="oe_link" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<!-- Bank Transference Letter Action -->
+		<record id="bank_transference_letter" model="ir.actions.act_window">
+			<field name="name">Bank Transference Letter</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">wizard.bank.transference.letter</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_bank_transference_letter" />
+			<field name="context">{'record_id' : active_id}</field>
+			<!--field name="domain">[('journal_id.type', '=', 'bank')]</field -->
+			<field name="target">new</field>
+		</record>
+
+
+		<!-- Bank Transference Letter Sequence -->
+		<record id="seq_type_bank_transference_letter" model="ir.sequence.type">
+			<field name="name">Letter Number</field>
+			<field name="code">wiz_bnk_trans_let</field>
+		</record>
+		<record id="seq_bank_transference_letter" model="ir.sequence">
+			<field name="name">Letter Number</field>
+			<field name="code">wiz_bnk_trans_let</field>
+			<field eval="2" name="padding" />
+			<field name="suffix">ش ك س م</field>
+			<field name="prefix">%(year)s/131000/</field>
+		</record>
+
+		<!-- Bank Transference Letter Wizard -->
+		<act_window id="bank_transference_letter" key2="client_action_multi"
+			name="Bank Transference Letter" res_model="wizard.bank.transference.letter"
+			src_model="account.move" view_id="view_bank_transference_letter"
+			domain="[('journal_id.type', '=', 'bank')]" view_mode="form" target="new"
+			view_type="form" />
+	</data>
+</openerp>

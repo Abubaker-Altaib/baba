@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+       <record id="view_add_items_operation_wizard" model="ir.ui.view">
+            <field name="name">Add Items Operation Wizard</field>
+            <field name="model">add.items.operation.wizard</field>
+            <field name="arch" type="xml">
+                   <form string="Add Items Operation" version="7.0">
+                      <group col="2" colspan="2">
+                         <group >
+              	         <field name="operation_date" required="1"/>
+                      </group>
+                      
+                         <newline />
+			      <field colspan="4" name="custody_ids" mode="tree" >
+				     <tree editable="bottom" string="Custody Lines">
+				          <field name="category_company_id" required="1"  on_change="onchange_company(category_company_id)" widget="selection"/>
+				          <field name="category_id" required="1"  widget="selection"/>
+				          <field name="version_id" required="1" domain="[( 'category_id' , '=' , category_id )]" />
+				          <field name="quantity" required="1"/>
+				     </tree>
+			      </field>
+                              
+                      </group>
+                              <footer>
+				  <button string="Add Custodies" name="create_custodies"  type="object" icon="STOCK_EXECUTE" confirm="Are you sure you want to apply this operation"/>
+                                   or
+                                  <button string="Cancel" special="cancel" icon="gtk-cancel"/>
+                             </footer>
+                   </form>
+            </field>
+        </record>
+
+
+
+               <record id="action_add_items_operation_wizard" model="ir.actions.act_window">
+                       <field name="name">Action For Add Items Operation</field>
+                       <field name="res_model">add.items.operation.wizard</field>
+                       <field name="view_type">form</field>
+                       <field name="view_mode">form</field>
+                       <field name="view_id" ref="view_add_items_operation_wizard"/>
+                       <field name="target">new</field>
+                </record>
+       
+		
+
+      
+       
+
+        <menuitem
+            action="action_add_items_operation_wizard"
+            id="menu_add_items_operation_wizard"
+            parent="menu_custodies_operations"
+            name="Add New Custodies Operation"
+                 sequence="2" />
+
+
+
+            
+    </data>
+</openerp>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      
+		<record id="stock_picking_out_inherit_sale" model="ir.ui.view">
+            <field name="name">Outgoing picking Inherited</field>
+            <field name="model">stock.picking</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_out_form"/>
+            <field name="arch" type="xml">
+                <field name="move_type" position="after">
+                    <field name="exchange_id"/>
+                </field>
+            </field>
+        </record>
+
+		<record id="stock_picking_internl_inherit" model="ir.ui.view">
+            <field name="name">Internl picking Inherited</field>
+            <field name="model">stock.picking</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <field name="move_type" position="after">
+                    <field name="exchange_id"/>
+                </field>
+            </field>
+        </record>
+
+		<record id="stock_picking_inl_inherit" model="ir.ui.view">
+            <field name="name">IN picking Inherited</field>
+            <field name="model">stock.picking</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_in_form"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="exchange_id"/>
+                </field>
+            </field>
+        </record>
+
+
+
+		<act_window
+            domain="[('exchange_id', '=', active_id)]"
+            id="act_exchange_order_2_stock_picking"
+            name="Stock Picking"
+            res_model="stock.picking"
+            src_model="exchange.order"
+             />
+    </data>
+</openerp>

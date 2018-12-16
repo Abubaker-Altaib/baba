@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+       <!-- activity     -->
+       <record model="workflow.activity" id="act_unit_manag">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">unit_manag</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'unit_manag'})</field>
+		</record>
+
+		<record model="workflow.activity" id="act_dep_manag">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">dep_manag</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'dep_manag'})</field>
+		</record>
+
+		<record model="workflow.activity" id="act_general_dep">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">general_dep</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'general_dep'})</field>
+		</record>
+
+		<record model="workflow.activity" id="act_hr_finance1">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">hr_finance1</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'hr_finance1'})</field>
+		</record>
+
+		<record model="workflow.activity" id="act_hr_finance2">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">hr_finance2</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'hr_finance2'})</field>
+		</record>
+
+		<record model="workflow.activity" id="act_general_manag">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">general_manag</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'general_manag'})</field>
+		</record>
+
+		<record model="workflow.activity" id="act_review">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">general_manag</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'review'})</field>
+		</record>
+
+		<!--   Leave Cut Activities   /-->
+		<record model="workflow.activity" id="act_general_dep_cut">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">general_dep_cut</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'general_dep_cut'})</field>
+		</record>
+
+		<record model="workflow.activity" id="act_hr_finance1_cut">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">hr_finance1_cut</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'hr_finance1_cut'})</field>
+		</record>
+
+		<record model="workflow.activity" id="act_hr_finance2_cut">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">hr_finance2_cut</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'hr_finance2_cut'})</field>
+		</record>
+
+		<record model="workflow.activity" id="act_general_manag_cut">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">general_manag_cut</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'general_manag_cut'})</field>
+		</record>
+
+
+	<!--      transition-->
+		<record model="workflow.transition" id="holiday_draft_act_hr_finance2"> 
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="act_hr_finance2" />
+			<field name="condition">check_sick_leave()</field>
+			<field name="signal">confirm</field>
+		</record>
+		<record model="workflow.transition" id="hr_holidays.holiday_draft2confirm"> 
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="hr_holidays.act_confirm" />
+			<field name="condition">not check_sick_leave() and not check_unit() and not_manger()</field>
+			<field name="signal">confirm</field>
+		</record>
+		<record model="workflow.transition" id="holiday_draft_act_unit_manag"> 
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="act_unit_manag" />
+			<field name="condition">not check_sick_leave() and (check_unit() and not check_general_dep_manager() or check_unit_manager())</field>
+			<field name="signal">confirm</field>
+		</record>
+		<record model="workflow.transition" id="holiday_draft_act_dep_manag"> 
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="act_dep_manag" />
+			<field name="condition">not check_sick_leave() and not check_unit() and check_dep_manager()</field>
+			<field name="signal">confirm</field>
+		</record>
+		<record model="workflow.transition" id="holiday_draft_act_hr_finance1"> 
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="act_hr_finance1" />
+			<field name="condition">not check_sick_leave() and check_general_dep_manager()</field>
+			<field name="signal">confirm</field>
+		</record>
+		<record model="workflow.transition" id="holiday_draft_act_general_dep"> 
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="act_hr_finance2" />
+			<field name="condition">not check_sick_leave() and check_general_manager()</field>
+			<field name="signal">confirm</field>
+		</record>
+
+		<record model="workflow.transition" id="holiday_confirm_act_unit_manag"> 
+	        <field name="act_from" ref="hr_holidays.act_confirm" />
+	        <field name="act_to" ref="act_unit_manag" />
+	        <field name="signal">unit_manager_app</field>
+	        <field name="condition">manager()</field>
+	    </record>
+
+	    <record model="workflow.transition" id="hr_holidays.holiday_confirm2refuse">
+    		<field name="act_from" ref="hr_holidays.act_confirm" />
+	        <field name="act_to" ref="hr_holidays.act_refuse" />
+	        <field name="condition">manager()</field>
+    		<field name="signal">unit_manager_refuse</field>
+	    </record>
+
+		<record model="workflow.transition" id="holiday_unit_manag_dep_manag"> 
+	        <field name="act_from" ref="act_unit_manag" />
+	        <field name="act_to" ref="act_dep_manag" />
+	        <field name="condition">not check_unit() and manager()</field>
+	        <field name="signal">dep_manager_app</field>
+	    </record>
+	    <record model="workflow.transition" id="act_unit_manag_act_general_dep"> 
+	        <field name="act_from" ref="act_unit_manag" />
+	        <field name="act_to" ref="act_general_dep" />
+	        <field name="condition">check_unit() and not check_unpaid() and manager()</field>
+	        <field name="signal">dep_manager_app</field>
+	    </record>
+		<!--record model="workflow.transition" id="act_unit_manag_act_review"> 
+	        <field name="act_from" ref="act_unit_manag" />
+	        <field name="act_to" ref="act_review" />
+	        <field name="condition">check_unit() and check_unpaid() and manager()</field>
+	        <field name="signal">dep_manager_app</field>
+	    </record-->
+
+		<record model="workflow.transition" id="act_unit_manag_finance1"> 
+	        <field name="act_from" ref="act_unit_manag" />
+	        <field name="act_to" ref="act_hr_finance1" />
+	        <field name="condition">check_unit() and check_unpaid() and manager()</field>
+	        <field name="signal">dep_manager_app</field>
+	    </record>
+
+	    <record model="workflow.transition" id="holiday_unit_manag_refuse"> 
+	    	<field name="act_from" ref="act_unit_manag" />
+        	<field name="act_to" ref="hr_holidays.act_refuse" />
+        	<field name="condition">manager()</field>
+	    	<field name="signal">dep_manager_refuse</field>
+	    </record>
+
+		<record model="workflow.transition" id="holiday_dep_manag_general_dep"> 
+	        <field name="act_from" ref="act_dep_manag" />
+	        <field name="act_to" ref="act_general_dep" />
+	        <field name="condition">manager() and not check_unpaid()</field>
+	        <field name="signal">general_dep_app</field>
+	    </record>
+		<!--record model="workflow.transition" id="holiday_dep_manag_act_review"> 
+	        <field name="act_from" ref="act_dep_manag" />
+	        <field name="act_to" ref="act_review" />
+	        <field name="condition">manager() and check_unpaid()</field>
+	        <field name="signal">general_dep_app</field>
+	    </record-->
+		<record model="workflow.transition" id="holiday_dep_manag_finance1"> 
+	        <field name="act_from" ref="act_dep_manag" />
+	        <field name="act_to" ref="act_hr_finance1" />
+	        <field name="condition">manager() and check_unpaid()</field>
+	        <field name="signal">general_dep_app</field>
+	    </record>
+
+	    <record model="workflow.transition" id="holiday_dep_manag_refuse"> 
+			<field name="act_from" ref="act_dep_manag" />
+        	<field name="act_to" ref="hr_holidays.act_refuse" />
+			<field name="condition">manager()</field>
+			<field name="signal">general_dep_refuse</field>
+	    </record>
+
+	    <record model="workflow.transition" id="holiday_general_dep_hr_finance2"> 
+	        <field name="act_from" ref="act_general_dep" />
+	        <field name="act_to" ref="act_hr_finance2" />
+	        <field name="condition">True</field>
+	        <field name="signal">fin_humm_mgr</field>
+	    </record>
+
+	    <record model="workflow.transition" id="holiday_general_dep_refuse">
+			<field name="act_from" ref="act_general_dep" />
+        	<field name="act_to" ref="hr_holidays.act_refuse" />
+			<field name="condition">True</field>
+			<field name="signal">refuse</field>
+	    </record>
+
+		<record model="workflow.transition" id="holiday_act_review_hr_finance1"> 
+	        <field name="act_from" ref="act_review" />
+	        <field name="act_to" ref="act_hr_finance1" />
+	        <field name="condition">True</field>
+	        <field name="signal">review_app</field>
+	    </record>
+
+	    <record model="workflow.transition" id="holiday_act_review_refuse"> 
+	        <field name="act_from" ref="act_review" />
+	        <field name="act_to" ref="hr_holidays.act_refuse" />
+	        <field name="condition">True</field>
+	        <field name="signal">review_refuse</field>
+	    </record>
+		<record model="workflow.transition" id="holiday_hr_finance1_general_dep"> 
+	        <field name="act_from" ref="act_hr_finance1" />
+	        <field name="act_to" ref="act_general_dep" />
+	        <field name="condition">True</field>
+	        <field name="signal">general_manag_app</field>
+	    </record>
+
+	    <record model="workflow.transition" id="holiday_hr_finance1_refuse"> 
+	        <field name="act_from" ref="act_hr_finance1" />
+	        <field name="act_to" ref="hr_holidays.act_refuse" />
+	        <field name="condition">True</field>
+	        <field name="signal">general_manag_refuse</field>
+	    </record>
+
+	     <record model="workflow.transition" id="holiday_hr_finance2_validate"> 
+	        <field name="act_from" ref="act_hr_finance2" />
+	        <field name="act_to" ref="hr_holidays.act_validate" />
+	        <field name="condition">True</field>
+	        <field name="signal">validate</field>
+	    </record>
+
+
+	    <!--  Leave Cut Transitions /-->
+
+	    <record model="workflow.transition" id="hr_holidays_custom.t30">
+			<field name="act_from" ref="hr_holidays.act_validate" />
+			<field name="act_to" ref="hr_holidays_custom.act_cut" />
+			<field name="condition">manager()</field>
+			<field name="signal">cut_leave</field>
+		</record>
+
+		<record model="workflow.transition" id="holiday_act_cut_act_hr_finance1_cut"> 
+	        <field name="act_from" ref="hr_holidays_custom.act_cut" />
+	        <field name="act_to" ref="act_hr_finance1_cut" />
+	        <field name="condition">check_unpaid() and manager()</field>
+	        <field name="signal">general_dep_app_cut</field>
+	    </record>
+		<record model="workflow.transition" id="holiday_act_cut_general_dep_cut"> 
+	        <field name="act_from" ref="hr_holidays_custom.act_cut" />
+	        <field name="act_to" ref="act_general_dep_cut" />
+	        <field name="condition">manager() and not check_unpaid()</field>
+	        <field name="signal">general_dep_app_cut</field>
+	    </record>
+
+		<record model="workflow.transition" id="holiday_act_cut_act_hr_finance2_cut"> 
+	        <field name="act_from" ref="hr_holidays_custom.act_cut" />
+	        <field name="act_to" ref="act_hr_finance2_cut" />
+	        <field name="condition">True</field>
+	        <field name="signal">fin_humm_mgr_cut</field>
+	    </record>
+		
+		<record model="workflow.transition" id="holiday_act_cut_act_general_dep_cut"> 
+	        <field name="act_from" ref="hr_holidays_custom.act_cut" />
+	        <field name="act_to" ref="act_general_dep_cut" />
+	        <field name="condition">True</field>
+	        <field name="signal">general_manag_app_cut</field>
+	    </record>
+
+		<record model="workflow.transition" id="holiday_approve_cut_hr_finance1_cut_unit"> 
+	        <field name="act_from" ref="hr_holidays_custom.act_approve_cut" />
+	        <field name="act_to" ref="act_hr_finance1_cut" />
+	        <field name="condition">check_unpaid() and check_unit()</field>
+	        <!--field name="signal">general_dep_app_cut</field-->
+	    </record>
+		<record model="workflow.transition" id="holiday_approve_cut_hr_finance1_cut"> 
+	        <field name="act_from" ref="hr_holidays_custom.act_approve_cut" />
+	        <field name="act_to" ref="act_hr_finance1_cut" />
+	        <field name="condition">check_unpaid() and manager()</field>
+	        <field name="signal">general_dep_app_cut</field>
+	    </record>
+		<record model="workflow.transition" id="holiday_approve_cut_general_dep_cut_unit"> 
+	        <field name="act_from" ref="hr_holidays_custom.act_approve_cut" />
+	        <field name="act_to" ref="act_general_dep_cut" />
+	        <field name="condition">check_unit() and not check_unpaid()</field>
+	        <!--field name="signal">general_dep_app_cut</field-->
+	    </record>
+		
+		<record model="workflow.transition" id="holiday_approve_cut_general_dep_cut"> 
+	        <field name="act_from" ref="hr_holidays_custom.act_approve_cut" />
+	        <field name="act_to" ref="act_general_dep_cut" />
+	        <field name="condition">manager() and not check_unpaid()</field>
+	        <field name="signal">general_dep_app_cut</field>
+	    </record>
+
+	    <record model="workflow.transition" id="hr_holidays.approve_cut_validate"> 
+			<field name="act_from" ref="hr_holidays_custom.act_approve_cut" />
+        	<field name="act_to" ref="hr_holidays.act_validate" />
+			<field name="condition">True</field>
+			<field name="signal">general_dep_refuse_cut</field>
+	    </record>
+
+
+	    <record model="workflow.transition" id="holiday_general_dep_cut_hr_finance2_cut"> 
+	        <field name="act_from" ref="act_general_dep_cut" />
+	        <field name="act_to" ref="act_hr_finance2_cut" />
+	        <field name="condition">True</field>
+	        <field name="signal">fin_humm_mgr_cut</field>
+	    </record>
+
+	    <record model="workflow.transition" id="holiday_general_dep_cut_validate"> 
+	        <field name="act_from" ref="act_general_dep_cut" />
+	        <field name="act_to" ref="hr_holidays.act_validate" />
+	        <field name="condition">True</field>
+	        <field name="signal">fin_humm_mgr_refuse_cut</field>
+	    </record>
+		<record model="workflow.transition" id="holiday_hr_finance1_cut_act_general_dep_cut"> 
+	        <field name="act_from" ref="act_hr_finance1_cut" />
+	        <field name="act_to" ref="act_general_dep_cut" />
+	        <field name="condition">True</field>
+	        <field name="signal">general_manag_app_cut</field>
+	    </record>
+
+	    <record model="workflow.transition" id="holiday_hr_finance1_cut_validate"> 
+	        <field name="act_from" ref="act_hr_finance1_cut" />
+	        <field name="act_to" ref="hr_holidays.act_validate" />
+	        <field name="condition">True</field>
+	        <field name="signal">general_manag_refuse_cut</field>
+	    </record>
+
+	    <record model="workflow.transition" id="t50">
+			<field name="act_from" ref="act_hr_finance2_cut" />
+			<field name="act_to" ref="hr_holidays_custom.act_done_cut" />
+			<field name="signal">done_cut</field>
+		</record>
+
+		
+		<!--Permission -->
+		<record model="workflow.transition" id="hr_holidays_custom.t140">
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="hr_holidays.act_confirm" />
+			<field name="condition">not check_general_manager()</field>
+			<field name="signal">permission_confirm</field>
+		</record>
+
+		<record model="workflow.transition" id="permission_general_manag">
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="act_hr_finance2" />
+			<field name="condition">check_general_manager()</field>
+			<field name="signal">permission_confirm</field>
+		</record>
+
+		<record model="workflow.transition" id="holiday_confirm_act_hr_finance2"> 
+			<field name="act_from" ref="hr_holidays.act_confirm" />
+			<field name="act_to" ref="act_hr_finance2" />
+			<field name="condition">manager()</field>
+			<field name="signal">permission_hr_finance2</field>
+		</record>
+	    
+		
+	</data>
+</openerp>

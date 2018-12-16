@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_vendor_receipt_form">
+			<field name="name">account.voucher.receipt.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher.view_vendor_receipt_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='reconcile']" position="attributes">
+					<attribute name="on_change">
+						onchange_reconcile(reconcile,partial_reconcile,amount,amount_unreconciled,move_line_id,context)
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='reconcile']" position="before">
+					<field name="partial_reconcile"
+						on_change="onchange_reconcile(reconcile,partial_reconcile,amount,amount_unreconciled,move_line_id,context)" />
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_bank_and_cash_form">
+			<field name="name">account.voucher.bank_and_cash.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher_wafi.view_bank_and_cash_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='operation_type']" position="attributes">
+					<attribute name="on_change">
+						onchange_operation_type(operation_type,partner_id)
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='partner_id']" position="attributes">
+					<attribute name="on_change">
+						onchange_operation_type(operation_type,partner_id)
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_dr_ids']" position="attributes">
+					<attribute name="attrs">{'invisible':[('operation_type','=','treasury')]}
+					</attribute>
+				</xpath>
+				<xpath expr="//button[@name='receive_post']" position="replace">
+					<field name="reference" invisible="1" />
+					<field name="writeoff_acc_id" invisible="1" />
+					<field name="payment_option" invisible="1" />
+					<div states="receive">
+						<div attrs="{'invisible':[('pay_type','in',['chk','letter']),('chk_seq','=',False)]}">
+							<button name="receive_post" string="Receive"
+								attrs="{'invisible':[('operation_type','=','treasury')]}"
+								groups="account_voucher_custom.group_account_expense_pay" />
+							<button name="%(account_voucher.act_pay_voucher)d"
+								context="{'narration':narration, 'title':'Bill Payment', 'type':'receipt', 'partner_id': partner_id,'amount':amount, 'move':move_id}"
+								attrs="{'invisible':[('operation_type','!=','treasury')]}"
+								groups="account_voucher_custom.group_account_expense_pay" type="action"
+								string="Receive..." class="oe_highlight" />
+						</div>
+					</div>
+				</xpath>
+				<xpath expr="//page[@string='Journal Items']" position="attributes">
+					<attribute name="attrs">
+					{'invisible':[('state','not in',['receive','posted','done'])]}
+					</attribute>
+				</xpath>
+			</field>
+		</record>
+	</data>
+</openerp>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    <record id="view_loan_add_detail" model="ir.ui.view">
+            <field name="name">Employee Loan Request</field>
+            <field name="model">hr.employee.loan.request</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Loan Request">
+			<field name="company_id" colspan="4" widget="selection" groups="base.group_multi_company"/>
+		   	<field name="department_id" domain= "[('company_id','=',company_id)]" on_change="onchange_employee(department_id)" colspan="4" />
+		   	<field name="loan_id" domain= "[('active','=',True)]" colspan="4"/>
+			<field name="start_date" />
+			<field name="end_date" />
+                        <notebook colspan="4">
+                	    <page string="Employees">
+				<field name="employee_id"  on_change="onchange_employee(department_id)" nolabel="1"/>
+			  </page>
+		        </notebook>
+                        <newline/>
+		        <group col="2" colspan="1">
+			    <button special="cancel" string="Close" type="object" class="oe_highlight"/>
+	 		    <button name="assign_emp_loan" string="Request" type="object"  class="oe_highlight"/>
+		        </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="Employee_loan_request_action" model="ir.actions.act_window">
+            <field name="name">Employee Loan Request</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee.loan.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="loan_request_menu" parent="hr.menu_hr_main" name="Loans"/>
+        <menuitem  action="Employee_loan_request_action"  id="menu_loan_request" parent="loan_request_menu"  name="Employee Loan Request" />
+	
+    </data>
+</openerp>

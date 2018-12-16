@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_employee_process_wizard" model="ir.ui.view">
+            <field name="name">hr.employee.process.wizard.form</field>
+            <field name="model">hr.employee.process.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Jobs" version="7.0">
+                    <group>
+                        <field name="type" invisible="1"/>
+                        <field name="approve_date"/>          
+                    </group>
+                    <notebook>
+                        <page string="processes">
+                            <field name="department_movement_ids" attrs="{'invisible' : [('type' , '!=' , 'department')]}" domain="[('state' , '=' , 'draft')]"/> 
+                            <field name="job_movement_ids" domain="[('state' , '=' , 'draft')]" attrs="{'invisible' : [('type' , '!=' , 'job')]}"/> 
+                            <field name="yearly_bonus_ids" domain="[('state' , '=' , 'draft')]" attrs="{'invisible' : [('type' , '!=' , 'bonus')]}"/> 
+                            <field name="promotion_ids" domain="[('state' , '=' , 'draft'), ('process_type' , '=', 'promotion')]" attrs="{'invisible' : [('type' , '!=' , 'promotion')]}"/> 
+                            <field name="isolate_ids" domain="[('state' , '=' , 'draft') , ('process_type' , '=', 'isolate')]" attrs="{'invisible' : [('type' , '!=' , 'isolate')]}"/>  
+                        </page>
+                    </notebook>
+                    <footer groups="hr_custom_military.hr_emp_process_user">
+                        <button name="do_approve" type="object" string="Approve" class="oe_highlight"/> or                          
+                        <button name="cancel" string="Cancel" special="cancel" class="oe_link"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_employee_process_wizard" model="ir.actions.act_window">
+            <field name="name">Approve Employee Process</field>
+            <field name="res_model">hr.employee.process.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_type' : 'department'}</field>
+        </record>
+        <record id="action_promotion_process_wizard" model="ir.actions.act_window">
+            <field name="name">Approve Employee Process</field>
+            <field name="res_model">hr.employee.process.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_type' : 'promotion'}</field>
+        </record>
+        <record id="action_isolate_process_wizard" model="ir.actions.act_window">
+            <field name="name">Approve Employee Process</field>
+            <field name="res_model">hr.employee.process.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_type' : 'isolate'}</field>
+        </record>
+        <record id="action_bonus_process_wizard" model="ir.actions.act_window">
+            <field name="name">Approve Employee Process</field>
+            <field name="res_model">hr.employee.process.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_type' : 'bonus'}</field>
+        </record>
+        <record id="action_job_process_wizard" model="ir.actions.act_window">
+            <field name="name">Approve Employee Process</field>
+            <field name="res_model">hr.employee.process.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_type' : 'job'}</field>
+        </record>
+        <menuitem id="approve_process_wizard_menu" name="Approve Employee Process"  parent="hr_custom.menu_hr_payroll_processes"/>
+        <menuitem id="department_process_wizard_menu" name="Approve Department Movements" action="action_employee_process_wizard" parent="approve_process_wizard_menu"/>
+        <menuitem id="promotion_process_wizard_menu" name="Approve Promotion Process" action="action_promotion_process_wizard" parent="approve_process_wizard_menu"/>
+        <menuitem id="isolate_process_wizard_menu" name="Approve Isolation Process" action="action_isolate_process_wizard" parent="approve_process_wizard_menu"/>
+        <menuitem id="bonus_process_wizard_menu" name="Approve Yearly Bonus " action="action_bonus_process_wizard" parent="approve_process_wizard_menu"/>
+        <menuitem id="job_process_wizard_menu" name="Approve Job Movements" action="action_job_process_wizard" parent="approve_process_wizard_menu"/>
+
+    </data>
+</openerp>

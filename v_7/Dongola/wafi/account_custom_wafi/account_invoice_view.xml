@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<record id="account_invoice_inheret" model="ir.ui.view">
+			<field name="name">account.invoice.supplier.form</field>
+			<field name="model">account.invoice</field>
+			<field name="inherit_id" ref="account.invoice_supplier_form" />
+			<field name="priority">1</field>
+			<field name="arch" type="xml">
+
+				<xpath expr="//button[@name='invoice_open']" position="replace">
+					<button name="to_complete" states="draft" string="Complete"
+						class="oe_highlight" type="workflow" />
+					<button name="to_confirm" states="complete"
+						string="Financial Controller Confirm" class="oe_highlight" type="workflow"
+						groups="account_custom.group_account_controller" />
+					<button name="to_review" states="confirm" string="Internal Auditor Review"
+						class="oe_highlight" type="workflow" groups="account_custom.group_account_auditor" />
+					<button name="invoice_open" states="review" string="Validate"
+						class="oe_highlight" type="workflow" groups="account.group_account_manager" />
+					<button name="generate_orders" states="open" string="Generate Payments"
+						class="oe_highlight" type="object"
+						attrs="{'invisible':['|',('move_creation','!=','voucher')]}" />
+					<button name="action_cancel" string="Cancel" class="oe_highlight" type="object"
+						attrs="{'invisible':[('state','in',('draft','open','paid','cancel'))]}" />
+				</xpath>
+				<xpath expr="//button[@name='invoice_cancel']" position="replace" />
+				<xpath expr="//field[@name='state']" position="attributes">
+					<attribute name="statusbar_visible">"draft ,complete ,confirm ,review ,paid"</attribute>
+				</xpath>
+				<xpath expr="//field[@name='invoice_line_tax_id']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax</attribute>
+				</xpath>
+				<xpath expr="//field[@name='tax_line']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax</attribute>
+				</xpath>
+				<xpath expr="//field[@name='amount_untaxed']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax</attribute>
+				</xpath>
+				<xpath expr="//field[@name='amount_tax']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax</attribute>
+				</xpath>
+				<xpath expr="//button[@name='button_reset_taxes']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax</attribute>
+				</xpath>
+				<xpath expr="//field[@name='fiscal_position']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='account_id']" position="attributes">
+
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='origin']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='reference']" position="attributes">
+					<attribute name="readonly">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='reference_type']" position="attributes">
+					<attribute name="readonly">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='journal_id']" position="after">
+					<field name="move_creation" class="oe_inline" />
+					<field name="condition_descriptions" class="oe_inline" />
+				</xpath>
+				<xpath expr="//field[@name='supplier_invoice_number']" position="after">
+					<field name="revocable_conditions" class="oe_inline" />
+					<field name="order_nature" class="oe_inline" />
+				</xpath>
+				<xpath expr="//field[@name='payment_ids']" position="attributes">
+				<attribute name="attrs">
+						{'invisible': [('move_creation','!=','invoice')]}
+					</attribute>
+				</xpath>
+				<xpath expr="//page[@string='Payments']" position="inside">
+					<field name="voucher_ids" attrs="{'invisible':[('move_creation','!=','voucher')]}" />
+				</xpath>
+				<xpath expr="//field[@name='payment_term']" position="attributes">
+					<attribute name="required">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='period_id']" position="attributes">
+					<attribute name="required">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='date_invoice']" position="replace">
+					<field name="date_invoice" on_change="onchange_date(date_invoice, company_id)" />
+				</xpath>
+				<xpath expr="//field[@name='quantity']" position="before">
+						<field name="budget_confirm_id" />
+			    </xpath>
+			
+			</field>
+		</record>
+		
+		<record id="account_invoice_pay" model="ir.ui.view">
+			<field name="name">account.invoice.supplier.pay</field>
+			<field name="model">account.invoice</field>
+			<field name="inherit_id" ref="account_voucher.view_invoice_supplier" />
+			<field name="arch" type="xml">
+			    	<xpath expr="//button[@name='invoice_pay_customer']" position="attributes">
+						<attribute name="attrs">{'invisible':['|',('move_creation','!=','invoice')]}</attribute>
+			    	</xpath>
+			</field>
+		</record>
+		
+		<record id="invoice_form_inheret" model="ir.ui.view">
+			<field name="name">account.invoice.form</field>
+			<field name="model">account.invoice</field>
+			<field name="inherit_id" ref="account.invoice_form" />
+			<field name="priority">1000</field>
+			<field name="arch" type="xml">
+
+				<xpath expr="//field[@name='invoice_line_tax_id']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+				</xpath>
+				<xpath expr="//field[@name='tax_line']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+				</xpath>
+				<xpath expr="//field[@name='amount_untaxed']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+				</xpath>
+				<xpath expr="//field[@name='amount_tax']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+				</xpath>
+				<xpath expr="//label[@for='amount_tax']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+				</xpath>
+				<xpath expr="//button[@name='button_reset_taxes']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+				</xpath>
+				<xpath expr="//field[@name='date_invoice']" position="replace">
+					<field name="date_invoice" on_change="onchange_date(date_invoice, company_id)" />
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.cron" id="account_invoice_cron">
+			<field name="name">Invoice Scheduler</field>
+			<field name="interval_number">1</field>
+			<field name="interval_type">days</field>
+			<field name="numbercall">-1</field>
+			<field name="doall" eval="False" />
+			<field name="model" eval="'account.invoice'" />
+			<field name="function" eval="'run_scheduler'" />
+			<field name="args" eval="'()'" />
+		</record>
+		
+        <record id="account_invoice_form_inheret" model="ir.ui.view">
+			<field name="name">account.invoice.form</field>
+			<field name="model">account.invoice</field>
+			<field name="inherit_id" ref="account.invoice_form" />
+			<field name="arch" type="xml">
+			
+		    	<xpath expr="//page[2]//field[@name='name']" position="replace"/>
+		    	
+		    	<xpath expr="//field[@name='partner_id']" position="after">
+		    	    <field name="name" required="1"/>
+		    	</xpath>
+		    	<xpath expr="//field[@name='comment']" position="attributes">
+		    	    <attribute name="required">True</attribute>
+		    	</xpath>
+	    	    <xpath expr="//field[@name='fiscal_position']" position="attributes">
+						<attribute name="attrs">{'invisible':1}</attribute>
+		    	</xpath>
+		    	
+	    	    <xpath expr="//field[@name='payment_term']" position="attributes">
+						<attribute name="attrs">{'invisible':1}</attribute>
+		    	</xpath>
+		    	
+	    	    <xpath expr="//field[@name='account_id']" position="attributes">
+    	            <attribute name="attrs">{'required':[('state','=','complete')],'readonly':[('state','not in',('complete'))]}</attribute>
+					<attribute name="groups">account.group_account_manager,account_voucher_custom.group_account_revenue</attribute>
+		    	</xpath>
+		    	
+	    	    <xpath expr="//field[@name='invoice_line']" position="attributes">
+					<attribute name="attrs">{'required':[('state','=','complete')],'readonly':[('state','not in',('complete'))]}</attribute>
+					<attribute name="groups">account.group_account_manager,account_voucher_custom.group_account_revenue</attribute>
+		    	</xpath>
+		    	
+				<xpath expr="//button[@name='invoice_open']" position="replace">
+				
+					<button name="to_complete_custom" states="draft" string="Complete"
+						class="oe_highlight" type="workflow" groups="account.group_account_invoice"/>
+						
+					<button name="to_confirm_custom" states="complete"
+						string="Accountant Confirm" class="oe_highlight" type="workflow"
+						groups="account_voucher_custom.group_account_revenue" />
+						
+					<button name="to_review_custom" states="confirm" string="Financial Manager Approve"
+						class="oe_highlight" type="workflow" groups="account.group_account_manager" />
+						
+					<button name="invoice_open" states="review" string="Validate"
+						class="oe_highlight" type="workflow" groups="account_voucher_custom.group_account_revenue" />
+				</xpath>
+				<xpath expr="//button[@name='invoice_cancel']" position="replace">
+					<button name="action_cancel" states="complete,confirm,review" string="Cancel" class="oe_highlight" type="object"/>
+				</xpath>
+				<xpath expr="//field[@name='invoice_line_tax_id']" position="attributes">
+                    <attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+                </xpath>
+                <xpath expr="//field[@name='tax_line']" position="attributes">
+                    <attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+                </xpath>
+                <xpath expr="//field[@name='amount_untaxed']" position="attributes">
+                    <attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+                </xpath>
+                <xpath expr="//field[@name='amount_tax']" position="attributes">
+                    <attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+                </xpath>
+                <xpath expr="//label[@for='amount_tax']" position="attributes">
+                    <attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+                </xpath>
+                <xpath expr="//button[@name='button_reset_taxes']" position="attributes">
+                    <attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_invoice']" position="replace">
+                    <field name="date_invoice" on_change="onchange_date(date_invoice, company_id)" />
+                </xpath>
+			</field>
+        </record>
+        
+	</data>
+</openerp>

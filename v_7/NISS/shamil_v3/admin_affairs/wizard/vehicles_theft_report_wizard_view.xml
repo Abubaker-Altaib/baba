@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_vehicles_theft_report" model="ir.ui.view">
+            <field name="name">Vehicles Theft Report</field>
+            <field name="model">vehicle.theft.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Vehicles Theft Report" version="7.0">
+                    <group>
+
+                        <field name="type" colspan="2"/>
+
+                    </group>
+                            <group>
+                                <field name='model_ids' attrs="{'invisible':[('type','!=','model')]}"/>
+                            </group>
+			    <group>
+                            	<field name='type_ids' attrs="{'invisible':[('type','!=','type')]}"/>
+			    </group>
+                            <group>
+                            	<field name='employee_ids' attrs="{'invisible':[('type','!=','employee')]}"/>
+			    </group>
+                <group>
+                    <field name='place' attrs="{'invisible':[('type','!=','place')],'required':[('type','=','place')]}"/>
+                </group>
+			    <group attrs="{'invisible':[('type','!=','period')]}">
+		                <field name="start_date" colspan="2"/>
+		                <field name="end_date" colspan="2"/>
+			    </group>
+
+                    <footer>
+                        <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight"/>                                or                                                                                                                        
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_wizard_vehicles_theft_report" model="ir.actions.act_window">
+            <field name="name">Vehicles Theft Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">vehicle.theft.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_vehicles_theft_report"/>
+            <field name="target">new</field>
+        </record>
+        <!--menuitem name="Vehicles Reports" parent="admin_affairs.fleet_report" id="vehicle_report_menu" sequence="2" /-->
+        <menuitem name="Vehicles Theft Report" parent="admin_affairs.fleet_report_menu" action="action_wizard_vehicles_theft_report" id="menu_wizard_vehicles_theft_report" />
+    </data>
+</openerp>

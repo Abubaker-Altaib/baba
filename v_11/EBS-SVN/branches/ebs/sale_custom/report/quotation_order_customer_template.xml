@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_quotation_order_customer">
+        <t t-call="web.html_container">
+            <t t-set="data_report_margin_top" t-value="5"/>
+            <t t-set="data_report_dpi" t-value="140"/>
+            <t t-call="web.basic_layout">
+                <div class="page">
+                    <html>
+                        <body>
+                            <!-- add style to change font type -->
+                            <style type="text/css">
+                                /* Declare fonts */
+                                @font-face {
+                                    font-family:KacstLetter ;
+                                    src: url(/sale_custom/static/font/KacstLetter.ttf);
+                                }
+                            </style>
+                            <!-- add table for header -->
+                            <table>
+                                <tbody>
+                                    <tr width="100%">
+                                        <td style="background:white;border-right:0px solid #C1C3D1;" width="18%">
+
+                                            <img src="/sale_custom/static/src/img/index.jpeg" style="height: 160px;width: 200;"/>
+                                        </td>
+                    
+                                        <td width="82%">
+                                            <strong>
+
+                                                <center style="color:#00008B;font-size:30;font-family:KacstLetter">
+                                                    <b> 
+                                                        بسم الله الرحمن الرحيم 
+                                                    </b>
+                                                </center>
+
+                                                <center style="color:#00008B; font-size:35;font-family:KacstLetter">
+                                                        Electronic Banking Services company
+                                                </center><br></br>
+                                                    
+                                                <center style="color:#00008B; font-size:30;font-family:KacstLetter">
+                                                    <u>
+                                                    Marketing Management and Business Development
+                                                    </u>
+                                                </center><br></br>
+
+                                                <center style="color:#00008B;  font-size:30;font-family:KacstLetter">
+                                                    Print prices for bank cards
+                                                </center>
+
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- End of header table -->
+
+                            <!-- add table for content 1  -->
+                            <table style="padding-top:0px; border-collapse:separate;border-spacing:0px 40px;color:#00008B">
+
+                                <tr>
+                                    <td>
+                                        <b style="font-family:KacstLetter;font-size:20;">
+                                            Date : 
+                                        </b>
+                                    </td>
+
+                                    <td>
+                                        <span t-esc="docs.date_order" style="font-family:KacstLetter;font-size:20;"/>
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b style="font-family:KacstLetter;font-size:20;">
+                                            Number : 
+                                        </b>
+                                    </td>
+
+                                    <td>
+                                        <span t-esc="docs.name" style="font-family:KacstLetter;font-size:20;"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b style="font-family:KacstLetter;font-size:20;">
+                                            Bank : 
+                                        </b>
+                                    </td>
+
+                                    <td>
+                                        <span t-esc="docs.partner_id.name" style="font-family:KacstLetter;font-size:20;"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <b style="font-family:KacstLetter;font-size:20;">
+                                            Subject: 
+                                        </b>
+                                    </td>
+
+                                    <td>
+                                        <span t-esc="docs.description" style="font-family:KacstLetter;font-size:20;"/>
+                                    </td>
+                                </tr>
+                            </table>
+                            <!-- End of content1 table -->
+
+                           <!-- add table for content 2 -->  
+                            <center>
+                            <table class="table table-condensed" style="width:90%;">
+                                <thead>
+                                    <tr style="font-weight:bold;font-size:25px;background:grey">
+                                        <th class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width:10%;" >
+                                            <b>No.</b>
+                                         </th>
+                                        <th class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width:30%;" >
+                                            <b>Service</b>
+                                        </th>
+                                        <th class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width:30%;">
+                                            <b>Unit price X Ordered Qty</b>
+                                        </th>
+                                        <th class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width:20%;">
+                                            <b>Amount</b>
+                                        </th>
+                                     </tr>
+                                </thead>
+                                <t t-set="seq" t-value="1" />
+                                <t t-foreach="docs.order_line" t-as="d">
+                                    <tr style="text-align:center;border-width: thick;font-size:20px">
+                                        <td style="border:1px solid black">
+                                            <span t-esc="seq"  style="font-family:KacstLetter"/>
+                                            <t t-set="seq" t-value="seq+1" />
+                                        </td>
+                                        <td style="border:1px solid black">
+                                            <span t-esc="d.product_id.name" style="font-family:KacstLetter"/>
+                                        </td>
+                                        <td style="border:1px solid black">
+                                            <b><span t-esc="d.price_unit" style="font-family:KacstLetter"/> X <span t-esc="d.product_uom_qty" style="font-family:KacstLetter"/></b>
+                                        </td>
+                                        <td style="border:1px solid black">
+                                            <span t-esc="d.price_total" style="font-family:KacstLetter"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr style="text-align:center;border-width: thick;font-size:20px">
+                                    <td></td>
+                                    <td></td>
+                                    <td style="border:1px solid black;font-family:KacstLetter;font-size:20;" >
+                                        <b>Total</b>
+                                    </td>
+                                    <td style="border:1px solid black;font-family:KacstLetter;font-size:20;">
+                                        <span t-esc="sum([d.price_total for d in docs.order_line])" style="font-family:KacstLetter"/>
+                                    </td>
+                                </tr>
+                            </table>
+                            </center>
+                            <!-- end content2 table -->
+
+                            <center>
+                                <table class="table table-condensed" style="width:90%;">
+                                    <tr>
+                                        <td style="font-family:KacstLetter;font-size:20;width:20%;">
+                                            <strong>1\<u> Offer validity:</u></strong>
+                                        </td>
+                                        <td style="font-family:KacstLetter;font-size:20;width:70%;">
+                                            <p> The above prices are valid for ten days from the date of the offer. If the offer is accepted, the approval must be sent within the validity period of the offer</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-family:KacstLetter;font-size:20;width:20%;">
+                                            <strong>2\<u> Method of payment:</u></strong>
+                                        </td>
+                                        <td style="font-family:KacstLetter;font-size:20;width:70%;">
+                                            <p> Payment shall be made immediately upon receipt of the offer and before the commencement of execution by check or direct debit for the banks that have been authorized to do so.</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-family:KacstLetter;font-size:20;">
+                                            <strong>3\<u> Implementation:</u></strong>
+                                        </td>
+                                        <td style="font-family:KacstLetter;font-size:20;">
+                                            <b> After receiving the final design profile of its location by the bank and paying its cost.</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-family:KacstLetter;font-size:20;">
+                                            <strong>4\<u> Delivery:</u></strong>
+                                        </td>
+                                        <td style="font-family:KacstLetter;font-size:20;">
+                                            <b> The bank shall be delivered one month after the completion of the implementation procedures mentioned above in (3).</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-family:KacstLetter;font-size:20;">
+                                            <strong>5\<u> Prices:</u></strong>
+                                        </td>
+                                        <td style="font-family:KacstLetter;font-size:20;">
+                                            <p> Including printing, deportation and customs clearance only.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </center>
+
+                            <center>
+                                <strong><span t-esc="request.env.user.name" style="font-family:KacstLetter;font-size:20;"/></strong>
+                            </center>
+                            <center>
+                                <strong><span t-esc="env['hr.employee'].browse(request.env.user.id).job_id.name" style="font-family:KacstLetter;font-size:20;"/></strong>
+                            </center>
+                        </body>
+                    </html>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <data>
+
+        <report   
+            id="action_quotation_order_customer"
+            string="Customer Report"
+            model="sale.order"
+            report_type="qweb-pdf"
+            name="sale_custom.report_quotation_order_customer"
+            file="sale_custom.report_quotation_order_customer"
+            menu="False"/>
+
+    </data>
+</odoo>

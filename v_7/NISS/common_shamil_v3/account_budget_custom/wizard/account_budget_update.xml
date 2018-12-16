@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    <!--  Budget Cash Flow -->
+        <record id="account_budget_cash_flow_view" model="ir.ui.view">
+          <field name="name">Budget Cash Flow</field>
+          <field name="model">account.budget.cash.flow.wizard</field>
+          <field name="type">form</field>
+          <field name="arch" type="xml">
+            <form string="Budget Cash Flow" version="7.0">
+            	<separator string="Budget Cash Flow" colspan="4" />            
+                <label colspan="4" nolabel="1" string="This wizard allow you to generate budget cash flow from FiscalYear budget."/> 
+                <newline/>
+				<field name="company_id" widget="selection" groups="base.group_multi_company" on_change="onchange_company_id(company_id)"/>
+				<field name="chart_analytic_account_id" domain="[('company_id','=',company_id)]"/>
+				<field name="fiscalyear_id" domain="[('company_id','=',company_id)]" options='{"no_open": True}'/>              
+				<newline/>
+				<notebook colspan="4">
+					<page string="Cost Centers">
+						<field name="analytic_account_ids" domain="[('type','=','normal'),('company_id','=',company_id)]" nolabel="1" colspan="3"/>
+					</page>
+					<page string="Periods">
+						<field name="period_ids" nolabel="1" domain="[('fiscalyear_id','=',fiscalyear_id),('special','=',False)]" colspan="3"/>
+					</page>
+					<page string="Accounts">
+						<field name="account_ids" domain="[('type','=','other'),('company_id','=',company_id)]" nolabel="1" colspan="3"/>
+					</page>
+				</notebook>
+				<separator colspan="4"/>
+                <group col="4" colspan="4">
+                    <footer>
+                    <button name="compute" string="Compute" type="object" colspan="2" class="oe_highlight"/>or 
+                    <button special="cancel" string="Cancel" colspan="2" class="oe_link"/>
+                    </footer>
+                </group>
+            </form>
+          </field>
+        </record>
+
+        <record id="action_account_budget_cash_flow_menu" model="ir.actions.act_window">
+            <field name="name">Budget Cash Flow</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.budget.cash.flow.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_budget_cash_flow_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem 	name="Budget Cash Flow" parent="account_budget_custom.menu_budget_operations" 
+        			action="action_account_budget_cash_flow_menu" id="menu_account_budget_cash_flow"/>
+    </data>
+</openerp>

@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_fleet_vehicle_form_inherit">
+			<field name="name">fleet.vehicle.form.inherit</field>
+			<field name="model">fleet.vehicle</field>
+			<field name="inherit_id" ref="fleet.fleet_vehicle_form" />
+			<field name="arch" type="xml">
+				<div class="oe_right oe_button_box" position="replace" />
+				<field name="state_id" position="replace">
+					<!--field name="state" widget="statusbar" clickable="True" invisible="1"/ -->
+				</field>
+				<xpath expr="/form/header" position="inside">
+					<button  icon="terp-gtk-go-back-rtl"  name="confirmed" type="object" states="draft"
+						string="Confirm" />
+					<button name="set_draft" type="object" states="confirm,outservice"
+						string="Set to Draft" />
+					<button  icon="terp-gtk-go-back-rtl" name="out_service" type="object" states="confirm" string="Out Service" />
+					<field name="state" widget="statusbar" statusbar_visible="draft,confirm,outservice" />
+				</xpath>
+
+				<xpath expr="//field[@name='vin_sn']" position="attributes">
+					<attribute name="attrs">
+						{'required': [('ownership','in',['owned', 'mile'])]}
+					</attribute>
+				</xpath>
+				
+				<xpath expr="/form/sheet" position="inside">
+					<notebook>
+						<page string="Vehicle Details">
+							<group>
+								<group>
+									<field name="year" />
+									<field name="type" attrs="{'readonly':[('state','!=','draft')]}"/>
+									<field name="machine_no"
+										attrs="{'required':[('ownership','in',('owned','mile'))],'invisible':['|',('ownership','=','rented'),('type','=','generator')]}" />
+									<field name="machine_capacity" />
+								</group>
+								<group>
+									<field name="department_id" />
+									<field name="ownership" />
+									<field name="status" />
+								</group>
+							</group>
+						</page>
+						
+						<page string="Notes">
+							<field name="notes" />
+						</page>
+					</notebook>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_fleet_vehicle_tree_inherit">
+			<field name="name">fleet.vehicle.tree.inherit</field>
+			<field name="model">fleet.vehicle</field>
+			<field name="inherit_id" ref="fleet.fleet_vehicle_tree" />
+			<field name="arch" type="xml">
+				<xpath expr="//tree[@string='Vehicle']" position="replace">
+					<tree string="Vehicle" version="7.0" colors="orange:status=='active';red:status=='inactive'">
+	                    <field name="license_plate" />
+	                    <field name="model_id" />
+	                    <field name="department_id" />
+	                    <field name="driver_id" />
+	                    <field name="vin_sn" />
+	                    <field name="ownership" />
+	                    <field name="status" />   
+						<field name="fuel_type" />
+	                    <field name="state" />   
+	                </tree>
+               </xpath>
+                
+			</field>
+		</record>
+
+		<record id="view_fleet_vehicle_filter" model="ir.ui.view">
+			<field name="name">fleet.vehicle.select</field>
+			<field name="model">fleet.vehicle</field>
+			<field name="arch" type="xml">
+				<search string="Fleet Vehicle">
+					<group col="10" colspan="4">
+						<field name="name" />
+						<field name="type" />
+						<field name="department_id" widget="selection" />
+					</group>
+					<newline />
+					<group expand="0" string="Group by...">
+						<filter string="Ownership" domain="[]"
+							context="{'group_by':'ownership'}" />
+						<separator orientation="vertical" />
+						<filter string="Department" domain="[]"
+							context="{'group_by':'department_id'}" />
+						<separator orientation="vertical" />
+						<filter string="Type" domain="[]" context="{'group_by':'type'}" />
+						<separator orientation="vertical" />
+						<filter string="Model" domain="[]" context="{'group_by':'model'}" />
+						<separator orientation="vertical" />
+						<filter string="name" domain="[]" context="{'group_by':'name'}" />
+						<separator orientation="vertical" />
+						<filter string="Year" domain="[]" context="{'group_by':'year'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+		<delete model="ir.ui.menu" id="fleet.fleet_vehicle_odometer_menu" />
+		<delete model="ir.ui.menu" id="fleet.fleet_vehicle_log_services_menu" />
+		<delete model="ir.ui.menu" id="fleet.fleet_vehicle_costs_menu" />
+
+		
+	
+	</data>
+</openerp>

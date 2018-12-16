@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Transitions -->
+		
+		<record id="hr_wafi.trans_complete_confirm" model="workflow.transition">
+			<field name="act_from" ref="hr_wafi.act_draft_complete" />
+			<field name="act_to" ref="hr_wafi.act_confirm" />
+			<field name="signal">confirm</field>
+		</record>
+		<record id="hr_wafi.trans_approve_done" model="workflow.transition">
+			<field name="act_from" ref="hr_wafi.act_confirm" />
+			<field name="act_to" ref="hr_wafi.act_done" />
+			<field name="signal">done</field>
+		</record>
+		<record id="hr_wafi.trans_approve_cancel" model="workflow.transition">
+			<field name="act_from" ref="hr_wafi.act_confirm" />
+			<field name="act_to" ref="hr_wafi.act_cancel" />
+			<field name="signal">cancel</field>
+		</record>
+
+		<!-- ***************** Mission Workflow ***************** -->
+		<record id="hr_mission.act_complete" model="workflow.activity">
+			<field name="wkf_id" ref="hr_mission.wkf_mission" />
+			<field name="name">complete</field>
+			<field name="kind">function</field>
+			<field name="action">complete()</field>
+		</record>
+		<record id="hr_mission.act_approve" model="workflow.activity">
+			<field name="wkf_id" ref="hr_mission.wkf_mission" />
+			<field name="name">approve</field>
+			<field name="kind">function</field>
+			<field name="action">mission_approved()</field>
+			<field name="flow_stop" eval="False"/>
+
+		</record>
+		<record id="hr_mission.act_hr_approve" model="workflow.activity">
+			<field name="wkf_id" ref="hr_mission.wkf_mission" />
+			<field name="name">hr_approve_mission</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'hr_approved'})</field>
+		</record>
+		<record id="hr_mission.act_review" model="workflow.activity">
+			<field name="wkf_id" ref="hr_mission.wkf_mission" />
+			<field name="name">review_mission</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'reviewed'})</field>
+		</record>
+		<record id="hr_mission.act_done" model="workflow.activity">
+			<field name="wkf_id" ref="hr_mission.wkf_mission" />
+			<field name="name">done_mission</field>
+			<field name="kind">function</field>
+			<field name="action">mission_done()</field>
+			<field name="flow_stop">True</field>
+		</record>
+
+		<record id="hr_mission.act_external_mission" model="workflow.activity">
+			<field name="wkf_id" ref="hr_mission.wkf_mission" />
+			<field name="name">externl_mission</field>
+			<field name="kind">function</field>
+			<field name="action">mission_external()</field>
+		</record>
+
+		<record id="hr_mission.act_mission_allowance" model="workflow.activity">
+			<field name="wkf_id" ref="hr_mission.wkf_mission" />
+			<field name="name">mission_allowance_calc</field>
+			<field name="kind">function</field>
+			<field name="action">mission_allowance_calcu()</field>
+		</record>
+
+		<record id="hr_mission.trans_mission_hr_approve" model="workflow.transition">
+			<field name="act_from" ref="hr_mission.act_approve" />
+			<field name="act_to" ref="hr_mission.act_hr_approve" />
+			<field name="signal">hr_approve_mission</field>
+		</record>
+		<record id="hr_mission.trans_mission_review" model="workflow.transition">
+			<field name="act_from" ref="hr_mission.act_hr_approve" />
+			<field name="act_to" ref="hr_mission.act_review" />
+			<field name="signal">review_mission</field>
+		</record>
+		<record id="hr_mission.trans_mission_done" model="workflow.transition">
+			<field name="act_from" ref="hr_mission.act_review" />
+			<field name="act_to" ref="hr_mission.act_done" />
+			<field name="signal">done_mission</field>
+		</record>
+
+
+		<record id="trans_mission_hr_approve_approved" model="workflow.transition">
+			<field name="act_from" ref="hr_mission.act_hr_approve" />
+			<field name="act_to" ref="hr_mission.act_approve" />
+			<field name="signal">set_to_approved_review</field>
+		</record>
+		<record id="trans_mission_act_review_approved" model="workflow.transition">
+			<field name="act_from" ref="hr_mission.act_review" />
+			<field name="act_to" ref="hr_mission.act_approve" />
+			<field name="signal">set_to_approved</field>
+		</record>
+		<record id="hr_mission.trans_mission_complete" model="workflow.transition">
+			<field name="act_from" ref="hr_mission.act_draft" />
+			<field name="act_to" ref="hr_mission.act_complete" />
+			<field name="condition">True</field>
+			<field name="signal">complete_mission</field>
+		</record>
+		<!-- deleeeeeeeeeeeeete /-->
+		<record id="trans_mission_complete_done" model="workflow.transition">
+			<field name="act_from" ref="hr_mission.act_draft" />
+			<field name="act_to" ref="hr_mission.act_done" />
+			<field name="condition">False</field>
+			<field name="signal">complete_mission</field>
+		</record>
+
+		<record id="hr_mission.trans_mission_validate_reject" model="workflow.transition">
+			<field name="act_from" ref="hr_mission.act_validate" />
+			<field name="act_to" ref="hr_mission.act_reject" />
+			<field name="signal">reject_mission_general_manag</field>
+		</record>
+
+		<record id="hr_mission.trans_external_done" model="workflow.transition">
+			<field name="act_from" ref="hr_mission.act_draft" />
+			<field name="act_to" ref="hr_mission.act_external_mission" />
+			<field name="signal">external_mission</field>
+		</record>
+
+		<record id="hr_mission.trans_draft_allownce_calc" model="workflow.transition">
+			<field name="act_from" ref="hr_mission.act_draft" />
+			<field name="act_to" ref="hr_mission.act_mission_allowance" />
+			<field name="signal">mission_allownce</field>
+		</record>
+
+		<record id="hr_mission.trans_mission_calc_mission_hr_approve" model="workflow.transition">
+			<field name="act_from" ref="hr_mission.act_mission_allowance" />
+			<field name="act_to" ref="hr_mission.act_hr_approve" />
+			<field name="signal">hr_approve_mission</field>
+		</record>
+	</data>
+</openerp>

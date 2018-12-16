@@ -1,0 +1,263 @@
+
+<odoo>
+  <data>
+
+    <!--========= Projects Committee ===================== -->
+
+    <!-- Tree view for projects committee model -->
+    <record id="project_committee_view_tree" model="ir.ui.view">
+      <field name="name"> Project Committee Tree</field>
+      <field name="model">dzc2.project.project.committee</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="state_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Form view for project committee model -->
+    <!-- ==========================================-->
+    <record id="‫‪project_committee_view_form" model="ir.ui.view">
+      <field name="name">Project Committee Form</field>
+      <field name="model">dzc2.project.project.committee</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <group>
+               <div>
+                <h4>
+                 <field name="name" placeholder="Project Committee Name" style="width:80%; margin-right:2%;height:30%" required="1"/>
+               </h4> 
+             </div>
+
+           </group>
+
+           <group>
+            <field name="state_id" required="1"/>
+            <field name="company_id" readonly="1"/>
+          </group>
+        </group>
+
+        <field name="employee_ids">
+          <tree editable="bottom">
+           <field name="name" required="1"/>
+         </tree>
+       </field> 
+     </sheet>
+   </form>
+ </field>
+</record>
+
+<!-- Project Committee search view-->
+<!-- =========================== -->
+
+<record id="project_committee_view_search" model="ir.ui.view">
+ <field name="name">dzc2.project.project.committee.search</field>
+ <field name="model">dzc2.project.project.committee</field>
+ <field name="arch" type="xml">
+
+   <search string="Search Opportunities">
+    <field name="name"/>
+  </search>
+
+</field>
+</record>
+
+<!-- Project Committee Main form action-->
+<!-- =================================== -->
+<!-- <record id="project_committee_action" model="ir.actions.act_window">
+  <field name="name">Projects Committee</field>
+  <field name="res_model">dzc2.project.project.committee</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record> -->
+
+
+  <!-- ==================================== -->
+<!-- Projects-->
+  <!-- Tree view for projects model -->
+  <record id="Projects_view_tree" model="ir.ui.view">
+    <field name="name"> Projects Tree</field>
+    <field name="model">dzc2.project</field>
+    <field name="arch" type="xml">
+      <tree>
+		<field name="code"/>
+        <field name="name"/>
+        <field name="parent_ids" />
+
+      </tree>
+    </field>
+  </record>
+
+  <!-- Form view for Projects model -->
+  <record id="‫‪organizations_view_form" model="ir.ui.view">
+    <field name="name">Projects Form</field>
+    <field name="model">dzc2.project</field>
+    <field name="arch" type="xml">
+      <form>
+
+        <sheet>
+          <group>
+          <group>
+            <field name="name" required="1"/>
+            <field name="code" required="1"/>                       
+          </group>
+          <group>
+            <field name="view_type" required="1"/>
+            <field name="is_basic"  attrs="{'invisible':[('view_type' , '!=' , 'view')] }"/>
+            <field name="type_of_products" required="1" />                       
+          </group>
+          <group>
+            <field name="project_type" attrs="{'invisible':[('view_type' , '==' , 'view')] }"/>
+            <field name="parent_ids" attrs="{'invisible':[('is_basic' , '==' , True)] }" />
+          </group>
+
+          <group col="6" >
+            <field name="require_purchase_order" attrs="{'invisible':[('view_type' , '==' , 'view')] }"/>
+            <field name="require_exchange_order" attrs="{'invisible':[('view_type' , '==' , 'view')] }"/>
+          </group>
+           </group>
+
+          <notebook attrs="{'invisible':[('view_type' , '==' , 'view')] }">
+          <page string="Rules">
+
+            <group>
+            <group>
+            <field name="residence_certificate"/>
+            <field name="case_study"/>
+          </group>
+          <group>
+            <field name="managment_ability_confirmation"/>
+            <field name="project_licence"/>
+
+            
+            </group>
+            <group>
+            <field name="experience_certificate"/>
+            <field name="practicing_certificate"/>
+          </group>
+          <group>
+            <field name="implementation_contracts"/>
+          </group>
+        </group>
+          </page>
+          <page string="Products to Purchase" attrs="{'invisible':[('require_purchase_order' , '!=' , True)]}">
+              <field name="product_p_ids" >
+                  <tree editable="bottom">
+                      <field name="product_id" required="1" />
+                      <field name="product_qty" required="1" />
+                  </tree>
+              </field>
+          </page>
+          
+          <page string="Products to Exchange" attrs="{'invisible':[('require_exchange_order' , '!=' , True)]}">
+              <field name="product_e_ids" >
+                  <tree editable="bottom">
+                      <field name="product_id" required="1" />
+                      <field name="product_qty" required="1" />
+                  </tree>
+              </field>
+          </page>
+        </notebook>
+
+
+
+       
+        </sheet>
+
+      </form>
+    </field>
+  </record>
+
+  <!-- Projects search view-->
+
+  <record id="projects_view_search" model="ir.ui.view">
+   <field name="name">dzc2.projects.search</field>
+   <field name="model">dzc2.project</field>
+   <field name="arch" type="xml">
+
+     <search string="Search Opportunities">
+      <field name="name"/>
+      <field name="code"/>
+
+      
+    </search>
+
+  </field>
+</record>
+<!-- Projects Main form action-->
+<record id="projects_action" model="ir.actions.act_window">
+  <field name="name">Projects</field>
+  <field name="res_model">dzc2.project</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record>
+<!-- Almsaken configuration menu -->
+<menuitem name="Configuration"
+  id="almsakin_conf"
+  parent="almsakeen_main_menu"
+  />
+
+<!-- Projects menu -->
+<menuitem name="Projects"
+  id="projects_form_menu_action"
+  parent="almsakin_conf"
+  action="projects_action"
+  sequence="1"/>
+
+<!-- Project Committee menu -->
+<!-- <menuitem name="Projects Committee"
+  id="project_committee_form_menu_action"
+  parent="almsakin_conf"
+  action="project_committee_action"/> -->
+  <!-- Orgnization tree view -->
+<record id="organizations_view_tree" model="ir.ui.view">
+    <field name="name"> Organizations Tree</field>
+    <field name="model">dzc2.organizations</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="channel_type"/>
+      </tree>
+    </field>
+  </record>
+  
+  <!-- projects organization form view -->
+  <record id="project_‪organizations_view_form" model="ir.ui.view">
+    <field name="name">Projects Organization  Form</field>
+    <field name="model">dzc2.organizations</field>
+    <field name="inherit_id" ref="zakat_base.‫‪organizations_view_form" />
+    <field name="arch" type="xml">
+		<xpath expr="/form/sheet/group[1]/group[2]/field[@name='channel_type']" position="attributes">
+			<attribute name="readonly">1</attribute>
+		</xpath>
+    </field>
+    </record>
+<!-- projects organization action -->
+<record id="almsakeen_rganization_action" model="ir.actions.act_window">
+  <field name="name">Organizations</field>
+  <field name="res_model">dzc2.organizations</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+  <field name="domain">[('channel_type' , '=' , 'projects')]</field>
+  <field name="context">{'default_channel_type': 'projects'}</field>
+</record>
+<!--projects organization menu -->
+<menuitem name="Organizations"
+  id="projects_organization_menu"
+  parent="almsakin_conf"
+  action="almsakeen_rganization_action"
+  sequence="4"/>
+  
+  <!---secors menu -->
+ <!--  <menuitem name="Sectors"
+  id="projects_sectors_form_menu"
+  parent="almsakin_conf"
+  action="zakat_base.sectors_action"
+  sequence="5"/>
+ -->
+</data>
+</odoo>
+

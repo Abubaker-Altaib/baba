@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+	<record id="category_hr" model="ir.module.category">
+    	<field name="name">Human Resources</field>
+	</record>
+	
+    <record id="base.group_hr_overview" model="res.groups">
+        <field name="name">Human Resources / Overview</field>
+        <field name="category_id" ref="category_hr" />
+    </record>
+
+    <record id="base.group_unit_manager" model="res.groups">
+        <field name="name">Unit Manager</field>
+        <field name="category_id" ref="category_hr" />
+    </record>
+
+    <record id="base.group_department_manager" model="res.groups">
+        <field name="name">Department Manager</field>
+        <field name="category_id" ref="category_hr" />
+        <field name="implied_ids" eval="[(4, ref('base.group_unit_manager'))]"/>
+    </record>
+
+    <record id="base.group_hr_juser" model="res.groups">
+        <field name="name">Human Resources / Job User</field>
+        <field name="category_id" ref="category_hr" />
+    </record>
+
+    <record id="base.group_hr_jmanager" model="res.groups">
+        <field name="name">Human Resources / Job Manager</field>
+        <field name="category_id" ref="category_hr" />
+        <field name="implied_ids" eval="[(4, ref('base.group_hr_juser'))]"/>
+    </record>
+    <record id="base_custom.group_account_general_manager" model="res.groups">
+			
+			<field name="implied_ids" eval="[(4, ref('base.group_hr_overview'))]" />
+		</record>
+
+</data>
+<data noupdate="1">
+
+        <record id="rule_qualification_manager" model="ir.rule">
+            <field name="name">HR qualification manager</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_qualification"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_manager')), (4,ref('base.group_hr_overview')),(4,ref('base.group_hr_jmanager'))]"/>
+        </record>
+        <record id="rule_qualification_user" model="ir.rule">
+            <field name="name">HR qualification user</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_qualification"/>
+            <field name="domain_force">['|',('employee_id.company_id','=',False),('employee_id.company_id','child_of',[user.company_id.id])]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_user')),(4,ref('base.group_hr_juser'))]"/>
+        </record>
+        <record id="rule_employee_family_manager" model="ir.rule">
+            <field name="name">HR employee family manager</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_family"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_manager')), (4,ref('base.group_hr_overview')),(4,ref('base.group_hr_jmanager'))]"/>
+        </record>
+        <record id="rule_employee_family_user" model="ir.rule">
+            <field name="name">HR employee family user</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_family"/>
+            <field name="domain_force">['|',('employee_id.company_id','=',False),('employee_id.company_id','child_of',[user.company_id.id])]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_user')),(4,ref('base.group_hr_juser'))]"/>
+        </record>
+        <record id="rule_termination_manager" model="ir.rule">
+            <field name="name">HR employee termination manager</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employment_termination"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_manager')), (4,ref('base.group_hr_overview')),(4,ref('base.group_hr_jmanager'))]"/>
+        </record>
+        <record id="rule_termination_user" model="ir.rule">
+            <field name="name">HR employee termination user</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employment_termination"/>
+            <field name="domain_force">['|',('employee_id.company_id','=',False),('employee_id.company_id','child_of',[user.company_id.id])]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_user')),(4,ref('base.group_hr_juser'))]"/>
+        </record>
+        <record id="rule_reemployment_manager" model="ir.rule">
+            <field name="name">HR reemployment manager</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_reemployment"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_manager')), (4,ref('base.group_hr_overview')),(4,ref('base.group_hr_jmanager'))]"/>
+        </record>
+        <record id="rule_reemployment_user" model="ir.rule">
+            <field name="name">HR reemployment user</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_reemployment"/>
+            <field name="domain_force">['|',('employee_id.company_id','=',False),('employee_id.company_id','child_of',[user.company_id.id])]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_user')),(4,ref('base.group_hr_juser'))]"/>
+        </record>
+        <record id="rule_employee_manager" model="ir.rule">
+            <field name="name">HR employee manager</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_manager')), (4,ref('base.group_hr_overview')),(4,ref('base.group_hr_jmanager'))]"/>
+        </record>
+        <record id="rule_employee_user" model="ir.rule">
+            <field name="name">HR employee user</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_user')),(4,ref('base.group_hr_juser'))]"/>
+        </record>
+        <record id="rule_employee" model="ir.rule">
+            <field name="name">HR employee </field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee"/>
+            <field name="domain_force">[('user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('base.group_user'))]"/>
+        </record>
+</data>
+</openerp>

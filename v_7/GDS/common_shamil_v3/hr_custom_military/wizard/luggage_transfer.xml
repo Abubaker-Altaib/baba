@@ -1,0 +1,45 @@
+<openerp>
+    <data>
+        <record id="luggage_transfer_view" model="ir.ui.view">
+            <field name="name">luggage transfer allowance</field>
+            <field name="model">luggage.transfer</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Luggage Transfer Allowance">
+                    <field name="company_id" colspan="2"/>
+                    <field name="department_id" colspan="2" domain="[('company_id','=',company_id)]"/>
+                    <field name="allowance_id" colspan="2" domain="[('name_type','=','allow'),('allowance_type','=','in_cycle')]"/>
+                    <field name="destination_id" colspan="2"/>
+                    <separator colspan="4"/>
+                    <field colspan="4" name="emp_hours" nolabel="1" >
+                        <form string="Employee Luggage Transfer hours">
+                            <field name="emp_code" colspan="4" />
+                            <field name="employee" colspan="4" domain="[('state','=','approved')]"/>
+                            <field name="hours"/>
+                        </form>
+                        <tree editable="bottom" string="Employee Allowance Amount">
+                            <field name="emp_code" colspan="4" on_change="onchange_name_code(emp_code)"/>
+                            <field name="employee" domain="[('state','=','approved')]" colspan="4" on_change="onchange_name_code(employee,False)" context="{'emp_hours':parent.emp_hours}"/>
+                            <field name="hours"/>
+                        </tree>
+                    </field>
+                    <field name="date" colspan="4"/>
+                    <group col="4" colspan="4">
+                        <button icon="gtk-cancel" special="cancel" string="Cancel" colspan="2"/>
+                        <button icon="gtk-ok" name="luggage_transfer" string="OK" type="object" colspan="2" default_focus="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="action_luggage_transfer_view" model="ir.actions.act_window">
+            <field name="name">luggage transfer allowance</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">luggage.transfer</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="luggage_transfer_view"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem name="Luggage Transfer Allowance" action="action_luggage_transfer_view" id="menu_luggage_transfer_view" parent="menu_action_luggages"/>
+    </data>
+</openerp>

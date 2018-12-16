@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="activity_create_pickin" model="workflow.activity">
+            <field name="wkf_id" ref="purchase.purchase_order"/>
+            <field name="name">create_pickin</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'create_pickin'})</field>
+        </record>
+
+
+        <record id="trans_creat_pickin" model="workflow.transition">
+            <field name="act_from" ref="purchase_wafi.act_budget_approved"/>
+            <field name="act_to" ref="activity_create_pickin"/>
+            <field name="signal">create_picking_in</field>
+        </record>
+
+        <record id="purchase_wafi.trans_sent_confirmed" model="workflow.transition">
+            <field name="act_from" ref="activity_create_pickin"/>
+            <field name="act_to" ref="purchase.act_confirmed"/>
+            <field name="signal">purchase_order</field>
+        </record>
+    </data>
+</openerp>
+
+       
+    

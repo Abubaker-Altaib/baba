@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="report_account_statement">
+    
+    <t t-call="web.html_container">
+        <t t-call="web.external_layout">
+        <t t-foreach="docs" t-as="o">
+	     <div class="page" t-attf-style="font-family: #{o.company_id.report_style_id.page_fount};">
+                <div  t-attf-style="font-family: #{o.company_id.report_style_id.header_fount};">
+                    <center>
+                         <u><h2>Account Statement</h2></u>
+                         <h4>
+                           <strong>For Account:</strong> <span t-esc="data['account_id'][1]"/>
+                         </h4>
+                    </center>
+                </div>
+
+                
+                    <table class="table table-condensed col-xs-12">
+                        <thead >
+                            <tr>
+                                <th  t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                     <center><span > initial balance </span></center>
+                                </th>
+                                <th colspan="2"  t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                    <center>Date</center>
+                                    
+                                        
+                                </th>
+                                <th  t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                     <center> <span >Target Moves</span> </center>
+                                </th>
+                           </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                <span t-esc="get_initial_balance" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                </td>
+                                <t name="date_from_td" t-if="not data['date_to'] ">
+                                    <td colspan="2" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" >
+                                  
+                                 <strong t-if="data['date_from']">from date:</strong> <span t-esc="data['date_from']"/>
+                                </td>
+                                </t>
+                                <t name="date_to_td" t-if="data['date_to']">
+                                    <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" >
+                                  
+                                 <strong >from date:</strong> <span t-esc="data['date_from']"/>
+                                </td>
+                                <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                   
+                                   <strong >to date:</strong><span t-esc="data['date_to']"/>
+                                </td>
+                                </t>
+                                
+                                    <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                    <p t-if="data['target_move'] == 'all'">All Entries</p>
+                                    <p t-if="data['target_move'] == 'posted'">All Posted Entries</p>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="col-xs-12 row">
+                        <br/>
+                    </div>
+                <table  class="table table-condensed  col-xs-12" t-attf-style="font-family: #{o.company_id.report_style_id.table_fount};">
+                    <thead t-attf-style="background-color: #{o.company_id.report_style_id.header_color};">
+                        <tr class="text-center">
+                             <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"> <center>Date </center></th>
+                              <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                <center> Account move number </center></th>
+                              <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><center> Document number </center></th>
+                              <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"> <center>beneficiary </center></th>
+                              <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                <strong><center> narration </center></strong>
+                            </th>
+                              <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><center> Debit </center></th>
+                              <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><center> Credit </center></th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                            <t t-foreach="Accounts" t-as="line">
+                                <t t-if="line_even">
+                                        <tr t-attf-style="background-color: #{o.company_id.report_style_id.even_row_color};">
+                                         <td name="date_even_row" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                            <span t-esc="line['ldate']" />
+                                        
+
+                                     </td>
+                                          
+                                           <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-esc="line['move_name']"/></td>
+                                           <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-if="line['lref']" t-esc="line['lref']"/></td>
+                                           <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-esc="line['partner_name']"/></td>
+                                           <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                            <strong><span t-esc="line['lname']"/> </strong></td>
+                                           <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                            <span t-esc="line['debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                            <span t-esc="line['credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </td>
+                                        
+                                       
+                                        
+                                      
+                                       
+                                    </tr>
+                                </t>
+                                <t t-if="not line_even">
+                                        <tr t-attf-style="background-color: #{o.company_id.report_style_id.odd_row_color};">
+
+                                        <td name="date_odd_row" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                            <span t-esc="line['ldate']"/>
+                                        
+
+                                     </td>
+                                          <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-esc="line['journal']"/></td>
+                                          
+                                           <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-if="line['lref']" t-esc="line['lref']"/></td>
+                                           <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-esc="line['partner_name']"/></td>
+                                           <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                            <strong><span t-esc="line['lname']"/>
+                                            </strong></td>
+                                           <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                            <span t-esc="line['debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                            <span t-esc="line['credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                        </t> 
+                    <thead t-attf-style="background-color: #{o.company_id.report_style_id.header_color};">
+                        <tr t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" >
+                            <th colspan="5" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">total</th>
+                            <th  t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">  
+                                <t  t-esc="sum(l['debit'] for l in Accounts )" t-att-style="style" 
+                                    t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> 
+                            </th>
+                            
+                            <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"> <t  t-esc="sum(l['credit'] for l in Accounts )" 
+                                    t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> </th>
+
+                            
+                        </tr>
+                    </thead>
+                    <thead t-attf-style="background-color: #{o.company_id.report_style_id.header_color};">
+                        <tr t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                            <th colspan="6" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                <u><u>Closing balance</u></u>
+                            </th>
+                            <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                               <u><u> <t  t-esc="get_initial_balance + sum(l['debit'] for l in Accounts ) - sum(l['credit'] for l in Accounts ) " t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></u></u>
+                            </th>
+                        </tr>
+                    </thead>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    
+</t>
+        </t>
+</template>
+</odoo>
+
+

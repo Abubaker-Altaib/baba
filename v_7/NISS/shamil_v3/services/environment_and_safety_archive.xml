@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+<!-- Environment & Safety allowances archive lines Form,Tree View  -->
+
+
+
+		<record id="view_environment_and_safety_allowances_archive_form" model="ir.ui.view">
+			<field name="name">services.contracts.archive.form</field>
+			<field name="model">services.contracts.archive</field>
+			<field name="arch" type="xml">
+				<form string="Rented cars Allowances Archive" version="7.0">
+                                     <header col="11" colspan="4">
+					        <button name="confirmed" states="draft" string="Confirmed"  class="oe_highlight"
+					                confirm="Are you sure you want to Confirm this request?"                            
+                                                        groups="base.group_envirument_id,base.group_service_section_manager"/>	
+						<button name="done" states="confirmed" string="Create Ratification"  class="oe_highlight"
+							confirm="Are you sure you want to Create Ratification?"
+                                                        groups="base.group_envirument_id,base.group_service_section_manager"/>						<button name="cancel" states="draft,confirmed" string="Cancel Request"  class="oe_highlight"
+						        confirm="Are you sure you want to Cancel this request?"
+                                                         groups="base.group_envirument_id,base.group_service_section_manager"/>
+						<button name="ir_action_cancel_draft" states="cancel" 
+                                                        string="Set to Draft" type="object"  class="oe_highlight"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,done,cancel" />
+                                       </header>
+                                       <sheet>
+					<group col="4" colspan="4">
+						<field name="name" colspan="2"/>
+						<field name="date" colspan="2"/>		
+						<field name="partner_id" colspan="2"/>	
+						<field name="month" colspan="2" />
+						<field name="year" colspan="2" />
+						<field name="transfer" colspan="2" />
+						<field name="company_id" groups="base.group_multi_company" widget="selection"/>
+						<field name="user_id" colspan="2" />
+						<field name="voucher_no" colspan="2" />
+				   	</group>
+					<notebook colspan="4">	
+					    <page string="Partner Rate details">
+                        			<field colspan="4" name="allowances_lines_before" nolabel="1"  domain="[('type', '=', 'before')]">
+                                                    <tree editable="top" string="Partner Lines">
+						       <field name="contract_id" />
+							<field name="category_id" />
+							<field name="cost_of_rent" />
+							<field name="deduct_days" />
+							<field name="deduct_amount" />
+							<field name="amount_untaxed" />
+							<field name="amount_tax" />
+							<field name="amount_total" />
+							<field name="percentage_rating" />
+						    </tree>
+                        	                 </field>
+                                           </page>
+					   <page string="Partner Amount After Rate">
+                        	                <field colspan="4" name="allowances_lines_after" nolabel="1" domain="[('type', '=', 'after')]">
+                                                    <tree editable="top" string="Partner Lines">
+						        <field name="contract_id" />
+							<field name="cost_of_rent" invisible="1" />
+							<field name="deduct_days" invisible="1"/>
+							<field name="deduct_amount" invisible="1"/>
+							<field name="percentage_rating" />
+							<field name="amount_untaxed" />
+							<field name="amount_tax" />
+							<field name="amount_total" />
+						    </tree>
+                        	                </field>
+                                           </page>
+					   <page string="Notes">
+                                                <field name="notes" colspan="4" nolabel="1"/>
+                                           </page>
+                                      </notebook>
+				      <group colspan="4" col="6">
+						<field name="amount_untaxed" colspan="2" />
+						<field name="amount_tax" colspan="2" />
+						<field name="amount_total" colspan="2" />
+				     </group>
+                                  </sheet>
+			    </form>
+			</field>
+		</record>
+
+
+		<record id="view_environment_and_safety_allowances_tree" model="ir.ui.view">
+			<field name="name">services.contracts.archive.tree</field>
+			<field name="model">services.contracts.archive</field>
+			<field name="arch" type="xml">
+				<tree string="Allowances Archive">
+					        <field name="name" />
+						<field name="partner_id" />
+						<field name="month" />
+						<field name="year" />
+						<field name="amount_total" />
+						<field name="state" />
+						<field name="transfer" />
+						<field name="user_id" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- environment and safety Archive service Search Filter -->
+
+		<record id="view_environment_and_safety_allowances_filter" model="ir.ui.view">
+			<field name="name">services.contracts.archive.filter</field>
+			<field name="model">services.contracts.archive</field>
+			<field name="arch" type="xml">
+				<search string="Environment and Safety Allowances Archive">
+				    	<field name="name"/>
+				    	<separator orientation="vertical" />	
+				    	<field name="partner_id" />
+					<separator orientation="vertical" />
+					<field name="month" />
+					<field name="year"/>
+					<separator orientation="vertical" />
+					<field name="transfer"/>
+					<newline />
+					<group expand="0" string="Extended Filters..." colspan="4" col="20" >
+			       		<field name="date"/>
+					<field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                	</group>
+                	<newline/>   
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Partner" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'partner_id'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+						<filter string="Responsible" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'user_id'}" />
+						<filter string="Company" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+					</group>
+				</search>
+			</field>
+		</record>
+
+                <record id="environment_and_safety_allowances_archive_action" model="ir.actions.act_window">
+			<field name="res_model">services.contracts.archive</field>
+			<field name="domain">[]</field>
+		</record>
+
+
+<!-- Lines-->
+		<record id="view_environment_and_safety_allowances_lines_form" model="ir.ui.view">
+			<field name="name">services.contracts.allowances.lines.form</field>
+			<field name="model">services.contracts.allowances.lines</field>
+			<field name="arch" type="xml" >
+				<form string="Allowances Lines" version="7.0">
+                                	<sheet>
+                                                <group>
+							<field name="contract_id" />
+							<field name="type" />
+							<field name="cost_of_rent" />
+							<field name="deduct_days" />
+							<field name="deduct_amount" />
+							<field name="amount_untaxed" />
+							<field name="amount_tax" />
+							<field name="amount_total" />
+							<field name="percentage_rating" />
+                                                </group>
+                                	</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_environment_and_safety_lines_tree" model="ir.ui.view">
+			<field name="name">services.contracts.allowances.lines.tree</field>
+			<field name="model">services.contracts.allowances.lines</field>
+			<field name="arch" type="xml">
+				<tree string="Allowances Lines">
+					<field name="contract_id" />
+					<field name="cost_of_rent" />
+					<field name="deduct_days" />
+					<field name="deduct_amount" />
+					<field name="amount_untaxed" />
+					<field name="amount_tax" />
+					<field name="amount_total" />
+					<field name="percentage_rating" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- Menu -->
+
+		<menuitem id="menu_environment_and_safety" name="Environment and Safety Contracts"
+                           parent="services_menu" sequence="4"/>
+
+		<!--menuitem id="menu_environment_and_safety_allowances" name="Environment and Safety Allowances"
+                          parent="menu_environment_and_safety" sequence="4"/>
+
+       		<menuitem id="environment_and_safety_allowances_archive" name="Environment and Safety Allowances Archive"
+			  parent="menu_environment_and_safety_allowances" action="environment_and_safety_allowances_archive_action" /-->
+
+
+	</data>
+</openerp>

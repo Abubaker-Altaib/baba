@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_transfer_wish_wizard" model="ir.ui.view">
+            <field name="name">transfer_wish_wizard.form</field>
+            <field name="model">transfer_wish.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Transfer Wish Report" version="7.0">
+                    <header>
+                        <button name="print_report" string="Print" type="object"/>                    or                                                                                                                    
+                        <button special="cancel" string="Cancel" class="oe_link"/>
+                    </header>
+                    <sheet>
+                        <group colspan="2" col="4">
+                            <field name="employee_id"/>
+                            <newline/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="reason_id"/>
+                            <field name="medical_date"/>
+                            <newline/>
+                            <field name="department_id"/>
+                            <field name="with_childs"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="job_id"/>
+                            <field name="degree_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_transfer_wish_wizard" model="ir.actions.act_window">
+            <field name="name">Transfer Wish Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transfer_wish.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_transfer_wish_wizard"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="transfer_wish_wizard_menu" name="Transfer Wish Report" action="action_transfer_wish_wizard" parent="hr_custom.menu_hr_process_report"/>
+        <report menu="False" auto="False" id="transfer_wish_report_id" model="hr.transfer.wishes" name="hr.transfer_wish.report" file="hr_custom_military/report/transfer_wish_report.mako" string="transfer_wish Report" report_type="webkit" header="True"/>
+    </data>
+</openerp>

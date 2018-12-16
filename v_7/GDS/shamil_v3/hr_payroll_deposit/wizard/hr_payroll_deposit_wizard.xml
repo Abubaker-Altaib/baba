@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		
+		<!-- HR Payroll Deposit form -->
+		<record model="ir.ui.view" id="view_hr_payroll_deposit_wizard_form">
+			<field name="name">hr.payroll.deposit.wizard.form</field>
+			<field name="model">hr.payroll.deposit.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Payroll Deposit" version="7.0">
+				    <group col="4" colspan="4">
+					<field name="deposit_type" required="1" colspan="2"/>
+				    </group>
+				    <footer>
+		 		    	<button name="transfer_or_get_salary" string="Transfer to Treasury" type="object"  
+						attrs="{'invisible':[('deposit_type','!=','treasury')]}"/>
+		 		    	<button name="transfer_or_get_salary" string="Get salary" type="object"  
+						attrs="{'invisible':[('deposit_type','!=','refund')]}"/> or  
+                    			<button string="Cancel" class="oe_link" special="cancel"/>
+                		    </footer>
+				</form>
+			</field>
+		</record>
+
+		<act_window id="action_payroll_deposit_wizard_form" 
+			name="Transfer/Get salary"
+                        src_model="hr.payroll.deposit"
+			res_model="hr.payroll.deposit.wizard"
+                        key2="client_action_multi"
+			view_type="form"
+			view_mode="form"
+			view_id ="view_hr_payroll_deposit_wizard_form"
+			target="new"
+		  />
+
+
+	</data>
+</openerp>

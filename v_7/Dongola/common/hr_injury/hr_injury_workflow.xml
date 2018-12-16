@@ -1,0 +1,87 @@
+<?xml version="1.0" ?>
+<openerp>
+	<data>
+		<!-- Workflow definition -->
+		<record model="workflow" id="wkf_injury">
+			<field name="name">hr.injury.wf</field>
+			<field name="osv">hr.injury</field>
+			<field name="on_create">True</field>
+		</record>
+
+		<!-- Workflow activities -->
+		<record model="workflow.activity" id="act_draft">
+			<field name="wkf_id" ref="wkf_injury" />
+			<field name="flow_start">True</field>
+			<field name="name">draft</field>
+		</record>
+		<record model="workflow.activity" id="act_complete">
+			<field name="wkf_id" ref="wkf_injury" />
+			<field name="name">complete</field>
+			<field name="kind">function</field>
+			<field name="action">complete()</field>
+		</record>
+		<record model="workflow.activity" id="act_confirm">
+			<field name="wkf_id" ref="wkf_injury" />
+			<field name="name">confirm</field>
+			<field name="kind">function</field>
+			<field name="action">confirm()</field>
+		</record>
+		<record model="workflow.activity" id="act_validate">
+			<field name="wkf_id" ref="wkf_injury" />
+			<field name="name">validate</field>
+			<field name="kind">function</field>
+			<field name="action">validate()</field>
+		</record>
+		<record model="workflow.activity" id="act_approve">
+			<field name="wkf_id" ref="wkf_injury" />
+			<field name="name">approve</field>
+			<field name="kind">function</field>
+			<field name="action">approve()</field>
+		</record>
+		<record model="workflow.activity" id="act_refuse">
+			<field name="wkf_id" ref="wkf_injury" />
+			<field name="name">refuse</field>
+			<field name="kind">function</field>
+			<field name="flow_stop">True</field>
+			<field name="kind">stopall</field>
+			<field name="action">refuse()</field>
+		</record>
+
+		<!-- workflow transitions -->
+		<record model="workflow.transition" id="t1">
+			<field name="act_from" ref="act_draft" />
+			<field name="act_to" ref="act_complete" />
+			<field name="signal">complete</field>
+		</record>
+		<record model="workflow.transition" id="t2">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_confirm" />
+			<field name="signal">confirm</field>
+		</record>
+		<record model="workflow.transition" id="t3">
+			<field name="act_from" ref="act_confirm" />
+			<field name="act_to" ref="act_validate" />
+			<field name="signal">validate</field>
+		</record>
+		<record model="workflow.transition" id="t4">
+			<field name="act_from" ref="act_validate" />
+			<field name="act_to" ref="act_approve" />
+			<field name="signal">approve</field>
+		</record>
+		<record model="workflow.transition" id="t5">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_refuse" />
+			<field name="signal">refuse</field>
+		</record>
+		<record model="workflow.transition" id="t6">
+			<field name="act_from" ref="act_confirm" />
+			<field name="act_to" ref="act_refuse" />
+			<field name="signal">refuse</field>
+		</record>
+		<record model="workflow.transition" id="t7">
+			<field name="act_from" ref="act_validate" />
+			<field name="act_to" ref="act_refuse" />
+			<field name="signal">refuse</field>
+		</record>
+	</data>
+</openerp>

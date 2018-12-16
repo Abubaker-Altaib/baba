@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <record id="view_production_order_report_tree" model="ir.ui.view">
+        <field name="name">production.order.report.tree</field>
+        <field name="model">production.order.report</field>
+        <field name="arch" type="xml">
+            <tree string="المواد الخام" create="false">
+                <field name="production_id" string="أمر الإنتاج"/>
+                <field name="product_id" string="المنتج"/>
+                <field name="quantity" string="الكمية" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_production_order_report_search" model="ir.ui.view">
+        <field name="name">production.order.report.search</field>
+        <field name="model">production.order.report</field>
+        <field name="arch" type="xml">
+            <search string="المواد الخام" >
+                <field name="product_id" string="المنتج "/>
+                <field name="production_id" string="أمر الإنتاج"/>
+                <group expand="0" string="Group By...">
+                   <filter string="أمر الإنتاج" name="production_id" icon="terp-personal" context="{'group_by':'production_id'}"/>
+                   <filter string="المنتج" name="product_id" icon="terp-personal" context="{'group_by':'product_id'}"/>                          
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="view_production_order_report_graph" model="ir.ui.view">
+         <field name="name">production.order.report.graph</field>
+         <field name="model">production.order.report</field>
+         <field name="arch" type="xml">
+             <graph string="المواد الخام" type="pie">
+                <field name="product_id" string="المنتج"/>
+                <field name="quantity" string="الكمية" operator="+"/>
+                <field name="production_id" string="أمر الإنتاج"/>
+             </graph>
+         </field>
+    </record>
+
+    <record id="action_production_order_report" model="ir.actions.act_window">
+        <field name="name">المواد الخام</field>
+        <field name="res_model">production.order.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,graph</field>
+        <field name="context">{  'group_by':[],'search_default_state':1}</field>
+        <!--field name="search_view_id" ref="view_production_order_report_search"/-->
+        <field name="view_id" ref="view_production_order_report_tree"/>
+    </record>
+
+    <menuitem action="action_production_order_report"
+        id="menu_action_production_order_report"
+        string="إستهلاك المواد الخام"
+        parent="menu_mrp_report" sequence="4"/>
+
+</data>
+</openerp>

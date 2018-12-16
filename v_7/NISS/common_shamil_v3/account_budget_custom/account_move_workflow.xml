@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!--check analytic state..
+-->
+
+       <record id="act_analytic_check" model="workflow.activity">
+            <field name="wkf_id" ref="account_custom.wkf_move"/>
+            <field name="name">check_analytic</field>
+            <field name="action">check_analytic()</field>
+             <field name="kind">function</field>
+        </record>
+
+<!--Reverse state.. analytic
+-->
+       <record id="act_analytic" model="workflow.activity">
+            <field name="wkf_id" ref="account_custom.wkf_move"/>
+            <field name="name">analytic</field>
+            <field name="action">write({'state':'analytic'})</field>
+            <field name="kind">function</field>
+        </record>
+
+<!--
+Transitions
+-->
+
+        <record id="account_custom.t1" model="workflow.transition">
+            <field name="act_from" ref="account_custom.act_draft"/>
+            <field name="act_to" ref="account_custom.act_complete"/>
+            <field name="signal">completed</field>
+            <field name="condition">not test_analytic()</field>
+            <!-- <field name="group_id" ref="group_shamil_account_entry_complete"/-->
+        </record>
+        <record id="tx" model="workflow.transition">
+            <field name="act_from" ref="account_custom.act_draft"/>
+            <field name="act_to" ref="act_analytic"/>
+            <field name="signal">completed</field>
+            <field name="condition">test_analytic()</field>
+             <!--<field name="group_id" ref="group_shamil_account_entry_complete"/-->
+        </record>
+        <record id="t_analytic_complete" model="workflow.transition">
+            <field name="act_from" ref="act_analytic"/>
+            <field name="act_to" ref="account_custom.act_complete"/>
+            <field name="signal">analytic_completed</field>
+            <!--field name="group_id" ref="group_shamil_account_entry_complete_analytic"/-->
+        </record>
+        
+          <record id="t_analytic_check" model="workflow.transition">
+            <field name="act_from" ref="act_analytic"/>
+            <field name="act_to" ref="act_analytic_check"/>
+            <field name="signal">check_analytic</field>
+            <!--<field name="group_id" ref="group_shamil_account_entry_complete_analytic"/>-->
+        </record>
+        <record id="t_Bcheck_draft" model="workflow.transition">
+            <field name="act_from" ref="act_analytic_check"/>
+            <field name="act_to" ref="account_custom.act_draft"/>
+            <field name="signal">draft</field>
+             <!--<field name="group_id" ref="group_shamil_account_entry_complete"/-->
+        </record>
+        
+
+</data>
+</openerp>
+        
+

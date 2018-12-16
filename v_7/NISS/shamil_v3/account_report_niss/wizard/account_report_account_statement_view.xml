@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="account_report_account_statement_total" model="ir.ui.view">
+			<field name="name">Account Print Total Journal</field>
+			<field name="model">account.account.statement.total</field>
+			<field name="inherit_id" ref="account.account_common_report_view" />
+			<field name="arch" type="xml">
+				<field name="target_move" position="after">
+					<field name="sort_selection"  />
+					<!--field name="account_id" /-->
+					<field name="amount_currency" groups="base.group_multi_currency"/>
+					<newline /> 
+				</field>
+                <xpath expr="//field[@name='period_from']" position="attributes">
+					<attribute name="context">{'closed':True}</attribute>
+				</xpath> 
+                <xpath expr="//field[@name='period_to']" position="attributes">
+					<attribute name="context">{'closed':True}</attribute>
+				</xpath> 
+			</field>
+		</record>
+
+		<record id="action_account_report_account_statement_total" model="ir.actions.act_window">
+			<field name="name">Account Print Journal</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.account.statement.total</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+			<field name="view_id" ref="account_report_account_statement_total" />
+		</record>
+
+
+                       <menuitem name="Total Statement" parent="account.final_accounting_reports"
+	action="action_account_report_account_statement_total" id="menu_account_account_statement_total"
+			groups="account.group_account_manager,account.group_account_user"
+			icon="STOCK_PRINT" />
+
+	</data>
+</openerp>

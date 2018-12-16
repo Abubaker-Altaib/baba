@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record id="view_account_journal_form" model="ir.ui.view">
+			<field name="name">account.journal.form</field>
+			<field name="model">account.journal</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="account.view_account_journal_form" />
+			<field name="arch" type="xml">
+				<field name="sequence_id" position="before">
+					<field name="voucher_sequence_id" />
+				</field>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_voucher_tree">
+			<field name="name">account.voucher.tree</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher.view_voucher_tree" />
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='partner_id']" position="attributes">
+					<attribute name="string">Beneficiary/Collector</attribute>
+				</xpath>
+				<xpath expr="//field[@name='journal_id']" position="attributes">
+					<attribute name="string">Order/Collect Type</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<!-- Supplier Voucher -->
+		<menuitem id="account_voucher.menu_action_purchase_receipt"
+			icon="STOCK_JUSTIFY_FILL" action="account_voucher.action_purchase_receipt"
+			parent="account.menu_finance_payables" sequence="10" name="Expenses Payment" />
+
+		<record id="account_voucher.action_purchase_receipt" model="ir.actions.act_window">
+			<field name="name">Expenses Payment</field>
+			<field name="domain">
+				['|',('pay_journal_id','=',False),('pay_journal_id.special','=',False),('journal_id.type','in',['purchase','purchase_refund']),('type','=','purchase')]
+			</field>
+		</record>
+
+		<record id="view_voucher_filter_vendor" model="ir.ui.view">
+			<field name="name">account.voucher.purchase.select</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher.view_voucher_filter_vendor" />
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='partner_id']" position="attributes">
+					<attribute name="string">Beneficiary</attribute>
+				</xpath>
+				<xpath expr="//filter[@string='Supplier']" position="attributes">
+					<attribute name="string">Beneficiary</attribute>
+				</xpath>
+				<xpath expr="//field[@name='journal_id']" position="attributes">
+					<attribute name="string">Order Type</attribute>
+				</xpath>
+				<xpath expr="//filter[@string='Journal']" position="attributes">
+					<attribute name="string">Order Type</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_purchase_receipt_form">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher.view_purchase_receipt_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<field name="partner_id" position="replace">
+					<field name="partner_id" domain="[('supplier','=',True)]"
+						string="Supplier" required="1"
+						on_change="onchange_partner_id(partner_id, journal_id, amount, currency_id, type, date, context)"
+						context="{'default_customer': 0, 'search_default_supplier': 1, 'default_supplier': 1}" />
+				</field>
+				<field name="partner_id" position="after">
+					<field name="department_id" />
+				</field>
+				<xpath expr="//field[@name='journal_id']" position="attributes">
+					<attribute name="string">Order Type</attribute>
+					<attribute name="on_change">
+						onchange_journal_id(journal_id,pay_journal_id,line_dr_ids,tax_id,partner_id,date,amount,type,company_id,pay_now)
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='currency_id']" position="attributes">
+					<attribute name="invisible">0</attribute>
+					<attribute name="groups">base.group_multi_currency</attribute>
+				</xpath>
+				<field name="pay_now" position="replace">
+					<field name="pay_now"
+						on_change="onchange_payment(pay_now, journal_id, partner_id)"
+						required="1" />
+				</field>
+				<xpath expr="//field[@name='journal_id']" position="after">
+					<field name="account_id" domain="[('type','=','liquidity')]"
+						invisible="True" />
+					<field name="pay_journal_id"
+						domain="[('type','in',['cash','bank']),('special','=',False)]"
+						attrs="{'readonly': [('state','!=','draft')],'required': [('state','=','draft'),('pay_now','=','pay_now')],'invisible': [('pay_now','=','pay_later')]}"
+						on_change="onchange_journal_id(journal_id, pay_journal_id, line_dr_ids, tax_id, partner_id, date, amount, type, company_id,pay_now)" />
+				</xpath>
+				<field name="line_dr_ids" position="replace">
+					<field name="line_dr_ids" on_change="onchange_price(line_dr_ids, tax_id, partner_id)"
+						context="{'journal_id':journal_id,'partner_id':partner_id}"
+						colspan="4" nolabel="1" height="180">
+						<tree string="Expense Lines" editable="bottom">
+							<field name="account_id" on_change="onchange_account(account_id)"
+								domain="[('journal_id','=',parent.journal_id),('user_type.report_type','=','expense'),('type','!=','view')]" />
+							<field name="name" />
+							<field name="amount" on_change="onchange_amount(amount)" />
+							<field name="tax_ids" widget="many2many_tags"/>
+							<field name="untax_amount" invisible="1" />
+							<field name="account_analytic_id"
+								domain="[('company_id','=',parent.company_id),('parent_id','!=',False),('type','=','normal')]"
+								groups="analytic.group_analytic_accounting" />
+						</tree>
+					</field>
+				</field>
+				<field name="tax_amount" nolabel="1" position="after">
+					<field name="active" invisible="1" />
+					<field name="special" invisible="1" />
+				</field>
+			</field>
+		</record>
+
+
+		<!-- Customer Voucher -->
+		<record id="account_voucher.action_sale_receipt" model="ir.actions.act_window">
+			<field name="name">Revenues Receipt</field>
+			<field name="domain">
+				['|',('pay_journal_id','=',False),('pay_journal_id.special','=',False),('journal_id.type','in',['sale','sale_refund']),('type','=','sale')]
+			</field>
+		</record>
+
+		<menuitem id="account_voucher.menu_action_sale_receipt" icon="STOCK_JUSTIFY_FILL"
+			action="account_voucher.action_sale_receipt" parent="account.menu_finance_receivables"
+			name="Revenues Receipt" sequence="10" />
+
+		<record id="view_voucher_filter_sale" model="ir.ui.view">
+			<field name="name">account.voucher.sale.select</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher.view_voucher_filter_sale" />
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='partner_id']" position="attributes">
+					<attribute name="string">Collector</attribute>
+				</xpath>
+				<xpath expr="//filter[@string='Customer']" position="attributes">
+					<attribute name="string">Collector</attribute>
+				</xpath>
+				<xpath expr="//field[@name='journal_id']" position="attributes">
+					<attribute name="string">Collect Type</attribute>
+				</xpath>
+				<xpath expr="//filter[@string='Journal']" position="attributes">
+					<attribute name="string">Collect Type</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_sale_receipt_form">
+			<field name="name">account.voucher.sale.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher.view_sale_receipt_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='journal_id']" position="attributes">
+					<attribute name="string">Collect Type</attribute>
+				</xpath>
+				<field name="journal_id" position="after">
+					<field name="pay_journal_id"
+						domain="[('type','in',['cash','bank']),('special','=',False)]"
+						attrs="{'readonly': [('state','!=','draft')],'required': [('state','=','draft'),('pay_now','=','pay_now')],'invisible': [('pay_now','=','pay_later')]}"
+						on_change="onchange_journal_id(journal_id, pay_journal_id, line_cr_ids, tax_id, partner_id, date, amount, type, company_id,pay_now)"
+						string="Receipt Method" />
+				</field>
+				<xpath expr="//field[@name='journal_id']" position="attributes">
+					<attribute name="string">Order Type</attribute>
+					<attribute name="on_change">
+						onchange_journal_id(journal_id,pay_journal_id,line_cr_ids,tax_id,partner_id,date,amount,type,company_id,pay_now)
+					</attribute>
+				</xpath>
+				<field name="line_cr_ids" position="replace">
+					<field name="line_cr_ids" on_change="onchange_price(line_cr_ids, tax_id, partner_id)"
+						context="{'journal_id':journal_id,'partner_id':partner_id}">
+						<tree string="Revene Lines" editable="bottom">
+							<field name="account_id" on_change="onchange_account(account_id)"
+								domain="[('journal_id','=',parent.journal_id),('user_type.report_type','=','income'),('type','!=','view')]" />
+							<field name="name" />
+							<field name="amount" on_change="onchange_amount(amount)" />
+							<field name="untax_amount" invisible="1" />
+							<field name="account_analytic_id"
+								domain="[('company_id','=',parent.company_id),('parent_id','!=',False),('type','=','normal')]"
+								groups="analytic.group_analytic_accounting" />
+						</tree>
+					</field>
+				</field>
+			</field>
+		</record>
+	</data>
+</openerp>

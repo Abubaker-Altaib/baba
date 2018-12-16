@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+		<record id="res_config_settings_view_form_inherit" model="ir.ui.view">
+            <field name="name">res config settings</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//div[hasclass('settings')]" position="inside">
+
+
+                    <h2>Retification List Setting</h2>
+
+                    <field name="company_id" invisible="1"/>
+                    <field name="account_approve_ids">
+                        <tree editable='bottom'>
+                            <field name="name" required="1"/>
+                            <field name="min_amount" required="1"/>
+                            <field name="max_amount" required="1"/>
+                            <field name="employee_ids" widget="many2many_tags"/>
+                        </tree>
+                    </field>
+
+
+                </xpath>
+
+
+            </field>
+        </record>
+
+        <!--Form View Of account.approve -->
+        <record model="ir.ui.view" id="account_approve_form">
+            <field name="name">account.approve.form</field>
+            <field name="model">account.approve</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" required="True"/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="min_amount" string="minumum amount"/>
+                            </group>
+                            <group>
+                                <field name="max_amount" string="maximum amount"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="employee_ids" string="employees" widget="many2many_tags"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--Tree View Of account.approve -->
+        <record model="ir.ui.view" id="account_approve_tree">
+            <field name="name">account.approve.tree</field>
+            <field name="model">account.approve</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="min_amount"/>
+                    <field name="max_amount"/>
+                    <!--field name="employee_ids" string= "employees" /-->
+                </tree>
+            </field>
+        </record>
+
+        <!--Action of Form, Tree View Of account.aprove-->
+        <record model="ir.actions.act_window" id="account_custom.account_approve_action_window">
+            <field name="name">Account Approve</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.approve</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem name="account approve" id="account_custom.account_approve" parent="account.account_management_menu"
+                  action="account_custom.account_approve_action_window"/>
+
+		
+
+		<record model="ir.ui.view" id="view_purchase_receipt_form_inherit">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher.view_purchase_receipt_form"/>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<!--xpath expr="//button[@name='proforma_voucher']" position="replace">
+					<button name="proforma_voucher" string="Validate" class="oe_highlight" type="object" attrs="{'invisible':['|',('check_lines','!=',True),('state','!=','no_approve')]}"/>
+				</xpath-->
+				<xpath expr="//field[@name='state']" position="replace">
+				<field name="state" widget="statusbar" statusbar_visible="draft,proforma,cancel"/>
+				</xpath>
+
+				<xpath expr="//button[@name='cancel_voucher']" position="replace">
+					<field name="retf_approve" invisible="1" />
+					<button name="no_approve_draft" type="object" string="Set To Draft"  class="oe_highlight" states="no_approve"/>
+					<button name="no_approve2_draft" type="object" string="Set To Draft" class="oe_highlight" states="no_approve2"/>
+					<button name="approved_draft" type="object" string="Set To Draft" class="oe_highlight" states="approved" groups="account_custom.group_expenditure_unit"/>
+
+					<button name="check_budget" type="object" string="Check Budget" class="oe_highlight" states="no_approve,no_approve2" groups="account_custom.group_financial_manager"/>
+					<button name="cancel" type="object" string="Cancel" class="oe_highlight" states="no_approve,no_approve2"/>
+
+
+					<button name="not_approve_cancel" type="object" string="Not Approve" class="oe_highlight" states="no_approve" />
+					<button name="not_approve2_cancel" type="object" string="Not Approve" class="oe_highlight" states="no_approve2" />
+					<button name="budget_approved_cancel" type="object"   string="Not Approve" attrs="{'invisible':[('retf_approve','=',False)]}" class="oe_highlight"/>
+					<button name="not_approve2_back" type="object" string="Not Approve" class="oe_highlight" states="approved2" groups="account_custom.group_financial_section"/>
+					<button name="not_approve3_back" type="object" string="Not Approve" class="oe_highlight" states="approved3" groups="account_custom.group_internal_auditor"/>
+				</xpath>
+
+				<xpath expr="//button[@name='cancel_voucher']" position="after">
+					<button name="confirm" type="object" string="Confirm" class="oe_highlight" states="draft"/>
+					<button name="approved"  attrs="{'invisible':[('retf_approve','=',False)]}" type="object" string="Approve" class="oe_highlight" />
+					<button name="approved2" type="object" string="Approve" class="oe_highlight" states="approved" groups="account_custom.group_expenditure_unit"/>
+					<button name="approved3" type="object" string="Approve" class="oe_highlight" states="approved2" groups="account_custom.group_financial_section"/>
+					<button name="auditor_approved" type="object" string="Approve" class="oe_highlight" states="approved3" groups="account_custom.group_internal_auditor"/>
+				</xpath>
+
+				<xpath expr="//button[@name='proforma_voucher']" position="replace">
+					<button name="proforma_voucher" string="Validate" class="oe_highlight" type="object" states="auditor_approved" groups="account_custom.group_financial_section,account_custom.group_financial_manager"/>
+				</xpath>
+
+				<xpath expr="//button[@name='cancel_voucher']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+
+				<!--xpath expr="//field[@name='partner_id']" position="after">
+					<field name="check_lines" invisible="1"/>
+				</xpath-->
+				<xpath expr="//field[@name='line_ids']/tree" position="attributes">
+					<attribute name="colors">gray:state=='cancel';red:state=='no_approve'</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_ids']/tree/field[@name='account_analytic_id']" position="after">
+					<field name="state"/>
+				</xpath>	
+			<xpath expr="//field[@name='line_ids']/tree/field[@name='account_analytic_id']" position="attributes">
+					<attribute name="required">'1'</attribute>
+				</xpath>
+
+						
+				
+				<xpath expr="//field[@name='reference']" position="after">
+					<field name="department_id" required="1"/>
+
+				</xpath>
+				<xpath expr="//field[@name='journal_id']" position="after">
+
+					<field name="payment_id" invisible="1" />
+
+					<field name="user_id" readonly="1"/>
+
+
+				</xpath>
+
+                <xpath expr='//field[@name="account_id"]' position="attributes">
+                    <attribute name="domain">
+ 						[('deprecated','=',False),('internal_type', 'in', ('payable' ,'liquidity'))]
+					</attribute>
+                </xpath>
+
+				<xpath expr="//field[@name='pay_now']" position="attributes">
+					<attribute name="invisible" > 1 </attribute>
+				</xpath>
+
+				<!--xpath expr="//field[@name='amount']" position="after">
+					<field name="amount_text"/>
+				</xpath-->
+
+				<xpath expr="/form/sheet/notebook/page/group/group/field[@name='amount']" position="after">
+                    <field name="amount_text"  />
+                </xpath>
+
+                <xpath expr="//field[@name='company_id']" position="after">
+                	<field name="payment_type" attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')]}" />
+                	<field name="payment_purpose" />
+                </xpath>
+
+                <xpath expr="//field[@name='move_id']" position='attributes'>
+                	<attribute name='invisible'>1</attribute>
+                </xpath>
+
+                <xpath expr="//page[2]" position='inside'>
+                	<field name='move_ids' readonly='True' domain="[('voucher_id','in','account.move')]">
+                	 <!--tree string="Journal Entry" editable='buttom'>
+                		<field name='date'/>
+                		<field name='ref'/>
+                		<field name='journal_id'/>
+                		<field name='voucher_id'/>
+                	</tree-->
+                	</field>
+                </xpath>
+
+
+		<xpath expr='//notebook' position="inside">
+					<page string="Payments" >
+
+							<field name="payment_ids" >
+								<tree   options='{"no_open": True,"no_create": 1, "no_create_edit": 1}' >
+									<field name="payment_date"/>
+									<field name="name"/>
+									<field name="journal_id"/>
+									<field name="amount"/>
+									<field name="state"/>
+								</tree>
+							</field>
+
+					</page>
+	    		</xpath>
+
+			</field>
+		</record>
+
+
+           <!-- tree for account_voucher inhernt-->
+        <record model="ir.ui.view" id="view_purchase_receipt_tree_inherit">
+			<field name="name">account.voucher.purchase.tree</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher.view_voucher_tree" />
+			<field name="arch" type="xml">
+
+			<xpath expr='//field[@name="number"]' position="after">
+	    			<field name="department_id"/>
+	    	</xpath>
+	    	</field>
+	        </record>
+	        <!-- tree for account_voucher inhernt-->
+
+	    <!-- form for view_account_payment_form inherit -->
+		<record model="ir.ui.view" id="view_account_payment_form_inherit">
+			<field name="name">view.account.payment.form.inherit</field>
+			<field name="inherit_id" ref="account.view_account_payment_form" />
+			<field name="model">account.payment</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<data>
+					<xpath expr="//button[@name='post']" position="attributes">
+						<attribute name="groups">account_custom.group_financial_manager,account_custom.group_financial_section</attribute>
+					</xpath>
+					<xpath expr="//button[@name='action_draft']" position="attributes">
+						<attribute name="groups">account_custom.group_financial_manager,account_custom.group_financial_section</attribute>
+					</xpath>
+				</data>
+			</field>
+		</record>
+
+
+		<!-- form for view_account_payment_form inherit -->
+		<record model="ir.ui.view" id="view_account_move_form_inherit">
+			<field name="name">view.account.move.form.inherit</field>
+			<field name="inherit_id" ref="account.view_move_form" />
+			<field name="model">account.move</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<data>
+					<xpath expr="//field[@name='journal_id']" position="after">
+						<field name="voucher_id" attrs="{'invisible':[('voucher_id','=',False)]}"/>
+					</xpath>
+				</data>
+			</field>
+		</record>
+
+
+        <!-- inherit search view in voucher -->
+        <record id="voucher_search_view_inherit" model="ir.ui.view">
+            <field name="name">voucher.search.view.inherit</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_voucher_filter_vendor"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//group[1]" position="before">
+                	<field name="department_id" string="Department"/>
+                	<field name="company_id" string="Company"/>
+                	<field name="state" string="State"/>
+                	<field name="user_id" string="User"/>
+				</xpath>
+
+				<xpath expr="//group[1]" position="inside">
+					<filter string="Department" domain="[]" context="{'group_by':'department_id'}"/>
+					<filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
+					<filter string="User" domain="[]" context="{'group_by':'user_id'}"/>
+                	
+				</xpath>
+			</field>
+		</record>
+
+
+	</data>
+</odoo>

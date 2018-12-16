@@ -1,0 +1,359 @@
+<openerp>
+	<!-- This file manage the different views transportation order and lines -->
+	<data>
+		<record id="transportation_order_form" model="ir.ui.view">
+			<field name="name">transportation.order.form</field>
+			<field name="model">transportation.order</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Transportation order" version="7.0">
+                                      <header>
+					  <button name="confirmed" states="draft" string="Confirm" type="object"
+                                                  confirm="Are you sure you want to confirm this Transportation?" />
+                                          <button name="invoice" states="confirmed" string="Invoice Products" type="object"
+                                                  confirm="Are you sure you want to invoice this Transportation?" />
+                                          <button name="done" states="invoice" string="Done" type="object"
+                                                  confirm="Are you sure you want to confirm this Transportation?" />
+                                          <button name="cancel" states="draft,confirmed,invoice" string="Cancel Request" type="object"
+						  icon="gtk-cancel" confirm="Are you sure you want to Cancel this Transportation?" />
+                                          <button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" 
+                                                  type="object" icon="gtk-convert" />
+                                          <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,invoice,done"
+                                                 statusbar_colors='{"confirmed":"red"}'/>
+				      </header>
+				      <group colspan="2" col="4" name="Main">
+					     <field name="name" />
+					     <field name="transportation_date"/>
+					     <field name="purpose" on_change="onchange_purpose(purpose)"/>
+					     <field name="department_id" required="1" />
+					     <field name="purchase_order_id" on_change="purchase_ref(purchase_order_id)" attrs="{'invisible':[('purpose','!=','purchase')], 'required':[('purpose', '=', 'purchase')]}" domain ="['|',('state','=','draft'),('state','=','sign')]"/>
+					     <field name="user" colspan="2" invisible="1"/>
+				      </group>
+				      <notebook colspan="4">
+						<page string="Transportation">
+						      <group colspan="4" col="4" name="Main Infromation">
+							     <field name="source_location" required="1" />
+							     <field name="destination_location" required="1" />
+							     <field name="delivery_method" required="1"/>
+						             <field name="allocation_base" colspan="2" required="1" 
+                                                                    attrs="{'invisible':[('purpose','!=','purchase')]}"/>
+						       </group>
+							     <separator string="Items" colspan="4" />
+                                                             <group attrs="{'invisible':[('purpose', '!=', 'purchase')]}">
+                                                                    <button name="load_items" type="object" string="Load Items"
+                                                                            attrs="{'invisible':[('state','!=','draft')]}"/>
+                                                             </group>
+							     <field colspan="4" name="transportation_line_ids" nolabel="1" >
+								    <tree editable="bottom" string="Items Lines">
+									  <field name="product_id" colspan="4" on_change="product_id_change(product_id)" />
+								          <field name="name" colspan="4" />
+								          <field name="product_qty" colspan="2" on_change="qty_change(product_qty)"/>
+                                                                          <field name="price_unit" readonly="1" />
+									  <field name="product_uom" colspan="2" />
+									  <field name="transportation_price_unit" />
+									  <field name="weight" />
+									  <field name="space" />
+								    </tree>
+								</field>	                             
+							
+							</page>
+							<page string="Invoices" attrs="{'invisible':[('state', '=','draft')]}">
+							      <group colspan="2" col="5" string="create quote" 
+                                                                     attrs="{'invisible':[('state', '!=','confirmed')]}">
+			           			            <button name="create_quote" states="confirmed" 
+                                                                            string="Create a Quotation" type="object" 
+                                                                            confirm="Are you sure you want to create a new Quotation?"/>
+							      </group>
+							        <separator string="Invoices" colspan="8" />
+                                                                <group>
+									<field name="quotes_ids" nolabel="1" colspan="4">
+									<tree string="Transportation Quotes" create="false">
+										<field name="name" colspan="2" />
+										<field name="quote_no"/>
+										<field name="supplier_id"/>
+										<field name="amount_total"/>
+										<field name="state"/>
+			                                                </tree>
+                                                                        </field>  
+
+
+
+
+									<field name="supplier_chose_reason_delivery" colspan="2" nolabel="0"/>
+									<field name="supplier_chose_reason_quality" colspan="2" nolabel="0"/>
+									<field name="supplier_chose_reason_price" colspan="2" nolabel="0"/>
+									<field name="supplier_chose_reason_others" colspan="2" nolabel="0"/>
+                                                                </group>
+							</page>
+							<page string="Other Infromations">
+								<group colspan="4" col="4" name="Drivers infromation">
+									<separator string="Drivers infromation" colspan="8" />
+										   <field colspan="4" name="transportation_drivers" nolabel="1" >
+											<tree editable="bottom" string="Drivers infromation">
+												<field name="driver_name" colspan="2" />
+												<field name="phone_number" colspan="2" />
+												<field name="car_type" colspan="2" />
+												<field name="car_number" colspan="2" />
+												<field name="description" colspan="2" />
+											</tree>
+										   </field>
+								</group>
+								<group colspan="8" col="8" name="Desacription">
+									<separator string="Desacription" colspan="8" />
+									<field name="description" colspan="8" nolabel="1" />
+								</group>
+							</page>
+						<page string="accounting" attrs="{'invisible':[('state', '!=', 'done')]}">
+                                                      <field name="account_vouchers" colspan="4" nolabel="1" readonly="1" context="{'form_view_ref' : 'account_voucher.view_purchase_receipt_form', 'tree_view_ref' : 'account_voucher.view_purchase_receipt_tree'}" />
+						
+						</page>
+							<page string="notes">
+								<field name="notes" nolabel="1" />
+							</page>
+						</notebook>
+				</form>
+			</field>
+		</record>
+
+		<record id="transportation_order_tree" model="ir.ui.view">
+			<field name="name">transportation.order.tree</field>
+			<field name="model">transportation.order</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree colors="grey:state=='cancel';blue:state=='confirmed'"
+					string="Transportations">
+					<field name="name" />
+					<field name="transportation_date" />
+					<field name="purpose" />
+					<field name="delivery_method" />
+					<field name="state" />
+					<field name="user" />
+				</tree>
+			</field>
+		</record>
+
+
+		<record id="transportation_order_line_form" model="ir.ui.view">
+			<field name="name">transportation.order.line.form</field>
+			<field name="model">transportation.order.line</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Items">
+					<notebook colspan="4">
+						<page string="Items">
+							<field name="product_id" colspan="4"
+								on_change="product_id_change(product_id)" domain="[('categ_id','=',parent.cat_id)]" />
+							<field name="name" colspan="4" />
+							<field name="product_qty" colspan="2" />
+                                                        <field name="price_unit" colspan="2" readonly="1" />
+							<field name="product_uom" colspan="2" />
+							<field name="product_packaging" colspan="2" />
+							<field name="transportation_price_unit" invisible="1" />
+                                                        <field name="price_unit" readonly="1" />
+							<field name="weight" />
+							<field name="space" />
+							<field name="description" colspan="4" />
+						</page>
+						<page string="Notes">
+							<field name="notes" colspan="4" nolabel="1" />
+						</page>
+					</notebook>
+				</form>
+			</field>
+		</record>
+		<record id="transportation_order_line_tree" model="ir.ui.view">
+			<field name="name">transportation.order.line.tree</field>
+			<field name="model">transportation.order.line</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Items">
+					<field name="product_id" />
+					<field name="name" />
+					<field name="product_uom" />
+					<field name="product_qty" />
+					<field name="transportation_price_unit" invisible="1" />
+				</tree>
+			</field>
+		</record>
+		
+<!--   driver information forrm and tree  -->
+		<record id="transportation_driver_form" model="ir.ui.view">
+			<field name="name">transportation.driver.from</field>
+			<field name="model">transportation.driver</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Items">
+					<notebook colspan="4">
+						<page string="Drivers">
+							<field name="name" colspan="2" />
+							<field name="driver_name" colspan="2" />
+							<field name="phone_number" colspan="2" />
+							<field name="car_type" colspan="2" />
+							<field name="car_number" colspan="2" />
+							<field name="description" colspan="4" />
+						</page>
+					</notebook>
+				</form>
+			</field>
+		</record>
+
+		<record id="transportation_order_line_tree" model="ir.ui.view">
+			<field name="name">transportation.driver.tree</field>
+			<field name="model">transportation.driver</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree editable="bottom" string="Items Lines">
+					<field name="driver_name" colspan="2" />
+					<field name="phone_number" colspan="2" />
+					<field name="car_type" colspan="2" />
+					<field name="car_number" colspan="2" />
+					<field name="description" colspan="2" />
+				</tree>
+			</field>
+		</record>
+		<!-- transportation order Search Filter -->
+
+		<record id="view_transportation_order_filter" model="ir.ui.view">
+			<field name="name">transportation.order.list.select</field>
+			<field name="model">transportation.order</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search for transportation order">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="transportation_date" select="1" />
+					<separator orientation="vertical" />
+					<field name="purpose" select="1" />
+					<field name="delivery_method" select="1" />
+					<field name="state" select="1" />
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Responsible" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'user'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="transportation_order_form_action" model="ir.actions.act_window">
+			<field name="name">Transportation order</field>
+			<field name="res_model">transportation.order</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="view_transportation_order_filter" />
+		</record>
+
+		<menuitem id="id_purchase_transportation_menu1" name="Purchase Transportation"
+			parent="base.menu_purchase_root" sequence="2"/>
+
+		<menuitem action="transportation_order_form_action" id="menu_transportation_order_form_action"
+			parent="id_purchase_transportation_menu1" />
+<!--  Quote view -->
+         <record id="transportation_quote_form" model="ir.ui.view">
+		 <field name="name">transportation_quote_form</field>
+		 <field name="model">transportation.quotes</field>
+		 <field name="type">form</field>
+		 <field name="arch" type="xml">
+                        <form string="Purchase Quote" version="7.0">
+                              <header>
+		                    <button name="quote_confirm" states="draft" colspan="2" string="Confirm Quote" icon="gtk-execute"/>
+		                    <button name="done" colspan="2" states="confirmed" string="Approved to Purchase" 
+		                            icon="gtk-go-forward" confirm="Are you sure you want to approve this quote ?"/>
+		                    <button name="action_cancel_draft" states="cancel" colspan="2" string="Set to Draft" type="object" icon="gtk-convert"/>
+		                    <button name="quote_cancel" states="draft,confirmed" colspan="2" string="Cancel Quote" icon="gtk-cancel"/>
+                                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done" statusbar_colors='{"confirmed":"red","done":"red","draft":"blue"}' readonly="1"/>
+                              </header> 
+                                        
+                       <group col="8" colspan="4" name="main Information">
+                        <field name="name" colspan="2"/>
+                        <field name="quote_no" required="1" />
+                        <field name="quote_date"/>
+                        <field name="delivery_period" colspan="2"/>
+                        <field name="supplier_id" domain="[('supplier','=',1)]" colspan="2" on_change="on_change_supplier(supplier_id)" required="1"  />
+                        <field name="supplier_vat" colspan="2"/>
+                       </group> 
+                    <notebook colspan="4">
+                       <page string="Items">
+                         <field colspan="4" name="quotes_products_ids" nolabel="1" attrs="{'readonly':[('state', '!=', 'draft')]}">
+                                <tree editable="bottom" string="Purchase Quote Lines" create="false">
+				    <field name="name" colspan="2" />
+                                    <field name="product_id"/>
+                                    <field name="product_qty" on_change="subtotal(price_unit,product_qty)"/>
+                                    <field name="price_unit" on_change="subtotal(price_unit,product_qty)" required="1"/>
+                                    <field name="price_subtotal"/>
+                                </tree>
+                        </field>
+                       <group colspan="4">
+                        <separator string="Taxes" colspan="4"/>
+                        <field name="taxes_id" colspan="4" nolabel="1" domain="[('parent_id','=',False),('type_tax_use','!=','sale'),('company_id','=',parent.company_id)]"/>
+                       </group> 
+
+                            <group col="12" colspan="3">
+                                <field name="amount_untaxed" sum="Untaxed amount" colspan="2"/>
+                                <field name="amount_tax" colspan="2"/>
+                                <field name="amount_total" sum="Total amount" colspan="2"/>
+                            </group>
+                            <group col="12" colspan="3">
+                                <field name="price_total" colspan="2" attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+		                <button name="button_dummy" states="draft" colspan="2" string="Compute" type="object" icon="gtk-execute"/>
+                            </group>
+
+                    </page>
+                </notebook>       
+                </form>
+            </field>
+          </record>
+
+         <record id="transportation_quote_tree" model="ir.ui.view">
+            <field name="name">transportation_quote_tree</field>
+            <field name="model">transportation.quotes</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Quotes">
+                        <field name="name"/>
+                        <field name="quote_date"/>
+                        <field name="supplier_id" on_change="on_change_supplier(supplier_id)"/>
+                        <field name="supplier_vat"/>
+                        <field name="amount_untaxed"/>
+                        <field name="amount_tax"/>
+                        <field name="amount_total"/>
+                        <field name="price_total"/>
+                        <button name="done" states="confirmed" string="Create Purchase Order" type="object" icon="gtk-go-forward" confirm="Are you sure you want to create a purchase order ?"/>
+                        <field name="state"/>
+                        <button name="quote_confirm" states="draft" string="Confirm Quote" icon="gtk-execute"/>
+                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                        <button name="quote_cancel" states="draft,confirmed" string="Cancel Quote" icon="gtk-cancel"/>
+                </tree>
+            </field>
+          </record>
+
+          <record id="transportation_quotes_products_form" model="ir.ui.view">
+            <field name="name">transportation.quotes.products.form</field>
+            <field name="model">transportation.quotes.products</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Items">
+                   <notebook colspan="4">
+                      <page string="Quote Line">
+			<field name="name" colspan="2" />
+                        <field name="product_id" select="1" colspan="4"/>
+                        <field name="product_qty"/>
+                        <field name="price_unit" required="1"/>
+                        <field name="price_subtotal"/>
+                        <field name="desc" colspan="4"/>
+                      </page>
+                   </notebook>
+                </form>
+            </field>
+         </record>
+         
+       <act_window
+           domain="[('transportation_ids', '=', active_id)]"
+           id="act_purchase_order_transportation"
+           name="Purchase Orders"
+           res_model="purchase.order"
+           src_model="transportation.order"/>
+	</data>
+</openerp>

@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<document filename="Vehicles Movements.pdf">
+    <template pageSize="(595.0,842.0)" title="Vehicles Movements" author="NCTR" allowSplitting="20" orientation="portrait">
+        <pageTemplate id="first">
+            <frame id="first" x1="1cm" y1="1cm" width="550" height="800" />
+
+        </pageTemplate>
+    </template>
+    <stylesheet>
+
+        <blockTableStyle id="Table2">
+            <blockValign value="CENTER" />
+            <blockAlignment value="CENTER" />
+            <blockBackground colorName="#e6e6e6" start="0,0" stop="-1,0" />
+            <lineStyle kind="GRID" colorName="#2F4F4F" />
+            <blockTopPadding length="8" />
+            <blockBottomPadding length="4" />
+        </blockTableStyle>
+
+        <blockTableStyle id="Table11">
+			<blockAlignment value="CENTER" />
+			<blockValign value="TOP" />
+			<lineStyle kind="LINEBEFORE" colorName="#ffffff" start="0,0"
+				stop="0,-1" />
+			<lineStyle kind="LINEBEFORE" colorName="#ffffff" start="1,0"
+				stop="1,-1" />
+			<lineStyle kind="LINEBEFORE" colorName="#ffffff" start="2,0"
+				stop="2,-1" />
+			<lineStyle kind="LINEBEFORE" colorName="#ffffff" start="3,0"
+				stop="3,-1" />
+			<lineStyle kind="LINEAFTER" colorName="#ffffff" start="3,0"
+				stop="3,-1" />
+		</blockTableStyle>
+
+        <paraStyle name="space_after_title" fontName="KacstLetter" fontSize="7.0" leading="18" alignment="CENTER" spaceBefore="10"
+            spaceAfter="10" />
+        <paraStyle name="all" alignment="justify" />
+        <paraStyle name="P2" fontName="Helvetica-Bold" fontSize="14.0" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="7"
+        />
+        <paraStyle name="P3" fontName="Helvetica-Bold" fontSize="10.0" leading="16" alignment="CENTER" spaceBefore="0.0" spaceAfter="20"
+        />
+        <paraStyle name="P8" fontName="Helvetica" fontSize="8.0" leading="9" alignment="RIGHT" spaceBefore="7" />
+        <paraStyle name="PR" fontName="Helvetica" fontSize="10.0" leading="10" alignment="RIGHT" spaceBefore="7" />
+        <images />
+    </stylesheet>
+
+    <story>
+		<para style="space_after_title"></para>
+		<para style="P2">تقرير تدليل المركبات</para>
+		<para style="space_after_title"></para>
+
+		<para style="PR">من: [[ data['form']['start_date'] or removeParentNode('para') ]]</para>
+		<para style="PR">إلى: [[ data['form']['end_date'] or removeParentNode('para') ]]</para>
+
+
+	<section>
+		<para style="space_after_title"></para>
+		<para style="P2">[[repeatIn(line(data),'th')]]</para>
+		<blockTable colWidths="110,80,80" style="Table2">
+		
+		    <tr>
+		        
+		        <td>
+		            <para style="P3">إسم الدلالة</para>
+		        </td>
+		        <td>
+		            <para style="P3"> نوع الدلالة</para>
+		        </td>
+		        <td>
+		            <para style="P3">تاريخ الدلالة</para>
+		        </td>
+		       
+		    </tr>
+		    <tr>
+		        <td>
+		            <para style="P8">[[ th.name ]] </para>
+		        </td>
+		        <td>
+		            <para style="P8"> [[ th.sale_type == 'pension' and sale_type['pension'] or removeParentNode('para')  ]]</para>
+		            <para style="P8"> [[ th.sale_type == 'public' and sale_type['public'] or removeParentNode('para')  ]]</para>
+		        </td>
+		        <td>
+		            <para style="P8"> [[ th.sale_date ]]</para>
+		        </td>
+		        
+		    </tr>
+		</blockTable>
+
+		<para style="space_after_title"></para>
+
+		<blockTable colWidths="80,50,50,50,50,80,80,100,30" style="Table2">
+		
+		    <tr>
+			<td>
+		            <para style="P3">المشتري</para>
+		        </td>
+
+		        <td>
+		            <para style="P3">مبلغ البيع</para>
+		        </td>
+		        
+		        <td>
+		            <para style="P3">المبلغ المتفق عليه</para>
+		        </td>
+		        <td>
+		            <para style="P3">تقييم اللجنة</para>
+		        </td>
+		        <td>
+		            <para style="P3">تقييم الشركة</para>
+		        </td>
+		        <td>
+		            <para style="P3">رقم الشاسي</para>
+		        </td>
+		        <td>
+		            <para style="P3">الموديل</para>
+		        </td>
+		        <td>
+		            <para style="P3">إسم المركبة</para>
+		        </td>
+			<td>
+		            <para style="P3">م.</para>
+		        </td>
+		       
+		    </tr>
+		    <tr>[[repeatIn(lines(data,th),'l')]]
+				<td>
+		            <para style="P8">[[ l.purchaser ]] </para>
+		        </td>
+		        <td>
+		            <para style="P8">[[ l.actual_sale_amount ]] </para>
+		        </td>
+		        <td>
+		            <para style="P8">[[ l.agreed_amount ]] </para>
+		        </td>
+		        <td>
+		            <para style="P8">[[ l.committee_assess ]] </para>
+		        </td>
+		        <td>
+		            <para style="P8">[[ l.company_assess ]] </para>
+		        </td>
+		        <td>
+		            <para style="P8"> [[ l.body_id  ]]</para>
+		        </td>
+		        <td>
+		            <para style="P8"> [[ l.vehicle_id.year ]]</para>
+		        </td>
+		        <td>
+		            <para style="P8"> [[ l.vehicle_id.name ]]</para>
+		        </td>
+				<td>
+		            <para style="P8">
+		                <seq id="L1" />
+		            </para>
+		        </td>
+		    </tr>
+		</blockTable>
+		<para style="space_after_title"></para>
+		<blockTable colWidths="200,100,200" style="Table11">
+			<tr>
+				<td>
+					<para style="PR">إجمالي مبلغ البيع الحقيقي: [[th.actual_sale_amount_total]]</para>
+				</td>
+				<td></td>
+				<td>
+					<para style="PR">إجمالي المبلغ المتفق عليه: [[th.amount_total]]</para>
+    	    				
+				</td>
+			</tr>
+		</blockTable>
+		<para style="space_after_title"></para>
+		<para style="space_after_title"></para>
+		
+	</section>
+
+	
+
+        <para>
+            <seqReset id="L1" />
+        </para>
+    </story>
+</document>

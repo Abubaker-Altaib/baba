@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="view_bank_statement_form2" model="ir.ui.view">
+			<field name="name">account.bank.statement.form</field>
+			<field name="model">account.bank.statement</field>
+			<field name="inherit_id"
+				ref="account_bank_statement.view_bank_statement_form2_custom" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<field name="journal_balance" position="after">
+					<field name="ceiling" on_change="onchange_journal_id(journal_id,date)" />
+				</field>
+				<xpath expr="//page[@string='Cash Control']" position="after">
+					<page string="Note">
+						<field colspan="4" name="note" nolabel="1" />
+					</page>
+				</xpath>
+				<xpath expr="//field[@name='line_ids']/tree/field[@name='amount']"
+					position="after">
+					<field name="line_type" required="1" />
+				</xpath>
+			</field>
+		</record>
+	</data>
+</openerp>

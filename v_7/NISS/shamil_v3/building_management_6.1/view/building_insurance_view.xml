@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+	<!-- building insurance Record Form,Tree View & Action -->
+		
+		<record id="view_building_insurance_tree" model="ir.ui.view">
+			<field name="name">building.insurance.tree</field>
+			<field name="model">building.insurance</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Building insurance">
+						<field name="name" />				
+						<field name="date" />
+                    	<field name="company_id" groups="base.group_multi_company"/>
+						<field name="state"/>
+				</tree>
+			</field>
+		</record>
+		
+		<record id="view_building_insurance_form" model="ir.ui.view">
+			<field name="name">building.insurance.form</field>
+			<field name="model">building.insurance</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Building insurance">
+					<group col="4" colspan="4">
+						<field name="name"  />				
+						<field name="date" />
+						<field name="desc" colspan="6"/>
+						<field name="operation_type"/>
+						<field name="department_id" />
+						<field name="partner_id" />
+						<field name="begin_date" string = "Begin date"/>
+						<field name="end_date" />
+						<field name="transfer"/>
+                    	<field name="company_id" groups="base.group_multi_company"/>
+						<field name="voucher_no"/>
+					</group>		
+				<notebook colspan="4">
+						<page string="Insurance line">
+								<field colspan="4" name="insurance_lines" nolabel="1" required="1"
+									mode="tree,form" >
+									<tree editable="bottom" string="Items">
+										<field name="item_id" />
+										<field name="building_id" />
+										<field name="department_id" />
+										<field name="company_id" />
+										<field name="qty" />
+										<field name="price" />
+										<field name="cost" />
+										<field name="name" />
+									</tree>
+									<form string="Items">
+										<field name="item_id" />
+										<field name="building_id" />
+										<field name="department_id" />
+										<field name="company_id" />
+										<field name="qty" />
+										<field name="price" />
+										<field name="cost" />
+										<newline/>
+										<field name="name" />
+									</form>
+								</field>
+						</page>
+							<page string="Insurance Cost line">
+								<field colspan="4" name="insurance_cost_lines" nolabel="1" required="1"
+									mode="tree,form" >
+									<tree editable="bottom" string="Items">
+										<field name="partner_id" />
+										<field name="cost" required="1" />
+									  <field name="currency" required="1" />
+									  <field name="payment_term" widget="selection"/>																			  
+										<field name="name" />
+									</tree>
+									<form string="Items">
+										<field name="partner_id"  />
+										<field name="cost" required="1" />
+									  <field name="currency" required="1" />
+									  <field name="payment_term" widget="selection"/>																			  										
+										<newline/>
+										<field name="name" />
+									</form>
+								</field>
+						</page>
+						<page string="Notes">
+							<field name="notes" colspan="4" nolabel="1" />
+						</page>
+					</notebook>					
+								<group col="11" colspan="4">
+								<field name="state" readonly="1" />
+
+								<button name="confirmed" states="draft" string="Officer Confirm"
+									confirm="Are you sure you want to Confirm this request?" groups="base.group_car_operation_id"/>
+								<button name="section" states="confirmed" string="Section manager Confirm"
+									confirm="Are you sure you want to Confirm this request?" groups="base.group_insurance_section_manager"/>
+
+								<button name="dept" states="section" string="Dept manager Confirm"
+									confirm="Are you sure you want to Confirm this request?" groups="base.group_admin_affairs_manager" />																
+								<button name="gm" states="dept" string="Gm Confirm"
+									confirm="Are you sure you want to Confirm this request?" groups="base.group_admin_affairs_general_manager" />																
+									
+								<button name="cancel" states="draft,confirmed,section,dept" string="Cancel Request"
+									icon="gtk-cancel" confirm="Are you sure you want to Cancel this request?" groups="base.group_car_operation_id,base.group_insurance_section_manager"/>
+									
+								<button name="ir_action_cancel_draft" states="cancel"
+									string="Set to Draft" type="object" icon="gtk-convert" groups="base.group_car_operation_id,base.group_insurance_section_manager,base.group_admin_affairs_manager"/>
+							
+								<button colspan="2" name="action_create_ratification"  string="Create Ratification" type="object" icon="terp-gtk-go-back-rtl"
+                     			confirm="Are you sure you want to create purchase requisition?" attrs="{'invisible':['|', ('transfer','=',True), ('state','!=','gm')]}" groups="base.group_car_operation_id"/>
+							</group>
+				</form>
+			</field>
+		</record>
+
+		<!-- Building insurance Search Filter -->
+
+		<record id="view_building_insurance_filter" model="ir.ui.view">
+			<field name="name">building.insurance.list.select</field>
+			<field name="model">building.insurance</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search for insurance Record">
+					<field name="name" select="1" />
+					<field name="state" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="date" colspan="1"/>
+					<newline />
+
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					    <separator orientation="vertical"/>
+					    <filter string="state" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />														
+					</group>
+
+				</search>
+			</field>
+		</record>
+		
+		<!-- Building insurance action -->
+		
+		<record id="building_insurance_action" model="ir.actions.act_window">
+			<field name="name">Building insurance</field>
+			<field name="res_model">building.insurance</field>		
+            <field name="view_type">form</field>
+		</record>
+
+		<!-- Menu -->		
+           
+           <menuitem action="building_insurance_action" id="menu_building_insurance"  name="Building insurance" parent="building_management_menu" sequence="1" />
+
+	</data>
+</openerp>

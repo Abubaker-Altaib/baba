@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_finance_config" name="Configuration" parent="menu_finance_root" sequence="6"
+            groups="group_operation_manager" />
+        <menuitem id="main_menu_finance_order" name="Financing Order" parent="menu_finance_config" groups="group_operation_manager" />
+        <menuitem id="main_payment_method" name="Payment Methods" parent="menu_finance_config" groups="group_operation_manager" />
+        <menuitem id="main_menu_products" name="Products" parent="menu_finance_root" sequence="3"
+            groups="group_operation_manager" />
+
+	<!-- Res Users -->
+        <record id="view_res_users_form_inherit" model="ir.ui.view">
+            <field name="name">res.users.form.inherit</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form" />
+            <field name="arch" type="xml">
+                <field name="partner_id" position='after'>
+                        <field name="is_officer"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- State & Local State -->
+        <record id="view_state_tree1" model="ir.ui.view">
+            <field name="name">res.country.state.tree</field>
+            <field name="model">res.country.state</field>
+            <field name="inherit_id" ref="base.view_country_state_tree" />
+            <field name="arch" type="xml">
+                <field name="country_id" options='{"no_open": True}' position='replace' />
+            </field>
+        </record>
+
+        <record id="view_state_form1" model="ir.ui.view">
+            <field name="name">res.country.state.form</field>
+            <field name="model">res.country.state</field>
+            <field name="inherit_id" ref="base.view_country_state_form" />
+            <field name="arch" type="xml">
+                <group position='replace'>
+                    <group col="4" colspan="4">
+                        <field name="name" />
+                        <field name="code" />
+                        <field name="country_id" invisible="1" />
+                    </group>
+                    <notebook>
+                        <page String="Local States">
+                            <field name="child_ids">
+                                <tree>
+                                    <field name="name" string="Local State Name" />
+                                    <field name="code" />
+                                    <field name="child_ids" string="Zone" options='{"no_open": True}' />
+                                </tree>
+                                <form editable="bottom">
+                                    <sheet>
+                                        <group col="4" colspan="4">
+                                            <field name="name" string="Local State Name" />
+                                            <field name="code" />
+                                        </group>
+                                        <page String="Zone">
+                                            <field name="child_ids" string="Zone">
+                                                <tree editable="bottom">
+                                                    <field name="name" string="Zone Name" />
+                                                    <field name="code" />
+                                                    <field name="child_ids" invisible="1" />
+                                                </tree>
+                                            </field>
+                                        </page>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </group>
+            </field>
+        </record>
+
+        <record id="view_simple_state_form" model="ir.ui.view">
+            <field name="name">res.country.state.form</field>
+            <field name="model">res.country.state</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="code" />
+                            <field name="parent_id" invisible="1" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_state1" model="ir.actions.act_window">
+            <field name="name">States</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.country.state</field>
+            <field name="domain">[('parent_id','=',False)]</field>
+            <field name="view_type">form</field>
+            <field name="help"></field>
+        </record>
+
+        <menuitem id="menu_action_state" name="States" sequence="2" parent="main_menu_finance_order" action="action_state1"
+            groups="group_operation_manager" />
+
+
+        <!-- Sector -->
+        <record id="view_finance_sector_form" model="ir.ui.view">
+            <field name="name">finance.sector.form</field>
+            <field name="model">finance.sector</field>
+            <field name="arch" type="xml">
+                <form string="Finance Sector">
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="seq" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_finance_sector_tree" model="ir.ui.view">
+            <field name="name">finance.sector.tree</field>
+            <field name="model">finance.sector</field>
+            <field name="arch" type="xml">
+                <tree string="Finance Sector">
+                    <field name="name" />
+                    <field name="seq" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="finance_sector_action" model="ir.actions.act_window">
+            <field name="name">Finance Sector</field>
+            <field name="res_model">finance.sector</field>
+            <field name="domain">[]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_finance_sector" name="Sector" sequence="2" parent="main_menu_finance_order" action="finance_sector_action"
+            groups="group_operation_manager" />
+
+
+        <!-- Identity Type -->
+        <record id="view_microfinance_identification_form" model="ir.ui.view">
+            <field name="name">finance.identity.type.form</field>
+            <field name="model">finance.identity.type</field>
+            <field name="arch" type="xml">
+                <form string="Finance Identity">
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="code" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_microfinance_identification_tree" model="ir.ui.view">
+            <field name="name">finance.identity.type.tree</field>
+            <field name="model">finance.identity.type</field>
+            <field name="arch" type="xml">
+                <tree string="Finance Identity">
+                    <field name="name" />
+                    <field name="code" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="microfinance_identification_action" model="ir.actions.act_window">
+            <field name="name">Finance Identity</field>
+            <field name="res_model">finance.identity.type</field>
+            <field name="domain">[]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_microfinance_identification" name="Identity Type" sequence="3" parent="main_menu_finance_order"
+            action="microfinance_identification_action" groups="group_operation_manager" />
+
+        <!-- Guarantee Type -->
+        <record id="view_finance_guarantee_type_form" model="ir.ui.view">
+            <field name="name">finance.guarantee.type.form</field>
+            <field name="model">finance.guarantee.type</field>
+            <field name="arch" type="xml">
+                <form string="Finance guarantee">
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="code" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_finance_guarantee_type_tree" model="ir.ui.view">
+            <field name="name">finance.guarantee.type.tree</field>
+            <field name="model">finance.guarantee.type</field>
+            <field name="arch" type="xml">
+                <tree string="Finance guarantee">
+                    <field name="name" />
+                    <field name="code" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="finance_guarantee_type_action" model="ir.actions.act_window">
+            <field name="name">Finance guarantee</field>
+            <field name="res_model">finance.guarantee.type</field>
+            <field name="domain">[]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_finance_guarantee_type" name="Guarantee Type" sequence="4" parent="main_menu_finance_order"
+            action="finance_guarantee_type_action" groups="group_operation_manager" />
+
+
+        <!-- Personal Income Resources -->
+        <record id="view_income_resources_form" model="ir.ui.view">
+            <field name="name">income.resources.form</field>
+            <field name="model">income.resources.type</field>
+            <field name="arch" type="xml">
+                <form string="Personal Income Resources">
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="code" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_income_resources_tree" model="ir.ui.view">
+            <field name="name">income.resources.tree</field>
+            <field name="model">income.resources.type</field>
+            <field name="arch" type="xml">
+                <tree string="Income Resources">
+                    <field name="name" />
+                    <field name="code" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="income_resources_action" model="ir.actions.act_window">
+            <field name="name">Income Resources</field>
+            <field name="res_model">income.resources.type</field>
+            <field name="domain">[]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_income_resources" name="Income Resources" sequence="5" parent="main_menu_finance_order"
+            action="income_resources_action" groups="group_operation_manager" />
+
+
+        <!-- Payment Method -->
+        <record id="view_payment_method_form" model="ir.ui.view">
+            <field name="name">finance.payment.method.form</field>
+            <field name="model">finance.payment.method</field>
+            <field name="arch" type="xml">
+                <form string="Payment Method">
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="number_of_days" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_payment_method_tree" model="ir.ui.view">
+            <field name="name">finance.payment.method.tree</field>
+            <field name="model">finance.payment.method</field>
+            <field name="arch" type="xml">
+                <tree string="Payment Method">
+                    <field name="name" />
+                    <field name="number_of_days" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="payment_method_action" model="ir.actions.act_window">
+            <field name="name">Payment Method</field>
+            <field name="res_model">finance.payment.method</field>
+            <field name="domain">[]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_payment_method" name="Payment Method" sequence="1" parent="main_menu_finance_order"
+            action="payment_method_action" groups="group_operation_manager" />
+
+        <!-- Employer -->
+        <record id="view_employer_form" model="ir.ui.view">
+            <field name="name">micro.finance.employer.form</field>
+            <field name="model">micro.finance.employer</field>
+            <field name="arch" type="xml">
+                <form string="Employer">
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="code" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_employer_tree" model="ir.ui.view">
+            <field name="name">micro.finance.employer.tree</field>
+            <field name="model">micro.finance.employer</field>
+            <field name="arch" type="xml">
+                <tree string="Employer">
+                    <field name="name" />
+                    <field name="code" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="employer_action" model="ir.actions.act_window">
+            <field name="name">Employer</field>
+            <field name="res_model">micro.finance.employer</field>
+            <field name="domain">[]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_employer" name="Employer" sequence="1" parent="main_menu_finance_order" action="employer_action"
+            groups="group_operation_manager" />
+
+
+
+        <!-- Products & Projects -->
+        <record id="view_finance_project_form" model="ir.ui.view">
+            <field name="name">finance.project.form</field>
+            <field name="model">finance.project</field>
+            <field name="arch" type="xml">
+                <form string="Financing Project">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Name..." class="oe_inline" />
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="overdrow" />
+                            <field name="individual" />
+                            <field name="group" />
+                            <label string="# of Members Range" attrs="{'invisible': [('group', '!=', True)]}"
+                                class="oe_inline" />
+                            <div attrs="{'invisible': [('group', '!=', True)]}" class="o_row">
+                                <field name="min_member" class="oe_inline" />
+                                -
+                                <field name="max_member" class="oe_inline" />
+                            </div>
+                        </group>
+                        <group>
+                            <group>
+
+                                <field name="celling" />
+                                <field name="formula" invisible="1" />
+                                <field name="formula_clone" />
+                                <field name="murabaha_selection" widget="radio"
+                                    attrs="{'invisible': [('formula_clone', 'not in',['murabaha','buying_murabaha'])],'required': [('formula_clone', 'in',['murabaha','buying_murabaha'])]}"></field>
+
+
+                                <field name="payment_method_id"
+                                    attrs="{'required':[('formula','not in',['salam','mudarba','muzaraa','musharka'])],
+                                                'invisible':[('formula','in',['salam','mudarba','muzaraa','musharka'])]}" />
+
+                            </group>
+                            <group>
+                                <field name="profit_margin"
+                                    attrs="{'invisible':[('formula','in',['gard_hassan','salam','mudarba','muzaraa','musharka'])]}" />
+                                <field name="installment_no"
+                                    attrs="{'invisible':[('formula','in',['salam','mudarba','muzaraa','musharka'])]}" />
+                                <label for="grace_period" class="oe_inline" />
+                                <div class="o_row">
+                                    <field name="grace_period" />
+                                    Months
+                                </div>
+                                <label for="payment_period" class="oe_inline" />
+                                <div class="o_row">
+                                    <field name="payment_period" />
+                                    Months
+                                    <field name="payment_days" />
+                                    Days
+                                </div>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_finance_project_tree" model="ir.ui.view">
+            <field name="name">finance.project.tree</field>
+            <field name="model">finance.project</field>
+            <field name="arch" type="xml">
+                <tree string="Projects">
+                    <field name="name" />
+                    <field name="individual" />
+                    <field name="group" />
+                    <field name="celling" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_finance_product_form" model="ir.ui.view">
+            <field name="name">finance.product.form</field>
+            <field name="model">finance.product</field>
+            <field name="arch" type="xml">
+                <form string="Financing Product">
+                    <header>
+                        <button name="action_request" string="Request" states="draft" type="object" class="oe_highlight"
+                            groups="microfinance.group_branch_manager" />
+                        <button name="action_approve" string="Approve" states="request" type="object" class="oe_highlight"
+                            groups="microfinance.group_operation_manager" />
+                        <button name="action_draft" string="Set to Draft" states="request,approve" type="object"
+                            class="oe_highlight" groups="microfinance.group_operation_manager" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,request,approve" />
+
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" placeholder="Name..." attrs="{'readonly':[('state','=','approve')]}"
+                                class="oe_inline" />
+                        </h1>
+                        <group col="4" colspan="4">
+                            <field name="sector_ids" placeholder="Sectors..." widget="many2many_tags"
+                                attrs="{'readonly':[('state','=','approve')]}" />
+                            <field name="company_ids" widget="many2many_tags" attrs="{'readonly':[('state','=','approve')]}" />
+                            <field name="active" attrs="{'readonly':[('state','=','approve')]}" />
+                        </group>
+                        <notebook>
+                            <page string="Projects">
+                                <field name="project_ids" nolabel="1" attrs="{'readonly':[('state','=','approve')]}" />
+                                <field name="description" placeholder="Description..." attrs="{'readonly':[('state','=','approve')]}" />
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_finance_product_tree" model="ir.ui.view">
+            <field name="name">finance.product.tree</field>
+            <field name="model">finance.product</field>
+            <field name="arch" type="xml">
+                <tree string="Financing Product">
+                    <field name="name" />
+                    <field name="description" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="finance_product_action" model="ir.actions.act_window">
+            <field name="name">Financing Product</field>
+            <field name="res_model">finance.product</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_finance_product" name="Financing Product" parent="main_menu_products" action="finance_product_action"
+            groups="group_operation_manager,group_branch_manager" />
+
+        <!-- ############################################## micro finance config settings Action and views ############################################## -->
+
+
+        <record id="action_finance_crop" model="ir.actions.act_window">
+            <field name="name">Finance Crop</field>
+            <field name="res_model">finance.crop</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create"> Add finance Crop</p>
+            </field>
+        </record>
+
+        <record id="finance_crop_form" model="ir.ui.view">
+            <field name="name">finance Crop</field>
+            <field name="model">finance.crop</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="uom_id" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <menuitem id="menu_finance_crop" name="Crop" parent="main_menu_finance_order" sequence="1"
+            action="action_finance_crop" groups="group_operation_manager" />
+
+
+
+        <!-- ############################################## micro finance config settings Action and views ############################################## -->
+
+        <record id="action_finance_config_settings" model="ir.actions.act_window">
+            <field name="name">finance configuration settings</field>
+            <field name="res_model">finance.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+        </record>
+
+        <record id="finance_setting_form" model="ir.ui.view">
+            <field name="name">Finance Settings</field>
+            <field name="model">finance.settings</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="Apply" type="object" name="set_company_values" class="oe_highlight"
+                            groups="microfinance.group_operation_manager" />
+                        <button string="Cancel" type="object" name="cancel" class="oe_link"/>
+                    </header>
+                    <group string="Company" col="2" colspan="2">
+                        <field name="company_id" />
+                    </group>
+                    <group string="Ceiling" col="4" colspan="4">
+                        <field name="br_ceiling" />
+                        <field name="op_ceiling" />
+
+                    </group>
+                    <group string="Portfolios Ceiling" col="4" colspan="4">
+                        <field name="por_gm_ceiling" />
+                        <field name="por_op_ceiling" />
+
+                    </group>
+                    <field name="parent_id" invisible="1" />
+                    <group string="Counsel" attrs="{'invisible':[('parent_id','!=',False)]}" col="4" colspan="2">
+                        <field name="counsel" />
+                        <field name="counsel_character" />
+                    </group>
+
+                    <div>
+                        <span>(*) This configuration is related to the company you're logged into.</span>
+                    </div>
+                </form>
+
+            </field>
+        </record>
+
+
+        <menuitem id="menu_finance_settings" name="Settings" parent="menu_finance_config" sequence="0"
+            action="action_finance_config_settings" groups="group_operation_manager" />
+
+        <!--##################### Account Config Custom view ######################### -->
+        <record id="view_account_config_settings_custom" model="ir.ui.view">
+            <field name="model">account.config.settings</field>
+            <field name="inherit_id" ref="account.view_account_config_settings" />
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='accounting']" position="after">
+                    <group string="Microfinance Accounting &amp; Finance" col="4" colspan="2">
+                        <field name="journal_id" domain="[('type','=','sale'),('company_id','=',company_id)]" />
+                        <field name="insurance_account_id" />
+                        <field name="expence_account" />
+                        <field name="stock_account_id" />
+                    </group>
+                </xpath>
+            </field>
+
+        </record>
+
+        <!-- Customizd accont.account view -->
+        <record id="view_account_form_inherit" model="ir.ui.view">
+            <field name="name">account.form.inherit</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='code']" position="before">
+                    <field name="active"/>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="companys" required="1"/>
+                    <field name="company_ids" widget="many2many_tags" attrs="{'invisible': [('companys', 'in',['all_company', False])],'required':[('companys', '=','specified')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>

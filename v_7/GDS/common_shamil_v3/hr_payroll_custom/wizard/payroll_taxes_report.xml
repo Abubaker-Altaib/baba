@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_payroll_taxes" model="ir.ui.view">
+            <field name="name">payroll.taxes</field>
+            <field name="model">payroll.taxes</field>
+            <field name="arch" type="xml">
+            <form string="Payroll Taxes" version="7.0">
+                <group >
+                    <field name="company_ids" widget="many2many_tags" groups="base.group_multi_company"/>
+                    <field name="scale_ids" widget="many2many_tags"/>
+                    <field name="process"/>
+                    <field name="month" attrs="{'invisible':[('process','not in',('monthly','candidate'))],'required':[('process','in',('monthly','candidate'))]}"/>
+                    <field name="year" attrs="{'invisible':[('process','not in',('monthly','candidate'))],'required':[('process','in',('monthly','candidate'))]}"/>
+                    
+                </group>
+                 <footer>
+                   	<button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+                  	or
+                  	<button string="Cancel" class="oe_link" special="cancel"/>
+                     </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="action_payroll_taxes" model="ir.actions.act_window">
+            <field name="name">Payroll Taxes</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">payroll.taxes</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+	<menuitem
+            action="action_payroll_taxes"
+            id="wiz_action_payroll_taxes"
+            parent="menu_hr_payroll_reporting"
+            name="Payroll Taxes Report" />
+
+
+
+    </data>
+</openerp>

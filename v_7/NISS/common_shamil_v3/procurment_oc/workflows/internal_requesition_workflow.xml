@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="wkf_ireq_m_done" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">create_purchase_order_oc()</field>
+            <field name="flow_stop">True</field>
+        </record>
+        <record id="purchase_customization.wkf_ireq_draft_inprogress" model="workflow.transition">
+            <field name="act_from" ref="purchase_custom.wkf_ireq_m_draft"/>
+            <field name="act_to" ref="purchase_customization.wkf_ireq_in_progress"/>
+            <field name="condition">not is_oc()</field>
+            <field name="signal">in_progress</field>
+        </record>
+        <!--  -->
+        <record id="wkf_ireq_draft_inprogress_oc" model="workflow.transition">
+            <field name="act_from" ref="purchase_custom.wkf_ireq_m_draft"/>
+            <field name="act_to" ref="purchase_customization.wkf_ireq_in_progress_quote"/>
+            <field name="condition">is_oc()</field>
+            <field name="signal">in_progress</field>
+        </record>
+        <record id="wkf_ireq_in_progress_fin_request_completed_fin_request_oc" model="workflow.transition">
+            <field name="act_from" ref="purchase_customization.wkf_ireq_in_progress_fin_request"/>
+            <field name="act_to" ref="wkf_ireq_m_done"/>
+            <field name="signal">completed_fin_request_oc</field>
+        </record>
+    </data>
+</openerp>
+

@@ -1,0 +1,3 @@
+import commites_wizard
+import hr_bonus_candidates_wizard
+import hr_promotion_candidates_wizard

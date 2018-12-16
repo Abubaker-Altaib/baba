@@ -1,0 +1,997 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+
+        <!-- Vehicle Destination -->
+
+        <record id="vehicle_dest_form" model="ir.ui.view">
+            <field name="name">vehicle.dest.form</field>
+            <field name="model">vehicle.dest</field>
+            <field name="arch" type="xml">
+                <form string="Vehicle Destination" version="7.0">
+                    <sheet>
+                        <group col="2">
+                            <field name="name" required="1" on_change="onchange_name(name)"/>
+                            <field name="company_id" groups="base.group_multi_company" required="1" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="vehicle_dest_tree" model="ir.ui.view">
+            <field name="name">vehicle.dest.tree</field>
+            <field name="model">vehicle.dest</field>
+            <field name="arch" type="xml">
+                <tree string="Vehicle Destinations">
+                    <field name="name" />
+                    <field name="company_id" groups="base.group_multi_company" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="vehicle_dest_filter" model="ir.ui.view">
+            <field name="name">vehicle_dest_filter</field>
+            <field name="model">vehicle.dest</field>
+            <field name="arch" type="xml">
+                <search string="Vehicle Destination">
+                    <field name="name" />
+                    <separator orientation="vertical" />
+                    <newline />
+                </search>
+            </field>
+        </record>
+
+        <record id="vehicle_dest_action" model="ir.actions.act_window">
+            <field name="name">Vehicle Destinations</field>
+            <field name="res_model">vehicle.dest</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="vehicle_dest_filter" />
+        </record>
+
+        <menuitem id="vehicle_dest_menu" name="Vehicle Destinations"
+            parent="fuel_config_menu" action="vehicle_dest_action"/>
+
+
+        <!-- outgoing type of fuel -->
+
+        <record id="outgoing_fuel_type_form" model="ir.ui.view">
+            <field name="name">outgoing.fuel.type.form</field>
+            <field name="model">outgoing.fuel.type</field>
+            <field name="arch" type="xml">
+                <form string="outgoing fuel type" version="7.0">
+                    <sheet>
+                        <group col="2">
+                            <field name="name" required="1"/>
+                            <field name="require_user"/>
+                            <field name="evaporation_type"/>
+                            <field name="company_id" groups="base.group_multi_company" />                            
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="outgoing_fuel_type_tree" model="ir.ui.view">
+            <field name="name">outgoing.fuel.type.tree</field>
+            <field name="model">outgoing.fuel.type</field>
+            <field name="arch" type="xml">
+                <tree string="outgoing fuel type">
+                    <field name="name" />
+                    <field name="company_id" groups="base.group_multi_company" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="outgoing_fuel_type_filter" model="ir.ui.view">
+            <field name="name">outgoing_fuel_type_filter</field>
+            <field name="model">outgoing.fuel.type</field>
+            <field name="arch" type="xml">
+                <search string="outgoing fuel type">
+                    <field name="name" />
+                    <separator orientation="vertical" />
+                    <newline />
+                </search>
+            </field>
+        </record>
+
+        <record id="outgoing_fuel_type_action" model="ir.actions.act_window">
+            <field name="name">outgoing fuel type</field>
+            <field name="res_model">outgoing.fuel.type</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="outgoing_fuel_type_filter" />
+        </record>
+
+        <menuitem id="outgoing_fuel_type_menu" name="outgoing fuel type"
+            parent="fuel_config_menu" action="outgoing_fuel_type_action"/>
+
+        <!-- fuel delegate -->
+        <record id="fuel_delegate_form" model="ir.ui.view">
+            <field name="name">fuel.delegate.form</field>
+            <field name="model">fuel.delegate</field>
+            <field name="arch" type="xml">
+                <form string="Fuel Delegate" version="7.0">
+                    <header>
+                        <button string="Confirm" name="confirm" states="draft"  type="object"
+                        icon="gtk-apply" colspan="2" groups="fuel_management.group_fuel_config"/>
+                        
+                        <button string="Set To Draft" name="set_to_draft" states="confirm" type="object"
+                        icon="gtk-apply" colspan="2" groups="fuel_management.group_fuel_set_to_draft"/>
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm" statusbar_colors='{"confirm":"gray","draft":"blue"}'/>
+                    </header>
+                    <sheet>
+                        <group col="4" colspan="2" >
+                        <group>
+                            <field name="employee_id" attrs="{'readonly':[('state','!=','draft')],'required':True}" domain="[('state','=','approved')]" on_change="onchange_employee_id(employee_id)" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                            <field name="emp_code"/>
+                            <field name="employee_type" attrs="{'readonly':[('state','!=','draft')],'required':True}"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+
+                        </group>
+                        <group>
+                            <field name="degree_id" options="{'no_open':True, 'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                            <field name="department_id" options="{'no_open':True, 'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                        </group>
+                        </group>
+                        
+                        <notebook colspan="4">
+                            <page string="fuel delegate lines">
+                                <field name="line_id" nolabel="1" attrs="{'readonly':[('state','!=','draft')],'required':True}">
+                                    <tree editable="top">
+                                        <field name="fuel_type" required="1" on_change="onchange_fuel_type(fuel_type)"/>
+                                        <field name="product_id" context="{'form_view_ref':'fuel_management.fuel_normal_form_view','default_fuel_ok': True}" domain="[('fuel_ok','=',True),('fuel_type','=',fuel_type)]" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                        <field name="location_id" domain="[('fuel_ok','=',True),('usage','=','internal')]" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                        <field name="fuel_qty" />
+                                        <field name="card_no" required="1"/>
+                                        <field name="delegation_auther" required="1"/>
+                                        <field name="delegation_type" required="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="fuel_delegate_tree" model="ir.ui.view">
+            <field name="name">fuel.delegate.tree</field>
+            <field name="model">fuel.delegate</field>
+            <field name="arch" type="xml">
+                <tree string="Fuel Delegate">
+                    <field name="employee_id"/>
+                    <field name="emp_code" />
+                    <field name="employee_type" />
+                    <field name="degree_id"/>
+                    <field name="department_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="fuel_delegate_filter" model="ir.ui.view">
+            <field name="name">fuel_delegate_filter</field>
+            <field name="model">fuel.delegate</field>
+            <field name="arch" type="xml">
+                <search string="Fuel Delegate">
+                    <field name="employee_id" />
+                    <field name="state" />
+                    <field name="company_id" />
+                    <separator orientation="vertical" />
+                    <newline/>
+                    <group expand="0" string="Group By..." colspan="4" col="10">
+                        <filter string="State" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'state'}" />
+                        <separator orientation="vertical" />
+                        <filter string="Company" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'company_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="fuel_delegate_action" model="ir.actions.act_window">
+            <field name="name">Fuel Delegate</field>
+            <field name="res_model">fuel.delegate</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="fuel_delegate_filter" />
+        </record>
+
+        <menuitem id="fuel_delegate_menu" name="Fuel Delegate"
+            parent="fuel_management.fuel_management_menu" action="fuel_delegate_action"/>
+
+
+
+        <!-- additional fuel purpose -->
+        <record id="additional_fuel_purpose_form" model="ir.ui.view">
+            <field name="name">additional.fuel.purpose.form</field>
+            <field name="model">additional.fuel.purpose</field>
+            <field name="priority" eval="1" />
+            <field name="arch" type="xml">
+                 <form string="additional fuel purpose" version="7.0">
+                        <sheet>
+                            <group col="2">
+                                <group>
+                                    <field name="name" required="1"/>
+                                </group>
+                                <group>
+                                        <field name="company_id" groups="base.group_multi_company" required="1"/>
+                                </group>
+                                
+                            </group>
+                        </sheet>
+                 </form>
+            </field>
+        </record>
+        <record id='additional_fuel_purpose_tree' model='ir.ui.view'>
+            <field name="name">additional.fuel.purpose.tree</field>
+            <field name="model">additional.fuel.purpose</field>
+            <field name="arch" type="xml">
+                <tree string="additional fuel purpose" version="7.0">
+                        <field name="name" />
+                        <field name="company_id" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_additional_fuel">
+            <field name="name">additional fuel purpose</field>
+            <field name="res_model">additional.fuel.purpose</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new additional fuel purpose. 
+              </p>
+            </field>
+        </record>
+
+
+
+        <!-- additional fuel -->
+
+        <record id="additional_fuel_form" model="ir.ui.view">
+            <field name="name">additional.fuel.form</field>
+            <field name="model">additional.fuel</field>
+            <field name="arch" type="xml">
+                <form string="additional fuel" version="7.0">
+                    <header>
+                        <button string="Confirm" name="confirm" type="object"
+                        icon="gtk-apply" colspan="2" states="draft,reapprove" groups="fuel_management.group_fuel_officer,fuel_management.group_fuel_manager,fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_manager_oc"/>
+
+                        <button string="Approve" name="approve" type="object"
+                        icon="gtk-apply" colspan="2" states="confirm" groups="fuel_management.group_fuel_officer,fuel_management.group_fuel_manager,fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_manager_oc"/>
+
+                        <button string="Set To Draft" name="set_to_draft" states="cancel"  type="object" icon="gtk-apply" colspan="2" groups="fuel_management.group_fuel_set_to_draft" />
+
+                        <button string="Done" name="done" type="object" states="approve"
+                        icon="gtk-apply" colspan="2" groups="fuel_management.group_fuel_officer,fuel_management.group_fuel_manager,fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_manager_oc"/>
+
+                        <button string="Check" name="reapprove" type="object" colspan="2" class="oe_highlight" attrs="{'invisible':['|',('add_type','!=','temporary'),('state','!=','done')]}" groups="fuel_management.group_fuel_officer,fuel_management.group_fuel_manager,fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_manager_oc"/>
+
+                        <button string="Cancel" name="cancel" type="object" states="reapprove,confirm,approve" colspan="2" icon="gtk-cancel" groups="fuel_management.group_fuel_officer,fuel_management.group_fuel_manager,fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_manager_oc"/>
+
+
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve" statusbar_colors='{"confirm":"gray","draft":"blue"}'/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group col="4" colspan="2" >
+                        <group>
+                            <field name="vehicle_id" attrs="{'readonly':[('state','!=','draft')],'required':[('add_type','!=','moving')],'invisible':[('add_type','=','moving')]}" on_change="onchange_vehicle_id(vehicle_id,distance_id,add_type)" domain="[('state','=','confirm'),('status','=','active'),('company_id','=',company_id),('belong_to','!=','out')]" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}" />
+                            <field name="body_id" attrs="{'invisible':[('add_type','=','moving')]}"/>
+                            <field name="license_plate" attrs="{'invisible':[('add_type','=','moving')]}"/>
+                            <field name="department_id" attrs="{'readonly':['|',('add_type','!=','moving'),('state','!=','draft')],'required':[('add_type','=','moving')]}" options="{'no_open':True, 'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                            <field name="applier_employee_id" attrs="{'readonly':['|',('add_type','!=','moving'),('state','!=','draft')],'required':[('add_type','=','moving')],'invisible':[('add_type','!=','moving')]}" options="{'no_open':True, 'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                            <field name="applier_degree_id" attrs="{'invisible':[('add_type','!=','moving')]}" options="{'no_open':True, 'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                            <field name="degree_id" attrs="{'invisible':[('add_type','=','moving')]}" options="{'no_open':True, 'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                            <field name="order_date" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="company_id" groups="base.group_multi_company" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="type" invisible="1"/>
+                            <field name="location" invisible="1"/>
+                            <field name="use" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="add_type" attrs="{'readonly':[('state','!=','draft')]}" on_change="onchange_add_type(add_type)" />
+                            <field name="employee_id" attrs="{'readonly':[('state','!=','draft')]}" required="1"/>
+                            <!--field name="destination" attrs="{'readonly':[('state','!=','draft')],'invisible':[('add_type','!=','other')],'required':[('add_type','=','other')]}" /-->
+                            <field name="filling" attrs="{'readonly':[('state','!=','draft')],'invisible':[('add_type','not in',['other','moving'])],'required':[('add_type','in',['other','moving'])]}"/>
+                            
+                            <field name="distance_id" attrs="{'readonly':[('state','!=','draft')]}" on_change="onchange_vehicle_id(vehicle_id,distance_id,add_type)" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}" invisible="1"/>
+                            <field name="comments" readonly="1" attrs="{'invisible':[('add_type','not in',['other','moving'])]}" invisible="1"/>
+                            <field name="fuel_amount_id" attrs="{'readonly':[('state','!=','draft')]}"  on_change="onchange_fuel_amount_id(fuel_amount_id, add_type)" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}" invisible="1"/>
+                            <field name="purpose_id" attrs="{'readonly':[('state','!=','draft')],'invisible':[('add_type','not in',['other','moving'])],'required':[('add_type','in',['other','moving'])]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                            <field name="fuel_type" attrs="{'invisible':[('add_type','in',['other','moving'])]}" invisible="1"/>
+                            <field name="fuel_qty" attrs="{'invisible':[('add_type','in',['other','moving'])]}" invisible="1"/>
+                            <field name="add_qty" attrs="{'readonly':[('state','!=','draft')],'required':[('add_type','not in',['other','moving'])]}"/>
+
+                            <field name="start_date" attrs="{'readonly':[('state','not in',('draft','reapprove'))],'invisible':[('add_type','not in',['temporary','additional'])],'required':[('add_type','in',['temporary','additional'])]}"/>
+                            <field name="end_date" attrs="{'readonly':[('state','not in',('draft','reapprove'))],'invisible':[('add_type','not in',['temporary','additional'])],'required':[('add_type','in',['temporary','additional'])]}"/>
+                            <field name="go_date" attrs="{'readonly':[('state','not in',('draft'))],'invisible':[('add_type','not in',['other','moving'])],'required':[('add_type','in',['other','moving'])]}"/>
+                            <field name="back_date" attrs="{'readonly':[('state','not in',('draft'))],'invisible':[('add_type','not in',['other','moving'])],'required':[('add_type','in',['other','moving'])]}"/>
+                        <group>
+                        <button string="Calculate" name="calc_total" type="object"
+                        icon="gtk-apply" colspan="2" attrs="{'invisible':[('add_type','!=','other')]}" groups="fuel_management.group_fuel_officer,fuel_management.group_fuel_manager,fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_manager_oc"/>                       
+				<field name="total_distance" attrs="{'invisible':[('add_type','!=','other')]}" readonly="1"/>
+				<field name="total_fuel" attrs="{'invisible':[('add_type','!=','other')]}" readonly="1"/>
+                        </group>
+                        </group>
+                        </group>
+                        <group>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Destination details" attrs="{'invisible':[('add_type','!=','other')]}">
+                                <field name="dest_line_id" attrs="{'readonly':[('state','!=','draft')],'required':[('add_type','=','other')],'invisible':[('add_type','!=','other')]}">
+                                    <tree editable="top">
+                                        <field name="distance_id" on_change="onchange_fuel_distance_amount(distance_id,parent.vehicle_id,parent.fuel_type)"/>
+                                        <field name="no_distance" />
+                                        <field name="no_fuel" />
+                                    </tree>
+                                </field>
+                                
+                            </page>
+                            <page string="Moving details" attrs="{'invisible':[('add_type','!=','moving')]}">
+                                <field name="move_line_id" attrs="{'readonly':[('state','!=','draft')],'required':[('add_type','=','moving')],'invisible':[('add_type','!=','moving')]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}">
+                                    <form version="7.0">
+                                        <group>
+                                            <field name="fuel_pattarn" required="1"/>
+                                        </group>
+                                        <group attrs="{'invisible':[('fuel_pattarn','!=','fixed')]}">
+                                            <field name="vehicle_type" attrs="{'required':[('fuel_pattarn','=','fixed')]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}" context="{'move_line_id':parent.move_line_id}" />
+                                            <field name="number" attrs="{'required':[('fuel_pattarn','=','fixed')]}" on_change="on_change_number(amount,number)"/>
+                                            <field name="amount" attrs="{'required':[('fuel_pattarn','=','fixed')]}" on_change="on_change_amount(amount,number)"/>
+                                        </group>
+                                        <notebook colspan="4" attrs="{'invisible':[('fuel_pattarn','!=','different')]}">
+                                            <page string="Vehicle details">
+                                                <field name="line_id" nolabel="1" attrs="{'required':[('fuel_pattarn','=','different')]}" >
+                                                    <tree editable="top">
+                                                        <field name="vehicle_id" attrs="{'required':True}"  context="{'vehicle_line':parent.line_id}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                                        <field name="amount" sum="Total" attrs="{'required':True}"/>
+                                                    </tree>
+                                                </field>
+                                            </page>
+
+                                        </notebook>
+
+                                        <group attrs="{'invisible':[('fuel_pattarn','=',False)]}">
+                                            <field name="total"/>
+                                        </group>
+                                        
+
+                                    </form>
+                                    <tree>
+                                        <field name="fuel_pattarn"/>
+                                        <field name="total"/>
+
+                                    </tree>
+                                </field>
+
+                                <group class="oe_subtotal_footer" attrs="{'invisible':[('add_type','!=','moving')]}">
+                                    <div class="oe_subtotal_footer_separator oe_inline">
+                                        <label for="amount_total" />
+                                    </div>
+                                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" attrs="{'invisible':[('add_type','!=','moving')]}"/>
+                                </group>
+                                
+                            </page>
+                            <page string="fuel filling details" attrs="{'invisible':[('filling','!=','several')]}">
+                                <field name="line_id" attrs="{'readonly':[('state','!=','draft')],'required':[('filling','=','several')],'invisible':[('filling','!=','several')]}">
+                                    <tree editable="top">
+                                        <field name="location" domain="[('fuel_ok','=',True),('usage','=','internal')]" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                        <field name="amount" />
+                                    </tree>
+                                </field>
+                                
+                            </page>
+                            <page string="Description">
+                                <field name="description" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="additional_fuel_tree" model="ir.ui.view">
+            <field name="name">additional.fuel.tree</field>
+            <field name="model">additional.fuel</field>
+            <field name="arch" type="xml">
+                <tree string="additional fuel">
+                    <field name="name"/>
+                    <field name="order_date"/>
+                    <field name="start_date" />
+                    <field name="end_date" />
+                    <field name="vehicle_id"/>
+                    <field name="state"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Additional Fuel Search Filter -->
+        <record id="view_additional_fuel_filter" model="ir.ui.view">
+            <field name="name">additional.fuel.search</field>
+            <field name="model">additional.fuel</field>
+            <field name="arch" type="xml">
+                <search string="Search For Additional Fuel Record">
+                    <field name="purpose_id" select="1" />
+                    <separator orientation="vertical" />
+                    <field name="order_date" select="1" />
+                    <field name="vehicle_id" select="1"/>
+                    <field name="name" select="1"/>
+                    <newline />
+                    <group expand="0" string="Extended Filters..." colspan="4"
+                        col="20">
+                        <!--field name="department_id" widget="selection" /-->
+                        <field name="state" />
+                        <field name="company_id" widget="selection" groups="base.group_multi_company" />
+                    </group>
+                    <newline />
+                    <group expand="0" string="Group By..." colspan="4" col="10">
+                        <filter string="Order Date" icon="terp-personal" domain="[]"
+                            context="{'group_by':'order_date'}" />
+                        <filter string="fuel purpose" icon="terp-personal" domain="[]"
+                            context="{'group_by':'purpose_id'}" />
+                        <filter string="Vehicle" icon="terp-personal" domain="[]"
+                            context="{'group_by':'vehicle_id'}" />
+                        <filter string="State" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'state'}" />
+                        <separator orientation="vertical" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!--record id="vehicle_move_filter" model="ir.ui.view">
+            <field name="name">vehicle_move_filter</field>
+            <field name="model">vehicle.move</field>
+            <field name="arch" type="xml">
+                <search string="Vehicle Move">
+                    <field name="move_type" />
+                    <field name="move_date" />
+                    <field name="employee_id" />
+                    <field name="vehicle_id" />
+                    <separator orientation="vertical" />
+                    <newline/>
+                    <group expand="0" string="Group By..." colspan="4" col="10">
+                        <filter string="Type" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'move_type'}" />
+                        <separator orientation="vertical" />
+                        <filter string="Move Date" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'move_date'}" />
+                        <separator orientation="vertical" />
+                        <filter string="Employee" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'employee_id'}" />
+                        <separator orientation="vertical" />
+                        <filter string="vehicle" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'vehicle_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record-->
+
+        <record id="additional_fuel_action" model="ir.actions.act_window">
+            <field name="name">additional fuel</field>
+            <field name="res_model">additional.fuel</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="additional_fuel_menu" name="Additional Fuel"
+            parent="fuel_management_menu" action="additional_fuel_action" groups="fuel_management.group_fuel_officer,fuel_management.group_fuel_manager,fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_manager_oc,fuel_management.group_fuel_set_to_draft"/>
+
+
+
+		
+		<!-- Fuel Amount -->
+		<record id="fuel_amount_form" model="ir.ui.view">
+			<field name="name">fuel.amount.form</field>
+			<field name="model">fuel.amount</field>
+			<field name="arch" type="xml">
+           		 <form string="Fuel Amounts" version="7.0">
+           		 	    <sheet>
+                        	<group col="2">
+                                <group>
+									    <field name="company_id" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                </group>
+                                <newline/>
+                            	<group>
+                            		<field name="vehicle_category" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                            		<field name="vehicle_place" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                    <field name="vehicle_use" required="1" on_change="onchange_vehicle_use(vehicle_use)"/>
+                                    <field name="type" invisible="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+									<field name="degree_id" attrs="{'invisible':[('type','not in',['dedicated','dedicated_managemnet'])],'required':[('type','in',['dedicated','dedicated_managemnet'])]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                    <field name="fuel_amount" required="1"/>
+                            	</group>
+                            </group>
+                        </sheet>
+           		 </form>
+           	</field>
+		</record>
+		<record id='fuel_amount_tree' model='ir.ui.view'>
+            <field name="name">fuel.amount.tree</field>
+            <field name="model">fuel.amount</field>
+            <field name="arch" type="xml">
+                <tree string="Fuel Amounts" version="7.0">
+                        <field name="vehicle_category" />
+                        <field name="vehicle_place" />
+                        <field name="degree_id" />
+                        <field name="vehicle_use" />
+                        <field name="fuel_amount" />                   
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_fuel_amount">
+            <field name="name">Fuel Amounts</field>
+            <field name="res_model">fuel.amount</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new fuel amount. 
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="fuel_amount_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fuel_amount_form"/>
+            <field name="act_window_id" ref="action_fuel_amount"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="fuel_amount_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="fuel_amount_tree"/>
+            <field name="act_window_id" ref="action_fuel_amount"/>
+        </record>
+
+		<!-- Fuel Distance -->
+		<record id="fuel_distance_form" model="ir.ui.view">
+			<field name="name">fuel.distance.form</field>
+			<field name="model">fuel.distance</field>
+			<field name="arch" type="xml">
+           		 <form string="Distinations and Distances" version="7.0">
+           		 	    <sheet>
+                        	<group col="2">
+                                <group>
+									<field name="company_id" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                </group>
+                                <newline/>
+                            	<group>
+                            		<field name="start_place" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+									<field name="end_place" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                    <field name="distance" required="1"/>
+                                    <field name="comments" required="1"/>
+                            	</group>
+                            </group>
+                        </sheet>
+           		 </form>
+           	</field>
+		</record>
+		<record id='fuel_distance_tree' model='ir.ui.view'>
+            <field name="name">fuel.distance.tree</field>
+            <field name="model">fuel.distance</field>
+            <field name="arch" type="xml">
+                <tree string="Distinations and Distances" version="7.0">
+                        <field name="start_place" />
+						<field name="end_place" />       
+                        <field name="distance" />            
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_fuel_distance">
+            <field name="name">Distinations and Distances</field>
+            <field name="res_model">fuel.distance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new distination and distance. 
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="fuel_distance_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fuel_distance_form"/>
+            <field name="act_window_id" ref="action_fuel_distance"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="fuel_distance_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="fuel_distance_tree"/>
+            <field name="act_window_id" ref="action_fuel_distance"/>
+        </record>
+
+        <!-- Fuel Distance Amount -->
+		<record id="fuel_distance_amount_form" model="ir.ui.view">
+			<field name="name">fuel.distance.amount.form</field>
+			<field name="model">fuel.distance.amount</field>
+			<field name="arch" type="xml">
+           		 <form string="Distinations and Fuel Amounts" version="7.0">
+           		 	    <sheet>
+                        	<group col="2">
+                            	<group>
+                                    <group>
+									    <field name="company_id" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                    </group>
+                                    <newline/>
+                                    <group>
+                                        <field name="fuel_distance_id" on_change="onchange_fuel_distance_id(fuel_distance_id)" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                        <field name="distance" readonly="1" />
+                                        <field name="comments" readonly="1" />
+                                    </group>
+                                    <group invisible="1">
+                                        <field name="fuel_amount_id" on_change="onchange_fuel_amount_id(fuel_amount_id)" required="0" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                        <field name="vehicle_category" readonly="1" />
+                                        <field name="vehicle_place" readonly="1" />
+                                        <field name="vehicle_use" readonly="1" />
+                                        <field name="type" invisible="1" />
+                                        <field name="degree_id" readonly="1" attrs="{'invisible':[('type','!=','dedicated')]}" options="{'no_open':True, 'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                    </group>
+                                    <newline/>
+                                    <group invisible="1" >
+                                        <field name="fuel_amount" required="0"/>
+                                    </group>
+                            	</group>
+                            </group>
+                            <notebook>
+                                <page string="Models">
+                                    <field name="models_ids">
+                                        <tree editable="bottom">
+                                            <field name="model_id"/>
+                                            <field name="fuel_type"/>
+                                            <field name="dist_fuel_amount" on_change="onchange_dist_fuel_amount(dist_fuel_amount,parent.distance)"/>
+                                            <field name="fuel_amount_all_dist_g"/>
+                                            <field name="fuel_amount_all_dist_l"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </sheet>
+           		 </form>
+           	</field>
+		</record>
+		<record id='fuel_distance_amount_tree' model='ir.ui.view'>
+            <field name="name">fuel.distance.amount.tree</field>
+            <field name="model">fuel.distance.amount</field>
+            <field name="arch" type="xml">
+                <tree string="Distinations and Fuel Amounts" version="7.0">
+                        <field name="fuel_distance_id" />
+						<field name="distance" />       
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_fuel_distance_amount">
+            <field name="name">Distinations and Fuel Amounts</field>
+            <field name="res_model">fuel.distance.amount</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new distination and distance. 
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="fuel_distance_amount_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fuel_distance_amount_form"/>
+            <field name="act_window_id" ref="action_fuel_distance_amount"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="fuel_distance_amount_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="fuel_distance_amount_tree"/>
+            <field name="act_window_id" ref="action_fuel_distance_amount"/>
+        </record>
+
+
+        <!-- Fuel Distance Wells -->
+		<record id="fuel_well_form" model="ir.ui.view">
+			<field name="name">fuel.well.form</field>
+			<field name="model">fuel.well</field>
+			<field name="arch" type="xml">
+           		 <form string="Fuel Wells" version="7.0">
+           		 	    <sheet>
+                        	<group col="2">
+                            	<group>
+                                    <group>
+                                        <field name="name" required="1"/>
+                                        <field name="fuel_type" required="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="station" domain="[('usage','in', ['internal', 'customer']),('fuel_ok','=',True)]" context="{'default_fuel_ok':True,'form_view_ref':'fuel_niss.view_location_form','tree_view_ref':'fuel_niss.view_location_tree2'}" required="1" />
+                                        <field name="store_amount" required="1"/>
+                                    </group>
+                                    <group>
+									    <field name="company_id" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                    </group>
+                            	</group>
+                            </group>
+                        </sheet>
+           		 </form>
+           	</field>
+		</record>
+		<record id='fuel_well_tree' model='ir.ui.view'>
+            <field name="name">fuel.well.tree</field>
+            <field name="model">fuel.well</field>
+            <field name="arch" type="xml">
+                <tree string="Fuel Wells" version="7.0">
+                    <field name="name" />
+                    <field name="fuel_type" />
+                    <field name="station" />
+                    <field name="store_amount" />   
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_fuel_well">
+            <field name="name">Fuel Wells</field>
+            <field name="res_model">fuel.well</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new Well. 
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="fuel_well_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fuel_well_form"/>
+            <field name="act_window_id" ref="action_fuel_well"/>
+        </record>
+
+
+        <record model="ir.actions.act_window.view" id="fuel_well_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="fuel_well_tree"/>
+            <field name="act_window_id" ref="action_fuel_well"/>
+        </record>
+        <menuitem name="Fuel Wells" id="menu_fuel_well"
+			action="action_fuel_well" parent="fuel_config_menu" sequence="2"/>
+
+
+
+        <!-- fuel evaporation -->
+
+		<record id="fuel_evaporation_form" model="ir.ui.view">
+			<field name="name">fuel.evaporation.form</field>
+			<field name="model">fuel.evaporation</field>
+			<field name="arch" type="xml">
+           		 <form string="Fuel Evaporations" version="7.0">
+           		 	    <sheet>
+                        	<group>
+                                <group>
+                                    <field name="fuel_product" domain="[('fuel_ok','=',True)]" required="1"/>
+                                    <field name="percentage" required="1"/>
+                                </group>
+                            </group>
+                        </sheet>
+           		 </form>
+           	</field>
+		</record>
+		<record id='fuel_evaporation_tree' model='ir.ui.view'>
+            <field name="name">fuel.evaporation.tree</field>
+            <field name="model">fuel.evaporation</field>
+            <field name="arch" type="xml">
+                <tree string="Fuel Evaporations" version="7.0" editable="top">
+                    <field name="fuel_product" domain="[('fuel_ok','=',True)]" required="1"/>
+                    <field name="percentage" required="1"/> 
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_fuel_evaporation">
+            <field name="name">Fuel Evaporations</field>
+            <field name="res_model">fuel.evaporation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new evaporation. 
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="fuel_evaporation_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fuel_evaporation_form"/>
+            <field name="act_window_id" ref="action_fuel_evaporation"/>
+        </record>
+
+
+        <record model="ir.actions.act_window.view" id="fuel_evaporation_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="fuel_evaporation_tree"/>
+            <field name="act_window_id" ref="action_fuel_evaporation"/>
+        </record>
+        <menuitem name="Fuel Evaporations" id="menu_fuel_evaporation"
+			action="action_fuel_evaporation" parent="fuel_config_menu" sequence="8"/>
+
+
+
+		<menuitem name="Fuel Amounts" id="menu_fuel_amount"
+			action="action_fuel_amount" parent="fuel_config_menu" sequence="2"/>
+        
+        <menuitem name="Distinations and Distances" id="menu_fuel_distance"
+			action="action_fuel_distance" parent="fuel_config_menu" sequence="3"/>
+        
+        <menuitem name="Distinations and Fuel Amounts" id="menu_fuel_distance_amount"
+			action="action_fuel_distance_amount" parent="fuel_config_menu" sequence="4"/>
+
+        <menuitem name="Additional Fuel purpose" id="menu_additional_fuel"
+            action="action_additional_fuel" parent="fuel_config_menu" sequence="5"/>
+
+        <!-- Fuel Stopped Reasons -->
+        <record id="fuel_stop_reasons_form" model="ir.ui.view">
+            <field name="name">fuel.stop.reasons.form</field>
+            <field name="model">fuel.stop.reasons</field>
+            <field name="arch" type="xml">
+                <form string="Fuel Stopped Reasons" version="7.0">
+                    <sheet>
+                        <group >
+                            <field name="name" on_change="onchange_name(name)"/>
+                            <field name="company_id" required="1" groups="base.group_multi_company" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="fuel_stop_reasons_tree" model="ir.ui.view">
+            <field name="name">fuel.stop.reasons.tree</field>
+            <field name="model">fuel.stop.reasons</field>
+            <field name="arch" type="xml">
+                <tree string="Fuel Stopped Reasons">
+                    <field name="name" />
+                    <field name="company_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="fuel_stop_reasons_filter" model="ir.ui.view">
+            <field name="name">holidays_place_filter</field>
+            <field name="model">fuel.stop.reasons</field>
+            <field name="arch" type="xml">
+                <search string="Fuel Stopped Reasons">
+                    <field name="name" />
+                    <separator orientation="vertical" />
+                    <newline />
+                </search>
+            </field>
+        </record>
+
+        <record id="fuel_stop_reasons_action" model="ir.actions.act_window">
+            <field name="name">Fuel Stopped Reasons</field>
+            <field name="res_model">fuel.stop.reasons</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="fuel_stop_reasons_filter" />
+        </record>
+
+        <menuitem id="fuel_stop_reasons_menu" name="Fuel Stopped Reasons"
+             parent="fuel_config_menu" action="fuel_stop_reasons_action"/>
+
+
+        <!-- vehicle fuel slice -->
+        <record id="vehicle_fuel_slice_form" model="ir.ui.view">
+            <field name="name">vehicle.fuel.slice.form</field>
+            <field name="model">vehicle.fuel.slice</field>
+            <field name="arch" type="xml">
+                <form string="Insert/Modify Slice" version="7.0">
+                    <header>
+                        <button string="Confirm" name="confirm" states="draft"  type="object"
+                        icon="gtk-apply" colspan="2" groups="fuel_management.group_fuel_officer,fuel_management.group_fuel_manager"/>
+                        
+                        <button string="Set To Draft" name="set_to_draft" states="confirm" type="object"
+                        icon="gtk-apply" colspan="2" groups="fuel_management.group_fuel_set_to_draft"/>
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm" statusbar_colors='{"confirm":"gray","draft":"blue"}'/>
+                    </header>
+                    <sheet>
+                        <group col="4">
+                            <field name="vehicle_id" attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')]}" domain="[('state','=','confirm')]" on_change="onchange_vehicle_id(vehicle_id)" />
+                            <field name="date" attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')]}"/>
+                            <field name="process_type" attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')]}" />
+                            <field name="company_id" readonly="1"/>
+                            <field name="fuel_type" readonly="1" invisible="1"/>
+                        </group>
+                        <newline />
+                        <group col="4" string="Vehicle Data">
+                            <field name="employee_id" readonly="1"/>
+                            <field name="department_id" readonly="1"/>
+                            <field name="vin_sn" readonly="1"/>
+                            <field name="machine_no" readonly="1"/>
+                            <field name="previous_product_id" readonly="1" attrs="{'invisible':[('process_type','!=','modify')]}"/>
+                            <field name="previous_fuel_card" readonly="1" attrs="{'invisible':[('process_type','!=','modify')]}"/>
+                            <field name="previous_fuel_slice" readonly="1" attrs="{'invisible':[('process_type','!=','modify')]}"/>
+                        </group>
+                        <newline />
+                        <group col="4" string="Update Data">
+                            <field name="product_id" attrs="{'readonly':['|',('state','!=','draft'),('vehicle_id','=',False)]}" domain="[('fuel_type','=',fuel_type),('fuel_ok','=',True)]"/>
+                            <field name="fuel_card" on_change="onchange_fuel_card(fuel_card)" attrs="{'readonly':['|',('state','!=','draft'),('vehicle_id','=',False)]}"/>
+                            <field name="fuel_slice" on_change="onchange_fuel_slice(fuel_card)" attrs="{'readonly':['|',('state','!=','draft'),('vehicle_id','=',False)]}"/>
+                        </group>
+                        
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="vehicle_fuel_slice_tree" model="ir.ui.view">
+            <field name="name">vehicle.fuel.slice.tree</field>
+            <field name="model">vehicle.fuel.slice</field>
+            <field name="arch" type="xml">
+                <tree string="Insert/Modify Slice">
+                    <field name="vehicle_id"/>
+                    <field name="product_id" />
+                    <field name="fuel_slice"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="vehicle_fuel_slice_filter" model="ir.ui.view">
+            <field name="name">vehicle_fuel_slice_filter</field>
+            <field name="model">vehicle.fuel.slice</field>
+            <field name="arch" type="xml">
+                <search string="Insert/Modify Slice">
+                    <field name="vehicle_id" />
+                    <field name="state" />
+                    <field name="company_id" />
+                    <field name="employee_id" />
+                    <field name="department_id" />
+                    <field name="date" />
+                    <field name="vin_sn" />
+                    <field name="machine_no" />
+                    <separator orientation="vertical" />
+                    <newline/>
+                    <group expand="0" string="Group By..." colspan="4" col="10">
+                        <filter string="State" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'state'}" />
+                        <separator orientation="vertical" />
+                        <filter string="Company" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'company_id'}" />
+                        <separator orientation="vertical" />
+                        <filter string="Vehicle" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'vehicle_id'}" />
+                        <separator orientation="vertical" />
+                        <filter string="Employee" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'employee_id'}" />
+                        <separator orientation="vertical" />
+                        <filter string="Department" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'department_id'}" />
+                        <separator orientation="vertical" />
+                        <filter string="Process Type" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'process_type'}" />
+                        <separator orientation="vertical" />
+                        <filter string="Date" icon="terp-stock_effects-object-colorize"
+                            domain="[]" context="{'group_by':'date'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="vehicle_fuel_slice_action" model="ir.actions.act_window">
+            <field name="name">Insert/Modify Slice</field>
+            <field name="res_model">vehicle.fuel.slice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="vehicle_fuel_slice_filter" />
+        </record>
+
+        <menuitem id="vehicle_fuel_slice_menu" name="Insert/Modify Slice"
+            parent="fuel_management_menu" action="vehicle_fuel_slice_action"/>
+
+	</data>
+</openerp>

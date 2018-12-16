@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--  needs aggregation form -->
+        <record id="job_needs_grouping_view" model="ir.ui.view">
+             <field name="name">Needs Grouping</field>
+             <field name="model">job.needs.grouping</field>
+             <field name="type">form</field>
+             <field name="arch" type="xml">
+                <form string="Needs Aggregation">
+                    <group colspan="4" cols="4">
+                        <field name="plan_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="job_id" 
+                             attrs="{'invisible':[('plan_id','=',False)]}"
+                             options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                    <footer>
+                      <button name="get_needs" string="Grouping" type="object"  class="oe_highlight"/>
+                      or
+                     <button string="Cancel" class="oe_link" special="cancel"/>
+                   </footer>
+                </form>
+            </field>
+        </record>
+         <!--  needs aggregation action -->
+         <record id="job_needs_grouping_action" model="ir.actions.act_window">
+              <field name="name">Needs Grouping Wizard</field>
+              <field name="res_model">job.needs.grouping</field>
+              <field name="type">ir.actions.act_window</field>
+              <field name="view_type">form</field>
+              <field name="view_mode">tree,form</field>
+              <field name="view_id" ref="job_needs_grouping_view"/>
+              <field name="target">new</field>
+        </record>
+         <menuitem
+             action="job_needs_grouping_action"
+             name="Job Needs Grouping Wizard"
+             id="menu_needs_grouping"
+             parent="menu_recruitment_needs"
+             sequence = "11"/>
+         </data>
+     </odoo>

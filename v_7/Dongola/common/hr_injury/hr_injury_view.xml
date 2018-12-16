@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="hr_injury_form_view">
+			<field name="name">hr.injury.form</field>
+			<field name="model">hr.injury</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Employee Injury" version="7.0">
+					<header>
+						<button string="Refuse" name="refuse" states="complete,confirm,validate"
+							type="workflow" icon="gtk-no" groups="" />
+						<button string="Set to Draft" name="set_to_draft"
+							states="complete,confirm,validate" type="object" icon="gtk-convert"
+							groups="" />
+						<button string="Complete" name="complete" states="draft"
+							type="workflow" icon="gtk-yes" />
+						<button string="Confirm" name="confirm" states="complete"
+							type="workflow" icon="gtk-apply" groups="" />
+						<button string="Validate" name="validate" states="confirm"
+							type="workflow" icon="gtk-apply" groups="" />
+						<button string="Approve" name="approve" states="validate"
+							type="workflow" icon="gtk-apply" groups="" />
+						<button string="Transfer" name="%(hr_transfer_action)d"
+							states="approve" icon="gtk-index" type="action" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,complete,confirm,validate,approve" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<field name="name" readonly="1" />
+							</h1>
+						</div>
+						<group col="4">
+							<field name="employee_id" select="1"
+								attrs="{'readonly':[('state','=','approve')]}" on_change="onchange_employee(employee_id)" />
+							<field name="department_id" select="1" />
+							<field name="type" select="1"
+								attrs="{'readonly':[('state','=','approve')]}" />
+						</group>
+						<notebook colspan="4">
+							<page string="Injury Information">
+								<group col="4">
+									<field name="injury_type" attrs="{'readonly':[('state','=','approve')]}"
+										context="{'default_type':'injury_type'}" />
+									<field name="injury_reason" attrs="{'readonly':[('state','=','approve')]}"
+										context="{'default_type':'injury_reason'}" />
+									<field name="injury_date" attrs="{'readonly':[('state','=','approve')]}" />
+									<newline />
+								</group>
+							</page>
+							<page string="More Information">
+								<group col="4">
+									<separator string="Witness Information" colspan="4" />
+									<field name="first_witness" attrs="{'readonly':[('state','=','approve')]}" />
+									<field name="second_witness" attrs="{'readonly':[('state','=','approve')]}" />
+									<separator string="Accident Address" colspan="4" />
+									<field name="accident_address" nolabel="1" colspan="4" />
+									<newline />
+									<separator string="Work Type" colspan="4" />
+									<field name="work_type" nolabel="1" colspan="4" />
+								</group>
+							</page>
+							<page string=" Treatment Form" attrs="{'invisible':[('type','=','compensation')]}">
+								<group col="4">
+									<field name="treatment_start" />
+									<field name="treatment_end" />
+                                   <field name="recipient_name" attrs="{'invisible':[('type','=','treatment')] }"/>
+								</group>
+								<field name="treatment_ids">
+									<tree editable="top">
+										<field name="invoice_no" />
+										<field name="treatment_amount" sum="Total"/>
+										<field name="voucher_id" />
+									</tree>
+								</field>
+							</page>
+							<page string=" Compension Form" attrs="{'invisible':[('type','=','treatment')] }">
+								<group col="4">
+									<separator string="Inability Information"
+										attrs="{'invisible':[('type','=','treatment')] }" colspan="4" />
+									<field name="inability_types"
+										attrs="{'required':[('type','!=','treatment')],'readonly':[('state','=','approve')] }" />
+									<field name="inability_percentage"
+										attrs="{'required':[('type','!=','treatment')],'readonly':[('state','=','approve')] }" />
+									<field name="inability_date"
+										attrs="{'required':[('type','!=','treatment')],'readonly':[('state','=','approve')] }" />
+									<label for="inability_amount" />
+									<div>
+										<field name="inability_amount" attrs="{'required':[('type','!=','treatment')] }"
+											readonly="1" class="oe_inline" />
+										<button type="object" icon="terp-accessories-archiver+"
+											name="compute_compensation" string="(Calculate)" states="approve"
+											class="oe_edit_only oe_link" />
+									</div>
+									<field name="inability_voucher_id"
+										context="{'form_view_ref':'account_voucher.view_purchase_receipt_form'}" />
+									<separator string="employee payroll" colspan="4" />
+									<field name="employee_payroll" />
+								</group>
+							</page>
+						</notebook>
+						<newline />
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_injury_tree_view">
+			<field name="name">hr.injury.tree</field>
+			<field name="model">hr.injury</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Injury">
+					<field name="name" />
+					<field name="employee_id" select="1" />
+					<field name="type" />
+					<field name="injury_date" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+		<record id="hr_injury_action" model="ir.actions.act_window">
+			<field name="name"> Employee Injury </field>
+			<field name="res_model">hr.injury</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_injury_tree_view" />
+		</record>
+
+		<!-- ============ Employee Injury type ============ -->
+		<record model="ir.ui.view" id="hr_injury_type_form_view">
+			<field name="name">hr.injury.type.form</field>
+			<field name="model">hr.injury.type</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Injury" version="7.0">
+					<sheet>
+						<group col="4">
+							<field name="name" select="1" />
+							<field name="code" />
+							<field name="type" />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_injury_type_tree_view">
+			<field name="name">hr.injury.type.tree</field>
+			<field name="model">hr.injury.type</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Injury">
+					<field name="name" />
+					<field name="code" />
+					<field name="type" />
+				</tree>
+			</field>
+		</record>
+		<record id="hr_injury_type_action" model="ir.actions.act_window">
+			<field name="name">Injury</field>
+			<field name="res_model">hr.injury.type</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_injury_type_tree_view" />
+		</record>
+
+		<!-- ============ Employee Injury inability type ============ -->
+		<record model="ir.ui.view" id="hr_inability_type_form_view">
+			<field name="name">hr.inability.type.form</field>
+			<field name="model">hr.inability.type</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Inability Types" version="7.0">
+					<sheet>
+						<group>
+							<group>
+								<field name="name" select="1" />
+								<label for="factor" string="Factor" />
+								<div col="2">
+									<field name="factor" class="oe_inline" />
+									Days
+								</div>
+							</group>
+							<group>
+								<field name="code" />
+								<field name="allowances_id" />
+							</group>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_inability_type_tree_view">
+			<field name="name">hr.inability.type.tree</field>
+			<field name="model">hr.inability.type</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Inability Types">
+					<field name="name" />
+					<field name="code" />
+				</tree>
+			</field>
+		</record>
+		<record id="hr_inability_type_action" model="ir.actions.act_window">
+			<field name="name">Inability Type</field>
+			<field name="res_model">hr.inability.type</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_inability_type_tree_view" />
+		</record>
+
+		<!-- ============ Employee Configuration ============ -->
+		<record id="hr_inherit_human_resources_configuration" model="ir.ui.view">
+			<field name="name">hr.config.settings.form.inherit</field>
+			<field name="model">hr.config.settings</field>
+			<field name="inherit_id"
+				ref="hr_payroll_custom.hr_inherit_human_resources_configuration" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='stamp_account_id']" position="after">
+					<div>
+						<label for="treatment_account_id" />
+						<field name="treatment_account_id" class="oe_inline" />
+					</div>
+				</xpath>
+			</field>
+		</record>
+		<menuitem id="hr.menu_hr_configuration" name="Configuration"
+			parent="hr.menu_hr_root" sequence="50"
+			groups="base.group_hr_jmanager,base.group_hr_manager" />
+		<menuitem id="hr_injury_menu" name="Injury" parent="hr.menu_hr_root"
+			groups="base.group_hr_juser,base.group_hr_overview" />
+		<menuitem id="hr_injury_configration_menu" name="Injury"
+			parent="hr.menu_hr_configuration" groups="base.group_hr_manager,base.group_hr_jmanager" />
+		<menuitem id="hr_employee_injury_menu" name="Employee Injury Form"
+			parent="hr_injury_menu" action="hr_injury_action" />
+		<menuitem id="hr_injury_type_menu" name="Injury Type"
+			parent="hr_injury_configration_menu" action="hr_injury_type_action" />
+		<menuitem id="hr_inability_type_menu" name="Inability types"
+			parent="hr_injury_configration_menu" action="hr_inability_type_action" />
+	</data>
+</openerp>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="Multi_ireq_m_form" model="ir.ui.view">
+			<field name="name">ireq.m.form2</field>
+			<field name="model">ireq.m</field>
+			<field name="inherit_id" ref="purchase_custom.ireq_m_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<field name="purpose" colspan="2" position="after">
+					<field name="multi" colspan="2" attrs="{'readonly': [('state','!=','confirmed')] ,'required':[('state','=','confirmed')]}"/>
+				</field>
+
+
+				<field name="cat_id" position='replace' >
+									<field name="cat_id" required="0" invisible="1" on_change="onchange_category_check_products_line(cat_id,pro_ids)"/>  
+								</field>
+			</field>
+		</record>
+		<record id="pur_quote_form" model="ir.ui.view">
+			<field name="name">pq_products_form2</field>
+			<field name="model">pq.products</field>
+			<field name="inherit_id" ref="purchase_custom.pq_products_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<field name="price_subtotal" colspan="2" position="after">
+					<field name="chosen" colspan="2" />
+				</field>
+			</field>
+		</record>
+
+		<record id="pur_quote_form_inherit" model="ir.ui.view">
+			<field name="name">pur.quote.form2</field>
+			<field name="model">pur.quote</field>
+			<field name="inherit_id" ref="purchase_custom.pur_quote_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<field name="price_subtotal" colspan="2" position="after">
+					<field name="chosen" colspan="2" />
+				</field>
+			</field>
+		</record>
+	</data>
+</openerp>

@@ -1,0 +1,376 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_purchase_requisition_form">
+			<field name="name">purchase.requisition.form</field>
+			<field name="model">purchase.requisition</field>
+			<field name="inherit_id"
+				ref="purchase_requisition.view_purchase_requisition_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//form" position="replace">
+					<form string="Purchase Requisition" version="7.0">
+	            <header>
+	                <button name="tender_in_progress" states="approve" string="Send to Suppliers" type="workflow" icon="terp-gtk-go-back-rtl"/>
+					<button name="tender_confirm" states="draft" string="Confirm"
+						type="workflow" icon="terp-gtk-go-back-rtl"/>
+
+					<button name="tender_confirm_dept" states="confirm"
+						string="General Department Approve" type="workflow"
+                        groups="base_custom.group_general_department_manager"
+						icon="terp-gtk-go-back-rtl" />
+
+					<button name="tender_approve" states="confirm_dept"
+						string="General Manager Approve" type="workflow"
+                        groups="base_custom.group_general_manager"
+						icon="terp-gtk-go-back-rtl" />
+						
+					<button name="tender_reset" states="cancel" string="Reset to Draft" type="workflow" icon="gtk-undo"/>
+	                <button name="tender_done" states="in_progress" string="Purchase Done" type="workflow" groups="purchase_wafi.group_committee_user"/>
+	                <button name="tender_cancel" states="confirm,confirm_dept,approve" string="Cancel Requisition" type="workflow" icon="gtk-cancel"/>
+
+					<button name="purchase_order" states="in_progress" string="Create Purchase Order" state='budget_approve' 
+						groups="purchase_wafi.group_committee_user" type="workflow"/>
+
+	                <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,done" statusbar_colors='{"in_progress":"blue"}'/>
+	            </header>
+	            <sheet>
+	                <div class="oe_edit_only">
+	                    <label for="name" class="oe_inline"/>
+	                    <label for="origin" class="oe_inline"/>
+	                </div>
+	                <h1>
+	                    <field name="name" readonly="1" class="oe_inline"/>
+	                    <label string="," attrs="{'invisible':[('origin','=',False)]}"/>
+	                    <field name="origin" readonly="1" class="oe_inline" placeholder="e.g. OUT/0025"/>
+	                </h1>
+	                <group>
+	                    <group>
+	                        <field name="user_id" readonly="1"/>
+							<field name="category_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+	                       
+													<field name="department_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+
+ <field name="exclusive" 
+														attrs="{'invisible':[('state','in',('draft','confirm','confirm_dept'))],'readonly':[('state','!=','approve')],
+														'required':[('state','=','approve')]}"  
+														 />
+	                    </group>
+	                    <group>
+	                        <field name="date_start" attrs="{'readonly':[('state','!=','draft')]}"/>
+	                        <field name="date_end" attrs="{'readonly':[('state','!=','draft')]}"/>
+	                        <field name="warehouse_id" widget="selection" groups="stock.group_locations" invisible="1"
+														attrs="{'readonly':[('state','!=','draft')]}"/>
+	                        <field name="company_id" readonly="1" widget="selection"
+														attrs="{'readonly':[('state','!=','draft')]}"/>
+
+
+
+                                <!--field name="budget_confirm_id" string="Budget Reference" readonly="1"/-->
+
+	                    </group>
+	                </group>
+	                <notebook>
+	                    <page string="Products">
+	                        <field name="line_ids" attrs="{'readonly':['|',('state','!=','draft'),('category_id','=',False)]}">
+	                            <tree string="Products" editable="bottom">
+	                                <field name="product_id" required="1" on_change="onchange_product_id(product_id,product_uom_id)"
+																		domain="[('categ_id','child_of',parent.category_id)]"
+																		context="{'products': parent.line_ids}"
+																		options="{'limit': 10, 'create': false,
+'create_edit': false}" />
+	                                <field name="product_qty"/>
+	                                <field name="product_uom_id" required="1" readonly="1" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+	                                <field name="name"/>
+	                            </tree>
+	                            <form string="Products" version="7.0">
+	                                <group>
+	                                    <field name="product_id" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+	                                    <field name="product_qty"/>
+	                                    <field name="product_uom_id" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+	                                    <field name="company_id" readonly="1" groups="base.group_multi_company" widget="selection"/>
+	                                </group>
+	                            </form>
+	                        </field>
+	                        <div class="oe_right oe_button_box" style="margin-top: 10px">
+															<button name="request_quotation" string="Request a Quotation" type="object" icon="gtk-execute"
+																		groups="purchase_wafi.group_committee_user"
+																		attrs="{'invisible': ['|',('line_ids','=',False),('state', 'not in', ('in_progress'))]}"/>
+	                        </div>
+	                        <separator string="Quotations" attrs="{'invisible':[('state','not in',('in_progress','done'))]}"/>
+	                        <field name="purchase_ids"
+														attrs="{'invisible':[('state','not in',('in_progress','done'))],'readonly':[('state','!=','in_progress')]}">
+	                            <tree string="Purchase Order" create="false">
+	                                <field name="name" string="Reference"/>
+	                                <field name="date_order" string="Order Date"/>
+	                                <field name="partner_id" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+	                                <!--field name="company_id" groups="base.group_multi_company" widget="selection"/>
+	                                <field name="location_id" groups="stock.group_locations"/>
+	                                <field name="minimum_planned_date"/>
+	                                <field name="origin"/-->
+	                                <field name="state"/>
+	                                <button name="purchase_cancel" states="draft,confirmed,wait_auth" string="Cancel Purchase Order" icon="gtk-cancel"/>
+	                                <button name="purchase_confirm" states="draft" string="Confirm Purchase Order" icon="gtk-apply"/>
+	                                <button name="purchase_approve" states="confirmed" string="Approved by Supplier" icon="gtk-ok"/>
+	              
+	                            </tree>
+	                        </field>
+	                        <separator string="Terms and Conditions"/>
+	                        <field name="description" attrs="{'readonly':[('state','!=','draft')]}"/>
+	                    </page>
+											<page string="Suppliers" attrs="{'invisible': [('state', 'not in', ('approve','in_progress','done'))]}">
+												<field name="supplier_ids" domain="[('supplier','=',True)]" attrs="{'readonly':[('state','!=','approve')]}"/>
+											</page>
+											<page string="Users" >
+												<field name="user_ids" attrs="{'readonly':[('state','!=','approve')],'required':[('state','=','approve')]}"/>
+											</page>
+	                </notebook>
+	            </sheet>
+	            <div class="oe_chatter">
+	              <field name="message_follower_ids" widget="mail_followers"/>
+	              <field name="message_ids" widget="mail_thread"/>
+	            </div>
+	          </form>
+				</xpath>
+
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="purchase_order_form_inherit">
+			<field name="name">purchase.order.form</field>
+			<field name="model">purchase.order</field>
+			<field name="inherit_id" ref="purchase.purchase_order_form" />
+			<field name="arch" type="xml">
+				<!--xpath expr="//form/header" position="inside">
+					<button name="purchase_order" states="budget_approved" string="General Manager Approve" 
+						icon="terp-gtk-go-back-rtl" class="oe_highlight" groups="base_custom.group_account_general_manager"/>
+				</xpath-->
+
+                                         <field name="partner_id" position="replace"> 
+
+				            <field name="partner_id" on_change="onchange_partner_id(partner_id)" context="{'search_default_supplier':1,'default_supplier':1,'default_customer':0}" domain="[('supplier','=',True)]" readonly="1" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+                                        </field>
+                         
+                                        <field name="partner_ref" position="replace"> 
+
+
+				            <field name="partner_ref" invisible="1"/>
+                                       </field>
+
+                                       <field name="pricelist_id" position="replace"> 
+				            <field domain="[('type','=','purchase')]" name="pricelist_id" groups="product.group_purchase_pricelist" on_change="onchange_pricelist(pricelist_id, context)" options="{'limit': 10, 'create': false,
+'create_edit': false}" readonly="1"/>
+                                      </field>
+
+                                      <field name="currency_id" position="replace"> 
+				            <field name="currency_id" invisible='1' readonly="1"/>
+                                     </field>
+                                     <field name="journal_id" position="replace"> 
+				            <field name="journal_id" invisible='1' readonly="1"/>
+				     </field>
+                                     <field name="date_order" position="replace"> 
+				          <field name="date_order" readonly="1"/>
+                                     </field>
+                                     <field name="origin" position="replace"> 
+				            <field name="origin" attrs="{'invisible': [('origin','=',False)]}" readonly="1"/>
+                                     </field>
+                                     <field name="warehouse_id" position="replace"> 
+				            <field name="warehouse_id" on_change="onchange_warehouse_id(warehouse_id)" widget="selection" groups="stock.group_locations" invisible='1'/>
+                                     </field>
+                                     <field name="company_id" position="replace"> 
+				            <field name="company_id" groups="base.group_multi_company" widget="selection" invisible='1'/>
+				     </field>
+                                     <field name="dest_address_id" position="replace"> 
+				            <field name="dest_address_id" invisible='1' readonly="1"/>
+                                     </field>
+				     <field name="payment_term_id" position="replace"> 
+	                                   <field name="payment_term_id" invisible='1' readonly="1"/> 
+                                     </field>
+                                     <field name="fiscal_position" position="replace"> 
+				            <field name="fiscal_position" invisible='1' readonly="1"/>
+                                     </field>
+                                     
+                                     <field name="validator" position="replace"> 
+				            <field name="validator" invisible='1' readonly="1"/>
+                                     </field>
+                                     <field name="date_approve" position="replace"> 
+				            <field name="date_approve" invisible='1' readonly="1"/>
+                                     </field>
+
+
+                                <field name="order_line" position='replace'>
+                                <field name="order_line">
+
+                                <tree editable="bottom" string="Purchase Order Lines" create="false">
+                                    <field name="product_id" on_change="onchange_product_id(parent.pricelist_id,product_id,0,False,parent.partner_id, parent.date_order,parent.fiscal_position,date_planned,False,price_unit,context)" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+                                    <field name="name"/>
+
+
+
+                                    <field name="product_qty" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,price_unit,context)"/>
+                                    <field name="product_uom" groups="product.group_uom" on_change="onchange_product_uom(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id, parent.date_order,parent.fiscal_position,date_planned,name,price_unit,context)"/>
+                                    <field name="price_unit"/>
+                                    <field name="taxes_id" widget="many2many_tags"  invisible="1"   domain="[('parent_id','=',False),('type_tax_use','!=','sale')]" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+                                    <field name="price_subtotal"/>                                                                     
+                                </tree>
+                                </field></field>
+
+                                <field name="order_line" position='after'>
+                                     <field name="taxes_id" widget="many2many_tags"  domain="[('parent_id','=',False),('type_tax_use','!=','sale')]"  attrs="{'readonly' : [('state' , '!=' , 'draft')]}" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+
+                                </field>
+
+
+
+
+				<xpath expr="//div[@class='oe_clear']" position="replace">
+					<group class="oe_inline">
+						<group>
+							<field name="good_delivery" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+							<field name="high_quality" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+						</group>
+						<group>
+							<field name="good_price" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+							<field name="other_reason" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+						</group>
+					</group>
+				</xpath>
+				<xpath expr="//field[@name='taxes_id']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax</attribute>
+				</xpath>
+				<xpath expr="//field[@name='amount_tax']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax</attribute>
+				</xpath>
+				<xpath expr="//field[@name='amount_untaxed']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax</attribute>
+				</xpath>
+				<xpath expr="//field[@name='partner_ref']" position="after">
+					<field string="Department" name="department_id" readonly="1"/>
+				</xpath>
+				<xpath expr="//field[@name='company_id']" position="after">
+					<field string="Category" name="category_id" readonly="1"/>
+				</xpath>
+				<xpath expr="sheet/notebook/page/field/tree/field[@name='product_id']" position="attributes">
+					<attribute name="domain">[('categ_id','child_of',parent.category_id)]</attribute>
+
+				</xpath>
+				<xpath expr="sheet/notebook/page/field[@name='order_line']" position="attributes">
+					<attribute name="attrs">{'readonly':['|',('state','!=','draft'),('category_id','=',False)]}</attribute>
+				</xpath>
+
+			</field>
+		</record>
+
+		<record id="purchase.purchase_form_action" model="ir.actions.act_window">
+			<field name="domain">[('state','in',('approved','done','except_picking','except_invoice'))]</field>
+		</record>
+
+		<record id="purchase.purchase_rfq" model="ir.actions.act_window">
+			<field name="domain">[('state','not in',('approved','done','except_picking','except_invoice'))]</field>
+		</record>
+
+		<!--Purchase Order Taxes Removal -->
+		<record id="purchase_order_tree" model="ir.ui.view">
+			<field name="name">purchase.order.tree</field>
+			<field name="model">purchase.order</field>
+			<field name="inherit_id" ref="purchase.purchase_order_tree" />
+			<field name="arch" type="xml">
+                          
+				<xpath expr="//field[@name='amount_untaxed']" position="replace">
+					<field name="amount_untaxed" invisible="1"/>
+				</xpath>
+			</field>
+		</record>
+		<!--Purchase Order Line Taxes Removal -->
+		<record id="purchase_order_line_form" model="ir.ui.view">
+			<field name="name">purchase.order.line.form</field>
+			<field name="model">purchase.order.line</field>
+			<field name="inherit_id" ref="purchase.purchase_order_line_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='taxes_id']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax</attribute>
+				</xpath>
+			</field>
+		</record>
+
+
+
+                
+                <!-- Make Requistion Field Readonly -->
+
+                   <record model="ir.ui.view" id="purchase_order_form_inherit_requistion">
+			<field name="name">purchase.order.form.inherit</field>
+			<field name="model">purchase.order</field>
+			<field name="inherit_id" ref="purchase_requisition.purchase_order_form_inherit"/>
+			<field name="arch" type="xml">
+			    <field name="requisition_id" position="replace">
+				<field name="requisition_id" readonly="1"/>
+			    </field>
+			</field>
+		    </record>
+                   
+		<!--product Taxes Removal -->
+		<record id="product_normal_form_view" model="ir.ui.view">
+			<field name="name">product.normal.form.inherit</field>
+			<field name="model">product.product</field>
+			<field name="inherit_id" ref="account.product_normal_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='taxes_id']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_customer_tax</attribute>
+				</xpath>
+			</field>
+		</record>
+		<!--product Supplier Taxes Removal -->
+		<record id="view_product_account_purchase_ok_form" model="ir.ui.view">
+			<field name="name">product.account.purchase.ok.form.inherit</field>
+			<field name="model">product.product</field>
+			<field name="inherit_id" ref="purchase.view_product_account_purchase_ok_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='supplier_taxes_id']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax</attribute>
+				</xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="product_form_view_procurement_button">
+			<field name="name">product.product.inherit</field>
+			<field name="model">product.product</field>
+			<field name="inherit_id" ref="procurement.product_form_view_procurement_button" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='supply_method']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+			</field>
+		</record>
+		<!--Invoice control Removal -->
+		<delete model="ir.ui.menu" id="purchase.menu_procurement_management_invoice" />
+		<delete model="ir.ui.menu"
+			id="purchase.menu_procurement_management_pending_invoice" />
+		<delete model="ir.ui.menu" id="purchase.menu_purchase_line_order_draft" />
+		<delete model="ir.ui.menu"
+			id="purchase.menu_action_picking_tree4_picking_to_invoice" />
+
+		<!-- Stock Picking >
+		<record id="view_picking_out_form" model="ir.ui.view">
+			<field name="name">stock.picking.out.form</field>
+			<field name="model">stock.picking.out</field>
+			<field name="inherit_id" ref="stock.view_picking_out_form" />
+			<field name="arch" type="xml">
+				<xpath expr="/form/header//button[@name='action_process']"
+					position="replace">
+					<button name="action_process" states="confirmed" string="Request"
+						type="object" class="oe_highlight" context="{'request':1}" />
+				</xpath>
+
+			</field>
+		</record-->
+	</data>
+</openerp>

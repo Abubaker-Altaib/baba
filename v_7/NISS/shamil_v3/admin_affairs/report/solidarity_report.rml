@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+    <template pageSize="(800.0,842.0)" title="Fuel Compare"
+        author="NCTR" allowSplitting="20" orientation="portrait">
+        <pageTemplate id="first">
+            <frame id="first" x1="0.5cm" y1="0.5cm" width="800" height="800" />
+            
+        </pageTemplate>
+    </template>
+    <stylesheet>
+
+        <blockTableStyle id="Table2">
+            <blockValign value="LEFT" />
+            <blockAlignment value="LEFT" />
+            <blockBackground colorName="#e6e6e6" start="0,0"
+                stop="-1,0" />
+            <lineStyle kind="GRID" colorName="#2F4F4F" />
+            <blockTopPadding length="8" />
+            <blockBottomPadding length="4" />
+        </blockTableStyle>
+
+        <paraStyle name="space_after_title" fontName="KacstLetter"
+            fontSize="7.0" leading="18" alignment="CENTER" spaceBefore="1" spaceAfter="1" />
+        <paraStyle name="all" alignment="justify" />
+        <paraStyle name="P2" fontName="Helvetica-Bold" fontSize="14.0"
+            leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="7" />
+        <paraStyle name="P3" fontName="Helvetica-Bold" fontSize="6.0" alignment="CENTER" spaceBefore="0.0" spaceAfter="0" />
+        <paraStyle name="P8" fontName="Helvetica" fontSize="8.0"
+            leading="9" alignment="CENTER" spaceBefore="7" />
+        <images />
+    </stylesheet>
+
+    <story>
+        <para style="space_after_title"></para>
+        <para style="P2">الصندوق الإجتماعي للفترة من</para>
+        <para style="P2">[[ data['form']['date_from'] ]]</para>
+        <para style="P2">إلى</para>
+        <para style="P2">[[ data['form']['date_to'] ]]</para>
+        <para style="P2"></para>
+        <para style="P2"></para>
+        <section>
+            <para style="P2">[[repeatIn(lines(data),'line')]]</para>
+
+            <blockTable colWidths="100,100,100" style="Table2">
+                <tr>
+                    <td>
+                        <para style="P3">اﻹجمالي</para>
+                    </td>
+                    <td>
+                        <para style="P3">النوع</para>
+                    </td>
+                    <td>
+                        <para style="P3">اﻹسم</para>
+                    </td>
+                </tr>
+                <tr>[[repeatIn(get_line_details(),'details')]]
+                    <td>
+                        <para style="P3">[[ details['sum'] ]]</para>
+                    </td>
+                    <td>
+                        <para style="P3">[[ details['type'] ]]</para>
+                    </td>
+                    <td>
+                        <para style="P3">[[ details['name'] or '0']]</para>
+                    </td>
+                </tr>
+            </blockTable>
+
+
+
+            <blockTable colWidths="100,100,100,100" style="Table2">
+                <tr>
+                    
+                    <td>
+                        <para style="P3">التاريخ</para>
+                    </td>
+                    <td>
+                        <para style="P3">المبلغ</para>
+                    </td>
+                    <td>
+                        <para style="P3">الموظف</para>
+                    </td>
+                    <td>
+                        <para style="P3">اﻹسم</para>
+                    </td>
+                </tr>
+                <tr>[[repeatIn(line,'st')]]
+                    <td>
+                        <para style="P3">[[ st.date ]]</para>
+                    </td>
+                    <td>
+                        <para style="P3">[[ st.amount ]]</para>
+                    </td>
+                    <td>
+                        <para style="P3">[[ st.employee_id.name ]]</para>
+                    </td>
+                    <td>
+                        <para style="P3">[[ st.name ]]</para>
+                    </td>
+                </tr>
+            </blockTable>
+        </section>
+    </story>
+</document>
+

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="contracts_info_form" model="ir.ui.view">
+            <field name="name">Contracts Info Wizard</field>
+            <field name="model">contracts.info.report</field>
+            <field name="arch" type="xml">
+                 <form string="Contracts Info" version="7.0">
+                     <sheet>
+		         <group >
+			 <separator string="Contracts Info" colspan="4"/>
+
+		              <group>
+				    <field name="from_date" />
+				    <field name="state" />
+				    <field name="picking_policy"  />
+			      </group>
+		              <group>
+				    <field name="to_date" />
+				    <field name="fees_state" />
+				    <field name="delivery_method" />
+		              </group>
+                              <notebook colspan="4">
+					<page string="Contracts">
+					    <group >
+				    		<field name="contract_ids" nolabel="1" />
+			                    </group>
+					</page>
+					<page string="Suppliers">
+					    <group >
+				    		<field name="supplier_ids" nolabel="1" />
+			                    </group>
+					</page>
+					<page string="Companies">
+					    <group >
+				    		<field name="company_ids" nolabel="1" />
+			                    </group>
+					</page>
+                              </notebook>
+		             <footer>
+		                <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight"/>
+		          	or
+		          	<button string="Cancel" class="oe_link" special="cancel"/>
+		             </footer>
+		         </group>
+                     </sheet>
+        	</form>
+            </field>
+	</record>
+
+        <record id="action_contracts_info" model="ir.actions.act_window">
+            <field name="name">Contracts Info</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">contracts.info.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="contracts_info_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="contracts info "
+                parent="purchase_contracts.menu_purchase_contracts_reports_id"
+                action="action_contracts_info"
+                id="contracts_info_menu_id"
+                />
+
+    </data>
+</openerp>

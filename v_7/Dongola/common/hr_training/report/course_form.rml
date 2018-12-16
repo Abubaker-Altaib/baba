@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<document filename="jobqualification_report.pdf">
+  <template pageSize="(595.0,842.0)" title="Qualification report" author="Samia" allowSplitting="20">
+    <pageTemplate id="first">
+      <frame id="first" x1="57.0" y1="57.0" width="481" height="728"/>
+    </pageTemplate>
+  </template>
+    <stylesheet>
+
+    <blockTableStyle id="Table_with_header">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+      <!--  Header -->
+      <lineStyle kind="BOX" thickness="0.3" colorName="#000000" start="0,0" stop="0,0"/>
+      <lineStyle kind="BOX" thickness="0.3" colorName="#000000" start="1,0" stop="1,0"/>
+      <lineStyle kind="BOX" thickness="0.3" colorName="#000000" start="2,0" stop="2,0"/>
+      <lineStyle kind="BOX" thickness="0.3" colorName="#000000" start="3,0" stop="3,0"/>
+
+      <!-- Content -->
+      <lineStyle kind="GRID" thickness="0.2" colorName="#000000" start="0,1" stop="0,-1"/>
+      <lineStyle kind="GRID" thickness="0.2" colorName="#000000" start="1,1" stop="1,-1"/>
+      <lineStyle kind="GRID" thickness="0.2" colorName="#000000" start="2,1" stop="2,-1"/>
+      <lineStyle kind="GRID" thickness="0.2" colorName="#000000" start="3,1" stop="3,-1"/>
+      <blockBackground colorName="#e6e6e6" start="0,0" stop="0,-1"/>
+      <blockBackground colorName="#e6e6e6" start="1,0" stop="1,-1"/>
+      <blockBackground colorName="#e6e6e6" start="2,0" stop="2,-1"/>
+      <blockBackground colorName="#e6e6e6" start="3,0" stop="3,-1"/>
+      <blockBackground colorName="#ffffff" start="0,1" stop="0,-1"/>
+      <blockBackground colorName="#ffffff" start="1,1" stop="1,-1"/>
+      <blockBackground colorName="#ffffff" start="2,1" stop="2,-1"/>
+      <blockBackground colorName="#ffffff" start="3,1" stop="3,-1"/>
+    </blockTableStyle>
+
+    <initialize>
+      <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="space_before_line" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="CENTER" spaceBefore="6.0" spaceAfter="6.0"/>
+    <paraStyle name="space_after_line" fontName="Helvetica-Bold" fontSize="8.0" leading="5" alignment="CENTER" spaceBefore="6.0" spaceAfter="6.0"/>
+    <paraStyle name="space_after_title" fontName="Helvetica-Bold" leading="1" alignment="CENTER" spaceBefore="1" spaceAfter="1"/>
+    <paraStyle name="P12" fontName="Helvetica-Bold" fontSize="12.0" leading="10" alignment="CENTER" spaceBefore="6.0" spaceAfter="6.0"/>
+    <paraStyle name="col_Right" fontName="Helvetica" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="small_col_Right" fontName="Helvetica" fontSize="9" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P13" fontName="Helvetica-Bold" fontSize="10.0" leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="small_col_left" fontName="Helvetica" fontSize="9" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="small_col_center" fontName="Helvetica" fontSize="9" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+  </stylesheet>
+
+	<story>
+    
+    <!-- +++++++++++++++++++++++++++++++++ Start repeating ++++++++++++++++++++++++++++++ -->  
+       <para style="P12">تقرير إحصائي لعدد المتدربين في الدورات التدريبية </para>
+       <para style="P12">من الفترة: [[ data['form']['From'] or removeParentNode('para') ]]</para>
+       <para style="P12">إلى الفترة: [[ data['form']['to'] or removeParentNode('para') ]]</para>
+       <para style="P12">[[ repeatIn(place(),'p') ]]  [[ p['training_place']=='inside' and 'داخل السودن' or  p['training_place']=='outside' and 'خارج السودن']]</para>
+		<para style="space_after_title"></para>
+		<para style="space_after_title"></para>
+		<para style="space_after_title"></para>
+		<para style="space_after_title"></para>
+
+		<blockTable colWidths="165,255,50" style="Table_with_header">
+			<tr>
+				<td><para style="col_Right">عدد المتدربين</para></td>
+				<td><para style="col_Right">الدورة التدربية</para></td>
+				<td><para style="col_Right">#</para></td>
+			</tr>
+      		<tr>
+				<td><para style="col_Right"> [[ crs['total'] or '0']] </para></td>
+				<td><para style="col_Right"> [[ crs ['course'] ]]</para></td>
+				<td><para style="col_Right"> [[ repeatIn(course(data['form'],p),'crs') ]] [[ crs ['no'] ]]</para></td>
+			</tr>
+			<tr>
+				<td><para style="col_Right">[[ repeatIn(total(),'t') ]] [[ t ]]</para></td>
+				<td><para style="col_Right"> عدد المتدربين </para></td>
+			</tr>
+		</blockTable> 
+	</story>
+</document>
+

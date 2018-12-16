@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Account Types -->
+
+        <record model="account.account.type" id="account.data_account_type_retained_profits">
+            <field name="name">Retained profits</field>
+            <field name="include_initial_balance" eval="True" />
+        </record>
+ 
+
+
+        <!-- Change Owner Equity -->
+       <record id="account_financial_report_ownerequity0" model="account.financial.report">
+            <field name="name">Change Owner Equity</field>
+            <field name="sign" eval="-1" />
+            <field name="type">sum</field>
+
+        </record>
+
+        <record id="account_financial_report_capital0" model="account.financial.report">
+            <field name="name">Increase In Capital</field>
+            <field name="sign" eval="-1" />
+            <field name="sequence">1</field>
+            <field name="parent_id" ref="account_financial_report_ownerequity0"/>
+            <field name="display_detail">no_detail</field>
+            <field name="type">account_type</field>
+            <field name="account_type_ids" eval="[(4,ref('account.data_account_type_equity'))]" />
+        </record>
+
+        <record id="account_financial_report_income0" model="account.financial.report">
+            <field name="name">Net Income</field>
+            <field name="sign" eval="-1" />
+            <field name="sequence">2</field>
+            <field name="parent_id" ref="account_financial_report_ownerequity0"/>
+            <field name="display_detail">no_detail</field>
+            <field name="type">account_type</field>
+            <field name="account_type_ids" eval="[(4,ref('account.data_account_type_retained_profits'))]" />
+        </record>
+    </data>
+</odoo>

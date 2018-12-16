@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+       
+      <!-- Purchase -->
+      <!--record id="activity_check_budget" model="workflow.activity">
+            <field name="wkf_id" ref="purchase.purchase_order"/>
+            <field name="name">check_budget</field>
+            <field name="kind">function</field>
+            <field name="action">create_budget_confirmation()</field>
+        </record>
+       <record id="activity_budget_not_approve" model="workflow.activity">
+            <field name="wkf_id" ref="purchase.purchase_order"/>
+            <field name="name">budget_not_approve</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'waiting_budget'})</field>
+        </record-->
+        <record id="act_budget_approved" model="workflow.activity">
+            <field name="wkf_id" ref="purchase.purchase_order"/>
+            <field name="name">budget_approved</field>
+            <field name="kind">function</field>
+            <field name="action">purchase_confirm_order()</field>
+        </record>
+
+        <record id="act_approved" model="workflow.activity">
+            <field name="wkf_id" ref="purchase.purchase_order"/>
+            <field name="name">approved</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'approved'})</field>
+        </record>
+
+        <record id="purchase.trans_draft_confirmed" model="workflow.transition">
+            <field name="act_from" ref="purchase.act_draft"/>
+            <field name="act_to" ref="act_budget_approved"/>
+            <field name="signal">purchase_confirm</field>
+
+        </record>
+        <!--record id="check_approve" model="workflow.transition">
+            <field name="act_from" ref="activity_check_budget"/>
+            <field name="act_to" ref="act_budget_approved"/>
+            <field name="trigger_model">account.budget.confirmation</field>
+            <field name="trigger_expr_id">confirmation_get()</field>
+            <field name="condition">test_state()</field>
+        </record>
+        <record id="check_no_approve" model="workflow.transition">
+            <field name="act_from" ref="activity_check_budget"/>
+            <field name="act_to" ref="activity_budget_not_approve"/>
+            <field name="trigger_model">account.budget.confirmation</field>
+            <field name="trigger_expr_id">confirmation_get()</field>
+            <field name="condition">not test_state()</field>
+        </record-->
+        <!--record id="no_approve_confirm" model="workflow.transition">
+            <field name="act_from" ref="activity_budget_not_approve"/>
+            <field name="act_to" ref="act_budget_approved"/>
+              <field name="trigger_model">account.budget.confirmation</field>
+            <field name="trigger_expr_id">confirmation_get()</field>
+            <field name="condition">test_state()</field>
+        </record-->
+
+        <record id="trans_sent_confirmed" model="workflow.transition">
+            <field name="act_from" ref="act_budget_approved"/>
+            <field name="act_to" ref="purchase.act_confirmed"/>
+            <field name="signal">purchase_order</field>
+        </record>
+        <record id="trans_purchase_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_approved"/>
+            <field name="act_to" ref="purchase.act_cancel"/>
+            <field name="signal">purchase_cancel</field>
+        </record>
+    </data>
+</openerp>
+

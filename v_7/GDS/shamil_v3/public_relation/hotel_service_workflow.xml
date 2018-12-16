@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    
+         <!--  The workflow -->
+    
+        <record id="wkf_hotel_service" model="workflow">
+            <field name="name">wkf.hotel.service</field>
+            <field name="osv">hotel.service</field>
+            <field name="on_create">True</field>
+        </record>
+        
+        <!--  Activity  -->
+   
+        <record id="wkf_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hotel_service"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+        </record>
+        <record id="wkf_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hotel_service"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>  
+        </record>
+        <record id="wkf_confirmed1" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hotel_service"/>
+            <field name="name">confirmed1</field>
+            <field name="kind">function</field>
+            <field name="action">changes_state({'state':'confirmed1'})</field>  
+        </record>
+        <!--record id="wkf_confirmed2" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hotel_service"/>
+            <field name="name">confirmed2</field>
+            <field name="kind">function</field>
+            <field name="action">changes_state({'state':'confirmed2'})</field>  
+        </record>
+        <record id="wkf_approve" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hotel_service"/>
+            <field name="name">approve</field>
+            <field name="kind">function</field>
+            <field name="action">changes_state({'state':'approve1'})</field>  
+        </record-->
+        <record id="wkf_approve1" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hotel_service"/>
+            <field name="name">approve1</field>
+            <field name="kind">function</field>
+            <field name="action">approve1()</field>  
+        </record>
+        <record id="wkf_approve2" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hotel_service"/>
+            <field name="name">approve2</field>
+            <field name="kind">function</field>
+            <field name="action">changes_state({'state':'approve2'})</field>  
+        </record>
+        <record id="wkf_approve3" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hotel_service"/>
+            <field name="name">approve3</field>
+            <field name="kind">function</field>
+            <field name="action">approve3()</field>  
+        </record>
+         <record id="wkf_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hotel_service"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">create_financial_claim()</field>  
+            <field name="flow_stop">True</field>          
+        </record>
+        <record id="wkf_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hotel_service"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">changes_state({'state':'cancel'})</field>
+        </record>
+
+     <!--  Transition  -->
+        
+        <record id="wkf_darft_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_draft"/>
+            <field name="act_to" ref="wkf_confirmed"/>
+            <field name="signal">confirmed</field>
+        </record>
+        
+        <record id="wkf_confirmed_confirmed1" model="workflow.transition">
+            <field name="act_from" ref="wkf_confirmed"/>
+            <field name="act_to" ref="wkf_confirmed1"/>
+            <field name="signal">confirmed1</field>
+        </record>
+        
+         <!--record id="wkf_confirmed1_confirmed2" model="workflow.transition">
+            <field name="act_from" ref="wkf_confirmed1"/>
+            <field name="act_to" ref="wkf_confirmed2"/>
+            <field name="signal">confirmed2</field>
+        </record>
+
+        <record id="wkf_confirmed2_approve" model="workflow.transition">
+            <field name="act_from" ref="wkf_confirmed2"/>
+            <field name="act_to" ref="wkf_approve"/>
+            <field name="signal">approve</field>
+        </record-->
+        
+        <record id="wkf_approve_approve1" model="workflow.transition">
+            <field name="act_from" ref="wkf_confirmed1"/>
+            <field name="act_to" ref="wkf_approve1"/>
+            <field name="signal">approve1</field>
+        </record>
+        
+         <record id="wkf_approve1_approve2" model="workflow.transition">
+            <field name="act_from" ref="wkf_approve1"/>
+            <field name="act_to" ref="wkf_approve2"/>
+            <field name="signal">approve2</field>
+        </record>
+        
+        <record id="wkf_approve2_approve3" model="workflow.transition">
+            <field name="act_from" ref="wkf_approve2"/>
+            <field name="act_to" ref="wkf_approve3"/>
+            <field name="signal">approve3</field>
+        </record>
+        
+        <record id="wkf_wkf_approve3_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_approve3"/>
+            <field name="act_to" ref="wkf_done"/>
+            <field name="signal">done</field>
+        </record>
+        
+     <!-- Cancel transitions  -->
+
+        <record id="wkf_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_draft"/>
+            <field name="act_to" ref="wkf_cancel"/>
+            <field name="signal">hotel_cancel</field>
+        </record>
+
+        <record id="wkf_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_confirmed"/>
+            <field name="act_to" ref="wkf_cancel"/>
+            <field name="signal">hotel_cancel</field>
+        </record>
+        
+       <record id="wkf_confirm1_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_confirmed1"/>
+            <field name="act_to" ref="wkf_cancel"/>
+            <field name="signal">hotel_cancel</field>
+        </record>
+        
+        <!--record id="wkf_confirm2_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_confirmed2"/>
+            <field name="act_to" ref="wkf_cancel"/>
+            <field name="signal">hotel_cancel</field>
+        </record>
+        
+        <record id="wkf_approve_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_approve"/>
+            <field name="act_to" ref="wkf_cancel"/>
+            <field name="signal">hotel_cancel</field>
+        </record-->
+        
+         <record id="wkf_approve1_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_approve1"/>
+            <field name="act_to" ref="wkf_cancel"/>
+            <field name="signal">hotel_cancel</field>
+        </record>
+        
+        <record id="wkf_approve2_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_approve2"/>
+            <field name="act_to" ref="wkf_cancel"/>
+            <field name="signal">hotel_cancel</field>
+        </record>
+        
+        <record id="wkf_approve3_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_approve3"/>
+            <field name="act_to" ref="wkf_cancel"/>
+            <field name="signal">hotel_cancel</field>
+        </record>
+        
+    </data>
+</openerp>
+

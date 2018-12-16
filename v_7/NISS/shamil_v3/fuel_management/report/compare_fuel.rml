@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+    <template pageSize="(595.0,842.0)" title="Fuel Compare"
+        author="NCTR" allowSplitting="20" orientation="portrait">
+        <pageTemplate id="first">
+    <stylesheet>
+      <!-- Set here the default font to use for all <para> tags -->
+      <paraStyle name='Normal' fontName="DejaVu Sans"/>
+      <paraStyle name="main_footer" fontSize="8.0" alignment="CENTER"/>
+      <paraStyle name="main_footer2" fontSize="8.0" alignment="LEFT"/>
+    </stylesheet>
+    <frame id="first" x1="1.3cm" y1="2.0cm" height="22.5cm" width="19cm"/>
+    <pageGraphics>
+    <setFont name="DejaVu Sans Bold" size="11"/>
+    <drawString x="2.1cm" y="27.2cm"  fontSize="14.0">جهاز اﻷمن و المخابرات الوطني</drawString>
+    <drawString x="3.1cm" y="26.5cm"  fontSize="14.0">هيئة اﻹدارة</drawString>
+    <drawString x="2.5cm" y="25.8cm"  fontSize="14.0">دائرة الخدمات الهندسية</drawString>
+    <drawString x="2.5cm" y="25.1cm"  fontSize="14.0">إدراة المركبات و الوقود</drawString>
+    <drawString x="3.1cm" y="24.4cm"  fontSize="14.0">فرع الوقود</drawString>
+    <drawString x="2.3cm" y="23.7cm"  fontSize="14.0">التاريخ : [[ formatLang(time.strftime("%Y-%m-%d"), date=True) ]]</drawString>
+    <setFont name="DejaVu Sans Bold" size="14"/>
+    <drawString x="260" y="28.9cm"  fontSize="14.0">بسم الله الرحمن الرحيم</drawString>
+    <drawString x="280" y="27.9cm"  fontSize="14.0">سري للغاية</drawString>
+
+      <lines>1.2cm 1.65cm 19.9cm 1.65cm</lines>
+      <place x="1.3cm" y="0cm" height="1.55cm" width="19.0cm">
+        <para style="main_footer">[[ company.rml_footer ]]</para>
+        <para style="main_footer">طبع بواسطة : [[ user.name ]] - صفحة رقم: <pageNumber/>
+        </para>
+      </place>
+      <setFont name="DejaVu Sans" size="9"/>
+      <drawString x="2cm" y="1.25cm"> [[ formatLang(time.strftime("%Y-%m-%d"), date=True) ]]  [[ time.strftime("%H:%M") ]] </drawString>
+    </pageGraphics>
+  </pageTemplate>
+    </template>
+    <stylesheet>
+
+        <blockTableStyle id="Table2">
+            <blockValign value="CENTER" />
+            <blockAlignment value="CENTER" />
+            <blockBackground colorName="#e6e6e6" start="0,0"
+                stop="-1,0" />
+            <lineStyle kind="GRID" colorName="#2F4F4F" />
+            <blockTopPadding length="8" />
+            <blockBottomPadding length="4" />
+        </blockTableStyle>
+
+        <paraStyle name="space_after_title" fontName="KacstLetter"
+            fontSize="7.0" leading="18" alignment="CENTER" spaceBefore="1" spaceAfter="1" />
+        <paraStyle name="all" alignment="justify" />
+        <paraStyle name="P2" fontName="Helvetica-Bold" fontSize="14.0"
+            leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="7" />
+        <paraStyle name="P3" fontName="Helvetica-Bold" fontSize="10.0"
+            leading="16" alignment="CENTER" spaceBefore="0.0" spaceAfter="20" />
+        <paraStyle name="P8" fontName="Helvetica" fontSize="8.0"
+            leading="9" alignment="CENTER" spaceBefore="7" />
+        <images />
+    </stylesheet>
+
+    <story>
+        <para style="space_after_title"></para>
+        <para style="P2">ﺇﺩاﺭﺓ اﻟﺸﺌﻮﻥ اﻻﺩاﺭﻳﺔ</para>
+        <para style="P2"></para>
+        <para style="P2">ﻗﺴﻢ اﻟﺨﺪﻣﺎﺕ</para>
+        <para style="P2">ﻣﻘﺎﺭﻧﺔ اﻟﻮﻗﻮﺩ</para>
+        <para style="P2"></para>
+        <para style="P2"></para>
+        <blockTable colWidths="130,100,100,80,100,40" style="Table2">
+            <tr>
+                <td>
+                    <para style="P3">اﻟﻔﺮﻕ ﺑﻴﻦ اﻟﺸﻬﺮﻳﻦ</para>
+                </td>
+                <td>
+                    <para style="P3">ﻛﻤﻴﺔ اﻟﻮﻗﻮﺩ ﺷﻬﺮ [[ data['form']['second_month'] ]]/[[ data['form']['second_year'] ]]</para>
+                </td>
+                <td>
+                    <para style="P3"> ﻛﻤﻴﺔ اﻟﻮﻗﻮﺩ ﺷﻬﺮ [[ data['form']['first_month'] ]]/[[ data['form']['first_year'] ]]</para>
+                </td>
+                <td>
+                    <para style="P3">ﻧﻮﻉ اﻟﺨﻄﺔ</para>
+                </td>
+                <td>
+                    <para style="P3">اﻹﺩاﺭﺓ</para>
+                </td>
+                <td>
+                    <para style="P3">اﻟﺮﻗﻢ</para>
+                </td>
+            </tr>
+            <tr>[[repeatIn(line(data),'st')]]
+                <td>
+                    <para style="P3">[[ formatLang(st['month1']-st['month2']) ]] </para>
+                </td>
+                <td>
+                    <para style="P3"> [[ formatLang(st['month2']) ]]</para>
+                </td>
+                <td>
+                    <para style="P3"> [[ formatLang(st['month1']) ]]</para>
+                </td>
+                <td>
+                    <para style="P3"> [[ st['plan_type']=='extra_fuel' and 'إضافي' or st['plan_type']=='fixed_fuel' and 'ثابت' or st['plan_type'] ]]</para>
+                </td>
+                <td>
+                    <para style="P3"> [[ st['department'] or '/']] </para>
+                </td>
+                <td>
+                    <para style="P3">
+                        <seq id="L1" />
+                    </para>
+                </td>
+            </tr>
+        </blockTable>
+        <blockTable colWidths="130,100,100,220" style="Table2">
+            <tr>[[repeatIn(sums(data),'sum')]]
+                <td>
+                    <para style="P3">[[formatLang(sum['month1']-sum['month2']) ]]
+                    </para>
+                </td>
+                <td>
+                    <para style="P3">[[ formatLang(sum['month2']) ]] </para>
+                </td>
+                <td>
+                    <para style="P3"> [[ formatLang(sum['month1'])]]</para>
+                </td>
+                <td>
+                    <para style="P3"> اﻹجمالي </para>
+                </td>
+            </tr>
+        </blockTable>
+        <para>
+            <seqReset id="L1" />
+        </para>
+    </story>
+</document>

@@ -1,0 +1,65 @@
+-
+  I create a purchase order.
+  
+-
+  !record {model: purchase.order, id: purchase_order1}:
+    partner_id: base.res_partner_asus
+    invoice_method: order
+    order_line:
+      - product_id: product.product_product_pc2
+        price_unit: 150.50
+        product_qty: 5.0
+      - product_id: product.product_product_pc1
+        price_unit: 450.20
+        product_qty: 2.0
+ 
+         
+-
+  I create a purchase another order.         
+-
+  !record {model: purchase.order, id: purchase_order2}:
+    partner_id: base.res_partner_maxtor
+    order_line:
+      - product_id: product.product_product_cpu1
+        product_qty: 3
+      - product_id: product.product_product_cpu3
+        product_qty: 13
+      - product_id: product.product_product_hdd1
+        product_qty: 10
+        
+        
+-
+  I create a purchase another order.        
+-
+  !record {model: purchase.order, id: purchase_order3}:
+    partner_id: base.res_partner_desertic_hispafuentes
+    order_line:
+      - product_id: product.product_product_0
+        product_qty: 5
+      - product_id: product.product_product_1
+        product_qty: 15
+        
+        
+-
+  In order to test to delete process on purchase order.
+  
+-
+  I try to delete confirmed order and check Error Message.
+  
+  
+-
+  !python {model: purchase.order}: |
+    try:
+        self.unlink(cr, uid, [ref("purchase_order1")])
+    except Exception,e:
+        pass
+-
+  I delete a draft order.
+-
+  !python {model: purchase.order}: |
+    self.unlink(cr, uid, [ref("purchase_order2")])
+-
+  I delete a cancelled order.
+-
+  !python {model: purchase.order}: |
+    self.unlink(cr, uid, [ref("purchase_order3")])

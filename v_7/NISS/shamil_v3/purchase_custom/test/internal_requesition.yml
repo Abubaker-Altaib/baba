@@ -1,0 +1,37 @@
+    
+- 
+  Creating a ireq.m record
+- 
+  !record {model: ireq.m, id: ireq_m_pr0}:
+    cat_id: product.product_category_10
+    company_id: base.main_company
+    inform: '\npurchase requisition Cancelled at : 2013-01-02 by Administrator'
+    name: 2013/PR-0011
+    pro_ids:
+      - name: Processor AMD Athlon XP 1800+
+        product_id: product.product_product_cpu1
+        product_qty: 5.0
+        product_uom: product.product_uom_unit
+      - name: Regular case fan 80mm
+        product_id: product.product_product_fan
+        product_qty: 20.0
+        product_uom: product.product_uom_unit
+    purpose: store        
+    
+-
+  I confirm on internal requistion .
+-
+  !workflow {model: ireq.m, action: confirmed_d, ref: ireq_m_pr0}
+-
+  I approve as the supply department the internal requestion
+-
+  !workflow {model: ireq.m, ref: ireq_m_pr0, action: confirmed_s}
+  
+-
+  I approve by purchase department the internal requestion
+-
+  !workflow {model: ireq.m, ref: ireq_m_pr0, action: ireq_confirm}
+
+  
+ 
+    

@@ -1,0 +1,240 @@
+--- openerp/report/render/rml2pdf/__init__.py
++++ openerp/report/render/rml2pdf/__init__.py
+@@ -19,6 +19,36 @@
+ #
+ ##############################################################################
+ 
++import os, stat
++from reportlab import rl_config
++from reportlab.pdfbase import pdfmetrics
++from reportlab.pdfbase import ttfonts
++from reportlab.lib.fonts import addMapping
++
++def rl_isreg(filename, dirname):
++    try:
++        st = os.stat(os.path.join(dirname, filename))
++    except OSError, reason:
++        if reason.errno == 2:
++            return False
++        raise
++    return stat.S_ISREG(st.st_mode) or stat.S_ISLNK(st.st_mode)
++
++for dirname in rl_config.TTFSearchPath:
++    for root, dirs, files in os.walk(dirname): #@UnusedVariable
++        for file in [x for x in files
++                     if x.lower().endswith('.ttf') and rl_isreg(x, root)
++                     ]:
++            filename = os.path.join(root, file)
++            try:
++                face = ttfonts.TTFontFace(filename)
++                face.extractInfo(1)
++                pdfmetrics.registerFont(ttfonts.TTFont(face.name, filename, asciiReadable=0))
++                addMapping(face.familyName, face.bold, face.italic, face.name)
++            except:
++                pass
++
++
+ from trml2pdf import parseString, parseNode
+ 
+ #.apidoc title: RML to PDF engine
+--- openerp/report/render/rml2pdf/trml2pdf.py
++++ openerp/report/render/rml2pdf/trml2pdf.py
+@@ -628,7 +628,7 @@
+             if not n.tag == 'bullet':
+                 txt_n.text = utils.xml2str(self._textual(n))
+             txt_n.tail = n.tail and utils.xml2str(utils._process_text(self, n.tail.replace('\n',''))) or ''
+-            rc1 += etree.tostring(txt_n)
++            rc1 += etree.tostring(txt_n, encoding = unicode)
+         return rc1
+ 
+     def _table(self, node):
+@@ -990,7 +990,41 @@
+         else:
+             self.doc_tmpl.build(fis)
+ 
++def changeFonts(data):
++    fontmap = {
++        'Times-Roman':                   'DejaVuSerif',
++        'Times-BoldItalic':              'DejaVuSerif-BoldItalic',
++        'Times-Bold':                    'DejaVuSerif-Bold',
++        'Times-Italic':                  'DejaVuSerif-Italic',
++
++        'Helvetica':                     'DejaVuSans',
++        'Helvetica-BoldItalic':          'DejaVuSans-BoldOblique',
++        'Helvetica-Bold':                'DejaVuSans-Bold',
++        'Helvetica-Italic':              'DejaVuSans-Oblique',
++
++        'Courier':                       'DejaVuSansMono',
++        'Courier-Bold':                  'DejaVuSansMono-Bold',
++        'Courier-BoldItalic':            'DejaVuSansMono-BoldOblique',
++        'Courier-Italic':                'DejaVuSansMono-Oblique',
++
++        'Helvetica-ExtraLight':          'DejaVuSans-ExtraLight',
++
++        'TimesCondensed-Roman':          'DejaVuSerifCondensed',
++        'TimesCondensed-BoldItalic':     'DejaVuSerifCondensed-BoldItalic',
++        'TimesCondensed-Bold':           'DejaVuSerifCondensed-Bold',
++        'TimesCondensed-Italic':         'DejaVuSerifCondensed-Italic',
++
++        'HelveticaCondensed':            'DejaVuSansCondensed',
++        'HelveticaCondensed-BoldItalic': 'DejaVuSansCondensed-BoldOblique',
++        'HelveticaCondensed-Bold':       'DejaVuSansCondensed-Bold',
++        'HelveticaCondensed-Italic':     'DejaVuSansCondensed-Oblique',
++    }
++    for old, new in fontmap.iteritems():
++        data = data.replace('"'+old+'"', '"'+new+'"')
++    return data
++
+ def parseNode(rml, localcontext=None, fout=None, images=None, path='.', title=None):
++    rml = changeFonts(rml)
+     node = etree.XML(rml)
+     r = _rml_doc(node, localcontext, images, path, title=title)
+     #try to override some font mappings
+@@ -1008,6 +1042,7 @@
+     return fp.getvalue()
+ 
+ def parseString(rml, localcontext=None, fout=None, images=None, path='.', title=None):
++    rml = changeFonts(rml)
+     node = etree.XML(rml)
+     r = _rml_doc(node, localcontext, images, path, title=title)
+ 
+--- openerp/tools/misc.py
++++ openerp/tools/misc.py
+@@ -555,7 +555,28 @@
+     # of some trivial codes where the Launchpad code is xx and we have xx_XX.
+     languages={
+         'ab_RU': u'Abkhazian / аҧсуа',
+-        'ar_AR': u'Arabic / الْعَرَبيّة',
++        'ar_DZ': u'Arabic (Algeria) / العربية - الجزائر',
++        'ar_BH': u'Arabic (Bahrain) / العربية - البحرين',
++        'ar_KM': u'Arabic (Comoros) / العربية - جزر القمر',
++        'ar_DJ': u'Arabic (Djibouti) / العربية - جيبوتي',
++        'ar_EG': u'Arabic (Egypt) / العربية - مصر',
++        'ar_AE': u'Arabic (Emirates) / العربية - الإمارات',
++        'ar_IQ': u'Arabic (Iraq) / العربية - العراق',
++        'ar_JO': u'Arabic (Jordan) / العربية - الأردن',
++        'ar_KW': u'Arabic (Kuwait) / العربية - الكويت',
++        'ar_LB': u'Arabic (Lebanon) / العربية - لبنان',
++        'ar_LY': u'Arabic (Libya) / العربية - ليبيا',
++        'ar_MR': u'Arabic (Mauritania) / العربية - موريتانيا',
++        'ar_MA': u'Arabic (Morocco) / العربية - المغرب',
++        'ar_OM': u'Arabic (Oman) / العربية - عمان',
++        'ar_PS': u'Arabic (Palestine) / العربية - فلسطين',
++        'ar_QA': u'Arabic (Qatar) / العربية - قطر',
++        'ar_SA': u'Arabic (Saudi Arabia) / العربية - السعودية',
++        'ar_SO': u'Arabic (Somalia) / العربية - الصومال',
++        'ar_SD': u'Arabic (Sudan) / العربية - السودان',
++        'ar_SY': u'Arabic (Syria) / العربية - سوريا',
++        'ar_TN': u'Arabic (Tunisia) / العربية - تونس',
++        'ar_YE': u'Arabic (Yemen) / العربية - اليمن',
+         'bg_BG': u'Bulgarian / български език',
+         'bs_BS': u'Bosnian / bosanski jezik',
+         'ca_ES': u'Catalan / Català',
+--- openerp/tools/translate.py
++++ openerp/tools/translate.py
+@@ -49,7 +49,22 @@
+ _LOCALE2WIN32 = {
+     'af_ZA': 'Afrikaans_South Africa',
+     'sq_AL': 'Albanian_Albania',
+-    'ar_SA': 'Arabic_Saudi Arabia',
++    'ar_DZ': 'Arabic_Algeria',
++    'ar_BH': 'Arabic_Bahrain',
++    'ar_EG': 'Arabic_Egypt',
++    'ar_IQ': 'Arabic_Iraq',
++    'ar_JO': 'Arabic_Jordan',
++    'ar_KW': 'Arabic_Kuwait',
++    'ar_LB': 'Arabic_Lebanon',
++    'ar_LY': 'Arabic_Libya',
++    'ar_MA': 'Arabic_Morocco',
++    'ar_OM': 'Arabic_Oman',
++    'ar_QA': 'Arabic_Qatar',
++    'ar_SA': 'Arabic_Saudi_Arabia',
++    'ar_SY': 'Arabic_Syria',
++    'ar_TN': 'Arabic_Tunisia',
++    'ar_AE': 'Arabic_UAE',
++    'ar_YE': 'Arabic_Yemen',
+     'eu_ES': 'Basque_Spain',
+     'be_BY': 'Belarusian_Belarus',
+     'bs_BA': 'Serbian (Latin)',
+--- reportlab/pdfgen/textobject.py
++++ reportlab/pdfgen/textobject.py
+@@ -15,6 +15,19 @@
+ from reportlab.lib.utils import fp_str
+ from reportlab.pdfbase import pdfmetrics
+ 
++# try to import pyfribidi
++try:
++    import pyfribidi as pyfribidi
++    log2vis = pyfribidi.log2vis
++    DIR_ON = pyfribidi.ON
++    DIR_LTR = pyfribidi.LTR
++    DIR_RTL = pyfribidi.RTL
++except:
++    import warnings
++    warnings.warn('pyfribidi is not installed - RTL not supported')
++    log2vis = None
++    DIR_ON = DIR_LTR = DIR_RTL = None
++
+ class _PDFColorSetter:
+     '''Abstracts the color setting operations; used in Canvas and Textobject
+     asseumes we have a _code object'''
+@@ -167,7 +180,8 @@
+ 
+     It keeps track of x and y coordinates relative to its origin."""
+ 
+-    def __init__(self, canvas, x=0,y=0):
++    def __init__(self, canvas, x=0,y=0, direction = 'LTR'):
++        self.direction = direction
+         self._code = ['BT']    #no point in [] then append RGB
+         self._canvas = canvas  #canvas sets this so it has access to size info
+         self._fontname = self._canvas._fontname
+@@ -349,6 +363,10 @@
+ 
+     def _formatText(self, text):
+         "Generates PDF text output operator(s)"
++
++	# Use pyfribidi to write the text in the correct visual order.
++        directions = { 'LTR': DIR_LTR, 'RTL': DIR_RTL }
++        text = log2vis(text, directions.get(self.direction, DIR_ON))
+         canv = self._canvas
+         font = pdfmetrics.getFont(self._fontname)
+         R = []
+--- reportlab/platypus/paragraph.py
++++ reportlab/platypus/paragraph.py
+@@ -1351,6 +1351,9 @@
+                 elif autoLeading=='min':
+                     leading = blPara.ascent-blPara.descent
+ 
++		# set the paragraph direction
++                if self.style.wordWrap == 'RTL':
++                    tx.direction = 'RTL'
+                 #now the font for the rest of the paragraph
+                 tx.setFont(f.fontName, f.fontSize, leading)
+                 ws = lines[0][0]
+--- reportlab/rl_config.py
++++ reportlab/rl_config.py
+@@ -66,6 +66,7 @@
+                 '%(REPORTLAB_DIR)s/../fonts',           #special
+                 '%(REPORTLAB_DIR)s/../../fonts',        #special
+                 '%(HOME)s/fonts',                       #special
++                '/usr/share/fonts/type1',               #Arabic font support
+                  )
+ 
+ # places to look for TT Font information
+@@ -83,7 +84,7 @@
+                 '/Library/Fonts',
+                 '/Network/Library/Fonts',
+                 '/System/Library/Fonts',
+-                
++                '/usr/share/fonts/truetype', 	#Arabic font support
+                 )
+ 
+ # places to look for CMap files - should ideally merge with above
+@@ -111,6 +112,7 @@
+                   '%(REPORTLAB_DIR)s/../fonts/CMap',    #special
+                   '%(REPORTLAB_DIR)s/../../fonts/CMap', #special
+                   '%(HOME)s/fonts/CMap',                #special
++                  '/usr/share/fonts/cmap',              #Arabic font support
+                   )
+ 
+ #### Normally don't need to edit below here ####

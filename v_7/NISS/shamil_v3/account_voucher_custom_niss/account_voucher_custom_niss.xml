@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>	
+		<!-- Account Voucher Line Tree, View -->
+                <record model="ir.ui.view" id="view_account_voucher_line_tree">
+			<field name="name">account.voucher.line.tree</field>
+			<field name="model">account.voucher.line</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml" >
+                             <tree string="Voucher details" editable="top">
+				<field name="date" readonly="1"/>
+				<field name="number" readonly="1"/>
+				<field name="account_id" readonly="1" />
+				<field name="amount" readonly="1"/>
+				<field name="res_partner_id" readonly="1"/>
+				<field name="second_partner_id" readonly="1"
+				    groups="account_voucher_custom_niss.group_shamil_account_voucher_second_partner"/>
+		                <field name="chk_seq" readonly="1"/>
+		                <field name="permission" readonly="1"/>
+				<field name="custody" readonly="1"/>
+				<field name="name" readonly="1"/>
+				<field name="journal_id" readonly="1"/>
+			     </tree>
+			</field>
+		</record>
+
+	<record id="view_account_voucher_line_filter" model="ir.ui.view">
+        <field name="name">account.voucher.line.select</field>
+        <field name="model">account.voucher.line</field>
+        <field name="arch" type="xml">
+            <search string="Voucher details">
+               <group>
+		    <filter name="pay_journal_id" string="Revenue"
+                    domain="['|',('pay_journal_id','=',False),('pay_journal_id.special','=',False),
+   		    ('journal_id.type','in',['sale','sale_refund']),('voucher_type','=','sale')]" />
+                    <filter name="journal_id" string="Expenses"
+                    domain="[('journal_id.type','=','purchase'), ('voucher_type','in',['purchase','pur_rat'])]" />
+ 
+               </group>
+               <group>
+		    <field name="res_partner_id" />
+		    <field name="second_partner_id" 
+			   groups="account_voucher_custom_niss.group_shamil_account_voucher_second_partner"/>
+                    <field name="number"/>
+                    <field name="name"/>
+                    <field name="account_id"/>
+                    <field name="amount" />
+		    <field name="permission" />
+		    <field name="chk_seq" readonly="1"/>
+		    <field name="date" />
+		    <field name="journal_id" />
+                </group>
+                <group expand="0" string="Group By..." colspan="4" col="10" >
+                    <filter string="Partner" context="{'group_by':'res_partner_id'}"/>
+                    <filter string="Second Partner" context="{'group_by':'second_partner_id'}"
+			    groups="account_voucher_custom_niss.group_shamil_account_voucher_second_partner"/>
+                    <filter string="Account" context="{'group_by':'account_id'}"/>
+                    <filter string="State" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+	</field>
+	</record>
+
+		<record id="action_view_account_voucher_line_tree" model="ir.actions.act_window">
+			<field name="name">Voucher details</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.voucher.line</field>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="view_account_voucher_line_tree" />
+                        <field name="search_view_id" ref="view_account_voucher_line_filter"/>
+		</record>
+
+               <menuitem name="Voucher details" parent="account.menu_finance_payables" sequence="11"
+		action="action_view_account_voucher_line_tree" id="menu_account_voucher_line"
+			groups="account.group_account_manager,account.group_account_user"
+			icon="STOCK_PRINT" />                
+         <record model="ir.ui.view" id="view_purchase_receipt_form_custom12">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_check_writing_custom.view_purchase_receipt_form" />
+			<field name="arch" type="xml">
+				<!--xpath expr="//button[@string='Cancel Voucher']" position="after">
+                                     <button name="open_voucher" string="COMPLETE" states="draft" groups="account_voucher_custom_niss.group_shamil_account_voucher_complete"/>
+            	              </xpath-->
+				<xpath expr="//button[@string='Validate']" position="replace">
+                                    <button name="proforma_voucher" string="Validate" states="draft,complete" groups="account_voucher_custom_niss.group_shamil_account_voucher_post"/>
+            	              </xpath>
+                              <xpath expr="//field[@name='name']" position="after">
+					<field name="move_type_id"/>
+					<field name="permission" attrs="{'readonly':['|',('state','!=','draft'),('pay_type','!=','cash')],'required': [('pay_type','=','cash')]}"/>
+				</xpath>
+                       </field>  
+                </record>
+
+		<record model="ir.ui.view" id="view_purchase_receipt_form">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher_confirmation.view_purchase_receipt_form"/>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+                                <xpath expr="//button[@name='cancel_voucher']" position="replace">
+                                       <button name="cancel_voucher_niss" string="Cancel Voucher" states="draft,proforma"  invisible="context.get('line_type', False)"/>
+				</xpath>
+				<xpath expr="//field[@name='pay_journal_id']" position="after">
+					<field name="move_id" readonly="1" />
+                                        <field name="create_uid" readonly="1" />
+				</xpath>
+				<xpath expr="//field[@name='line_dr_ids']" position="after">
+                                    <group col="4" colspan="2">
+					<button name="copy_dr_line" string="Copy Line"
+						type="object"
+						states="draft" class="oe_highlight" icon="STOCK_REDO"/>
+                                                <field name="line_dr_counter"/>
+                                                <field name="amount_in_word" invisible="1"/>
+
+                                    </group>
+				</xpath>
+				<xpath expr="//field[@name='line_dr_ids']/tree" position="attributes">
+					<attribute name="colors">gray:state=='cancel';red:state=='no_approve'</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_dr_ids']/tree/field[@name='state']" position="attributes">
+				<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_dr_ids']" position="replace">
+				       <field name="line_dr_ids" on_change="onchange_price(line_dr_ids, tax_id, partner_id)" context="{'journal_id':journal_id,'partner_id':partner_id}" attrs="{'readonly': [('state','=','posted')]}">
+                                           <tree string="Expense Lines" editable="bottom" attrs="{'readonly': [('state','=','posted')]}">
+
+                                                 <field name="account_id"  domain="[('type','!=','view')]" required="1"/>
+
+                                                 <field name="name"/>
+                                                 <field name="amount"/>
+                                                 <field name="res_partner_id" attrs="{'required':[('custody','=',True)]}"/>
+						 <field name="second_partner_id"
+				                 groups="account_voucher_custom_niss.group_shamil_account_voucher_second_partner"/>
+						  <field name="permission" readonly="1" invisible="1"/>
+						  <field name="account_analytic_id"/>
+						  <field name="dest_approve" domain="[('main_dept','=',True)]" required="1"/>
+                                                 <field name="custody"  
+ on_change="on_change_custody(res_partner_id,custody,parent.partner_id)"/>
+                                                 <field name="custody_end_date" string="End Date"
+							attrs="{'required':[('custody','=',True)],'readonly':[('custody','=',False)]}"/>
+                                                 <field name="seq"/>
+				                 <field name="date" readonly="1" invisible="1"/>
+                                            </tree>
+                                       </field>
+				</xpath>
+			</field>
+		</record>
+
+	       <record model="ir.ui.view" id="view_sale_receipt_form">
+			<field name="name">account.voucher.sale.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher_multi_taxes.view_sale_receipt_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='cancel_voucher']" position="replace">
+                                       <button name="cancel_voucher_niss" string="Cancel Voucher" states="draft,proforma"  invisible="context.get('line_type', False)"/>
+				</xpath>
+				<xpath expr="//field[@name='line_cr_ids']" position="after">
+                                    <group col="4" colspan="2">
+					<button name="copy_cr_line" string="Copy Line"
+						type="object"
+						states="draft"  class="oe_highlight" icon="STOCK_REDO"/>
+                                                <field name="line_cr_counter"/>
+                                    </group>
+				</xpath>
+				<xpath expr="//field[@name='pay_now']" position="after">
+					<field name="move_id" readonly="1" />
+					<!--field name="move_id" readonly="1" attrs="{'invisible': [('state','!=','posted')]}"/-->
+                                        <field name="create_uid"/>
+				</xpath>
+				<xpath expr="//field[@name='account_id']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+                                <xpath expr="//field[@name='name']" position="after">
+					<field name="move_type_id"/>
+				</xpath>
+                         <xpath expr="//field[@name='pay_type']" position="attributes">	
+				<attribute name="invisible">True</attribute>
+			</xpath>
+                         <xpath expr="//field[@name='name']" position="attributes">	
+				<attribute name="required">True</attribute>
+			</xpath>
+		
+                                <xpath expr="//field[@name='chk_seq']" position="attributes">
+					<attribute name="required">True</attribute>
+				</xpath>
+		             
+                                 <!--xpath expr="//button[@name='proforma_voucher']" position="after">
+                                     <button name="open_voucher" string="COMPLETE" states="draft" groups="account_voucher_custom_niss.group_shamil_account_voucher_complete"/>
+            	              </xpath-->
+				<xpath expr="//button[@string='Validate']" position="replace">
+                                    <button name="proforma_voucher" string="Validate" states="draft,complete" groups="account_voucher_custom_niss.group_shamil_account_voucher_post"/>
+            	              </xpath>
+			      <xpath expr="//field[@name='line_cr_ids']" position="replace">
+                                   <field name="line_cr_ids" on_change="onchange_price(line_cr_ids, tax_id, partner_id)" context="{'journal_id':journal_id, 'type':type, 'partner_id':partner_id}" attrs="{'readonly': [('state','=','posted')]}">
+                                       <tree string="Sales Lines" editable="bottom" attrs="{'readonly': [('state','=','posted')]}">
+		                            <field name="account_id" domain="[('type','!=','view')]" required="True"/>
+		                            <field name="name"/>
+		                            <field name="res_partner_id"/>
+
+		                            <field name="amount" sum="Total"/>
+				            <field name="date" readonly="1" invisible="1"/>
+                                     </tree>
+                                  </field>
+            	              </xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_voucher_tree_custom">
+			      <field name="name">account.voucher.tree</field>
+			      <field name="model">account.voucher</field>
+			      <field name="inherit_id" ref="account_voucher_multi_taxes.view_voucher_tree_custom" />
+			      <field name="arch" type="xml">
+                                  <xpath expr="//field[@name='state']" position="before">
+		                            <field name="chk_seq" invisible="1"/>
+		                            <field name="perm_chk_seq"/>
+		                            <field name="permission" invisible="1"/>
+		                            <field name="name"/>
+		                            <!--field name="permission"/-->
+				  </xpath>
+                              </field>
+               </record>
+
+		<record id="view_voucher_filter_sale" model="ir.ui.view">
+			<field name="name">account.voucher.sale.select</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id"
+				ref="account_voucher_custom.view_voucher_filter_sale" />
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='date']"
+					position="after">
+		                            <field name="name"/>
+		                            <field name="chk_seq"/>
+		                            <field name="amount"/>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_voucher_filter_vendor" model="ir.ui.view">
+			<field name="name">account.voucher.purchase.select</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id"
+				ref="account_voucher_custom.view_voucher_filter_vendor" />
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='date']"
+					position="after">
+		                            <field name="name"/>
+		                            <field name="chk_seq"/>
+		                            <field name="amount"/>
+		                            <field name="permission"/>
+				</xpath>
+			</field>
+		</record>
+
+                <!-- *************** Check Range Tree, View *****************-->
+                <record model="ir.ui.view" id="view_check_range_tree">
+			<field name="name">check.range.tree</field>
+			<field name="model">check.range</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml" >
+                             <tree string="Check Range" editable="bottom">
+				<field name="journal_id" required="1"
+				       domain="[('type','=','bank'),('allow_check_writing','=',True)]" />
+				<field name="first_number" required="1" on_change="onchange_range(first_number,last_number)"/>
+				<field name="last_number" required="1" on_change="onchange_range(first_number,last_number)"/>
+				<field name="checks_number" required="1"  on_change="onchange_checks_number(first_number, checks_number)"/>
+				<field name="archive" />
+			     </tree>
+			</field>
+		</record>
+
+		<record id="view_check_range_filter" model="ir.ui.view">
+			<field name="name">check.range.select</field>
+			<field name="model">check.range</field>
+			<field name="arch" type="xml">
+			    <search string="Check Range">
+			       <group>
+				    <field name="journal_id"/>
+				    <field name="first_number" />
+				    <field name="last_number" />
+				    <field name="checks_number" />
+				    <field name="archive"/>
+				</group>
+				<group expand="0" string="Group By..." >
+				    <filter string="Journal" context="{'group_by':'journal_id'}"/>
+				    <filter string="Archive" context="{'group_by':'archive'}"/>
+				</group>
+			    </search>
+			</field>
+			</record>
+
+			<record id="action_view_check_range_tree" model="ir.actions.act_window">
+				<field name="name">Check Range</field>
+				<field name="type">ir.actions.act_window</field>
+				<field name="res_model">check.range</field>
+				<field name="view_mode">tree</field>
+				<field name="view_id" ref="view_check_range_tree" />
+				<field name="search_view_id" ref="view_check_range_filter" />
+			</record>
+
+			<menuitem name="Check Range"  parent="account.menu_journals" sequence="30"
+				action="action_view_check_range_tree" id="menu_check_range"
+				groups="account.group_account_manager"
+				icon="STOCK_PRINT" />  
+
+	</data>
+</openerp>
+

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- fuel move wiz  View-->
+    	<record id="view_fuel_move_wiz" model="ir.ui.view">
+            <field name="name">fuel move wiz</field>
+            <field name="model">fuel.move.wiz</field>
+            <field name="arch" type="xml">
+            	<form string="Fuel Move Report" version="7.0">
+                	<group>
+        			<separator string="Fuel Move Reports" colspan="4"/>
+                                <field name="Date_from" />
+                                <field name="Date_to" />
+	    			<field name="location_id" domain="[('fuel_location','=',True)]"/>
+       		        </group>
+			<footer>
+           	    	 	<button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight"/>
+                                or
+                  		<button string="Cancel" class="oe_link" special="cancel"/>
+			</footer>
+    		</form>
+            </field>
+	</record>
+
+      <!-- fuel move wiz specific time Wizard Action-->
+        <record id="action_wizard_fuel_move_wiz" model="ir.actions.act_window">
+            <field name="name">Fuel Move Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fuel.move.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_fuel_move_wiz"/>
+            <field name="target">new</field>
+        </record>
+
+
+        <!-- fuel move wiz specific time report Menu-->
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Fuel Exchange"
+                parent="menu_fuel_managemen_report"
+                action="action_wizard_fuel_move_wiz"
+                id="menu_fuel_move_wiz"
+                />
+
+    </data>
+</openerp>

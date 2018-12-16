@@ -1,0 +1,25 @@
+-
+  I print a delivery order report.
+-
+  !python {model: stock.picking}: |
+    import netsvc, tools, os
+    (data, format) = netsvc.LocalService('report.delivery_order.reports').create(cr, uid, [ref('stock.outgoing_shipment')], {}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'delivery-order'+format), 'wb+').write(data)
+-
+  I print a stock Rec report.
+-
+  !python {model: exchange.order}: |
+    import netsvc, tools, os
+    (data, format) = netsvc.LocalService('report.stock.rec.list').create(cr, uid, [ref('exchange.exchange_order_rec0')], {}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'stock-rec-list'+format), 'wb+').write(data)
+-
+  I print a store report.
+-
+  !python {model: exchange.order}: |
+    ctx={}
+    data_dict = {'from_date': '2013-01-07', 'to_date': '2013-01-30', 'company_id': ref("base.main_company")}
+    from tools import test_reports
+    test_reports.try_report_action(cr, uid, 'action_view_exchange_report',wiz_data=data_dict, context=ctx, our_module='exchange')
+

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+		<!-- Add button request booking for employee mission form -->
+
+                <record model="ir.ui.view" id="hr_employee_mission_form_view_inherit">
+                <field name="name">hr.employee.mission.inherit.form</field>
+                <field name="model">hr.employee.mission</field>
+                <field name="type">form</field>
+                <field name="inherit_id" ref="hr_mission.hr_employee_mission_form_view"/>
+                <field name="arch" type="xml">
+                 <xpath expr='//field[@name="company_id"]' position='after'>
+                  <group col="4" colspan="4">
+                     <separator string="booking request" attrs="{'invisible':[('transport','!=','3')]}"  colspan="4"/>
+                          <newline/>
+                          <label for="Request Booking" />
+                                   <div>
+                                      <field name="booking_requested" attrs="{'invisible':[('transport','!=','3')]}"  />
+                               <group colspan="2" col="2" attrs="{'invisible':[('state','!=','approved')]}">
+                         	  <group colspan="2" col="2" attrs="{'invisible':[('transport','!=','3')]}">
+                                      <button type="object"
+                                             name="request_booking"
+                                             string="(Request Booking)"  class="oe_link" attrs="{'invisible':[('booking_requested','=',True)]}"/>
+                                  </group>
+                                </group>
+                                   </div>
+                     </group>
+                   </xpath>
+                </field>
+            </record>  
+
+
+		<!-- Add button request booking for approved course form -->
+
+                <record model="ir.ui.view" id="view_approved_course_form_inherit">
+                <field name="name">hr.employee.training.inherit.form</field>
+                <field name="model">hr.employee.training</field>
+                <field name="type">form</field>
+                <field name="inherit_id" ref="hr_training.hr_approved_course_form_view"/>
+                <field name="arch" type="xml">
+                <xpath expr="//field[@name='trainer_payment_no']" position="after">
+                    <field name="booking_requested" attrs="{'invisible':[('training_place','!=','outside')]}"/>
+                    <group colspan="2" col="2" attrs="{'invisible':[('training_place','!=','outside')]}">
+                      <group colspan="2" col="2" attrs="{'invisible':[('state','!=','done')]}">
+                      	<button string="Request Booking" name="request_booking"  attrs="{'invisible':[('booking_requested','=',True)]}" type="object" class="oe_link" />
+                      </group>
+                    </group>
+                </xpath>
+                </field>
+            </record>  
+	</data>
+</openerp>

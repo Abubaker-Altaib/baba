@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="wkf_ireq_m" model="workflow">
+            <field name="name">wkf.ireq.m</field>
+            <field name="osv">ireq.m</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_ireq_m_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_ireq_m"/>
+            <field name="flow_start"> True</field>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+        </record>
+        <record id="wkf_ireq_m_confirmed_d" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_ireq_m"/>
+            <field name="name">confirmed_d</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_d()</field>
+        </record>
+        <record id="wkf_ireq_m_confirmed_s" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_ireq_m"/>
+            <field name="name">confirmed_s</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_s()</field>
+        </record>
+        <record id="wkf_ireq_m_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_ireq_m"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>
+        </record>
+       <record id="wkf_ireq_m_approve1" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_ireq_m"/>
+            <field name="name">approve1</field>
+            <field name="kind">function</field>
+            <field name="action">approve1()</field>
+        </record>
+       <record id="wkf_ireq_m_approve2" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_ireq_m"/>
+            <field name="name">approve2</field>
+            <field name="kind">function</field>
+            <field name="action">approve2()</field>
+        </record>
+        <record id="wkf_ireq_m_check" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_ireq_m"/>
+            <field name="name">checked</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'checked'})</field>
+        </record>
+        <record id="wkf_ireq_m_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_ireq_m"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+            <field name="flow_stop">True</field>
+        </record>
+
+       <record id="wkf_ireq_m_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_ireq_m"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">create_purchase_order()</field>
+            <field name="flow_stop">True</field>
+        </record>
+
+        <record id="wkf_ireq_m_trans_draft_confirmed_d" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_draft"/>
+            <field name="act_to" ref="wkf_ireq_m_confirmed_d"/>
+            <field name="signal">confirmed_d</field>
+        </record>
+        <record id="wkf_ireq_m_trans_confirmed_d_confirmed_s" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_confirmed_d"/>
+            <field name="act_to" ref="wkf_ireq_m_confirmed_s"/>
+            <field name="signal">confirmed_s</field>
+        </record>
+        <record id="wkf_ireq_m_trans_confirmed_s_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_confirmed_s"/>
+            <field name="act_to" ref="wkf_ireq_m_confirmed"/>
+            <field name="signal">ireq_confirm</field>
+        </record>
+        <record id="wkf_ireq_m_trans_confirmed_approve1" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_confirmed"/>
+            <field name="act_to" ref="wkf_ireq_m_approve1"/>
+            <!-- field name="signal">quote - make purchase order</field -->
+            <field name="signal">approve1</field>
+        </record>
+        <record id="wkf_ireq_m_trans_approve1_approve2" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_approve1"/>
+            <field name="act_to" ref="wkf_ireq_m_approve2"/>
+            <field name="signal">approve2</field>
+        </record>
+        <record id="wkf_ireq_m_trans_approve2_check" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_approve2"/>
+            <field name="act_to" ref="wkf_ireq_m_done"/>
+            <field name="signal">done</field>
+        </record>
+
+        <record id="wkf_ireq_m_trans_conf_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_confirmed"/>
+            <field name="act_to" ref="wkf_ireq_m_cancel"/>
+            <field name="signal">ireq_cancel</field>
+        </record>
+        <record id="wkf_ireq_m_trans_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_draft"/>
+            <field name="act_to" ref="wkf_ireq_m_cancel"/>
+            <field name="signal">ireq_cancel</field>
+        </record>
+        <record id="wkf_ireq_m_trans_conf_d_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_confirmed_d"/>
+            <field name="act_to" ref="wkf_ireq_m_cancel"/>
+            <field name="signal">ireq_cancel</field>
+        </record>
+        <record id="wkf_ireq_m_trans_conf_s_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_confirmed_s"/>
+            <field name="act_to" ref="wkf_ireq_m_cancel"/>
+            <field name="signal">ireq_cancel</field>
+        </record>
+        <record id="wkf_ireq_m_trans_ap1_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_approve1"/>
+            <field name="act_to" ref="wkf_ireq_m_cancel"/>
+            <field name="signal">ireq_cancel</field>
+        </record>
+        <record id="wkf_ireq_m_trans_ap2_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_approve2"/>
+            <field name="act_to" ref="wkf_ireq_m_cancel"/>
+            <field name="signal">ireq_cancel</field>
+        </record>
+        <record id="wkf_ireq_m_trans_ch_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_m_check"/>
+            <field name="act_to" ref="wkf_ireq_m_cancel"/>
+            <field name="signal">ireq_cancel</field>
+        </record>
+
+    </data>
+</openerp>
+

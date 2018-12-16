@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="exchange_request_template">
+        	<t t-call="web.html_container">
+                      <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                       <div class="page" style="font-family:Amiri" >
+                        
+                        	 <div class="col-xs-12 row">
+                    <center>
+                        <h2 t-if="o.voucher_type == 'purchase'">
+                            <u>
+                                Exchange request
+                            </u>
+                        </h2>
+                         <h2 t-if="o.voucher_type == 'sale'">
+                            <u>
+                                Receipt Voucher
+                            </u>
+                        </h2>
+                    </center>
+                </div>
+                
+                <div class="col-xs-12 row">
+                    <h4> 
+                        <u>
+                          <strong>
+                          Institutiion :</strong>
+                          <span t-field="o.department_id"/>
+                        </u>
+                    </h4>
+                    
+                    <br/>
+                </div>
+                <div class="col-xs-6 row">            
+                    <h4> 
+                        <u> <strong> Narration:</strong> 
+                        <span t-field="o.narration"/>
+                      </u>
+                    </h4>
+                  </div>
+                  <div class="col-xs-12">
+                    <br/>
+                  </div>
+                    <t t-if="o.move_id.line_ids">
+                    <div class="row col-xs-4">
+                        <h4> 
+                            <u>
+                               Accounting entry 
+                            </u>
+                        </h4>
+                    </div>
+                
+                <div class="col-xs-12">
+                      <table class=" col-xs-12" style="border:0;">
+                <thead style="border:0;">
+                    <tr style="border:0;">
+                        <th style="border:0;">
+                            //
+                        </th>
+                        <th style="border-style:solid;border-width: 1px;border-color: black;">
+                            <h4>   Account Number
+                           </h4>
+                        </th>
+                        <th style="border-style:solid;border-width: 1px;border-color: black;  ">
+                            <h4>   Account Name </h4>
+                        </th>
+                        <th style="border-style:solid;border-width: 1px;border-color: black;  ">
+                              <h4> Cost Center </h4>
+                        </th>
+                        <th style="border-style:solid;border-width: 1px;border-color: black;">
+                             <h4>  Cost Center Name </h4>
+                        </th>
+                        <th style="border-style:solid;border-width: 1px;border-color: black;">
+                             <h4> Debit </h4>
+                        </th>
+                        <th style="border-style:solid;border-width: 1px;border-color: black; ">
+                             <h4> Cridet </h4>
+                        </th>
+                    </tr>
+                </thead>
+                  <tbody t-foreach="o.move_id.line_ids" t-as="move_line">
+                      <tr>
+                      	 <td style="border:0;">
+                          </td>
+                          <td style="border-style:solid;border-width: 1px;border-color: black; ">
+                          	  <h4> <span t-field="move_line.account_id.code"/> </h4>
+                          </td>
+                           <td style="border-style:solid;border-width: 1px;border-color: black; ">
+                           	<h4><span t-field="move_line.account_id.name"/></h4>
+                           	
+                          </td>
+                           <td style="border-style:solid;border-width: 1px;border-color: black; ">
+                           	<h4><span t-field="move_line.analytic_account_id.code"/></h4>
+                          </td>
+                           <td style="border-style:solid;border-width: 1px;border-color: black;">
+                           	<h4> <span t-field="move_line.analytic_account_id.name"/></h4>
+                          </td>
+                           <td style="border-style:solid;border-width: 1px;border-color: black; ">
+                           	<h4><span t-field="move_line.debit"/></h4>
+                          </td>
+                           <td style="border-style:solid;border-width: 1px;border-color: black; ">
+                           	<h4><span t-field="move_line.credit"/></h4>
+                          </td>
+                      </tr>
+                  </tbody>
+                   <tr style="border-bottom: 1px solid black;">
+                    <t t-set="total" t-value="sum( line.debit for line in o.move_id.line_ids )"/>
+                          <td colspan="4" style="border:0;">
+                              
+                             <h4> <span t-esc="o.return_amount_to_text(total,o.currency_id)"/></h4>
+                          </td>
+                          <td class="pull-right"  style="border:0;"><h4> Total:</h4>
+                          </td>
+                           <td  style="border:0;">
+                                <h4><span t-esc="total"/></h4>
+                          </td>
+                           <td  style="border:0;" >
+                              <h4> <span t-esc="total"/></h4>
+                          </td>
+                          
+                      </tr>
+            </table>
+            
+                </div>
+            </t>
+                <div class="row col-xs-12">
+                	<br/>
+                </div>
+                <div class="row col-xs-6">
+                    <u>
+                    <h4>
+                        Beneficiaries Data
+                    </h4>
+                    </u>
+                </div>
+                 <div class="col-xs-12">
+                      <table class=" col-xs-12" style="border-style:solid;border-width: 1px;border-color">
+                        <thead style="black;border: 1px solid black;">
+                            <tr style="border: 1px solid black">
+                            	<th>
+                                   <h4>  Beneficiary</h4>
+                                </th>
+                            	<th >
+                                 <h4>   Narration </h4>
+                                </th>
+                                <th>
+                                  <h4>  Account </h4>
+                                </th>
+                                <th>
+                                	<h4> Expense On </h4>
+                                </th>
+                                <th>
+                                  <h4>  Amount </h4>
+                                </th>
+                            </tr>
+                        </thead>
+                  <tbody t-foreach="o.line_ids" t-as="line">
+                      <tr  style="border-style:solid;border-width: 1px;border-color: black;">
+                      	<td style="border-style:solid;border-width: 1px;border-color: black; ">
+                      		<h4><span t-field="line.partner_id"/></h4>
+                      	</td>
+                      	<td style="border-style:solid;border-width: 1px;border-color: black; ">
+                      		<h4><span t-field="line.name"/></h4>
+                      	</td>
+                      	<td style="border-style:solid;border-width: 1px;border-color: black; ">
+                           	<h4><span t-field="line.account_id.name"/></h4>
+                          </td>
+                           <td style="border-style:solid;border-width: 1px;border-color: black; ">
+                           	<h4><span t-field="line.account_analytic_id.name"/></h4>
+                          </td>
+                           
+                           <td style="border-style:solid;border-width: 1px;border-color: black; ">
+                           	<h4><span t-field="line.price_unit"/></h4>
+                          </td>
+                      </tr>
+                    </tbody>
+                     </table>
+                </div>
+                <div class="row col-xs-12">
+                	<br/>
+                </div>
+                <div class="row col-xs-6">
+                    <u>
+                    <h4>
+                        Confirmation
+                    </h4>
+                   
+                    </u>
+                </div>
+                <div class="col-xs-12">
+                      <table class="table col-xs-12">
+                        <thead>
+                            <tr style="border-bottom: 1px solid black;">
+                                <th style="border-style:solid;border-width: 1px;border-color: black; ">
+                                    <h4>Prepared </h4>
+                                </th>
+                                <th style="border-style:solid;border-width: 1px;border-color: black; ">
+                                    <h4> References</h4>
+                                </th>
+                                <th style="border-style:solid;border-width: 1px;border-color: black; ">
+                                    <h4> Manager Director</h4>
+                                </th>
+                                <th style="border-style:solid;border-width: 1px;border-color: black; ">
+                                   <h4> Executive Manager</h4>
+                                </th>
+
+                            </tr>
+                        </thead>
+                  <tbody>
+                      <tr  style="border-style:solid;border-width: 1px;border-color: black;"> 
+                          <td style="border-style:solid;border-width: 1px;border-color: black; " rowspan="4">
+                             - 
+                          </td>
+                           <td style="border-style:solid;border-width: 1px;border-color: black; "  rowspan="5">
+                              -
+                          </td>
+                           <td style="border-style:solid;border-width: 1px;border-color: black; "  rowspan="5">
+                              -
+                          </td>
+                           <td style="border-style:solid;border-width: 1px;border-color: black; "  rowspan="5">
+                              -
+                          </td>
+                      </tr>
+                    </tbody>
+                     </table>
+                </div>
+                 <div class="row col-xs-12">
+                	<br/>
+                </div>
+                 <div class="col-xs-12">
+                      <table class=" col-xs-12"  style=" border : 0;">
+                        <thead >
+                            <tr>
+                                <th>
+                                    <h4 t-if="o.voucher_type == 'purchase'"><u>Exchange Type </u></h4>
+                                    <h4 t-if="o.voucher_type == 'sale'"><u>Receipt Type </u></h4>
+                                </th>
+                                <th >
+                                   <h4> Chash</h4>
+                                </th>
+                                <th >
+                                    <h4> Chaeck </h4>
+                                </th>
+                                <th >
+                                    <h4> Transfer </h4>
+                                </th>
+
+                            </tr>
+                        </thead>
+                  
+                     </table>
+                </div>
+                <div class="row col-xs-12">
+                	<br/>
+                  <br/>
+                </div>
+                <div class="col-xs-12">
+                      <table class="col-xs-12"  style="border:0;">
+                            <tr>
+                                <th >
+                                  <h4> <strong> The Recipient:_____________</strong></h4>
+                                </th>
+                                <th >
+                                  <h4> <strong> Signature:_____________</strong></h4>
+                                </th>
+                                <th >
+                                   <h4> <strong> Date:_____________ </strong></h4>
+                                </th>
+                            </tr>
+                  
+                     </table>
+                	</div>
+         				</div>
+          
+         			</t>
+         		</t>
+         	</t>
+</template>
+</data>
+</odoo>

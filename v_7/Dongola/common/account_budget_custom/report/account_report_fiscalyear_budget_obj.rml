@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<document filename="Account Budget.pdf">
+  <template pageSize="(595.0,842.0)" title="Voucher"
+		author="OpenERP S.A.(sales@openerp.com)" allowSplitting="20">
+		<pageTemplate>
+			<frame id="first" x1="1.3cm" y1="2.0cm" height="22.5cm" width="19cm" />
+		</pageTemplate>
+	</template>
+  
+	<stylesheet>
+
+		<blockTableStyle id="Content_Table">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+
+		<paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0"
+			alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0" />
+		<paraStyle name="Sub_Tilte" fontName="Helvetica-Bold" fontSize="12.0"
+			alignment="RIGHT" spaceBefore="12" spaceAfter="6.0" />
+		<paraStyle name="Content_Table_Detail" fontName="Helvetica"
+			fontSize="9.0" alignment="RIGHT" rightIndent="8" />
+			<paraStyle name="Content_Table_Detail2" fontName="Helvetica-Bold"
+			fontSize="9.0" alignment="RIGHT" />
+		<paraStyle name="Content_Table_Header" fontName="Helvetica-Bold"
+			fontSize="9.0" alignment="CENTER" />
+
+		<images />
+	</stylesheet>
+
+  <story>
+
+    <para> <font color="white"> </font> </para>
+    <para style="Tilte">[[repeatIn(objects, 'budget')]] تقرير الموازنة المعدة</para>
+    <para> <font color="white"> </font> </para>
+    <para> <font color="white"> </font> </para>
+    <para style="Tilte">مُوازنة     [[budget.analytic_account_id.name]]</para>
+
+    <para style="Content_Table_Detail">[[ repeatIn(objects, 'budget') ]]</para>
+   
+    <blockTable colWidths="150,300.0,50" style="Content_Table" repeatRows="1">
+      <tr>
+		
+		<td>
+		     <para style="Content_Table_Header">المبلغ المُخطط</para>
+		</td>
+	        <td>
+		     <para style="Content_Table_Header">الحساب</para>
+		</td>
+		<td>
+		    <para style="Content_Table_Header">الرمز</para>
+		</td>
+      </tr>
+      <tr>	
+        
+		<td>
+		     <para style="Content_Table_Detail"> [[ formatLang(line.planned_amount) ]]
+			
+		   </para>
+		</td>	
+		<td>
+		   <para style="Content_Table_Detail">
+			[[ repeatIn(budget.account_fiscalyear_budget_line, 'line') ]]
+			[[ line.general_account_id.name ]]
+			
+		   </para>
+		</td>
+		<td>
+		   <para style="Content_Table_Detail">
+			[[ repeatIn(budget.account_fiscalyear_budget_line, 'line') ]]
+			[[ line.general_account_id.code ]]
+		   </para>
+		</td>
+      </tr>  
+	  	
+      <tr>	
+      	<td>
+		    <para style="Content_Table_Detail2"> [[ formatLang(total['planned_amount']) ]] </para>
+		</td>
+     
+		<td>
+		     <para style="Content_Table_Detail2">[[ repeatIn(budget_total(budget), 'total') ]] المجمـــــــــــــــوع </para>
+		</td>	
+		<td>
+		   <para style="Content_Table_Detail2">   </para>
+		</td>
+      </tr>
+	  
+    </blockTable>
+  </story>
+</document>

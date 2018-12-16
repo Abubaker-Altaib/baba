@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+	    <record id="account_print_check_wizard_view" model="ir.ui.view">
+			<field name="name">Print Check Report</field>
+			<field name="model">wiz.print.check</field>
+			<field name="arch" type="xml">
+		        <form string="Print Check Wizard">
+			    <group>
+				<field name="preprinted" invisible="1"/>
+				<field name="action" attrs="{'invisible':[('preprinted','=', False)], 'required':[('preprinted','=',True)]}" />
+				<field name="reason" attrs="{'invisible':['|',('preprinted','=', False),('action','!=', 'update')], 'required':[('action','=','update')]}"/>
+				<field name="next_check_number" attrs="{'invisible':[('preprinted','=', True),('action','!=', 'update')]}"/>
+				<field name="release_at"/>
+			    </group>
+		            <footer>
+		                <button string="Print" name="print_checks" type="object" class="oe_highlight"/>
+		                or
+		                <button string="Cancel" class="oe_link" special="cancel" />
+		            </footer>
+		        </form>
+			</field>
+	    </record>
+	    
+ 	    <record model="ir.actions.act_window" id="wiz_print_check_action">
+			<field name="name">Print Check Report Action</field>
+			<field name="res_model">wiz.print.check</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+        </record>
+	</data>
+</odoo>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <data>
+ <!-- orgnization support order form -->
+    <record id="orgnization_support_order_form" model="ir.ui.view">
+      <field name="name">Orgnization Support Order</field>
+      <field name="model">support.order</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml" >
+        <form >
+          <header>
+              <button name="action_confirm" string="Confirm" states="draft" type="object"
+                    class="oe_highlight"/>
+              <button name="action_approve" string="Aprove" states="confirmed" type="object"
+                    class="oe_highlight"/>
+              <button name="action_done" string="Done" states="approval" type="object"
+                    class="oe_highlight"/>
+              <button name="action_cancle" states="draft,confirmed,approval" string="Cancel" type="object"
+                    class="oe_highlight"/>
+              <button name="action_set_draft" states="cancel" string="Set Draft" type="object"
+                    class="oe_highlight"/>
+              <field name="state" statusbar_visible="draft,confirmed,approval,done" widget="statusbar"/>
+          </header>
+          <sheet>
+            <group>
+                <group>
+                    <field name="name" readonly="1"/>
+                    <field name="oragnaztion_id" required="1" attrs="{'readonly':[('state','=','done')],
+                    'invisible':[('support_type','!=','organization')]}" domain="['&amp;',('channel_type','=','fageer'),('company_id','=',company_id)]"/>
+                    <field name="program_area" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                    <field name="approved_amount" attrs="{'invisible':['&amp;',('support_method','!=','cash'),('state','=','draft')],'readonly':[('state','=','done')],'required':[('support_method','=','cash')]}"/>
+                    <field name="support_type" required="1" readonly="1"/>
+                    <field name="address_id" required="1"/>
+                    <field name="company_id" required="1" readonly="1"/>
+                </group>
+                <group>
+                    <field name="date" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                    <field name="program_name" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                    <field name="estimated_cost"  attrs="{'readonly':[('state','=','done')],'invisible':[('support_method','!=','cash')],'required':[('support_method','=','cash')]}"/>
+                    <field name="People" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                    <field name="support_method" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                    <field name="type_" attrs="{'required':[('state','not in',['draft'])],'invisible':[('state','in',['draft'])],'readonly':[('state','=','done')]}"/>
+                </group>
+            </group>
+            <notebook>
+                <page string="Researcher Report">
+                  
+                    <field name="researcher_report" attrs="{'readonly':[('state','=','done')]}" required="1"/>
+                  
+                </page>
+                <page string="Almasaref Manager Comment" attrs="{'invisible':[('state','=','draft')]}">
+                  
+                    <field name="almasaref_manager_comment" attrs="{'readonly':[('state','=','done')],'required':[('state','!=','draft')]}"/>
+                  
+                </page>
+                <page string="Secretary of State Decision" attrs="{'invisible':[('state','!=','approval'),('state','!=','done'),('state','!=','cancel')]}">
+                  
+                    <field name="secretary_state_decision" attrs="{'readonly':[('state','=','done')],'required':[('state','=','approval')]}"/>
+                  
+                </page>
+                   <page string="Products" attrs="{'invisible':[('support_method' ,'!=' , 'material')],'readonly':[('state', 'in' , ('done','cancel'))]}">
+                          <field name="products">
+                   <tree editable="bottom">
+                    <field name="product_id" required="1"/>
+                    
+                    <field name="product_qty" required="1"/>
+                 </tree>
+                                </field>
+                            </page>
+
+           <page string="Voucher" attrs="{'invisible':['|',('state','!=','done'),('support_method','=','material')]}">
+                        <group>
+                        <field name="vaucher_id" readonly="1"/>
+                      </group>
+                      </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+<!-- orgnization support order tree -->
+    <record id="orgnization_support_order_tree" model="ir.ui.view">
+        <field name="name">Orgnization Support Order</field>
+        <field name="model">support.order</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="oragnaztion_id"/>
+                <field name="date"/>
+                <field name="program_name"/>
+                <field name="estimated_cost"/>
+                <field name="company_id"/>
+            </tree>
+        </field>
+    </record>
+<!-- orgnization support order search -->
+    <record id="orgnization_support_order_search" model="ir.ui.view">
+        <field name="name">Orgnization Support Order Search</field>
+        <field name="model">support.order</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="program_name"/>
+                <field name="name"/>
+                <field name="oragnaztion_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="State" context="{'group_by': 'statee'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+<!-- orgnization support order action -->
+    <record id="orgnization_support_order_action" model="ir.actions.act_window">
+            <field name="name">Orgnizations Support Order</field>
+            <field name="res_model">support.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <field name="context">{'default_support_type':'organization',
+            'default_support_method':'cash'}</field>
+    </record>
+<!-- orgniztion support order menu -->
+    <menuitem id="orgnization_menu"
+        name="Orgnizations"
+        parent="dzc1_menu"
+        sequence="5"/>
+    <menuitem id="orgnization_support_order_menu"
+        name="Organizations Support Order"
+        parent="orgnization_menu"
+        action="orgnization_support_order_action"/>
+ </data>
+</odoo>

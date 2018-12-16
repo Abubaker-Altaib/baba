@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<record id="view_employee_tree_inherit" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_custom.view_employee_tree_inherit" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='job_id']" position="after">
+					<field name="degree_id" />
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_employee_filter_inherit" model="ir.ui.view">
+			<field name="name">Employees inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="type">search</field>
+			<field name="inherit_id" ref="hr_custom.view_employee_filter_inherit" />
+			<field name="arch" type="xml">
+				<xpath expr='//filter[@string="Job"]' position='after'>
+					<filter string="Locations" icon="terp-gtk-select-all" domain="[]"
+							context="{'group_by':'location_id'}" />
+					<filter string="Degree" icon="terp-gtk-select-all" domain="[]"
+							context="{'group_by':'degree_id'}" />
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_employee_form_inherit2" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_custom.view_employee_form_inherit" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='job_id']" position="after">
+					<field name="location_id" context="{'type' : 'location'}" />
+				</xpath>
+				<xpath expr="//group[@string='Employment Dates']" position="after">
+					<group string="Salary">
+						<group>
+							<field name="payroll_id" on_change="onchange_payroll(payroll_id,degree_id,False)" attrs="{'required':[('employee_type','=', 'employee')]}"
+							domain= "[('employee_type','=','employee')]"/>
+							<field name="degree_id" on_change="onchange_payroll(payroll_id,degree_id,True)" attrs="{'required':[('employee_type','=', 'employee')]}" domain="[('payroll_id','=',payroll_id)]"/>
+							<field name="bonus_id" attrs="{'required':[('employee_type','=', 'employee')]}" domain="[('degree_id','=',degree_id)]" />
+							<field name="salary_suspend" />
+						</group>
+					</group>
+				</xpath>
+				<xpath expr="//group[@string='Active']"
+					position="before">
+					<group>
+							<field name="promotion_date" />
+							<field name="bonus_date" />
+							<field name="tax_exempted" readonly="1"
+							       groups="hr_payroll_custom.group_tax" />
+							<field name="tax" groups="hr_payroll_custom.group_tax" />
+							<field name="substitution" />							
+					</group>
+				</xpath>
+
+				<xpath expr="/form/sheet/notebook/page[@string='HR Settings']"
+					position="after" version="7.0">
+					<page string="Employee Salary" >
+                                                 
+						<field colspan="4" name="emp_salary_ids" nolabel="1">
+							<tree string="Employee Salary">
+								<field name="allow_deduct_id" />
+								<field name="type" />
+								<field name="amount" />
+								<field name="holiday_amount" />
+								<field name="tax_deducted" groups="hr_payroll_custom.group_tax" />
+							</tree>
+						</field>
+                                                <group>
+							<field  name="salary_total" />
+							
+						</group>
+					</page>
+				</xpath>
+
+			</field>
+		</record>
+                <!--contractor -->
+		<record id="view_contractor_form_inherit" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_custom.view_contractor_form" />
+			<field name="arch" type="xml">
+				<xpath expr="/form/sheet/notebook/page[@string='HR Settings']"
+					position="inside">
+					<group string="Salary">
+						<group>
+							<field name="payroll_id" on_change="onchange_payroll(payroll_id,degree_id,False)" required="1"
+							domain= "[('employee_type','=','contractor')]"/>
+							<field name="degree_id" on_change="onchange_payroll(payroll_id,degree_id,True)" required="1"/>
+							<field name="bonus_id" required="1"/>
+							<field name="salary_suspend" />
+						</group>
+						<group>
+							<field name="tax_exempted" readonly="1"
+								groups="hr_payroll_custom.group_tax" />
+							<field name="tax" groups="hr_payroll_custom.group_tax" />
+						</group>
+					</group>
+				</xpath>
+
+			</field>
+		</record>
+
+                 <!--trainee -->
+		<record id="view_trainee_form_inherit" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_custom.view_trainee_form" />
+			<field name="arch" type="xml">
+				<xpath expr="/form/sheet/notebook/page[@string='HR Settings']"
+					position="inside">
+					<group string="Salary">
+						<group>
+							<field name="payroll_id" on_change="onchange_payroll(payroll_id,degree_id,False)" required="1"
+							domain= "[('employee_type','=','trainee')]"/>
+							<field name="degree_id" on_change="onchange_payroll(payroll_id,degree_id,True)" required="1"/>
+							<field name="bonus_id" required="1"/>
+						</group>
+					</group>
+				</xpath>
+
+			</field>
+		</record>
+
+                <!--recruit -->
+		<record id="view_recruit_form_inherit" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_custom.view_recruit_form" />
+			<field name="arch" type="xml">
+				<xpath expr="/form/sheet/notebook/page[@string='HR Settings']"
+					position="inside">
+					<group string="Salary">
+						<group>
+							<field name="payroll_id" on_change="onchange_payroll(payroll_id,degree_id,False)" required="1"
+							domain= "[('employee_type','=','recruit')]"/>
+							<field name="degree_id" on_change="onchange_payroll(payroll_id,degree_id,True)" required="1"/>
+							<field name="bonus_id" required="1"/>
+						</group>
+					</group>
+				</xpath>
+
+			</field>
+		</record>
+
+		<!--job -->
+
+		<record id="view_job_inher2_form" model="ir.ui.view">
+			<field name="name">hr.job.inherit2</field>
+			<field name="model">hr.job</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_custom.hr_job_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//notebook/page[@string='Departments']" position="after"
+					version="7.0">
+					<page string="Degrees">
+						<field colspan="4" name="degree_ids" nolabel="1" />
+					</page>
+				</xpath>
+			</field>
+		</record>
+        <record id="hr_dismissal_form_view" model="ir.ui.view">
+			<field name="name">hr.dismissal.inherit</field>
+			<field name="model">hr.dismissal</field>
+			<field name="inherit_id" ref="hr_custom.hr_dismissal_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//notebook/page[@string='Info']" position="after" version="7.0">
+                                	<page string="Allowances" colspan="4">
+					    <field name="allowance_ids" nolabel="1" />
+                  			</page>
+				</xpath>
+			</field>
+		</record>
+  <!-- Termination inherit-->
+        <record model="ir.ui.view" id="view_employment_termination_inherit_form">
+                <field name="name">employment.termination.inherit.form</field>
+                <field name="model">hr.employment.termination</field>
+                <field name="inherit_id" ref="hr_custom.view_employment_termination_form"/>
+                <field name="arch" type="xml">
+                      <xpath expr="//header" position="replace"> 
+                       <header>
+                         <button name="termination" string="Terminate" states="draft" type="object" class="oe_highlight" groups="base.group_user"/>
+                         <button name="calculation" string="Allowances Calculation" states="refuse" 
+                                     type="object" class="oe_highlight" groups="base.group_user"/>
+                         <button name="transfer" string="Allowances Transfer" states="calculate" 
+                                    type="object" class="oe_highlight" groups="base.group_user"/>
+                         <field name="state" widget="statusbar" statusbar_visible="draft,refuse,calculate,transfer" />
+                       </header> 
+                       </xpath>
+                       <field name="comments" position="before">
+                           <group  colspan="4"  attrs="{'invisible':[('state','in',('draft','refuse'))]}">
+		    	       <field name="date"/>
+                                    <field name="acc_number" attrs="{'invisible':[('state','!=','transfer')]}"/>
+                           </group>    
+                          <group  colspan="4" string="End Of Service Lines " attrs="{'invisible':[('state','in',('draft','refuse'))]}">
+                              <field name="line_ids" nolabel="1" readonly="1" widget="many2many">
+                                 <tree>
+				    	<field name="name" />
+				    	<field name="amount"/>
+				 </tree>
+			      </field>
+			  </group> 
+                                                         
+                       </field>
+                </field>
+            </record>  
+
+       
+<!-- HR process inherit-->
+
+       <record id="hr_process_archive_form_view" model="ir.ui.view">
+            <field name="name">hr.process.archive.inherit</field>
+            <field name="model">hr.process.archive</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_custom.hr_process_archive_form_view"/>
+            <field name="arch" type="xml">
+                <field name="reference" position="replace">
+                   <field name="reference" on_change="onchange_reference(reference,employee_id)" select="1" />
+               </field>
+               
+               <!--field name="previous" position="replace">
+                   <field name="previous" on_change="onchange_reference(reference,employee_id)" select="1" />
+               </field-->     
+                <field name="previous" position="after">
+                   <field name="employee_salary_scale" select="1" />                                             
+                </field>
+               <xpath expr='//field/tree[@string="Associated Processes"]' position='inside'>
+                   <field name="employee_salary_scale" invisible="1" /> 
+               </xpath> 
+            </field>                                       
+        </record>
+        
+<!-- HR Employee Reemployment inherit-->
+
+       <record id="view_reemployment_form" model="ir.ui.view">
+          <field name="name">employee.reemployment.inherit</field>
+          <field name="model">hr.employee.reemployment</field>
+          <field name="type">form</field>
+          <field name="inherit_id" ref="hr_custom.view_reemployment_form"/>
+            <field name="arch" type="xml">
+              <field name="reemployment_date" position="after">
+                  <field name="degree_id" required="1"/>
+                  <field name="bonus_id" required="1"/>
+                 
+             </field>             
+            </field> 
+        </record>     
+
+<!--Employee Delegation -->
+
+		<record model="ir.ui.view" id="hr_employee_delegation_form_view">
+			<field name="name">hr.employee.delegation.form.inherit</field>
+			<field name="model">hr.employee.delegation</field>
+			<field name="inherit_id" ref="hr_custom.hr_employee_delegation_form_view" />
+			<field name="arch" type="xml">
+				<field name="destination" position="after">
+					<field name="payroll_type" invisible="1"/>
+				</field>
+				<xpath expr="/form/sheet/group" position="after" version="7.0">
+
+					<group string="Customized Payroll"
+						attrs="{'invisible':[('payroll_type','!=','customized')]}">
+						<field name="salary_included" />
+						<field colspan="4" name="allow_deduct_ids" />
+					</group>
+				</xpath>
+			</field>
+		</record>
+
+
+<!--
+        ============
+        Employee Category inherits
+        ============
+        -->
+       <record id="hr_pay_inherit_category" model="ir.ui.view">
+            <field name="name">hr.employee.category.form.inherit</field>
+            <field name="model">hr.employee.category</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_custom.hr_inherit_category"/>
+            <field name="arch" type="xml">
+                  <field name="code" position="after">
+                  <field name="salary_batch" />
+                  <field name="responsible_id"  attrs="{'required':[('salary_batch','=',True)],'invisible':[('salary_batch','=',False)]}" />
+                  <field name="active" />
+                  </field>
+            
+            </field>
+        </record>
+        
+      <record id="hr_pay_inherit_category_tree" model="ir.ui.view">
+            <field name="name">hr.employee.category.list.inherit</field>
+            <field name="model">hr.employee.category</field>
+            <field name="type">tree</field>
+            <field eval="8" name="priority"/>
+            <field name="inherit_id" ref="hr_custom.hr_inherit_category_tree"/>
+            <field name="arch" type="xml">
+            <tree string="Employees Categories">
+                  <field name="salary_batch" />
+                  <field name="responsible_id" />
+                  <field name="active" />
+                </tree> 
+             </field>
+        </record>
+
+        <record id="view_category_filter" model="ir.ui.view">
+            <field name="name">category</field>
+            <field name="model">hr.employee.category</field>
+            <field name="arch" type="xml">
+                <search string="Categories">
+                    <field name="name" string="Job"/>
+                    <field name="responsible_id" />
+                    <field name="salary_batch" />
+                    <field name="active" />
+                </search>
+            </field>
+        </record>
+
+        <record id="view_department_form_inherit" model="ir.ui.view">
+			<field name="name">hr.department.form.inherit</field>
+			<field name="model">hr.department</field>
+			<field name="inherit_id" ref="hr.view_department_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="parent_id"]' position="after">
+					<field name="payroll_use" />
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_department_cat_form_inherit" model="ir.ui.view">
+			<field name="name">hr.department.cat.form.inherit</field>
+			<field name="model">hr.department.cat</field>
+			<field name="inherit_id" ref="hr_custom.view_department_cat_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//h1' position="after">
+					<group>
+						<field name="outsite_scale" />
+					</group>
+				</xpath>
+			</field>
+		</record>
+
+	</data>
+</openerp>

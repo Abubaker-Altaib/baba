@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- form of inherit res.partner view -->
+        <record model="ir.ui.view" id="view_partner_form_inherit">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form" />
+            <field eval="20" name="priority" />
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/div[2]/h1" position="replace">
+                    <field name="name" style="width: 40%" default_focus="1" placeholder="Name"
+                        attrs="{'required' : [('type', '=', 'contact')]}" />
+                    <field name="code" placeholder="code" class="oe_inline" style="width: 40%" attrs="{'required' : True}"/>
+                </xpath>
+
+                <xpath expr='//field[@name="property_account_receivable_id"]' position="attributes">
+                    <attribute name="context">{'model':'res.partner' , 'customer':customer ,
+                                                'supplier':supplier , 'field':'receivable'}
+                    </attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="property_account_payable_id"]' position="attributes">
+                    <attribute name="context">{'model':'res.partner' , 'customer':customer ,
+                                                'supplier':supplier , 'field':'payable'}
+                    </attribute>
+                </xpath>
+
+
+            </field>
+        </record>
+
+        <!-- Inherited Form View Of account.journal -->
+        <record model="ir.ui.view" id="account_journal_form_inherit">
+            <field name="name">Account Journal Form Inherit</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='default_debit_account_id']" position="attributes">
+                    <attribute name="attrs">{'required' :['|',('type', '=', 'bank'),('type', '=', 'cash')]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='default_credit_account_id']" position="attributes">
+                    <attribute name="attrs">{'required' :['|',('type', '=', 'bank'),('type', '=', 'cash')]}
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!--Form View Of account.approve -->
+        <record model="ir.ui.view" id="account_approve_form">
+            <field name="name">account.approve.form</field>
+            <field name="model">account.approve</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" required="True" />
+                        </group>
+                        <group>
+                            <group>
+                                <field name="min_amount" string= "minumum amount" />
+                            </group>
+                            <group>
+                                <field name="max_amount" string= "maximum amount" />
+                            </group>
+                        </group>
+                        <group>
+                            <field name="employee_ids" string= "employees" widget="many2many_tags" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--Tree View Of account.approve -->
+        <record model="ir.ui.view" id="account_approve_tree">
+          <field name="name">account.approve.tree</field>
+          <field name="model">account.approve</field>
+          <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="min_amount"/>
+                <field name="max_amount"/>
+                <field name="employee_ids" string= "employees" />
+            </tree>
+          </field>
+        </record>
+
+        <!--Action of Form, Tree View Of account.aprove-->
+        <record model="ir.actions.act_window" id="account_custom.account_approve_action_window">
+          <field name="name">Account Approve</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">account.approve</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+        </record>
+
+        
+        <menuitem name="account approve" id="account_custom.account_approve" parent="account.account_management_menu" action="account_custom.account_approve_action_window"/>
+
+
+    </data>
+</odoo>

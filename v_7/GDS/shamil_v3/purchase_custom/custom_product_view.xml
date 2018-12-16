@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+ <!--
+        ============
+        product view inherit
+        ============
+        -->
+
+
+     <record id="custom_product_normal_form_view" model="ir.ui.view">
+            <field name="name">custom.product.normal.form.view.inherit</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                 <label for="sale_ok" position="replace"/>
+                <field name="sale_ok" position="replace">
+                   <field name="sale_ok" />
+                   <label for="sale_ok" />
+                </field>
+                <field name="description_sale" position="attributes">
+                    <attribute name="groups">purchase.group_purchase_no_one</attribute>
+                 </field>
+                <field name="description_purchase" position="replace">
+                   <field name="description_purchase" select="1" groups ="purchase.group_purchase_no_one"/>
+                </field>
+
+                <xpath expr="/form/sheet/notebook/page/separator[@string='Description for Quotations']" position="replace">
+	            <group colspan="2" col="2" groups ="purchase.group_purchase_no_one">
+                         <separator string="Sale Description" />
+		    </group>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page/separator[@string='Description for Suppliers']" position="replace">
+	             <group colspan="2" col="2" groups ="purchase.group_purchase_no_one">
+                           <separator string="Purchase Description" />
+	             </group>
+                </xpath>
+
+
+                </field>
+        </record>
+
+ </data>
+</openerp>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Pre-Complete State -->
+        <record id="act_pre_complete" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">precomplete</field>
+            <field name="action">pre_complete()</field>
+            <field name="kind">function</field>
+        </record>
+
+        <!-- Pre-Close State -->
+        <record id="act_pre_close" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">preclose</field>
+            <field name="action">pre_close()</field>
+            <field name="kind">function</field>
+        </record>
+        <!-- Pre-post State -->
+        <record id="act_pre_post" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">prepost</field>
+            <field name="action">pre_post()</field>
+            <field name="kind">function</field>
+        </record>
+        <!-- Pre-Approve State -->
+        <record id="act_pre_approve" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">preapprove</field>
+            <field name="action">pre_approve()</field>
+            <field name="kind">function</field>
+        </record>
+        <!-- Approved State -->
+        <record id="act_approved" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">approved</field>
+            <field name="action">write({'state':'approved'})</field>
+            <field name="kind">function</field>
+        </record>
+	<!-- Transition -->
+        <record id="t12" model="workflow.transition">
+            <field name="act_from" ref="account_voucher.act_proforma"/>
+            <field name="act_to" ref="act_pre_complete"/>
+            <field name="signal">precomplete</field>
+            <!--field name="group_id" ref="group_account_ratification_complete"/-->
+        </record>
+        
+        <record id="t13" model="workflow.transition">
+	    	<field name="act_from" ref="act_pre_complete"/>
+            <field name="act_to" ref="act_pre_close"/>
+            <field name="signal">preclose</field>
+            <!--field name="group_id" ref="group_account_ratification_close"/-->
+        </record>
+        
+        <record id="close_post" model="workflow.transition">
+	    	<field name="act_from" ref="act_pre_close"/>
+            <field name="act_to" ref="act_pre_post"/>
+            <field name="signal">prepost</field>
+            <!--field name="group_id" ref="group_account_ratification_post"/-->
+        </record>
+
+        <record id="t14" model="workflow.transition">
+	    	<field name="act_from" ref="act_pre_post"/>
+            <field name="act_to" ref="act_pre_approve"/>
+            <field name="signal">preapprove</field>
+            <!--field name="group_id" ref="group_account_ratification_approve"/-->
+        </record>
+
+        <record id="t15" model="workflow.transition">
+	    	<field name="act_from" ref="act_pre_approve"/>
+            <field name="act_to" ref="account_voucher.act_proforma"/>
+            <field name="signal">confirm_approve</field>
+        </record>
+	<record id="preapp_to_noaprve" model="workflow.transition">
+		<field name="act_from" ref="act_pre_approve" />
+		<field name="act_to" ref="account_voucher_confirmation.act_no_approve" />
+		<field name="signal">preapprove</field>
+		<field name="trigger_model">account.budget.confirmation</field>
+		<field name="trigger_expr_id">confirmation_get()</field>
+		<field name="condition">not test_state('finished')</field>
+	</record>      
+	<record id="preapp_to_approved_trg" model="workflow.transition">
+		<field name="act_from" ref="act_pre_approve" />
+		<field name="act_to" ref="act_approved" />
+		<field name="signal">preapprove</field>
+		<field name="trigger_model">account.budget.confirmation</field>
+		<field name="trigger_expr_id">confirmation_get()</field>
+		<field name="condition">test_state('finished')</field>
+	</record>    
+	<record id="preapp_to_approved" model="workflow.transition">
+		<field name="act_from" ref="act_pre_approve" />
+		<field name="act_to" ref="act_approved" />
+		<field name="trigger_model">account.budget.confirmation</field>
+		<field name="trigger_expr_id">confirmation_get()</field>
+		<field name="condition">test_state('finished')</field>
+	</record> 
+	<record id="approved_to_done" model="workflow.transition">
+	    <field name="act_from" ref="act_approved"/>
+	    <field name="act_to" ref="account_voucher.act_done"/>
+	    <field name="signal">proforma_voucher</field>
+	</record>   
+    </data>
+</openerp>

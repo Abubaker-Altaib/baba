@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+	 <menuitem id="menu_outsite_contract"  name="Contact Out Company"  parent="menu_environment_and_safety"/>
+	  <menuitem id="menu_configration"  name="Configration"  parent="menu_outsite_contract"/>
+	 
+<!--employee record-->	
+
+<record id="outsite_contract_form_view" model="ir.ui.view">
+            <field name="name">outsite.contract.form</field>
+            <field name="model">outsite.contract</field>
+            <field name="arch" type="xml">
+                <form string="Job Archive" version="7.0">
+                    <sheet>
+                        <group  col="4" colspan="2">
+			    <field name="name"  />
+			    <field name="job_id"  />
+			    <field name="sequence" />
+			    <field name="department_id" /> 
+			    <field name="partner_id"/>
+			    <field name="company_id" widget="selection" groups="base.group_multi_company" />
+            	        </group>            
+                        <notebook>
+                            <page string="Personal Information">
+                                <separator string="Status" colspan="2"/>
+                                <group col="4">
+		                    <field name="marital_status" />
+		                    <field name="family_no" />
+		                    <field name="birthday_date"/>
+                                </group>
+                                <separator string="Contact Information" colspan="2"/>
+                                <group col="4">
+		                     <field name="address_home_id" colspan="2"/>
+		                     <field name="mobile_phone" colspan="2"/>
+		                     <field name="phone_relat" colspan="2"/>
+                                </group>
+                                <separator string="Position" colspan="2"/>
+                                <group col="4">
+                                     <field name="contract_date" />                             
+                                     <field name="education_level" />
+                                     <field name="classfication" />
+                                     <field name="car_licence_type" />
+                                     <field name="car_model" />
+                                     <field name="place_work" />
+                                </group>  
+                            </page>
+                            <page string="Mission and overtime">
+                                <field name="allows_mount">
+                                    <form string="Employee Mession and overtime">
+                                         <field name="amounts_custom"/>
+                                         <field name="amounts_holiday"/>
+                                     </form>
+                                     <tree string="Employee Mession and overtime">
+                                        <field name="amounts_custom"/>
+                            		<field name="amounts_holiday"/>
+                            		<field name="month"/>
+                            		<field name="year"/>
+                            		<field name="overtime_name"/>                
+                           	    </tree>
+                                </field>
+                            </page>
+                            <page string="Note">                   
+				   <field name="note" nolabel="1"/>            
+			    </page>
+                        </notebook> 
+                     </sheet>
+                 </form>                        
+              </field> 
+          </record>
+
+          <record model="ir.ui.view" id="outsite_contract_tree_view">
+                <field name="name">outsite.contract.tree</field>
+                <field name="model">outsite.contract</field>
+                <field name="arch" type="xml">
+                <tree string="contract Out" >
+                    <field name="name"/>
+                    <field name="department_id"/>
+                    <field name="education_level"/>
+                    <field name="contract_date"/>
+                    <field name="job_id"/>
+                </tree>  
+                </field>
+            </record> 
+            <record id="hr3_emp_table_tree" model="ir.actions.act_window">
+				<field name="name"> Emp Table </field>
+				<field name="res_model">outsite.contract</field>
+				<field name="view_type">form</field>
+				<field name="view_mode">tree,form</field>
+				<field name="view_id" ref="outsite_contract_tree_view"/>
+		</record>
+
+        <menuitem id="menu_out_contract"  name="Archive  Outsite Employee" sequence="2" parent="menu_outsite_contract"
+        action="hr3_emp_table_tree"/>
+        <!-- Allows and detcution Configration>  
+        <Allows and detcution Form-->
+         <record id="outsite_allow_detuct_form_view" model="ir.ui.view">
+            <field name="name">outsite.allow.detuct.form</field>
+            <field name="model">outsite.allow.detuct</field>
+            <field name="arch" type="xml">
+                <form string="Allows and detcution Configration" version="7.0">
+                   <sheet>
+                       <group col="4"  >
+            	            <field name="name"  colspan="2"/>          	
+            	            <field name="allow_mount"  colspan="2"/>
+            	           <field name="overtime_holi"  colspan="2"/>
+            	       </group>
+                   </sheet>
+                </form>
+           </field>
+        </record>
+         <!--Allows and detcution  Tree-->
+
+    <record id="outsite_allow_detuct_tree_view" model="ir.ui.view">
+            <field name="name">outsite.allow.detuct.tree</field>
+            <field name="model">outsite.allow.detuct</field>
+            <field name="arch" type="xml">
+                 <tree string="Allows and detcution Configration">
+            	     <field name="name"  colspan="2" select="1"/>
+            	    <field name="allow_mount"  colspan="2"/>
+                </tree>
+         </field>
+     </record>
+
+           <record id="outsite_allow_detuct_tree" model="ir.actions.act_window">
+			<field name="name">Allows and detcution Configration</field>
+			<field name="res_model">outsite.allow.detuct</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="outsite_allow_detuct_tree_view"/>
+	</record>
+
+<menuitem id="outsite_allow_detuct_tree_menu" name="Allows and detcution Configration" sequence="1" parent="service_configration_menu"
+action="outsite_allow_detuct_tree" />
+   <!-- Job Configration>  
+   <Job configation and salary Form-->
+    <record id="outsite_job_form_view" model="ir.ui.view">
+            <field name="name">outsite.job.config.form</field>
+            <field name="model">outsite.job.config</field>
+            <field name="arch" type="xml">
+                <form string="Job Configration" version="7.0">
+                     <sheet>
+                	<group col="2" colspan="2" >
+            		    <field name="name"  colspan="2"/>
+            		    <field name="code"  colspan="2"/>
+            		</group>
+            	        <group col="2" colspan="2" >
+            	             <field name="basic_salary"  colspan="2"/>
+            	             <field name="total_amount"  colspan="2"/>
+            	        </group>
+                     </sheet>
+                 </form>
+         </field>
+     </record>
+
+         <!--Job configation and salary Tree-->
+    <record id="outsite_job_tree_view" model="ir.ui.view">
+            <field name="name">outsite.job.config.tree</field>
+            <field name="model">outsite.job.config</field>
+            <field name="arch" type="xml">
+                <tree string="Job Configration">
+            	    <field name="name"  colspan="2" select="1"/>
+            	    <field name="basic_salary"  colspan="2"/>
+            	    <field name="total_amount"  colspan="2"/>
+               </tree>
+            </field>
+    </record>
+
+    <record id="outsite_job_tree" model="ir.actions.act_window">
+			<field name="name">Job Configration</field>
+			<field name="res_model">outsite.job.config</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="outsite_job_tree_view"/>
+	</record>
+
+<menuitem id="outsite_job_tree_menu" name="Job Configration" sequence="2" parent="service_configration_menu"
+action="outsite_job_tree" />
+  <!--Employee overtime>  
+  <Overtime contract archive form--> 
+  
+        <record id="outsite_contract_over_form_view" model="ir.ui.view">
+            <field name="name">overtime.contract.form</field>
+            <field name="model">overtime.contract</field>
+            <field name="arch" type="xml">
+                <form string="overtime Archive" version="7.0">
+                    <sheet>
+                        <group col="4">
+            		    <field name="company_id"  />
+            		    <field name="overtime_name"  />
+            	            <field name="month" />
+            	            <field name="year" />
+                         </group>               
+                         <notebook colspan="4"> 
+                             <!--page string="employees">
+			         <field colspan="4" name="employees" nolabel="1"/>
+			     </page-->
+                             <page string="employees Allowance Amount">
+			          <field colspan="4" name="amount" nolabel="1">
+			              <form string="Employee Overtime Amount">
+                                          <notebook>
+                                              <page string="Employee Allowance Amount">
+ 						   <group>
+                                                        <field name="employee" colspan="4"  />
+                            			        <field name="no_day"/>
+                           			        <field name="no_hours"/>
+                           			        <field name="no_hours_holi"/>
+ 						   </group>                                             
+                        		      </page>
+                                          </notebook>
+			              </form>
+                                      <tree editable="top" string="Employee Allowance Amount">
+				          <field name="employee" colspan="4"/>
+				          <field name="no_day"/>
+				          <field name="no_hours"/>
+				          <field name="amounts_hours"/>
+				          <field name="no_hours_holi"/>                   
+				          <field name="amounts_value"/>
+				          <field name="gross_amount"/>
+                                      </tree>
+			          </field>
+			     </page>
+			 </notebook>
+		     </sheet>
+	          </form>
+                </field>
+            </record>
+               
+ <!-- overtime contract tree-->
+<record model="ir.ui.view" id="contract_overtime_tree_view">
+                <field name="name">overtime.contract.tree</field>
+                <field name="model">overtime.contract</field>
+                <field name="arch" type="xml">
+                    <tree string="Employee OverTime">
+                          <field name="company_id" groups="base.group_multi_company" colspan="2"/>
+                          <field name="overtime_name"  colspan="2"/>
+                          <field name="year" select="1" />
+                          <field name="month" colspan="2"/>
+                    </tree>
+                </field>
+            </record>
+               <record id="contract_overtime_tree" model="ir.actions.act_window">
+			<field name="name">Employee OverTime</field>
+			<field name="res_model">overtime.contract</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="contract_overtime_tree_view"/>
+	</record>
+
+<menuitem id="contact_overtime_tree_menu" name="Employee Outsite Additinal Allowance" sequence="4" parent="menu_outsite_contract"
+ action="contract_overtime_tree" />
+         
+         <record model="ir.ui.view" id="overtime_amount_form_view">
+                <field name="name">contract.payroll.amount.form</field>
+                <field name="model">contract.payroll.amount</field>
+                <field name="arch" type="xml">
+                    <form string="Employee Overtime Amount" version="7.0">
+                         <sheet>
+                             <group>
+                                 <field name="employee" colspan="4"/>
+                                  <field name="amounts_hours"/>
+                             </group>
+                         </sheet>
+                    </form>
+                </field>
+            </record>
+
+            <record model="ir.ui.view" id="overtime_amount_tree_view">
+                <field name="name">contract.payroll.amount.tree</field>
+                <field name="model">contract.payroll.amount</field>
+                <field name="arch" type="xml">
+                    <tree editable="top" string="Employee Overtime Amount">
+                          <field name="employee" colspan="4"/>
+                           <field name="amounts_hours"/>
+                    </tree>
+                </field>
+            </record>
+               <record id="overtime_amount_tree" model="ir.actions.act_window">
+			<field name="name">Employee Overtime Amount</field>
+			<field name="res_model">contract.payroll.amount</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="overtime_amount_tree_view"/>
+	</record>
+<!--Main payrol Archive-->
+   <!--main  payroll archive Form--> 
+     <record model="ir.ui.view" id="outsite_contract_main_archive_form_view">
+                <field name="name">outsite.contract.main.archive.form</field>
+                <field name="model">outsite.contract.main.archive</field>
+                <field name="arch" type="xml">
+                    <form string="Payroll Archive" version="7.0"> 
+                         <sheet>                 
+		               <group  col="4" >
+                                   <field name="company_id" select="1"/>
+			           <field name="employee_id" select="1"/>
+			           <field name="partner_id"  colspan="2"/>
+			        </group>                      
+				<notebook colspan="4">
+			 	    <page string="Job Info">
+		                         <group>
+						<field name="dep_name" />
+						<field name="job_id"/>
+						<field name="month" select="1"/>
+				                <field name="year" select="1"/>
+						<field name="net"/>
+		                         </group>
+			            </page>
+			 	    <page string="Employment">
+		                         <group>
+						<field name="total_allowance"/>
+						<field name="total_mission" />
+						<field name="appsent_amount" />
+						<field name="gross"/>
+		                         </group>
+                                    </page>
+			        </notebook>
+                         </sheet>                 	
+                    </form>
+                </field>
+            </record>  
+
+   <!--main  payroll archive Tree--> 
+     
+            <record model="ir.ui.view" id="outsite_contract_main_archive_tree_view">
+                <field name="name">outsite.contract.main.archive.tree</field>
+                <field name="model">outsite.contract.main.archive</field>
+                <field name="arch" type="xml">
+                    <tree string="Payroll Archive">
+                        <field name="employee_id"/>
+                        <field name="dep_name"/>
+                        <field name="month" select="1"/>
+			<field name="year" select="1"/>
+                        <field name="total_allowance"/>
+			<field name="total_mission"/>
+			<field name="appsent_amount" /> 
+                        <field name="net"/>
+                       <field name="gross" sum="Total Amount"/>
+                    </tree>
+                </field>
+         </record> 
+   <!--main payrol Action-->      
+        <record id="outsite_contract_main_archive_tree" model="ir.actions.act_window">
+			<field name="name">Employee OverTime</field>
+			<field name="res_model">outsite.contract.main.archive</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="outsite_contract_main_archive_tree_view"/>
+	</record>
+
+<menuitem id="outsite_contract_main_archive_tree_menu" name="Employee Payroll Allowance" sequence="5" parent="menu_outsite_contract"
+ action="outsite_contract_main_archive_tree" />      
+         
+         
+	</data>
+</openerp>

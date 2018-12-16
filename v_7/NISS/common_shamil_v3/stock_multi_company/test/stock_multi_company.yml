@@ -1,0 +1,32 @@
+-
+  I confirm  shipment 1.
+-
+  !workflow {model: stock.picking, action: button_confirm, ref: stock_multi_company.shipment1}
+
+-
+  I confirm  shipment 2.
+-
+  !workflow {model: stock.picking, action: button_confirm, ref: stock_multi_company.shipment2}
+-
+  I process shipment2.
+-
+  !python {model: stock.partial.picking}: |
+    context.update({'active_model': 'stock.picking', 'active_id': ref('stock_multi_company.shipment2'), 'active_ids': [ref('stock_multi_company.shipment2')]})
+-
+  !record {model: stock.partial.picking, id: partial_2}:
+    picking_id: stock_multi_company.shipment2
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_2')], context=context)
+-
+  I process shipment.
+-
+  !python {model: stock.partial.picking}: |
+    context.update({'active_model': 'stock.picking', 'active_id': ref('stock_multi_company.shipment1'), 'active_ids': [ref('stock_multi_company.shipment1')]})
+-
+  !record {model: stock.partial.picking, id: partial_1}:
+    picking_id: stock_multi_company.shipment1
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_1')], context=context)
+

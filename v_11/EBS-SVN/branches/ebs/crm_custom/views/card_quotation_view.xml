@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+<!-- Form view for CRM card Quotation -->
+        <record id="cards_quotation_inherit_sale_order_form" model="ir.ui.view">
+        <field name="name">cards.quotation.inherit.sale.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+        	<!-- this button create purchase requestions -->
+
+           <xpath expr="//button[@name='print_quotation']" position="before">
+          <button type='object' name='create_req' groups='sale_custom.group_billing_officer_crm' string='Create Purchase requestion' class="btn-primary o_sale_print" states='validated'
+           attrs="{'invisible':['|',('order_type','=','other')]}"/>
+          </xpath> 
+
+          <xpath expr="//button[@name='print_quotation']" position="before">
+          <button type='object' name='superviser_confirm' groups='crm_custom.group_crm_supervisor' string='Confirm' class="btn-primary o_sale_print" states='crm_approve'/>
+            <button name="action_cancel" type="object" string="Cancel" confirm="Are you sure you want to cancel?" groups="crm_custom.group_crm_supervisor" states="crm_approve" />
+            <button name="%(crm_custom.action_quotation_order_invoice)d" string="Invoice Report" type="action" class="btn-primary" groups="crm_custom.group_crm_supervisor,crm_custom.group_crm_department_manager,crm_custom.group_crm_financial_manager" />
+          </xpath>
+
+          <xpath expr="//button[@name='print_quotation']" position="before">
+          <button type='object' name='dept_approve' groups='crm_custom.group_crm_department_manager' string='Approve' class="btn-primary o_sale_print" states='dept_approve'/>
+          </xpath>
+
+          <xpath expr="//button[@name='print_quotation']" position="before">
+          <button type='object' name='financial_validate' groups='crm_custom.group_crm_financial_manager' string='Validate' class="btn-primary o_sale_print" states='account_validate'/>
+          </xpath>
+
+          <!-- <xpath expr="//button[@name='print_quotation']" position="before">
+          <button type='object' name='create_invoice' groups='crm_custom.group_crm_financial_manager' string='Create Invoice' class="btn-primary o_sale_print" states='purchase_req_created'/>
+          </xpath> -->
+
+          <xpath expr="//field[@name='partner_shipping_id']" position="after">
+            <field name='purchase_requisition_id' attrs="{'invisible':[('purchase_requisition_id','=',False)]}"/>
+          </xpath>
+
+        </field>
+</record>
+
+
+<!-- action for CRM Card quotation -->
+    <record id="action_quotations_crm" model="ir.actions.act_window">
+            <field name="name">Quotations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="sale.view_quotation_tree"/>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+            <field name="search_view_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+            <field name="context">{'default_card':True,'create':False}</field>
+            <field name='domain'>[('state','in',['crm_approve','dept_approve','account_validate','validated','purchase_req_created' ,'invoice_created'] )]</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Create a Quotation, the first step of a new sale.
+              </p><p>
+                Your next actions should flow efficiently: confirm the Quotation
+                to a Sales Order, then create the Invoice and collect the Payment.
+              </p><p>
+                Note that once a Quotation becomes a Sales Order, it will be moved
+                from the Quotations list to the Sales Order list.
+              </p>
+            </field>
+        </record>
+
+      <delete model="ir.ui.menu" id="sale_crm.sale_order_menu_quotations_crm" />
+
+      <!--
+      <xpath expr="//button[@name='action_cancel']" position="before">
+
+      <button type='action' name='%(action_purchase_requisition_to_so_crm)d' string='New Quotation ' class="btn-primary o_sale_print" attrs="{'invisible': ['|',('card','!=',True),('state', '!=', 'open')]}" context="{'analytic_account_id': account_analytic_id,'department_id': department_id,'card': True}" />
+
+      </xpath>-->
+ 
+      <!-- purchase requisition view for CRM work flow -->
+
+      <!--  <record model="ir.ui.view" id="purchase_requisition_crm_form_inherit">
+      <field name="name">purchase.requisition.crm.form.inherit</field>
+      <field name="model">purchase.requisition</field>
+      <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form" />
+      <field name="arch" type="xml">
+
+        <xpath expr="//field[@name='state']" position="attributes">
+          <attribute name='statusbar_visible'>draft</attribute>
+        </xpath>
+
+        <xpath expr="//field[@name='user_id']" position="after">
+          <field name='card' invisible='True'/>
+        </xpath>
+
+     
+        <xpath expr="//button[@name='action_cancel']" position="before">
+        <button type='object' name='action_open' groups='purchase_custom.group_service_manager' string='Confirm by crm' class="btn-primary o_sale_print" states='draft' attrs="{'invisible' :['|',('card','!=',True)] }"/>
+          </xpath>
+
+
+
+          <xpath expr="//button[@name='action_cancel']" position="replace">
+            <button name='action_cancel' type='object'  states='draft' groups="purchase_custom.group_service_manager" attrs="{'invisible' :['|',('card','!=',True)] }"/>
+          </xpath>
+
+      </field>
+    </record>
+ -->
+
+
+    <!-- action for (new qutation) button-->
+        <record model="ir.actions.act_window" id="action_purchase_requisition_to_so_crm">
+        <field name="name">Request for Quotation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form,tree</field>
+        <field name="domain">[('requisition_id','=',active_id)]</field>
+        <field name="context">{"default_requisition_id":active_id,
+                               'default_analytic_account_id': context.get('analytic_account_id', False),
+                               'default_department_id': context.get('department_id', False),
+                               'default_card':True,
+                               'search_default_todo':1,
+                               'show_purchase': False}</field>
+    </record>
+
+    <record model="ir.ui.view" id="purchase_requisition_crm_form_inherit">
+      <field name="name">purchase.requisition.crm.form.inherit</field>
+      <field name="model">purchase.requisition</field>
+      <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form" />
+      <field name="arch" type="xml">
+
+        <xpath expr="//field[@name='state']" position="attributes">
+          <attribute name='statusbar_visible'>draft</attribute>
+        </xpath>
+
+        <xpath expr="//field[@name='user_id']" position="after">
+          <field name='card' invisible='True'/>
+          <!--field name='department_id' invisible='True' /-->
+        </xpath>
+
+        <!-- service manager confirm -->
+        <xpath expr="//button[@name='action_cancel']" position="before">
+
+          <button type='object' name='action_open' groups='purchase_custom.group_service_manager' string='Confirm by crm' class="btn-primary o_sale_print" states='draft' attrs="{'invisible' :['|',('card','!=',True)] }" />
+
+          <button name="%(crm_custom.action_cancel_pr)d"  string="Cancel by CRM" type="action"  attrs="{'invisible' :['|','|',('card','!=',True),('state','!=','draft')] }" class="oe_highlight" />
+            
+        </xpath>
+
+        <xpath expr="//button[@name='action_cancel']" position="before">
+          <button type='action' name='%(action_purchase_requisition_to_so_crm)d' string='New Quotation ' class="btn-primary o_sale_print" attrs="{'invisible': ['|',('card','!=',True),('state', '!=', 'open')]}" context="{'analytic_account_id': account_analytic_id,'card': True}" />
+        </xpath>
+
+        <xpath expr="//notebook/page" position='after'>
+          <page string='Cancel Reason' attrs="{'invisible' :['|','|',('card','!=',True),('state','=','draft')] }">
+             <field name='cancel_reson' attrs="{'required':[('card','=',True),('state','=','cancel')] }"/>
+          </page>
+        </xpath>
+
+
+
+      </field>
+    </record>
+
+
+
+    <!-- action for purchase quotation in CRM -->
+
+    <record id="purchase_rfq_crm" model="ir.actions.act_window">
+            <field name="name">Requests for Quotation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order</field>
+            <field name="context">{'search_default_todo':1, 'show_purchase': False,'default_card':True }</field>
+            <field name="domain">[('state','in',('draft','sent','bid','cancel', 'confirmed','done','done_order','purchase','to_approve','approve2','review','approve','approve_rfq')),('card','=',True)]</field>
+            <field name="view_mode">tree,kanban,form,pivot,graph,calendar</field>
+            <field name="search_view_id" ref="purchase.view_purchase_order_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a request for quotation.
+              </p><p>
+                The quotation contains the history of the discussion/negotiation
+                you had with your vendor. Once confirmed, a request for
+                quotation is converted into a purchase order.
+              </p><p>
+                Most propositions of purchase orders are created automatically
+                by Odoo based on inventory needs.
+              </p>
+            </field>
+        </record>
+
+    <!-- purchase.order (purchase qutation crm) form view-->
+    <!--<record id="purchase_order_form_inherit_purchase_crm" model="ir.ui.view">
+          <field name="name">purchase.order.form</field>
+          <field name="model">purchase.order</field>
+          <field name="inherit_id" ref="purchase_ebs.purchase_order_form_inherit_purchase_ebs" />
+          <field name="arch" type="xml">
+
+            <xpath expr="//notebook" position="before">
+            <field name='card' invisible='True'/>
+           field name='department_id' invisible='True' 
+            </xpath>
+
+            <xpath expr="//button[@name='action_rfq_send']" position="before">
+            <button name="button_done" type='object' string='Confirm By CRM' attrs="{'invisible':['|',('card','!=',True)]}" class="oe_highlight" states='draft,sent' groups='crm_custom.group_crm_user'/>
+            </xpath>
+
+          </field>
+    </record>   /-->        
+
+
+  </data>
+</odoo>

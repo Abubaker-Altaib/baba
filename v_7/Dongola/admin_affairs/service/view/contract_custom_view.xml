@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <report
+            auto="False"
+            menu="False" 
+            id="flee_vehicle_log_contract_report"
+            model="fleet.vehicle.log.contract"
+            name="flee_vehicle_log_contract_report.report"
+            file="service/report/hall_report.rml"
+            string="Hall Form Report"
+            header="True"
+            />
+
+        <report
+            auto="False"
+            menu="False" 
+            id="env_safety_report"
+            model="fleet.vehicle.log.contract"
+            name="env_safety_report.report"
+            file="service/report/env_safety_report.rml"
+            string="print Covering letter"
+            header="True"
+            />
+
+        <record model='ir.ui.view' id='fleet_vehicle_log_contract_custom_form'>
+            <field name="name">fleet.vehicle.log_contract.custom.form2</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+                <form string="General Services" version="7.0">
+                    <header>
+                        <!--div class="oe_button_box oe_left" attrs="{'invisible':[('state','not in',('open','toclose','closed')), ('payment_method','!=','voucher')]}">
+                            <button type="object" name="transfer" string="Transfer" attrs="{'invisible':[('amount','&lt;=',0)]}" help="Vehicle rent contract transfer" class=" oe_highlight oe_left" />
+                            <button type="object" name="extend_action" string="Extend" attrs="{'invisible':[('payment_method','!=','voucher')]}" class="oe_button oe_highlight" />
+                            <button type="object" name="renew_action" string="Renew" attrs="{'invisible':[('payment_method','!=','voucher')]}" class="oe_button oe_highlight" />
+                        </div-->
+                        <!--button name="contract_close" states="open" type="object" class="oe_highlight" string="Terminate" />
+                        <button icon="gtk-cancel" type="object" name="draft" states="cancel" string=" Set to Draft" class="oe_highlight" />
+                        <button icon="gtk-cancel" type="object" name="cancel" states="draft" string="Cancel Request" class="oe_highlight" />
+                        <button icon="gtk-cancel" type="object" name="cancel" states="confirm_so" string="Cancel Request" class="oe_highlight" groups="admin_affairs.group_service_officer" />
+                        <button icon="gtk-cancel" type="object" name="cancel" states="confirm_sm" string="Cancel Request" class="oe_highlight" groups="admin_affairs.group_section_manager" />
+                        <button icon="gtk-cancel" type="object" name="cancel" states="affairs_mg" string="Cancel Request" class="oe_highlight" />
+                        <button icon="gtk-cancel" type="object" name="cancel" states="human_financial" string="Cancel Request" class="oe_highlight" />
+                        <button icon="gtk-cancel" type="object" name="cancel" states="request" string="Cancel Request" class="oe_highlight" />
+                        <button icon="gtk-cancel" type="object" name="cancel" states="confirm" string="Cancel Request" class="oe_highlight" />
+                        
+                        <button name="request" states="draft" string="Request" type="object" icon="gtk-convert" 
+                        groups="admin_affairs.group_section_manager,base_custom.group_general_department_manager,base_custom.group_department_manager"/>
+                        
+                        <button name="confirm" states="request" string="Confirm" type="object" icon="gtk-convert" groups="service.group_service_section_manager"/>
+                        
+                        <button name="to_affairs_mg" context="{'hospitality_ids':hospitality_ids,'internal':internal,'cat_subtype':cat_subtype}" states="confirm" string="Admin Affair Manager" type="object" icon="gtk-convert" groups="admin_affairs.group_admin_affair_manager"/>
+                        
+                        <button icon="gtk-cancel" type="object" name="cancel" states="technical" string="Cancel Request" class="oe_highlight" />
+                        
+                        <button icon="gtk-convert" type="object" name="technical" states="technical" string="Technical confirm" class="oe_highlight" />
+                        
+                        <div class="oe_button_box oe_left" attrs="{'invisible': [('state','!=','affairs_mg')]}">
+                            <div groups="base_custom.group_general_hr_manager" class="oe_button_box oe_left" attrs="{'invisible': [('internal','=',True)]}">
+                                <button name="to_human_financial" class="oe_left" string="HR And Financial Manager" type="object" attrs="{'invisible': ['|',('cat_subtype','=','hospitality' ),('rent','==',True)]}"/>
+                            </div>
+                            <button type="object" name="confirm_ss" string="Service Officer" groups="admin_affairs.group_service_officer" class="oe_left" attrs="{'invisible': [('cat_subtype','!=','hospitality'),('rent','==',False)]}"
+                            context="{'cat_subtype':cat_subtype}"/>
+                            <div groups="base_custom.group_general_hr_manager" class="oe_button_box oe_left" attrs="{'invisible': [('internal','!=',True)]}">
+                                <button type="object" name="confirm_ss" string="Service Section Manager" groups="service.group_service_section_manager" class="oe_left" attrs="{'invisible': [('cat_subtype','!=','hall')]}"
+                                context="{'cat_subtype':cat_subtype}"/>
+                            </div>
+                        </div>
+                        
+                        <button name="to_general_mg" context="{'internal':internal}" states="human_financial" string="General Manager" type="object" icon="gtk-convert" />
+                        
+                        <button type="object" name="confirm_so" states="confirm_hs" string="Hospitality Service Officer" groups="service.group_hospitality_service_officer" class="oe_highlight"
+                        context="{'cat_subtype':cat_subtype,'internal':internal}"/>
+
+                        <button type="object" name="confirm_so" states="confirm_ss" string="Service Officer" groups="admin_affairs.group_service_officer" class="oe_highlight"
+                        context="{'cat_subtype':cat_subtype,'internal':internal}"/>
+                        
+                        <button name="general_mg"  states="general_mg,confirm_so" string="Service Officer" type="object" icon="gtk-convert" groups="admin_affairs.group_service_officer"/-->
+                        <button icon="gtk-convert" type="object" name="draft" states="cancel" string=" Set to Draft" class="oe_highlight" />
+                        
+                        <button icon="gtk-cancel" type="object" name="cancel" states="w_it" string="Cancel Request" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent,'addtion_notes':addtion_notes}"
+                        groups="admin_affairs.group_admin_affairs_it"/>
+
+                        <button icon="gtk-cancel" type="object" name="cancel" states="w_admin" string="Cancel Request" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent,'addtion_notes':addtion_notes,'hospitality_subtype_id':hospitality_subtype_id,
+                        'hospitality_ids':hospitality_ids,'num_needed':num_needed}"
+                        groups="admin_affairs.group_admin_affair_manager"/>
+                        
+                        <button icon="gtk-cancel" type="object" name="cancel" states="w_ss" string="Cancel Request" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent,'addtion_notes':addtion_notes,'insurer_id':insurer_id}"
+                        groups="service.group_service_section_manager"/>
+                        
+                        <button icon="gtk-cancel" type="object" name="cancel" states="w_so" string="Cancel Request" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent,'addtion_notes':addtion_notes}"
+                        groups="admin_affairs.group_service_officer"/>
+
+
+                    
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <button icon="gtk-convert" type="object" name="w_request" states="draft" string="Request" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent, 'addtion_notes':addtion_notes,'insurer_id':insurer_id,'cost_subtype_id':cost_subtype_id,'date':date,'hospitality_subtype_id':hospitality_subtype_id,'partner_name':partner_name}"/>
+                        
+                        <button icon="gtk-convert" type="object" name="w_it" states="w_it" string="Technical Manager confirm" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent,'addtion_notes':addtion_notes,'cost_subtype_id':cost_subtype_id}"
+                        groups="admin_affairs.group_admin_affairs_it"/>
+
+                        <button icon="gtk-convert" type="object" name="w_admin" states="w_admin" string="Wainting for Adminstrative Manager" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent,'addtion_notes':addtion_notes,'hospitality_subtype_id':hospitality_subtype_id,
+                        'hospitality_ids':hospitality_ids,'num_needed':num_needed,'cost_subtype_id':cost_subtype_id,'date':date}"
+                        groups="admin_affairs.group_admin_affair_manager"/>
+                        
+                        <button icon="gtk-convert" type="object" name="w_ss" states="w_ss" string="Service Section Manager" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent,'addtion_notes':addtion_notes,'insurer_id':insurer_id,
+                        'payment_method':payment_method,'cost_subtype_id':cost_subtype_id}"
+                        groups="service.group_service_section_manager"/>
+                        
+                        <button icon="gtk-convert" type="object" name="w_so" states="w_so" string="Service Officer" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent,'addtion_notes':addtion_notes,'cost_subtype_id':cost_subtype_id}"
+                        groups="admin_affairs.group_service_officer"/>
+
+                        <button icon="gtk-convert" type="object" name="w_haa" states="w_haa" string="Wainting for HR and Accounting Manager" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent,'addtion_notes':addtion_notes,'cost_subtype_id':cost_subtype_id}"
+                        groups="base_custom.group_general_hr_manager"/>
+                        
+                        <button icon="gtk-convert" type="object" name="w_ho" states="w_ho" string="Hospitality Officer" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent,'addtion_notes':addtion_notes,'cost_subtype_id':cost_subtype_id}"
+                        groups="service.group_hospitality_service_officer"/>
+                        
+                        <button icon="gtk-convert" type="object" name="w_gm" states="w_gm" string="General Manager" class="oe_highlight" 
+                        context="{'cat_subtype':cat_subtype,'rent':rent,'addtion_notes':addtion_notes,'cost_subtype_id':cost_subtype_id}"
+                        groups="base_custom.group_account_general_manager"/>
+
+                        <button name="%(flee_vehicle_log_contract_report)d" 
+                        attrs="{'invisible': [('cat_subtype','!=','hall')]}"
+                        colspan="2" string="Print Hall Form" type="action" icon="gtk-print" />
+
+                        <button name="%(env_safety_report)d" 
+                        attrs="{'invisible': [('cat_subtype','in',('hall','hospitality') )]}"
+                        colspan="2" string="Print Covering letter" type="action" icon="gtk-print" 
+                        groups="admin_affairs.group_service_officer"/>
+
+                        <button name="open_hall"  
+                        attrs="{'invisible': ['|','|',('cat_subtype','!=','hall'),('state','not in', ('open') ),('open_hall','=',True)]}"
+                        groups="admin_affairs.group_service_officer"
+                        colspan="2" string="Open Hall" type="object"/>
+
+                        <button name="close_hall"  
+                        attrs="{'invisible': ['|','|',('cat_subtype','!=','hall'),('state','not in', ('open') ),('open_hall','=',False)]}"
+                        colspan="2" string="Close Hall" type="object"/>
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,toclose,closed"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <label for="name" string="Reference"/>
+                            <field name="name" class="oe_inline" readonly="1"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field widget="selection" name="cost_subtype_id" class="oe_inline" domain="[('category','not in',('contract','service','both','license','insurance','building'))]" 
+                                attrs="{'readonly':[('state','not in',('draft','w_ss','w_admin')),('cat_subtype','!=','hall')], 'required':[('state','!=','draft')]}" 
+                                on_change="onchange_service_type(cost_subtype_id)" 
+                                context="{'form_view_ref': 'service.fleet_service_type_form_inherit','cat_subtype':cat_subtype,'rent':rent,'state':state}"
+                                />
+                                <field name="cat_subtype" readonly="1" invisible="1"/>
+                                <field name="department_id" widget="selection" class="oe_inline" attrs="{'readonly':[('state','not in',('draft'))],'required':[('state','=','draft')]}"/>
+                                <field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                                <field name="hall_type" attrs="{'invisible':[('cat_subtype','!=','hall')],'readonly':[('state','not in',('draft','affairs_mg'))]}"/>
+                                <field name="addtion_notes" attrs="{'invisible':[('cat_subtype','!=','hall')],'readonly':[('state','not in',('draft','affairs_mg'))]}"/>
+                                
+                                <field name="addition_managerial" attrs="{'invisible':[('cat_subtype','!=','hall')],'readonly':[('state','not in',('draft','affairs_mg'))]}"/>
+                                <field name="time_exceeded" attrs="{'invisible':['|',('cat_subtype','!=','hall'),('time_exceeded','=',False)]}" readonly="1"/>
+                                
+                                <field name="num_needed" attrs="{'readonly':[('state','not in',('draft',))],'required':[('state','=','draft')]}"/>
+                                <field name="place" attrs="{'readonly':[('state','not in',('draft',))],'invisible':[('cat_subtype','!=','hospitality')]}"/>
+                                <field name="reason" attrs="{'readonly':[('state','not in',('draft',))],'invisible':[('cat_subtype','!=','hospitality')]}"/>
+                                <field name="open_hall" readonly="1" attrs="{'invisible': ['|',('cat_subtype','!=','hall'),('state','!=','open')]}"/>
+                                <field name="hall_reg_type" attrs="{'invisible':[('cat_subtype','!=','hall')],'readonly':[('state','not in',('draft','affairs_mg'))]}"/>
+
+                                <field name="ref_char" attrs="{'invisible': [('cat_subtype','!=','env_safety')]}"
+                                groups="admin_affairs.group_admin_affair_manager"/>
+                            </group>
+                            
+                            <group attrs="{'invisible':[('state','=','draft')]}" groups="service.group_service_section_manager">
+                                <group attrs="{'invisible':[('cat_subtype','=','hall'),('rent','=',False)]}">
+                                    <field name="contract_type" invisible="1"/>
+
+                                    <field name="payment_method" class="oe_inline" on_change="on_change_pay_method(payment_method)" 
+                                    attrs="{'readonly':[('state','not in',('w_ss'))], 'required':[('state','=','w_ss')]}"/>
+                                    
+                                    <field name="enrich_id" class="oe_inline" domain="['|',('service_id','=',cost_subtype_id),('service_id','=',False),('type','=','enrich'),('state','=','done'),('residual_amount','&gt;=',sum_cost)]" attrs="{'required':[('payment_method','==','enrich')], 'invisible':['|',('payment_method','!=','enrich')],		                                'readonly':[('state','not in',('w_ss'))],}" context="{'form_view_ref': 'admin_affairs.view_payment_enrich_view_form', 'default_type':'enrich'}"/>
+                                    
+                                    <label for="cost_generated" attrs="{'invisible':['|',('payment_method','!=','voucher')]}"/>
+                                    <div attrs="{'invisible':['|',('payment_method','!=','voucher')]}">
+                                        <field name="cost_generated" class="oe_inline" attrs="{'invisible': [('cost_frequency','=','no')],'readonly':['|',('state','not in',('w_ss'))],}" />
+                                        <field name="cost_frequency" class="oe_inline" on_change="emptyinstallment()" attrs="{'readonly':['|',('state','not in',('w_ss'))],}"/>
+                                    </div>
+                                    <field name="installment" attrs="{'invisible': [('cost_frequency','=','no')]}"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="rent" string="Out Side" attrs="{'readonly':[('state','!=','draft')]}"/>
+
+                                <field name="partner_name" 
+                                attrs="{'readonly':[('state','!=','draft')],'invisible':['|',('cat_subtype','!=','hall'),('rent','=',False)]}"
+                                />
+                            </group>
+
+                            
+
+                            <group attrs="{'invisible':[('cat_subtype','!=','hall')]}" groups="service.group_service_section_manager">
+                                
+                                <field name="internal" invisible="1" attrs="{'readonly':[('state','=','open')]}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="date" string="Execution Date" 
+                                on_change="on_change_exc_date(date)" context="{'cat_subtype':cat_subtype,}"
+                                attrs="{'readonly':[('state','not in',('draft',))],'required':[('state','=','draft')]}"/>
+                            </group>
+                            <group  attrs="{'invisible':[('cat_subtype','!=','hall')]}">
+                                <!--button name="update_hall_reg" type="object" attrs="{'invisible':[('state','not in',('draft'))]}"
+                                context="{'hall':cost_subtype_id,'first_booking_date':first_booking_date,'last_booking_date':last_booking_date,'start_time':start_time,'end_time':end_time,'weekday':weekday,'booking_frequency':booking_frequency,'skip':skip}" string="Update Regestration"/-->
+                             </group>   
+                            
+                            <group  attrs="{'invisible':[('cat_subtype','!=','hall')]}">
+                                <!--button name="update_hall_reg" type="object" attrs="{'invisible':[('state','not in',('draft'))]}"
+                                context="{'hall':cost_subtype_id,'first_booking_date':first_booking_date,'last_booking_date':last_booking_date,'start_time':start_time,'end_time':end_time,'weekday':weekday,'booking_frequency':booking_frequency,'skip':skip}" string="Update Regestration"/-->
+                                <group string="Booking Info" attrs="{'invisible':[('state','not in',('draft'))]}">
+                                    <field name="first_booking_date" attrs="{'required':[('cat_subtype','=','hall'), ('repeat_registration','=',True)],
+                                    'invisible':[('repeat_registration','=',False)]}"/>
+                                    <field name="last_booking_date" attrs="{'required':[('cat_subtype','=','hall'), ('repeat_registration','=',True)],
+                                    'invisible':[('repeat_registration','=',False)]}"/>
+                                    <label for="time" string="Time"/>
+                                    <div>
+                                        <field name="start_time" widget="float_time" class="oe_inline" attrs="{'required':[('cat_subtype','=','hall')]}"/>
+                                        <sub>
+                                            <b>&#160;&#160; - &#160;&#160;</b>
+                                        </sub>
+                                        <field name="end_time" widget="float_time" class="oe_inline" attrs="{'required':[('cat_subtype','=','hall')]}"/>
+                                    </div>
+                                    <field name="repeat_registration" />
+                                    
+                                    <field name="weekday" attrs="{'required':[('cat_subtype','=','hall'), ('repeat_registration','=',True)],
+                                    'invisible':[('repeat_registration','=',False)]}"/>
+                                    <field name="booking_frequency" attrs="{'required':[('cat_subtype','=','hall'), ('repeat_registration','=',True)],
+                                    'invisible':[('repeat_registration','=',False)]}"
+                                    />
+                                    <field name="skip" attrs="{'invisible':['|',('booking_frequency','=','no'), ('repeat_registration','=',False)]}"/>
+                                </group>
+                            </group>
+                            <group col="1" colsapn="4"  attrs="{'invisible':[('cat_subtype','!=','hall')]}">
+                                <separator />
+                                <separator />
+                                <separator />
+                                <separator />
+                                
+                                <button name="update_hall_reg" type="object" attrs="{'invisible':[('state','not in',('draft'))]}"
+                                context="{'hall':cost_subtype_id,'first_booking_date':first_booking_date,'last_booking_date':last_booking_date,'start_time':start_time,'end_time':end_time,'weekday':weekday,'booking_frequency':booking_frequency,'skip':skip}" string="Update Regestration"/>
+                             </group>  
+                        </group>
+                        <group string="Service Details">
+                            <group attrs="{'invisible':[('state','=','draft'),('cat_subtype','!=','hall')]}" groups="service.group_service_section_manager">
+                                <field name="start_date" attrs="{'readonly':[('state','not in',('draft', 'w_ss'))], 'required':[('state','=','w_ss')]}"/>
+                                <field name="expiration_date" attrs="{'readonly':[('state','not in',('draft', 'w_ss'))], 'required':[('state','=','w_ss')]}"/>
+                            </group>
+                            <group attrs="{'invisible':['|',('state','=','draft'),  ('cat_subtype','=','hall'),('rent','=',False)]}">
+                                <field name="insurer_id" class="oe_inline" 
+                                attrs="{'readonly':[('state','not in',('draft','w_ss'))],'invisible':[ ('state','=','draft'),('cat_subtype','=','hall') ]}"/>
+                                <field name="purchaser_id" class="oe_inline" attrs="{'readonly':[('state','not in',('w_ss',))],}"/>
+                            </group>
+                        </group>
+                        <field name="cat_subtype" invisible='1'/>
+                        
+                        <notebook>
+                            <page string="Included Services" attrs="{'invisible':[('state','=','draft'),('cat_subtype','not in', ('hall','env_safety') )]}">
+                                <group>
+                                    <field name="cost_ids" nolabel="1" on_change="onchange_value()" attrs="{'readonly':[('state','not in',('draft','w_ss'))]}">
+                                        <tree version="7.0" editable='top'>
+                                            <field name="cost_subtype_id" string="Service" required='1' domain="[('parent_id','=',parent.cost_subtype_id),('category','=','service')]" on_change="onchange_service(cost_subtype_id)" context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}" readonly="1"/>
+                                            <field name="quantity" string="Quantity" on_change="onchange_value(amount,quantity)"/>
+                                            <field name="amount" string="Indicative Cost" on_change="onchange_value(amount,quantity)" invisible="1"/>
+                                            <field name="total" string="Total" sum="Price" invisible="1"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                                
+                            </page>
+                            <page string="Included Hospitality" attrs="{'invisible':[('cat_subtype','!=','hall')]}">
+                                <field name="hospitality_subtype_id" class="oe_inline" domain="[('category','=','hospitality')]" 
+                                on_change="onchange_hospitality_type(hospitality_subtype_id)" context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}"
+                                attrs="{'readonly':[('state','not in',('draft','w_ss'))]}"/>
+                                <group>
+
+                                    <field name="hospitality_ids" nolabel="1" attrs="{'readonly':[('state','not in',('draft','request','affairs_mg'))]}"
+                                    widget="one2many">
+                                        <tree version="7.0" editable='top'>
+                                            <field name="cost_subtype_id" string="Service" required='1' domain="[('parent_id','=',parent.hospitality_subtype_id), ('category','=','service')]" on_change="onchange_service(cost_subtype_id)" context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}"/>
+                                            <field name="quantity" string="Quantity" />
+                                            <field name="amount" string="Indicative Cost" on_change="onchange_value(amount,quantity)" 
+                                            invisible='1'/>
+                                            <field name="total" string="Total" sum="Price" invisible='1'/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+
+
+                            <page string="Hall Registrations" attrs="{'invisible':[('cat_subtype','!=','hall')]}">
+                                <!--button name="update_hall_reg" type="object" attrs="{'invisible':[('state','not in',('draft'))]}"
+                                context="{'hall':cost_subtype_id,'first_booking_date':first_booking_date,'last_booking_date':last_booking_date,'start_time':start_time,'end_time':end_time,'weekday':weekday,'booking_frequency':booking_frequency,'skip':skip}" string="Update Regestration"/>
+                                <group string="Booking Info" attrs="{'invisible':[('state','not in',('draft'))]}">
+                                    <field name="first_booking_date" attrs="{'required':[('cat_subtype','=','hall'), ('repeat_registration','=',True)],
+                                    'invisible':[('repeat_registration','=',False)]}"/>
+                                    <field name="last_booking_date" attrs="{'required':[('cat_subtype','=','hall'), ('repeat_registration','=',True)],
+                                    'invisible':[('repeat_registration','=',False)]}"/>
+                                    <label for="time" string="Time"/>
+                                    <div>
+                                        <field name="start_time" widget="float_time" class="oe_inline" attrs="{'required':[('cat_subtype','=','hall')]}"/>
+                                        <sub>
+                                            <b>&#160;&#160; - &#160;&#160;</b>
+                                        </sub>
+                                        <field name="end_time" widget="float_time" class="oe_inline" attrs="{'required':[('cat_subtype','=','hall')]}"/>
+                                    </div>
+                                    <field name="repeat_registration" />
+                                    
+                                    <field name="weekday" attrs="{'required':[('cat_subtype','=','hall'), ('repeat_registration','=',True)],
+                                    'invisible':[('repeat_registration','=',False)]}"/>
+                                    <field name="booking_frequency" attrs="{'required':[('cat_subtype','=','hall'), ('repeat_registration','=',True)],
+                                    'invisible':[('repeat_registration','=',False)]}"
+                                    />
+                                    <field name="skip" attrs="{'invisible':['|',('booking_frequency','=','no'), ('repeat_registration','=',False)]}"/>
+                                </group-->
+                                <group>
+                                    <field name="hall_registrations" attrs="{'readonly':[('state','!=','draft')]}" context="{'hall_rgistrations':True}">
+                                        <tree create="0">
+                                            <field name="weekday"/>
+                                            <field name="date_start"/>
+                                            <field name="date_stop"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+
+
+
+                            <page string="Payments" attrs="{'invisible':['|',('payment_method','in',('enrich','nothing')),('state','not in',('open','toclose','closed'))]}">
+                                <group>
+                                    <field name="generated_cost_ids" nolabel="1" sum="total">
+                                        <tree version="7.0" editable="bottom" create="false">
+                                            <field name="date" />
+                                            <field name="voucher_id" colspan="4" nolabel="1" context="{'form_view_ref': 'account_voucher.view_purchase_receipt_form'}" readonly="1"/>
+                                            <field name="amount" string="Amount" readonly="0"/>
+                                            <field name="total" sum="total" />
+                                            <field name="v_state" />
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Taxes" invisible="1">
+                                <group>
+                                    <field name="tax_ids" nolabel="1" attrs="{'readonly':[('state','in',('confirm_ss','confirm_so','cancel','closed','open'))]}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                        <group>
+                            <field name="notes" nolabel="1" placeholder="Notes" />
+                        </group>
+                        <group attrs="{'invisible':[('state','=','draft')]}">
+                            <group attrs="{'invisible':[('cat_subtype','=','hall'),('rent','=',False)]}">
+                                <group class="oe_subtotal_footer oe_right"
+                                groups="service.group_service_section_manager"
+                                attrs="{'invisible':[('cat_subtype','!=','hall'),('internal','=',True)]}">
+                                    <field name="sum_cost" string="Total Costs"/>
+                                    <field name="amount" string="Activation Cost" attrs="{'readonly':[('state','not in',('w_ss','w_haa','w_gm','w_admin'))], 'invisible':[('payment_method','!=','voucher')]}"/>
+                                    <field name="paid" />
+                                    <field name="residual" class="oe_subtotal_footer_separator" />
+                                </group>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model='ir.ui.view' id='fleet_vehicle_log_contract_custom_tree'>
+            <field name="name">fleet.vehicle.log.contract.custom.tree</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Contract logs" version="7.0">
+                    <field name="cost_subtype_id"/>
+                    <field name="date" />
+                    <field name="expiration_date" invisible="1"/>
+                    <field name="days_left" invisible="1"/>
+                    <field name="insurer_id" />
+                    <field name="amount" string="Activation Cost"/>
+                    <field name="cost_generated" invisible="1"/>
+                    <field name="cost_frequency" invisible="1"/>
+                    <field name="department_id"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+		<record id="view_service_request_filter_general_service" model="ir.ui.view">
+			<field name="name">fleet.vehicle.log.contract.general.list.select</field>
+			<field name="model">fleet.vehicle.log.contract</field>
+			<field name="arch" type="xml">
+				<search string="Search for Service request Record">
+					
+					<field name="department_id" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="cost_subtype_id" colspan="1"/>
+					<separator orientation="vertical" />
+                     <field name="state" select="1"/>
+                     <separator orientation="vertical" />
+				
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Department" icon="terp-personal"
+							domain="[]" context="{'group_by':'department_id'}" />
+							<filter string="Service Type" icon="terp-personal"
+							domain="[]" context="{'group_by':'cost_subtype_id'}" />
+							<filter name="group_by_date" string="Date" icon="terp-personal"
+							domain="[]" context="{'group_by':'date'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+					
+
+					</group>
+
+				</search>
+			</field>
+		</record>
+
+
+        <record model="ir.ui.view" id="fleet_vehicle_log_contract_custom_graph">
+            <field name="name">fleet.vehicle.log.contract.graph</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+                <graph string="Contract Costs Per Month">
+                    <field name="date" />
+                    <field name="cost_amount" operator="+"/>
+                </graph>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_contract">
+            <field name="name">General Services</field>
+            <field name="res_model">fleet.vehicle.log.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('contract_type','=','service'),('cat_subtype','not in',('contract','service','both','license','insurance','building'))]</field>
+	    <field name="search_view_id" ref="view_service_request_filter_general_service" />
+            <field name="context">{'search_default_group_by_date': 3,'default_payment_method':'voucher','default_contract_type':'service','action':'service.contract_custom_menu'}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">                Click to create a new contract.               </p>
+                <p>                Manage Your Service Requests and Their Included Services and Costs.                System Will Automatically Warn You When Some Requests Have to Renew.              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="contract_tree_customact">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="fleet_vehicle_log_contract_custom_tree"/>
+            <field name="act_window_id" ref="action_contract"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="contract_form_customact">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fleet_vehicle_log_contract_custom_form"/>
+            <field name="act_window_id" ref="action_contract"/>
+        </record>
+        <menuitem id="admin_affairs_service_menu" name="Service" sequence="1" parent="admin_affairs.menu_administrative_affairs_root" 
+        groups="admin_affairs.group_section_manager,fleet.group_fleet_manager,fleet.group_fleet_user,base_custom.group_general_department_manager,base_custom.group_department_manager,base_custom.group_general_hr_manager,base_custom.group_account_general_manager"/>
+        <menuitem name="General Services" parent="admin_affairs_service_menu" id="contract_custom_menu" action="action_contract" sequence="2"
+        groups="admin_affairs.group_section_manager,fleet.group_fleet_manager,fleet.group_fleet_user,base_custom.group_general_department_manager,base_custom.group_department_manager,base_custom.group_general_hr_manager,base_custom.group_account_general_manager"/>
+        <menuitem id="fleet.fleet_vehicle_service_types_menu" action="fleet.fleet_vehicle_service_types_act" parent="admin_affairs.admin_affairs_configuration_menu" groups="admin_affairs.group_service_officer" sequence="3"/>
+    </data>
+</openerp>

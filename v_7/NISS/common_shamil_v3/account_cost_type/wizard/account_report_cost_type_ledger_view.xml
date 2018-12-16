@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+     <data>
+
+         <record id="account_cost_type_ledger_view" model="ir.ui.view">
+            <field name="name">Account Cost Type Ledger</field>
+            <field name="model">account.cost.type.ledger</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.account_common_report_view" />
+            <field name="arch" type="xml">
+            <data>
+            <xpath expr="/form/label[@string='']" position="replace">
+                <separator string="Cost Type Ledger" colspan="4"/>
+                <label nolabel="1" colspan="4" string="This report is an analysis done by a cost type. It is a PDF report containing one line per cost type representing the cumulative credit balance"/>
+            </xpath>
+            <xpath expr="//field[@name='target_move']" position="after">
+                <!--<field name="result_selection" invisible="1"/>-->
+
+                <!--<field name="initial_balance"/>-->
+                <field name="reconcil"/>
+                <field name="amount_currency"/>
+                <field name="page_split"/>
+                <field name="cumulate_move"/>
+                <newline/>
+		
+            </xpath>
+		<notebook tabpos="up" colspan="4">
+			<page string="Accounts" name="accounts_ids">
+		    		<field name="account_ids" colspan="4" nolabel="1" domain="[('type','!=','view'),('devolopment_projects','=','False')]"/>
+			</page>
+			<page string="Cost Types" name="cost_type_ids">
+		    		<field name="cost_type_ids" colspan="4" nolabel="1"/>
+			 </page>
+		</notebook>
+            </data>
+		
+            </field>
+        </record>
+
+         <record id="action_account_cost_type_ledger2" model="ir.actions.act_window">
+             <field name="name">Account Cost Type Ledger</field>
+             <field name="res_model">account.cost.type.ledger</field>
+             <field name="type">ir.actions.act_window</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="view_id" ref="account_cost_type_ledger_view"/>
+             <field name="context">{}</field>
+             <field name="target">new</field>
+       </record>
+
+        <menuitem icon="STOCK_PRINT"
+            name="Cost Type Ledger"
+            action="action_account_cost_type_ledger2"
+            id="menu_account_cost_type_ledger"
+            parent="account_cost_type_menu"/>
+
+     </data>
+ </openerp>

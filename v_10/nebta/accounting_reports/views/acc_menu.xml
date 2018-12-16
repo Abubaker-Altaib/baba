@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+	<!-- Hide unneccary menus -->
+    <delete id="account.menu_product_template_action" model="ir.ui.menu"/>
+    <delete id="account.menu_aged_trial_balance" model="ir.ui.menu"/>
+    <delete id="account.menu_action_account_fiscal_position_form" model="ir.ui.menu"/>
+    <delete id="account.account_tag_menu" model="ir.ui.menu"/>
+    <delete id="account.menu_action_account_bank_journal_form" model="ir.ui.menu"/>
+    <delete id="account.menu_action_tax_adjustment" model="ir.ui.menu"/>
+    <delete id="account.root_payment_menu" model="ir.ui.menu"/>
+
+	<!-- Change menus -->
+    <menuitem id="account_check_printing_custom.menu_check_log" name="Check Log" parent="account.menu_finance_entries"/>
+
+    <menuitem id="account_check_printing_custom.menu_account_check_dimension" name="Check Dimension" parent="account.account_account_menu"/>
+
+    <menuitem id="account.menu_action_account_form" parent="account.menu_finance_entries" sequence="20" name="Chart of Accounts" groups="account.group_account_manager,microfinance.group_branch_manager"/>
+
+    <menuitem id="account.menu_action_manual_reconciliation" name="Manual Payments &amp; Invoices Matching" parent="account.menu_finance_entries" action="account.action_manual_reconciliation" sequence="25" groups="account.group_account_manager"/>
+
+    <menuitem id="account.menu_finance_configuration" name="Configuration" parent="account.menu_finance" sequence="15" groups="account.group_account_manager,microfinance.group_branch_manager"/>
+
+    <menuitem id="account.menu_finance_reports" name="Reports" parent="account.menu_finance" sequence="5" groups="account.group_account_manager,microfinance.group_branch_manager"/>
+    
+   <menuitem id="account.account_reports_management_menu" name="Management" parent="account.menu_finance_reports" sequence="4" groups="account.group_account_manager,microfinance.group_branch_manager"/>
+            
+   <menuitem id="account.account_reports_business_intelligence_menu" name="Business Intelligence" parent="account.menu_finance_reports" sequence="5" groups="account.group_account_manager,microfinance.group_branch_manager"/>
+          
+   <menuitem id="account.menu_finance_legal_statement" name="PDF Reports" parent="account.menu_finance_reports" groups="account.group_account_manager,microfinance.group_branch_manager"/>
+
+   <menuitem action="account.action_account_payments" id="account.menu_action_account_payments_receivable" parent="account.menu_finance_receivables" sequence="20" groups="account.group_account_manager,account.group_account_user,microfinance.group_branch_manager"/>
+
+   <menuitem action="account.action_account_payments_payable" id="account.menu_action_account_payments_payable" parent="account.menu_finance_payables" sequence="20" groups="account.group_account_manager,account.group_account_user,microfinance.group_branch_manager"/>
+
+    <menuitem id="microfinance.menu_finance_installment" name="Customers Installments" sequence="5" parent="account.menu_finance_receivables" action="microfinance.finance_installment_action" groups="account.group_account_manager,account.group_account_user,microfinance.group_branch_manager" />
+
+     <menuitem id="account.menu_finance_entries" name="Adviser" parent="account.menu_finance" sequence="4" groups="account.group_account_manager,account.group_account_user,microfinance.group_branch_manager"/>
+
+<menuitem id="account.account_account_menu" name="Accounting" parent="account.menu_finance_configuration" sequence="2" groups="account.group_account_manager,microfinance.group_branch_manager"/>
+            <menuitem id="account.account_management_menu" name="Management" parent="account.menu_finance_configuration" sequence="3" groups="account.group_account_manager,microfinance.group_branch_manager"/>
+
+            <menuitem id="account.menu_account_reports" name="Financial Reports" parent="account.menu_finance_configuration" groups="account.group_account_manager,microfinance.group_branch_manager"/>
+
+        <menuitem action="account.action_account_journal_form" id="account.menu_action_account_journal_form" parent="account.account_account_menu" groups="account.group_account_manager,microfinance.group_branch_manager"/>
+
+<menuitem
+            action="account.action_move_journal_line"
+            id="account.menu_action_move_journal_line_form"
+            parent="account.menu_finance_entries"
+            groups="account.group_account_manager,account.group_account_user,microfinance.group_branch_manager"
+            sequence="2"/>
+
+  <record id="view_move_form_inh" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+ 	    <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">            
+                <xpath expr="//button[@name='post']" position="attributes">
+		<attribute name="groups">microfinance.group_branch_manager,account.group_account_manager</attribute>
+		</xpath>
+	    </field>
+  </record>
+</data>
+</odoo>

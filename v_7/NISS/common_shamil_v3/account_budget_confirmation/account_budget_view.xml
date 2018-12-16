@@ -1,0 +1,199 @@
+<?xml version="1.0" ?>
+<openerp>
+	<data>
+
+
+		<!-- Budgets -->
+		<record model="ir.ui.view" id="account_budget_view_form">
+			<field name="name">account.budget.view.form</field>
+			<field name="model">account.budget</field>
+			<field name="inherit_id" ref="account_budget_custom.account_budget_view_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='planned_amount']" position="after">
+					<field name="confirm" readonly="True" />
+				</xpath>
+			</field>
+		</record>
+
+		<!-- Budget Lines -->
+		<record model="ir.ui.view" id="account_budget_lines_view_tree">
+			<field name="name">account.budget.lines.tree</field>
+			<field name="model">account.budget.lines</field>
+			<field name="inherit_id"
+				ref="account_budget_custom.account_budget_lines_view_tree" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='planned_amount']" position="after">
+					<field name="confirm" readonly="True" sum="Confirmation" />
+				</xpath>
+			</field>
+		</record>
+
+		<act_window id="act_budget_line_confirmation" domain="[('budget_line_id', '=', active_id)]"
+			name="Budget confirmation" res_model="account.budget.confirmation"
+			src_model="account.budget.lines" />
+
+		<!-- budget confirmation -->
+		<record model="ir.ui.view" id="account_budget_confirmation_view_form">
+			<field name="name">account.budget.confirmation.view.form</field>
+			<field name="model">account.budget.confirmation</field>
+			<field name="arch" type="xml">
+				<form string="Budget Confirmation" version="7.0" create="false" delete="false">
+					<header>
+						<button string="Complete" name="complete" states="draft"
+							groups="account_budget_custom.group_budget_user" icon="gtk-apply" />
+						<button string="Check Budget" name="check" states="complete,unvalid"
+							icon="gtk-ok" groups="account_budget_custom.group_budget_user" />
+						<button string="Cancel" name="cancel" states="complete,unvalid"
+							icon="gtk-cancel" groups="account_budget_custom.group_budget_user"
+							confirm="Are you sure, you want to cancel this confirmation?" />
+						<button string="Reset to Draft" name="action_cancel_draft"
+							groups="account_budget_custom.group_budget_user" states="complete,unvalid"
+							type="object" icon="terp-stock_effects-object-colorize" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,valid" />
+					</header>
+					<sheet string="Budget Confirmation">
+						<group col="4">
+							<field name="name" />
+							<field name="reference" />
+							<field name="partner_id"
+								attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')] }" />
+							<field name="period_id"
+								attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')] }" />
+							<field name="date"
+								attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')] }" />
+							<field name="analytic_account_id" groups="analytic.group_analytic_accounting"
+								domain="[('parent_id','!=',False),('type','=','normal')]" attrs="{'required':[('state','=','draft')] }" />
+							<field name="general_account_id" colspan="1" select="1"
+								domain="[('type','!=','view')]"
+								attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')] }" />
+							<field name="amount" readonly="1" />
+							<field name="residual_amount" readonly="True" />
+							<field name="type" readonly="1" />
+						</group>
+						<notebook colspan="4">
+
+							<page string="Note">
+							<group>
+								<field name="budget_residual" readonly="1" />
+							</group>		
+							<field name="note" attrs="{'readonly':[('state','!=','draft')]}"
+									nolabel="1" colspan="3" />
+							</page>
+							<page string="Journal Entries">
+								<field name="line_id" nolabel="1" readonly="True" colspan="3" />
+							</page>
+						</notebook>
+					</sheet>
+                                       <div class="oe_chatter">
+					   <field name="message_follower_ids" widget="mail_followers" />
+					   <field name="message_ids" widget="mail_thread" />
+				  </div>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="account_budget_confirmation_view_tree">
+			<field name="name">account.budget.confirmation.view.tree</field>
+			<field name="model">account.budget.confirmation</field>
+			<field name="arch" type="xml">
+				<tree delete="false" create="false"
+					colors="blue:state in ('draft');gray:state in ('cancel');black:state in ('valid');red:state in ('unvalid');darkgreen:state in ('check','complete')"
+					string="budget confirmation tree">
+					<field name="name" />
+					<field name="reference" />
+					<field name="period_id" attrs="{'readonly':[('state','!=','draft')]}" />
+					<field name="partner_id" attrs="{'readonly':[('state','!=','draft')]}" />
+					<field name="analytic_account_id" groups="analytic.group_analytic_accounting"
+						domain="[('parent_id','!=',False),('type','=','normal')]" />
+					<field name="general_account_id" colspan="1" select="1"
+						attrs="{'readonly':[('state','!=','draft')]}" />
+					<field name="amount" attrs="{'readonly':[('state','!=','draft')]}"
+						sum="Amount" />
+					<field name="residual_amount" readonly="True" sum="Residual" />
+					<field name="state" select="1" />
+					<field name="type" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_account_budget_confirmation_search" model="ir.ui.view">
+			<field name="name">account.budget.confirmation.search</field>
+			<field name="model">account.budget.confirmation</field>
+			<field name="arch" type="xml">
+				<search string="Budget Confirmation">
+					<group col="20" colspan="4">
+						<filter string="Not Canceled" name="not_cancel"
+							domain="[('state','!=','cancel')]" />
+						<separator orientation="vertical" />
+						<field name="analytic_account_id" groups="analytic.group_analytic_accounting"
+							domain="[('parent_id','!=',False),('type','=','normal')]" />
+						<field name="general_account_id" />
+						<field name="reference" />
+						<field name="partner_id" />
+						<field name="period_id" />
+						<field name="date" />
+					</group>
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Account" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'general_account_id'}" />
+						<filter string="Analytic Account" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'analytic_account_id'}" />
+						<filter string="Period" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'period_id'}" />
+						<filter string="Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'type'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="act_account_budget_confirmation_view">
+			<field name="name">Budget Confirmation</field>
+			<field name="res_model">account.budget.confirmation</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="account_budget_confirmation_view_tree" />
+			<field name="search_view_id" ref="view_account_budget_confirmation_search" />
+			<field name="domain">[('state','!=','valid')]</field>
+			<field name="context">{'search_default_not_cancel':True}</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a new budget confirmation.
+				</p>
+				<p>
+					A budget confirmation set aside part of budget amount
+					till the
+					actual expense execute and moves create.
+				</p>
+			</field>
+		</record>
+
+		<menuitem parent="account_budget_custom.budget_menu" name="Budget Confirmation"
+			id="menu_act_account_budget_confirmation_view" sequence="2"
+			action="act_account_budget_confirmation_view" groups="account_budget_custom.group_budget_user" />
+
+		<record model="ir.actions.act_window" id="act_account_budget_confirmation_archive_view">
+			<field name="name">Budget Confirmation Archive</field>
+			<field name="res_model">account.budget.confirmation</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="account_budget_confirmation_view_tree" />
+			<field name="search_view_id" ref="view_account_budget_confirmation_search" />
+			<field name="domain">[('state','=','valid')]</field>
+			<field name="help" type="html">
+				<p>
+					All approved budget confirmations stored as archive here.
+				</p>
+			</field>
+		</record>
+
+		<menuitem parent="account_budget_custom.budget_menu" name="Budget Confirmation Archive"
+			id="menu_act_account_budget_confirmation_archive_view" sequence="2"
+			action="act_account_budget_confirmation_archive_view" groups="account_budget_custom.group_budget_user" />
+	</data>
+</openerp>
+
+

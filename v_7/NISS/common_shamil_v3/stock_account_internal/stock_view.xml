@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	<!-- 
+	Location
+    -->
+	<record id="view_location_form_inherit" model="ir.ui.view">
+           <field name="name">stock.location.form.inherit</field>
+           <field name="model">stock.location</field>
+           <field name="type">form</field>
+           <field name="inherit_id" ref="stock.view_location_form"/>
+           <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <label for="code" class="oe_edit_only"/>
+                    <h1><field name="code"/></h1>
+ 
+                </field>
+
+				<xpath expr="//group[@string='Accounting Information']"
+					position="replace">
+		    <group string="Accounting Information" >		
+		         <field name="valuation_account_id" 
+				attrs="{'readonly':[('usage','not in',['internal','inventory','production','transit','supplier'])]}" />
+                   </group>  
+				</xpath>
+
+         
+           </field>
+        </record>
+
+	<!-- 
+	Picking
+    -->
+	<record id="stock_picking_inherit_out" model="ir.ui.view">
+            <field name="name">Picking Out list</field>
+            <field name="model">stock.picking.out</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_out_form"/>
+            <field name="arch" type="xml">
+                <field name="date_done" position="after">
+                     <field name="account_move_id"   />
+                </field>
+                <field name="type" position="after">
+                     <field name="analytic_account_id" groups="analytic.group_analytic_accounting" readonly="1"/>
+                     <field name="account_id" groups="analytic.group_analytic_accounting" readonly="1" />
+                </field>
+                <field name="date" position="after">
+                     <field name="department_id" readonly="1" />
+                </field>
+
+            </field>
+        </record>
+
+	<record id="stock_picking_inherit_internal" model="ir.ui.view">
+            <field name="name">Picking Internal list</field>
+            <field name="model">stock.picking</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <field name="type" position="after">
+                     <field name="analytic_account_id" groups="analytic.group_analytic_accounting"  readonly="1" />
+                     <field name="account_id" groups="analytic.group_analytic_accounting" readonly="1" />
+                </field>
+                <field name="date_done" position="after">
+                     <field name="account_move_id"   />
+                </field>
+            </field>
+        </record>
+
+	<record id="stock_picking_inherit_in" model="ir.ui.view">
+            <field name="name">Picking list</field>
+            <field name="model">stock.picking.in</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_in_form"/>
+            <field name="arch" type="xml">
+                <field name="date_done" position="after">
+                     <field name="account_move_id"   />
+                </field>
+                <field name="type" position="after">
+                	<field name="analytic_account_id" groups="analytic.group_analytic_accounting" readonly="1"/>
+                        <field name="account_id" groups="analytic.group_analytic_accounting" readonly="1"/>
+                </field>
+
+            </field>
+        </record>
+
+    <!-- 
+	Stock Moves
+    -->
+	<record id="stock.ir_open_partial_move_wizard" model="ir.values">
+            <field eval="" name="key2"/>
+            <field eval="'stock.move'" name="model"/>
+            <field name="name">Deliver/Receive Products</field>
+            <!--field eval="'ir.actions.server,%d'%stock.action_partial_move_server" name="value"/-->
+            <field eval="False" name="object"/>
+     </record>
+	
+ 	   <record id="view_move_tree" model="ir.ui.view">
+            <field name="name">stock.move.tree</field>
+            <field name="model">stock.move</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="stock.view_move_tree"/>
+            <field eval="6" name="priority"/>
+            <field name="arch" type="xml">
+				<xpath expr="//button[@name='action_done']" position="replace"/>
+            </field>
+        </record>
+
+       <record id="view_move_form" model="ir.ui.view">
+            <field name="name">stock.move.form</field>
+            <field name="model">stock.move</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_move_form"/>
+            <field eval="4" name="priority"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_confirm']" position="replace"/>
+                <xpath expr="//button[@name='action_done']" position="replace"/>
+            </field>
+        </record>
+        <record id="view_move_tree_reception_picking" model="ir.ui.view">
+            <field name="name">stock.move.tree2</field>
+            <field name="model">stock.move</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="stock.view_move_tree_reception_picking"/>
+            <field name="priority" eval="6" />
+            <field name="arch" type="xml">
+                 <xpath expr="//button[@name='action_done']" position="replace"/>
+            </field>
+        </record >
+     
+
+    <!-- 
+	Product
+    -->
+        <record id="view_product_standard_price_form" model="ir.ui.view">
+            <field name="name">product.product.standard.price.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="stock.view_product_standard_price_form"/>
+            <field name="arch" type="xml">
+            	<button name="%(stock.action_view_change_standard_price)d" position="replace">
+           		<button name="%(stock.action_view_change_standard_price)d" string="Update" type="action" icon="gtk-execute" 
+                  	attrs="{'invisible':['|',('cost_method','&lt;&gt;','average'),('valuation','&lt;&gt;','manual_periodic')]}" />
+            	</button>
+            </field>
+       </record> 
+
+	<!-- 
+	Company
+         -->
+	<record id="mrp_company" model="ir.ui.view">
+           <field name="name">res.company.mrp.config</field>
+           <field name="model">res.company</field>
+           <field name="type">form</field>
+           <field name="inherit_id" ref="base.view_company_form"/>
+           <field name="arch" type="xml">
+                <page string="Configuration" position="inside">
+                    <field name="stock_journal"/>
+                </page>
+           </field>
+        </record>
+ </data>
+</openerp>

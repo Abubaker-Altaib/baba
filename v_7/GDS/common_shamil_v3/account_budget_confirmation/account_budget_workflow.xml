@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+<openerp>
+	<data>
+		<!-- account.budget.confirmation Workflow -->
+		<record model="workflow" id="wkf_account_budget_confirmation">
+			<field name="name">wkf.account.budget.confirmation</field>
+			<field name="osv">account.budget.confirmation</field>
+			<field name="on_create">True</field>
+		</record>
+
+		<!-- Activities -->
+		<record model="workflow.activity" id="act_draft">
+			<field name="wkf_id" ref="wkf_account_budget_confirmation" />
+			<field name="flow_start">True</field>
+			<field name="name">draft</field>
+			<field name="kind">dummy</field>
+			<field name="action"></field>
+		</record>
+
+		<record model="workflow.activity" id="act_complete">
+			<field name="wkf_id" ref="wkf_account_budget_confirmation" />
+			<field name="name">complete</field>
+			<field name="kind">function</field>
+			<field name="action">budget_complete()</field>
+		</record>
+
+		<record model="workflow.activity" id="act_valid">
+			<field name="wkf_id" ref="wkf_account_budget_confirmation" />
+			<field name="name">valid</field>
+			<field name="kind">function</field>
+			<field name="action">budget_valid()</field>
+			<field name="signal_send">subflow.valid</field>
+		</record>
+
+		<record model="workflow.activity" id="act_unvalid">
+			<field name="wkf_id" ref="wkf_account_budget_confirmation" />
+			<field name="name">unvalid</field>
+			<field name="kind">function</field>
+			<field name="action">budget_unvalid()</field>
+			<field name="signal_send">subflow.unvalid</field>
+		</record>
+
+		<record model="workflow.activity" id="act_cancel">
+			<field name="wkf_id" ref="wkf_account_budget_confirmation" />
+			<field name="name">cancel</field>
+			<field name="kind">function</field>
+			<field name="action">budget_cancel()</field>
+			<field name="signal_send">subflow.cancel</field>
+		</record>
+
+		<!-- Transitions -->
+		<record model="workflow.transition" id="t1">
+			<field name="act_from" ref="act_draft" />
+			<field name="act_to" ref="act_complete" />
+			<field name="signal">complete</field>
+		</record>
+
+		<record model="workflow.transition" id="t4">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_unvalid" />
+			<field name="signal">check</field>
+			<field name="condition">not check_budget()</field>
+		</record>
+
+		<record model="workflow.transition" id="t5">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_valid" />
+			<field name="signal">check</field>
+			<field name="condition">check_budget()</field>
+		</record>
+
+		<record model="workflow.transition" id="t6">
+			<field name="act_from" ref="act_unvalid" />
+			<field name="act_to" ref="act_valid" />
+			<field name="signal">check</field>
+			<field name="condition">check_budget()</field>
+		</record>
+
+		<record model="workflow.transition" id="t7">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_cancel" />
+			<field name="signal">cancel</field>
+		</record>
+
+		<record model="workflow.transition" id="t8">
+			<field name="act_from" ref="act_valid" />
+			<field name="act_to" ref="act_cancel" />
+			<field name="signal">cancel</field>
+		</record>
+
+		<record model="workflow.transition" id="t9">
+			<field name="act_from" ref="act_unvalid" />
+			<field name="act_to" ref="act_cancel" />
+			<field name="signal">cancel</field>
+		</record>
+	</data>
+</openerp>

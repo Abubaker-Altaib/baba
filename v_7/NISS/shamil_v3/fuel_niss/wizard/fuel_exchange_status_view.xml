@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="fuel_exchange_status_wizard_form" model="ir.ui.view">
+            <field name="name">Fuel Exchange Status wizard</field>
+            <field name="model">fuel_exchange_status_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Fuel Exchange Status wizard" version="7.0">
+                    <group>
+                        <group>
+                            <field name="date" colspan="2" required="1"/>
+                        </group>
+                        <group>
+                            <field name="fuel_exchange_status" colspan="2" required="1"/>
+                            <field name="fuel_stop_reason_id" colspan="2"  attrs="{'invisible':[('fuel_exchange_status','!=','stop')] , 'required':[('fuel_exchange_status','=','stop')]}"/>
+                        </group>
+
+                        <group>
+                            <field name="details"/>
+                        </group>
+                    </group>
+                    <group>
+                            <field name="vehicles_ids" colspan="2" required="1"/>
+                    </group>
+                    
+                    <footer>
+                        <button name="process" string="Process" type="object" default_focus="1" class="oe_highlight"/>                                or                                                                        
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_fuel_exchange_status_wizard" model="ir.actions.act_window">
+            <field name="name">Fuel Exchange Status wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fuel_exchange_status_wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fuel_exchange_status_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem name="Fuel Exchange Status wizard" parent="fuel_management.fuel_management_menu" action="action_fuel_exchange_status_wizard" id="menu_fuel_exchange_status_wizard" />
+    </data>
+</openerp>

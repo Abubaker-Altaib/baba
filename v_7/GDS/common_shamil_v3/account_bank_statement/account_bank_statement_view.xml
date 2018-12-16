@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Cash Register -->
+		<record id="view_bank_statement_form2_custom" model="ir.ui.view">
+			<field name="name">account.bank.statement.form</field>
+			<field name="model">account.bank.statement</field>
+			<field name="inherit_id" ref="account.view_bank_statement_form2" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='button_cancel']" position="replace">
+                                    <button name="button_cancel" states="confirm,open" string="Cancel CashBox" type="object" confirm="Are you sure you want to cancel this register.this operation will reverse it is transaction ?"/>
+				</xpath>                              
+				<xpath expr="//field[@name='journal_id']" position="attributes">
+					<attribute name="domain">
+						[('type', '=', 'cash')]
+					</attribute>
+					<attribute name="on_change">
+						onchange_journal_id(journal_id,date)
+					</attribute>
+				</xpath>
+				<!--xpath expr="//page[@string='Journal Entries']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath-->
+				<field name="period_id" position="replace">
+					<field name="journal_balance" string="Box Balance" />
+				</field>
+				<xpath expr="//field[@name='date']" position="attributes">
+					<attribute name="on_change">
+						onchange_date(date,journal_id,company_id)
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='last_closing_balance']" position="replace">
+					<field name="balance_end_real" readonly="True" />
+				</xpath>
+				<xpath expr="//field[@name='closing_details_ids']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','=','confirm')],'invisible' : [('state', '=', 'draft')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_ids']" position="replace">
+					<field colspan="4" name="line_ids" nolabel="1" context="{'date':date}" >
+						<tree editable="bottom" string="Statement lines">
+							<field name="sequence" invisible="1" />
+							<field name="name" />
+							<field name="ref" />
+							<field name="partner_id" />
+							<field name="account_id"  required="1"   
+ 							domain ="[('type', 'in', ('other','payable','receivable'))]"
+							on_change="onchange_account_id(parent.journal_id)" 	
+                                                         />
+							<field name="balance" />
+							<field name="amount" />
+						</tree>
+                                                <form>
+							<group col="4">
+								<field name="name" />
+								<field name="ref" />
+								<field name="amount" />
+								<field name="sequence" />
+								<separator colspan="4" string="Notes" />
+								<field colspan="4" name="note" nolabel="1" />
+							</group>
+						</form>
+					</field>
+				</xpath>
+			</field>
+		</record>
+
+		<!-- Bank Reconciliation -->
+		<record id="view_bank_statement_form_custom" model="ir.ui.view">
+			<field name="name">account.bank.statement.form</field>
+			<field name="model">account.bank.statement</field>
+			<field name="inherit_id" ref="account.view_bank_statement_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='name']" position="attributes">
+					<attribute name="readonly">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='period_id']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='date']" position="replace">
+					<field name="date" select="1"
+						on_change="onchange_date(date,journal_id,company_id)" />
+					<field name="account_id" invisible="1" />
+				</xpath>
+				<xpath expr="//field[@name='journal_id']" position="replace">
+					<field name="journal_id" domain="[('type', '=', 'bank')]"
+						on_change="onchange_journal_id(journal_id,date)" widget="selection" />
+				</xpath>
+				<!-- TOCHECK: monetary widget with currency option convert between currencies?? -->
+				<xpath expr="//field[@name='balance_start']" position="replace">
+					<field name="balance_start" string="Last Bank Balance"
+						widget="monetary" options='{"currency_field" : "currency"}' />
+					<field name="opening_balance" widget="monetary"
+						options='{"currency_field" : "currency"}' />
+					<field name="journal_balance" widget="monetary"
+						options='{"currency_field" : "currency"}' />
+				</xpath>
+				<xpath expr="//field[@name='balance_end_real']" position="replace">
+					<field name="balance_end_real" string="Current Bank Balance" />
+					<field name="balance_end" string="System Calculated Balance"
+						widget="monetary" options='{"currency_field" : "currency"}' />
+				</xpath>
+				<page name="statement_line_ids" position="before">
+					<page string="Reconciled Moves">
+						<field colspan="4" name="move_line_ids" nolabel="1" widget="many2many"
+							domain="[('account_id','=',account_id),('statement_id', '=', False),('move_id.state','in',('posted','reversed')),('date','&lt;=',date)]">
+							<tree string="Reconciled Moves">
+								<field name="move_id" />
+								<field name="date" />
+								<field name="period_id" />
+								<field name="name" />
+								<field name="account_id" />
+								<field name="partner_id" />
+								<field name="debit" sum="Debit" />
+								<field name="credit" sum="Credit" />
+								<field name="amount_currency" />
+								<field name="currency_id" />
+							</tree>
+						</field>
+					</page>
+					<page string="Non-Bank Moves">
+						<field colspan="4" name="non_bank_moves" nolabel="1" widget="many2many">
+							<tree string="Statement b">
+								<field name="move_id" />
+								<field name="date" />
+								<field name="period_id" />
+								<field name="ref" />
+								<field name="name" />
+								<field name="account_id" />
+								<field name="partner_id" />
+								<field name="debit" sum="Debit" />
+								<field name="credit" sum="Credit" />
+								<field name="amount_currency" />
+								<field name="currency_id" />
+							</tree>
+						</field>
+					</page>
+				</page>
+				<page name="statement_line_ids" position="after">
+					<page string="Note">
+						<field name="note" nolabel="1" />
+					</page>
+				</page>
+			</field>
+		</record>
+	</data>
+</openerp>
+

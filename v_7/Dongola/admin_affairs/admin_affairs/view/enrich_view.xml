@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<!-- Enrich Record Form,Tree View & Action -->
+		<record id="view_payment_enrich_view_form" model="ir.ui.view">
+			<field name="name">payment.enrich.form</field>
+			<field name="model">payment.enrich</field>
+			<field name="arch" type="xml">
+				<form string="Enrich Payment" version="7.0">
+					<header>
+						<!--button icon="terp-gtk-go-back-rtl" name="Requested" states="draft" string="Request" type="object" groups="admin_affairs.group_section_manager"/><button icon="terp-gtk-go-back-rtl" name="Admin_affairs_manager_confirmed" states="Requested" string="Confirm" type="object" groups="admin_affairs.group_admin_affair_manager" /><button icon="terp-gtk-go-back-rtl" name="done" states="Admin_affairs_manager_confirmed" string="Close" type="object" groups="admin_affairs.group_service_officer"/><button name="cancel" states="Requested" string="Cancel Request" type="object" icon="gtk-cancel" groups="admin_affairs.group_admin_affair_manager"/><button name="cancel" states="Admin_affairs_manager_confirmed" string="Cancel Request" type="object" icon="gtk-cancel" groups="account.group_account_manager" /><button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" /><button name="modify_enrich" string="Modify" attrs="{'invisible':['|',('expenditure_voucher_id','!=',False),('state','!=','done')] }" type="object" icon="gtk-convert" /><button name="transfer" string="Transfer" attrs="{'invisible':['|',('expenditure_voucher_id','!=',False),('state','!=','done')] }" type="object" /-->
+						<button name="transfer" string="Transfer" attrs="{'invisible':['|',('expenditure_voucher_id','!=',False),('state','!=','done')] }" type="object" groups="admin_affairs.group_admin_affair_manager" />
+						<button name="modify_enrich" string="Modify" attrs="{'invisible':['|',('expenditure_voucher_id','!=',False),('state','!=','done')] }" type="object" icon="gtk-convert" groups="admin_affairs.group_admin_affair_manager" />
+						<button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" />
+						<button name="cancel" states="Requested" string="Cancel Request" type="object" icon="gtk-cancel" groups="admin_affairs.group_admin_affair_manager"/>
+						<button name="confirm_so" states="draft" groups="admin_affairs.group_service_officer" string="Service Officer" type="object" icon="gtk-convert" />
+						<button name="confirm_ss" states="confirm_so" groups="service.group_service_section_manager" string="Service Section Manager" type="object" icon="gtk-convert" />
+						<button name="Admin_affairs_manager_confirmed" states="confirm_ss" string="Admin Affair Manager" type="object" icon="gtk-convert" groups="admin_affairs.group_admin_affair_manager" />
+
+						<button name="confirm_hf" states="Admin_affairs_manager_confirmed" string="HR and Financial Manager" type="object" icon="gtk-convert" context="{'renew':renew}" groups="base_custom.group_general_hr_manager" class="oe_left"/>
+
+						<button name="cancel" states="Admin_affairs_manager_confirmed" string="Cancel Request" type="object" icon="gtk-cancel" groups="base_custom.group_general_hr_manager" class="oe_left"/>
+
+						<button name="done" states="confirm_hf" string="Done" type="object" icon="gtk-convert" groups="base_custom.group_account_general_manager"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,closed" statusbar_colors='{"Admin_affairs_manager_confirmed":"red","confirm_hf":"blue","done":"red"}' />
+					</header>
+					<sheet>
+						<h1>
+							<field name="name" class="oe_inline" attrs="{'invisible': [('name','=','/')]}" readonly="1"/>
+						</h1>
+						<group>
+							<group>
+								<field name="desc" required="1"/>
+								<field name="enrich_category" attrs="{'required':[('state','=','draft')] }" domain="[('company_id', '=', company_id), ('type', '=', 'enrich')]" context="{'form_view_ref': 'enrich_category_view_form', 'default_type':'enrich'}"/>
+								<field name="department_id" attrs="{'readonly':[('state','!=','draft')] }" />
+							</group>
+							<group>
+								<field name="date" attrs="{'readonly':[('state','!=','draft')] }" />
+								<field name="approved_date" readonly="1" />
+								<label for="month" string="Period"/>
+								<div>
+									<field name="month" required="1" attrs="{'readonly':[('state','!=','draft')] }" class="oe_inline" />
+									<field name="year" required="1" attrs="{'readonly':[('state','!=','draft')] }" class="oe_inline"/>
+								</div>
+								<field name="user_id" />
+								<field name="company_id" groups="base.group_multi_company"/>
+								<field name="renew" attrs="{'readonly':[('state','!=','draft')] }" />
+								<field name="renew_enrich_id" class="oe_inline" domain="[('type','=','enrich'),('state','=','done')]" attrs="{ 'invisible':[('renew', '=', False)]}" context="{'form_view_ref': 'admin_affairs.view_payment_enrich_view_form', 'default_type':'enrich'}" widget="selection" on_change="on_change_renew(renew_enrich_id)"/>
+							</group>
+						</group>
+						<group>
+							<group string="Amount">
+								<field name="amount" required="1" attrs="{'readonly':[('state','=','done')] }" />
+								<field name="paid_amount" />
+								<field name="residual_amount" />
+							</group>
+							<group string="Accounting Documents">
+								<field name="expenditure_voucher_id" readonly="1" />
+								<field name="voucher_id" readonly="1"/>
+							</group>
+						</group>
+						<group string="Details">
+							<field colspan="4" name="enrich_lines" nolabel="1">
+								<tree editable="top" string="">
+									<field name="name" />
+									<field name="department_id" />
+									<field name="date" />
+									<field name="cost" />
+									<field name="state" />
+									<field name="owner_id" invisible="1"/>
+									<field name="model_id" invisible="1"/>
+									<button icon="terp-gtk-go-back-rtl" context="{'owner':owner_id,'model_id':model_id}" name="done" states="draft" string="Process" type="object" confirm="Are you sure you want to Confirm this request?" />
+									<button icon="gtk-cancel" name="cancel" context="{'owner':owner_id,'model_id':model_id}" states="draft" string="Cancel" type="object" confirm="Are you sure you want to Cancel this request?" />
+									<button name="delay" states="draft" context="{'owner':owner_id,'model_id':model_id}" string="Delay" type="object" confirm="set this request to be delaied?"/>
+									<button icon="terp-gtk-go-back-rtl" context="{'owner':owner_id,'model_id':model_id}" name="ir_action_cancel_draft" states="cancel,delaied" string="Reset" type="object" confirm="set this request to draft?"/>
+									<button name="%(enrich_receive_notification)d" groups="admin_affairs.group_enrich_report" colspan="2" string="Print Receive Notification" states="done" type="action" icon="gtk-print" />
+								</tree>
+							</field>
+						</group>
+						<field name="notes" colspan="4" nolabel="1" />
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id="view_payment_enrich_tree" model="ir.ui.view">
+			<field name="name">payment.enrich.tree</field>
+			<field name="model">payment.enrich</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree colors="blue:state in ('draft');gray:state in ('done','cancel'))" string="Enrich Payment">
+					<field name="name" colspan="2" />
+					<field name="date" colspan="2" />
+					<field name="desc" colspan="2" />
+					<field name="enrich_category" colspan="2" />
+					<field name="department_id" colspan="2" attrs="{'readonly':[('state','!=','draft')] }" />
+					<field name="month" colspan="2" />
+					<field name="year" colspan="2" />
+					<field name="company_id" colspan="2" groups="base.group_multi_company"/>
+					<field name="state" colspan="2" />
+				</tree>
+			</field>
+		</record>
+		<!-- service request Search Filter -->
+		<record id="view_payment_enrich_filter" model="ir.ui.view">
+			<field name="name">payment.enrich.list.select</field>
+			<field name="model">payment.enrich</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search for Payment Enrich Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="month" colspan="1" />
+					<separator orientation="vertical" />
+					<field name="year" colspan="1" />
+					<separator orientation="vertical" />
+					<field name="desc" colspan="1" />
+					<separator orientation="vertical" />
+					<field name="enrich_category" colspan="1" />
+					<separator orientation="vertical" />
+					<field name="department_id" colspan="1" />
+					<separator orientation="vertical" />
+					<field name="state" select="1" />
+					<separator orientation="vertical" />
+					<field name="company_id" colspan="1" groups="base.group_multi_company"/>
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Enrich" icon="terp-personal" domain="[]" context="{'group_by':'enrich_category'}" />
+						<filter string="Month" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'month'}" />
+						<filter string="Year" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'year'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+		<!-- Enrich Payment Lines -->
+		<!-- enrich category Record Form,Tree View & Action -->
+		<record id="enrich_category_view_form" model="ir.ui.view">
+			<field name="name">enrich.category.form</field>
+			<field name="model">enrich.category</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="enrich category" version="7.0">
+					<sheet>
+						<group col="4" colspan="2">
+							<field name="name" colspan="1" required="1" />
+							<field name="company_id" select="1" groups="base.group_multi_company"/>
+							<field name="renew" />
+							<field name="type" invisible="1" />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id="enrich_category_view_tree" model="ir.ui.view">
+			<field name="name">enrich.category.tree</field>
+			<field name="model">enrich.category</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="enrich category">
+					<field name="name" />
+					<field name="company_id" groups="base.group_multi_company"/>
+					<field name="renew" />
+				</tree>
+			</field>
+		</record>
+		<!-- enrich category Search Filter -->
+		<record id="enrich_category_filter" model="ir.ui.view">
+			<field name="name">enrich.category.list.select</field>
+			<field name="model">enrich.category</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="enrich category">
+					<field name="name" select="1" />
+					<field name="company_id" select="1" groups="base.group_multi_company"/>
+				</search>
+			</field>
+		</record>
+		<!-- solidarity box category Record Form,Tree View & Action -->
+		<record id="solidarity_box_category_view_form" model="ir.ui.view">
+			<field name="name">solidarity.box.category.form</field>
+			<field name="model">enrich.category</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="solidarity box category" version="7.0">
+					<sheet>
+						<group col="4" colspan="2">
+							<field name="name" colspan="1" required="1" />
+							<field name="company_id" select="1" groups="base.group_multi_company"/>
+							<field name="amount" colspan="1" required="1" />
+							<field name="operation_type" colspan="1" required="1" />
+							<field name="times" colspan="1" required="1" />
+							<field name="type" invisible="1" />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id="solidarity_box_category_view_tree" model="ir.ui.view">
+			<field name="name">solidarity.box.category.tree</field>
+			<field name="model">enrich.category</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="solidarity box category">
+					<field name="name" />
+					<field name="company_id" groups="base.group_multi_company"/>
+					<field name="amount" />
+					<field name="operation_type" />
+					<field name="times" />
+				</tree>
+			</field>
+		</record>
+		<!-- solidarity box category Search Filter -->
+		<record id="enrich_category_filter" model="ir.ui.view">
+			<field name="name">solidarity.box.category.list.select</field>
+			<field name="model">enrich.category</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="solidarity box category">
+					<field name="name" select="1" />
+					<field name="company_id" select="1" groups="base.group_multi_company"/>
+				</search>
+			</field>
+		</record>
+		<!-- solidarity special category Record Form,Tree View & Action -->
+		<record id="sol_special_category_view_form" model="ir.ui.view">
+			<field name="name">sol_special.category.form</field>
+			<field name="model">enrich.category</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="sol_special category" version="7.0">
+					<sheet>
+						<group col="4" colspan="2">
+							<field name="name" colspan="1" required="1" />
+							<field name="company_id" select="1" groups="base.group_multi_company"/>
+							<field name="amount" string="Starting Amount" colspan="1" required="1" />
+							<field name="current_amount" colspan="1" readonly="1" />
+							<field name="deposit_amount" colspan="1" readonly="1" />
+							<field name="withdraw_amount" colspan="1" readonly="1" />
+							<field name="type" invisible="1" />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id="sol_special_category_view_tree" model="ir.ui.view">
+			<field name="name">sol_special.category.tree</field>
+			<field name="model">enrich.category</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="sol_special category">
+					<field name="name" />
+					<field name="company_id" groups="base.group_multi_company"/>
+					<field name="amount" />
+					<field name="current_amount" />
+					<field name="deposit_amount" />
+					<field name="withdraw_amount" />
+				</tree>
+			</field>
+		</record>
+		<!-- solidarity box request Record Form,Tree View & Action -->
+		<record id="solidarity_request_view_form" model="ir.ui.view">
+			<field name="name">solidarity.request.form</field>
+			<field name="model">payment.enrich</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="solidarity box request" version="7.0">
+					<header>
+						<button name="request" states="draft" groups="admin_affairs.group_service_officer" string="Request" type="object" icon="gtk-convert" />
+						<button name="social_of" states="request" groups="admin_affairs.group_social_officer" string="Confirm" type="object" icon="gtk-convert" />
+						<button name="social_mg" states="social_of" string="approve" type="object" icon="gtk-convert" groups="admin_affairs.group_social_manager" />
+						<button name="done_solidarity" states="social_mg" string="Done" type="object" icon="gtk-convert" groups="admin_affairs.group_social_finicial_manager"/>
+						<button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" />
+						<button name="cancel" states="request" groups="admin_affairs.group_social_officer" string="Cancel Request" type="object" icon="gtk-convert" />
+						<button name="cancel" states="social_of" string="Cancel Request" type="object" icon="gtk-convert" groups="admin_affairs.group_social_manager" />
+						<button name="cancel" states="social_mg" string="Cancel Request" type="object" icon="gtk-convert" groups="admin_affairs.group_social_finicial_manager"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"request":"red","social_of":"blue","done":"red"}' />
+					</header>
+					<sheet>
+						<group col="4" colspan="2">
+							<field name="enrich_category" string="Category" colspan="1" required="1" domain="[('type','=','solidarity')]" widget="selection" attrs="{'readonly':[('state', '!=', 'draft')]}" on_change="on_category_change(enrich_category)" />
+							<field name="company_id" select="1" groups="base.group_multi_company" attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+							<field name="date" colspan="1" attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+							<field name="employee_id" colspan="1" required="1" attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+							<field name="amount" colspan="1" readonly="1" />
+							<field name="type" invisible="1" attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id="solidarity_request_view_tree" model="ir.ui.view">
+			<field name="name">solidarity.request.tree</field>
+			<field name="model">payment.enrich</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="solidarity box request">
+					<field name="employee_id"/>
+					<field name="enrich_category" string="Category" />
+					<field name="company_id"/>
+					<field name="date"/>
+					<field name="amount" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+		<!-- Enrich Action -->
+		<record id="payment_enrich_action" model="ir.actions.act_window">
+			<field name="name">Enrich</field>
+			<field name="res_model">payment.enrich</field>
+			<field name="domain">[('type','=','enrich')]</field>
+			<field name="context">{'default_type':'enrich','action':'admin_affairs.enrich_payment_menu'}</field>
+		</record>
+		<record model="ir.actions.act_window.view" id="payment_enrich_action_tree">
+			<field eval="1" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="view_payment_enrich_tree"/>
+			<field name="act_window_id" ref="payment_enrich_action"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="payment_enrich_action_form">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_payment_enrich_view_form"/>
+			<field name="act_window_id" ref="payment_enrich_action"/>
+		</record>
+		<!-- Solidarity Box Action -->
+		<record id="solidarity_box_action" model="ir.actions.act_window">
+			<field name="name">Solidarity Box</field>
+			<field name="res_model">payment.enrich</field>
+			<field name="domain">[('type','=','solidarity')]</field>
+			<field name="context">{'default_type':'solidarity','action':'admin_affairs.solidarity_box_menu'}</field>
+		</record>
+		<record model="ir.actions.act_window.view" id="solidarity_box_action_tree">
+			<field eval="1" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="solidarity_request_view_tree"/>
+			<field name="act_window_id" ref="solidarity_box_action"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="solidarity_box_action_form">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="solidarity_request_view_form"/>
+			<field name="act_window_id" ref="solidarity_box_action"/>
+		</record>
+		<!-- Enrich Category Action -->
+		<record id="enrich_category_action" model="ir.actions.act_window">
+			<field name="name">Enrich Category</field>
+			<field name="res_model">enrich.category</field>
+			<field name="domain">[('type','=','enrich')]</field>
+			<field name="context">{'default_type':'enrich'}</field>
+		</record>
+		<record model="ir.actions.act_window.view" id="enrich_category_action_tree">
+			<field eval="1" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="enrich_category_view_tree"/>
+			<field name="act_window_id" ref="enrich_category_action"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="enrich_category_action_form">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="enrich_category_view_form"/>
+			<field name="act_window_id" ref="enrich_category_action"/>
+		</record>
+		<!-- Solidarity Box Category Action -->
+		<record id="solidarity_box_category_action" model="ir.actions.act_window">
+			<field name="name">Solidarity Box Category</field>
+			<field name="res_model">enrich.category</field>
+			<field name="domain">[('type','=','solidarity')]</field>
+			<field name="context">{'default_type':'solidarity'}</field>
+		</record>
+		<record model="ir.actions.act_window.view" id="solidarity_box_category_action_tree">
+			<field eval="1" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="solidarity_box_category_view_tree"/>
+			<field name="act_window_id" ref="solidarity_box_category_action"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="solidarity_box_category_action_form">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="solidarity_box_category_view_form"/>
+			<field name="act_window_id" ref="solidarity_box_category_action"/>
+		</record>
+		<!-- Solidarity special Category Action(configuration) -->
+		<record id="sol_special_category_action" model="ir.actions.act_window">
+			<field name="name">Solidarity Box Configuration</field>
+			<field name="res_model">enrich.category</field>
+			<field name="domain">[('type','=','sol_special')]</field>
+			<field name="context">{'default_type':'sol_special'}</field>
+		</record>
+		<record model="ir.actions.act_window.view" id="sol_special_category_action_tree">
+			<field eval="1" name="sequence"/>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="sol_special_category_view_tree"/>
+			<field name="act_window_id" ref="sol_special_category_action"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="sol_special_category_action_form">
+			<field eval="2" name="sequence"/>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="sol_special_category_view_form"/>
+			<field name="act_window_id" ref="sol_special_category_action"/>
+		</record>
+		<!-- Enrich Action -->
+		<menuitem id="enrich_main_menu" name="Enrich Management" parent="admin_affairs.menu_administrative_affairs_root" sequence="3" />
+		<menuitem id="enrich_payment_menu" name="Enrich" parent="enrich_main_menu" action="payment_enrich_action" sequence="1" />
+		<menuitem id="enrich_category" name="Enrich Category" parent="enrich_main_menu" action="enrich_category_action" sequence="2" groups="group_admin_affairs_it"/>
+		<!-- Solidarity Box Action -->
+		<menuitem id="solidarity_box_main_menu" name="Solidarity Box Management" parent="admin_affairs.menu_administrative_affairs_root" sequence="4"/>
+		<menuitem id="solidarity_box_menu" name="Solidarity Box Request" parent="solidarity_box_main_menu" action="solidarity_box_action" sequence="1" />
+		<menuitem id="solidarity_box_category" name="Solidarity Box Category" parent="solidarity_box_main_menu" action="solidarity_box_category_action" sequence="2" groups="group_box_officer"/>
+		<!-- Solidarity Box Configuration Action -->
+		<menuitem id="sol_special_category" name="Solidarity Box Configuration" parent="admin_affairs_configuration_menu" action="sol_special_category_action" />
+	</data>
+</openerp>

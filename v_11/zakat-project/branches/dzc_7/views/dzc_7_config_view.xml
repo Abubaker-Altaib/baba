@@ -1,0 +1,126 @@
+<odoo>
+    <data>
+
+<record id="maytr_view_tree" model="ir.ui.view">
+      <field name="name"> Maytr Tree</field>
+      <field name="model">dzc_7.maytr</field>
+      <field name="arch" type="xml">
+        <tree>
+         <field name="partner_id"/>
+          <field name="type"/>
+          <field name="date_of_death"/>
+          <field name="no_families"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Form view for maytr_view model -->
+    <record id="‫‪maytr_view_form" model="ir.ui.view">
+      <field name="name">Maytr Form</field>
+      <field name="model">dzc_7.maytr</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group col="4" colspan="2" string="Martyr Information">
+          <field name="partner_id"  context="{'form_view_ref': 'zakat_base.zakat_res_partner_form_view', 'default_zakat_partner': 1}" required="1" domain="[('zakat_partner' , '=' , True )]"/>
+          <field name="type" required="1"/>
+          
+          <field name="no_families" />
+
+          <field name="date_of_death" attrs="{'invisible':[('type' , '!=' , 'maytr')], 'required':[('type' , '=','maytr')]}"/>
+
+          <field name="company_id" readonly="1" required="1"/>
+        
+         
+            </group>
+
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!--  maytr_view search view-->
+
+  <record id="maytr_view_search" model="ir.ui.view">
+   <field name="name">maytr.view.search</field>
+   <field name="model">dzc_7.maytr</field>
+   <field name="arch" type="xml">
+
+     <search string="Search Opportunities">
+       <field name="name"/>
+       <field name='national_number'/>
+
+       <group expand="0" string="Group By">
+          <filter string="Type" context="{'group_by': 'type'}"/>
+          <filter string="State" context="{'group_by': 'state_id'}"/>
+        </group>
+     </search>
+
+   </field>
+ </record>
+
+
+
+ <!-- Fe Sabeel Allah Menu -->
+       <menuitem id="dzc7_menu"
+        name="Fe Sabeel Allah Channel"
+          sequence="2"/>
+
+         
+ <record id="dzc_7_main_action" model="ir.actions.act_window">
+            <field name="name">Maytr</field>
+            <field name="res_model">dzc_7.maytr</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+
+        <menuitem id="dzc7_martyr"
+        name="Maytr"
+        parent="dzc7_submenu"
+        action="dzc_7_main_action"/>
+ 
+
+ <menuitem id="dzc7_submenu"
+        name="Configuration"
+        parent="dzc7_menu"
+        sequence="3"
+        />
+
+
+
+ <!-- Organizations -->
+    <record id="fs_org_view_tree" model="ir.ui.view">
+    <field name="name"> Organizations Tree</field>
+    <field name="model">dzc2.organizations</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="channel_type"/>
+      </tree>
+    </field>
+  </record>
+  
+
+<!-- Fesabeel organization action -->
+<record id="fs_organization_action" model="ir.actions.act_window">
+  <field name="name">Organizations</field>
+  <field name="res_model">dzc2.organizations</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+  <field name="domain">[('channel_type' , '=' , 'fe_sabeel')]</field>
+  <field name="context">{'default_channel_type': 'fe_sabeel','default_activity':'dawee'}</field>
+</record>
+
+<!-- fesabeel organization menu -->
+<menuitem name="Organizations"
+  id="fesabeel_organization_menu"
+  parent="dzc7_submenu"
+  action="fs_organization_action"
+  sequence="4"/>
+  
+
+
+    </data>
+</odoo>

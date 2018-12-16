@@ -1,0 +1,354 @@
+<odoo>
+    <data>
+
+
+        <!-- Form view for dzc_8 model -->
+        <record id="iban_alsabil_view_form" model="ir.ui.view">
+            <field name="name">Iban Alsabil Form</field>
+            <field name="model">zakat.dzc8</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="approve_order" string="Approve"
+                                attrs="{'invisible':['|',('approve_type', 'not in', ['tickets', False]),('state','!=','draft')]}"
+                                type="object" class="oe_highlight"/>
+
+                        <button name="approve_order" string="Approve" states="verify" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="verify_order" string="Verify"
+                                attrs="{'invisible':['|',('approve_type', 'in', ['tickets', False]),('state','!=','draft')]}"
+                                type="object" class="oe_highlight"/>
+
+                        <button name="done_order" string="Done"
+                                attrs="{'invisible':['|',('approve_type','=','tickets'),('state','!=','approve')]}"
+                                type="object" class="oe_highlight"/>
+
+                        <button name="cancel_order" string="Cancel Order"
+                                states="draft"
+                                type="object" class="oe_highlight"/>
+
+                        <button name="set_draft" string="Set To Draft"
+                                states="cancel"
+                                type="object" class="oe_highlight"/>
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approve,done"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="claim" readonly="1"/>
+                        </group>
+                        <group col="4" colspan="2">
+                            <field name="code" style="width:60%;" readonly="1"/>
+                            <field name="date" attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"
+                                   style="width:45%;" required="1"/>
+                            <field name="partner_id" required="1"
+                                   context="{'form_view_ref': 'zakat_base.zakat_res_partner_form_view', 'default_zakat_partner': 1}"
+                                   domain="[('zakat_partner','=',True)]"
+                                   attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"/>
+                            <field name="address_id" required="1"/>
+                            <field name="come_from" required="1"
+                                   attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"/>
+                            <field name="other" attrs="{'invisible':[('come_from','!=','other')],
+                             'required':[('come_from','=','other')], 'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"/>
+                            <field name="other" invisible="1"/>
+                            <field name="approve_date"
+                                   attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"
+                                   required="1"/>
+                            <!--field name="Transformer" attrs="{'invisible':[('action_type','in',[False,'approve','apology'])]}"/-->
+                            <!--field name="apology_reason" attrs="{'invisible':[('action_type','in',[False,'approve','transfer'])]}" /-->
+                            <field name="approve_type"
+                                   attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"
+                                   widget="radio" options="{'horizontal': true}"/>
+                            <field name="approve_amount" required="1"
+                                   attrs="{'invisible':[('approve_type','in',[False,'tickets'])],
+                                       'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"
+                                        widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="currency_id" invisible="1" />
+
+                            <field name="company_id" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Personal Information">
+                                <group col="4" colspan="2">
+                                    <field name="national_number" required="1" readonly="1"/>
+                                    <field name="name" required="1" readonly="1"/>
+                                    <field name="phone" readonly="1"/>
+                                    <field name="birth_date" readonly="1" required="1"/>
+                                    <field name="job" readonly="1"/>
+                                    <field name="income_amount"
+                                           widget="monetary"
+                                           options="{'currency_field': 'currency_id'}"
+                                           attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"/>
+                                    <field name="state_id" readonly="1" required="1"/>
+                                    <field name="local_state_id" readonly="1" required="1"
+                                           domain="[('state_ids','=',state_id)]"/>
+                                    <field name="admin_unit" readonly="1" required="1"
+                                           domain="[('local_state_id','=',local_state_id)]"/>
+                                    <field name="social_status"
+                                           attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"/>
+                                    <field name="health_status"
+                                           attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"/>
+                                </group>
+                            </page>
+                            <page string="Transport Comapny &amp; Destination"
+                                  attrs="{'invisible':[('approve_type','!=','tickets')]}">
+                                <group>
+                                    <field name="reasons_arrival"/>
+                                </group>
+                                <group col="4" colspan="2">
+                                    <field name="date_of_arrival"
+                                           attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])],
+                                           'required':[('approve_type','not in',['drugs','nathria',False])]}"
+                                           />
+                                    <field name="transport_type"
+                                           attrs="{'required':[('approve_type','not in',['drugs','nathria',False])],
+                                                   'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"
+                                           />
+                                    <field name="transport_company"
+                                           attrs="{'required':[('approve_type','not in',['drugs','nathria',False])],
+                                                    'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"
+                                            domain="[('company_id', '=',company_id)]"/>
+                                    <field name="distination_id"
+                                           domain="[('transport_company_id', '=', transport_company)]"
+                                           attrs="{'required':[('approve_type','not in',['drugs','nathria',False])],
+                                            'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"
+                                           />
+                                    <field name="other" attrs="{'invisible':[('come_from','!=','other')],
+                                 'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"/>
+                                </group>
+                            </page>
+                            <page string="Recommendation &amp; Committee Decision">
+                                <group>
+                                    <field name="recommend"
+                                           attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"/>
+                                    <field name="committee_decision"
+                                           attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"/>
+                                    <field name="manager_decision"
+                                           attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"/>
+                                </group>
+                            </page>
+                            <page string="Documents" attrs="{'invisible':[('come_from','in',['other','university','', False])]}">
+                                <group col="4" colspan="2" attrs="{'invisible':[('come_from','!=','hospital')]}">
+                                    <field name="medical_report"/>
+                                    <field name="hi_copy"/>
+                                    <field name="initial_bill"/>
+                                </group>
+                                 <group col="4" colspan="2" attrs="{'invisible':[('come_from','!=','pension_procedures')]}">
+                                    <field name="identification"/>
+                                     <field name="documents"/>
+                                </group>
+                                 <group col="4" colspan="2" attrs="{'invisible':[('come_from','!=','theft')]}">
+                                     <field name="police"/>
+                                     <field name="identification"/>
+                                     <field name="insurance"/>
+                                </group>
+                                 <group col="4" colspan="2" attrs="{'invisible':[('come_from','!=','khalawi')]}">
+                                    <field name="khalwa_letter"/>
+                                    <field name="identification"/>
+                                </group>
+                                 <group col="4" colspan="2" attrs="{'invisible':[('come_from','!=','inmates')]}">
+                                    <field name="release_letter"/>
+                                    <field name="identification"/>
+                                </group>
+                                 <group col="4" colspan="2" attrs="{'invisible':[('come_from','!=','sanatoriums')]}">
+                                     <field name="clinic_letter"/>
+                                     <field name="medical_report"/>
+                                </group>
+                            </page>
+
+                            <page string="Attendant" attrs="{'invisible':[('approve_type','!=','tickets')]}">
+                                <field name="attendant_id">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <!--<field name="age"/>-->
+                                        <!--<field name="relation"/>-->
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Notes">
+                                <field name="note" placeholder="Notes"
+                                       attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"/>
+                            </page>
+                            <page string="voucher" attrs="{'invisible':['|','&amp;',('approve_type', 'not in', ['nathria','drugs']),('state','=', 'done'),('state','!=','done')]}">
+                                <group>
+                                    <field name="voucher_id" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree view for dzc_8 model-->
+        <record id="iban_alsabil_view_tree" model="ir.ui.view">
+            <field name="name">Iban Alsabil Tree</field>
+            <field name="model">zakat.dzc8</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="national_number"/>
+                    <field name="approve_type"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Search View For dzc_8 model -->
+        <record id="view_iban_alsabil_search" model="ir.ui.view">
+            <field name="name">Iban Alsabil Search</field>
+            <field name="model">zakat.dzc8</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="national_number"/>
+                    <field name="name"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" context="{'group_by': 'state'}"/>
+                        <filter string="Date" context="{'group_by': 'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- dzc_8 Main form action-->
+        <record id="iban_alsabil_action" model="ir.actions.act_window">
+            <field name="name">Iban Alsabil</field>
+            <field name="res_model">zakat.dzc8</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- dzc_8 -->
+        <menuitem id="iban_alsabil_main_menu"
+                  name="Iban Alsabil Channel"
+                  sequence="3"
+        />
+
+        <!-- dzc_8 -->
+        <menuitem id="iban_alsabil_menu"
+                  parent="iban_alsabil_main_menu"
+                  name="Iban Alsabil"
+                  sequence="3"
+        />
+
+        <menuitem name="Iban Alsabil Order"
+                  id="iban_alsabil_form_menu_action"
+                  parent="iban_alsabil_menu"
+                  action="iban_alsabil_action"/>
+
+        <!-- Iban Alsabil Payment Form View -->
+        <record id="iban_alsabil_payment_form_view" model="ir.ui.view">
+            <field name="name">Iban Alsabil Payment</field>
+            <field name="model">zakat.dzc8.payment</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="approve_action" string="Approve"
+                                states="draft"
+                                type="object" class="oe_highlight"/>
+
+                        <button name="done_action" string="Done"
+                                states="approve"
+                                type="object" class="oe_highlight"/>
+
+                        <button name="cancel_action" string="Cancel"
+                                states="draft,approve"
+                                type="object" class="oe_highlight"/>
+
+                        <button name="set_draft" string="Set To Draft"
+                                states="cancel"
+                                type="object" class="oe_highlight"/>
+
+                        <field name="state" statusbar_visible="draft,approve,done" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <h1>
+                                <field name="code" readonly="1"/>
+                            </h1>
+                        </group>
+                        <group col="4" colspan="2">
+                            <field name="order_date" attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"
+                                   required="1"/>
+                            <field name="transport_company" context="{'transport': transport_company}" attrs="{'readonly':[('state', 'in', ['approve','done', 'cancel'])]}"
+                                   required="1"/>
+                            <field name="zakat_support" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                            <field name="company_currency_id" invisible="1" />
+                            <field name="company_id" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Orders">
+                                <field name="request" attrs="{'readonly':[('state', 'in', ['done', 'approve'])]}"
+                                       domain="['&amp;','&amp;','&amp;',('transport_company','=',transport_company),
+                                       ('state','=','approve'), ('date','=',order_date), ('approve_type','=','tickets')]"
+                                       required="1"/>
+                            </page>
+                            <page string="Voucher" attrs="{'invisible':[('state', '!=', 'done')]}">
+                                <group>
+                                <field name="voucher_id"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Iban Alsabil Payment Tree View -->
+        <record id="iban_alsabil_payment_list_view" model="ir.ui.view">
+            <field name="name">Iban Alsabil Payment List</field>
+            <field name="model">zakat.dzc8.payment</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="transport_company"/>
+                    <field name="order_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Search View For Iban alsbil payment  model -->
+        <record id="view_iban_alsabil_payment_search" model="ir.ui.view">
+            <field name="name">Iban alsbil payment Search</field>
+            <field name="model">zakat.dzc8.payment</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="transport_company"/>
+                    <field name="order_date"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Transport Company" context="{'group_by': 'transport_company'}"/>
+                        <filter string="Status" context="{'group_by': 'state'}"/>
+                        <filter string="Date" context="{'group_by': 'order_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Iban alsbil payment action-->
+        <record id="iban_alsabil_payment_action" model="ir.actions.act_window">
+            <field name="name">Iban Alsabil Payment</field>
+            <field name="res_model">zakat.dzc8.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Iban Alsabil Payment"
+                  id="iban_alsabil_payment_form_menu_action"
+                  parent="iban_alsabil_menu"
+                  action="iban_alsabil_payment_action"/>
+
+
+    </data>
+</odoo>

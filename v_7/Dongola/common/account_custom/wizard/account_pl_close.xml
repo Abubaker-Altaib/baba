@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="view_account_fiscalyear_pl_close" model="ir.ui.view">
+			<field name="name">account.fiscalyear.pl.close.form</field>
+			<field name="model">account.fiscalyear.pl.close</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Generate Fiscal Year Closing Entries"
+					version="7.0">
+					<separator
+						string="Generate Fiscal Year Closing Entries" />
+					<label
+						string="This wizard will generate the end of year journal entries of selected fiscal year. Note that you can run this wizard many times for the same fiscal year: it will simply replace the old closing entries with the new ones." />
+					<newline />
+					<group col="4">
+						<field name="fiscalyear_id" options='{"no_open":True}'
+							domain="[('state','!=','done')]"
+							on_change="onchange_fiscalyear_id(fiscalyear_id,company_id)" />
+						<field name="period_id" domain="[('special','=',True),('fiscalyear_id','=',fiscalyear_id)]" context="{'closed':True}"/>
+						<field name="journal_id"
+							domain="[('company_id','=',company_id),('type','=','profit_loss')]"
+							context="{'default_type':'profit_loss'}" />
+						<field name="account_id"
+							domain="[('type','=','other'),('company_id','=',company_id)]" />
+						<field name="company_id" invisible='1' />
+						<newline />
+						<field name="report_name" colspan="4" />
+					</group>
+					<footer>
+						<button string="Create" name="data_save"
+							type="object" class="oe_highlight" />
+						or
+						<button string="Cancel" class="oe_link"
+							special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_account_pl_close"
+			model="ir.actions.act_window">
+			<field name="name">
+				Generate profit and loss close Entries
+			</field>
+			<field name="res_model">account.fiscalyear.pl.close</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_account_fiscalyear_pl_close" />
+			<field name="target">new</field>
+		</record>
+
+		<menuitem action="action_account_pl_close"
+			id="menu_wizard_pl_close"
+			parent="account.menu_account_end_year_treatments" />
+
+	</data>
+</openerp>
+

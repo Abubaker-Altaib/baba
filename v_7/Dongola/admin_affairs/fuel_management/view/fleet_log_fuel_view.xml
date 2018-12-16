@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model='ir.ui.view' id='fleet_vehicle_log_fuel_form'>
+			<field name="name">fleet.vehicle.log.fuel.form</field>
+			<field name="model">fleet.vehicle.log.fuel</field>
+			<field name="inherit_id" ref="fleet.fleet_vehicle_log_fuel_form" />
+			<field name="arch" type="xml">
+				<xpath expr="/form/sheet" position="before">
+					<header>
+						<button name="requested" states="draft" string="Request"
+							class="oe_highlight" type="object" icon="terp-gtk-go-back-rtl"  />
+						<button name="check_it" icon="terp-gtk-go-back-rtl" string="Execute" type="object"
+							attrs="{'invisible': ['|',('state','not in','requested'),('plan_type', '=', 'extra_fuel')]}" />
+						<button name="approved" icon="terp-gtk-go-back-rtl" string="Approve" type="object"
+							attrs="{'invisible': ['|',('state','not in','requested'),('plan_type', '=', 'fixed_fuel')]}" />
+						<button name="confirmed" icon="terp-gtk-go-back-rtl" states="approved" string="Confirm" class="oe_highlight" type="object" />
+						<button name="done" states="confirmed" string="Execute"
+							icon="terp-gtk-go-back-rtl" class="oe_highlight" type="object" />
+						<button name="draft" states="requested,approved,confirmed"
+							string="Set to Draft" type="object" class="oe_highlight" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,requested,approved,confirmed,done" />
+					</header>
+				</xpath>
+				<xpath expr="/form/sheet" position="replace">
+					<sheet>
+						<group>
+							<group>
+								<field name="vehicle_id" on_change="on_change_vehicle(vehicle_id)"
+									attrs="{'required':[('state','not in',('draft','done'))], 'readonly':[('state','not in',('draft'))]}" 
+									domain="[('state','=','confirm')]"/>
+								<field name="department_id" on_change="onchange_enrich(date,department_id)"
+									attrs="{'readonly':[('state','not in',('draft'))],
+											'required':[('plan_type','=','extra_fuel')]}" />
+							</group>
+							<group>
+								<field name="date" attrs="{'readonly':[('state','not in',('draft'))]}"
+									on_change="onchange_enrich(date,department_id)"  />
+							</group>
+						</group>
+						<group string="Mission Details" attrs="{'invisible':[('purpose','!=','mission')]}">
+							<group col="2" colsapn="4">
+                                    				<field name="start_date" attrs="{'required':[('purpose','=','mission')],'readonly':[('state','!=','draft')]}" colsapn="4"/>
+                                    				<field name="end_date" attrs="{'required':[('purpose','=','mission')],'readonly':[('state','!=','draft')]}" colsapn="4"/>
+                            				</group>
+							<group col="2" colsapn="4">
+                                    				<field name="mission_id" attrs="{'required':[('purpose','=','mission')],'readonly':[('state','!=','draft')]}" col="2"/>
+							<button name="copy_car" icon="terp-gtk-go-back-rtl" string="Add More Vehicles" class="oe_highlight" type="object" attrs="{'invisible':[('state','!=','draft')]}" confirm="Are sure you want to request another car?"/>
+                            				</group>
+							<group col="2" colsapn="4">
+                                    				<field name="copy_request" colsapn="4"/>
+                                    				<field name="number_copy" colsapn="4" attrs="{'invisible':[('copy_request','=',True)]}"/>
+                            				</group>
+
+						</group>
+
+
+						<group string="Refueling Details" col="2">
+							<group>
+                                    <field name="liter" class="oe_inline" string="Quantity"
+											on_change="on_change_liter(liter,price_per_liter,amount)"
+											attrs="{'readonly':[('state','not in',('draft'))]}" />
+
+                                    <field name="product_id" class="oe_inline"
+											attrs="{'readonly':[('state','not in',('draft'))]}" 
+											on_change="on_change_price(product_uom,vehicle_id)"/>
+                                    <field name="product_uom" class="oe_inline" groups="product.group_uom"
+											attrs="{'readonly':[('state','not in',('draft'))]}" 
+											on_change="on_change_price(product_uom,vehicle_id)"/>
+                                <field name="price_per_liter" string="Price"
+									on_change="on_change_price_per_liter(liter,price_per_liter,amount)"
+									attrs="{'readonly':[('state','not in',('draft'))]}" />
+								<field name="amount"
+									on_change="on_change_amount(liter,price_per_liter,amount)"
+									attrs="{'readonly':[('state','not in',('draft'))]}" />
+								<field name="qty_line_id"
+									attrs="{'invisible':[('payment_method','!=',('plan'))]}" />
+                            </group>
+							<group>
+								<field name="plan_type" on_change="on_change_plan_type()" attrs="{'readonly':[('state','not in',('draft'))]}" />
+								<field name="purpose" attrs="{'required':[('plan_type','=','extra_fuel')],
+															'invisible':[('plan_type','!=','extra_fuel')],
+															'readonly':[('state','not in',('draft'))]}" />
+								<field name="payment_method" attrs="{'readonly':['|',('state','not in',('draft')),('plan_type','=','fixed_fuel')]}" on_change="onchange_enrich(date,department_id)" />
+								<field name="enrich_id" 
+									domain="[('state','=','done'),('type','=','enrich'),('residual_amount','&gt;=',amount)]" 
+													    attrs="{'invisible':['|',('payment_method','!=','enrich'),('plan_type','!=','extra_fuel')],
+																'required':[('payment_method','=','enrich'),('plan_type','=','extra_fuel')],
+																'readonly':[('state','not in',('draft'))]}"
+								context="{'form_view_ref': 'admin_affairs.view_payment_enrich_view_form', 'default_type':'enrich'}"
+								/>
+							</group>
+						</group>
+						<group col="2" invisible="1">
+							<group string="Odometer Details">
+                                <label for="odometer"/>
+                                <div>
+                                    <field name="odometer" class="oe_inline" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                    <field name="odometer_unit" class="oe_inline"/>
+                                </div>
+                            </group>
+							<group string="Additional Details">
+								<field name="purchaser_id"
+									attrs="{'readonly':[('state','not in',('draft'))]}" />
+								<field name="inv_ref"
+									attrs="{'readonly':[('state','not in',('draft'))]}" />
+								<field name="vendor_id"
+									attrs="{'readonly':[('state','not in',('draft'))]}" />
+							</group>
+						</group>
+						<notebook colspan="4">
+							<page string="Employees" attrs="{'invisible':[('purpose','!=','mission')]}">
+								<group string="Employees">
+									<field nolabel="1" name="employee_ids"
+								attrs="{'readonly':[('state','not in',('draft'))]}" />
+								</group>
+
+							</page>
+							<page string="Notes">
+								<group string="Notes">
+									<field nolabel="1" name="notes" placeholder="Write here any other information"
+								attrs="{'readonly':[('state','not in',('draft'))]}" />
+								</group>
+
+							</page>
+						</notebook>
+					</sheet>
+				</xpath>
+			</field>
+		</record>
+
+	<record model='ir.ui.view' id='fleet_vehicle_log_fuel_tree'>
+            <field name="name">fleet.vehicle.log.fuel.tree</field>
+            <field name="model">fleet.vehicle.log.fuel</field>
+	    <field name="inherit_id" ref="fleet.fleet_vehicle_log_fuel_tree" />
+            <field name="arch" type="xml">
+	   	 <xpath expr="//tree/field[@name='purchaser_id']" position="after">
+			    <field name="payment_method"/>
+		            <field name="plan_type" />
+		            <field name="state" string="State"/>
+		 </xpath>
+	    </field>
+	</record>
+
+
+	<record model='ir.ui.view' id='fleet_vehicle_log_fuel_search'>
+            <field name="name">fleet.vehicle.log.fuel.search</field>
+            <field name="model">fleet.vehicle.log.fuel</field>
+	    <field name="inherit_id" ref="fleet.fleet_vehicle_log_fuel_search" />
+            <field name="arch" type="xml">
+		   <xpath expr="//search/group/filter[@name='groupby_vehicle']" position="after">
+			    <filter name="payment_method" context="{'group_by' : 'payment_method'}" string="Payment Method"/>
+			    <filter name="plan_type" context="{'group_by' : 'plan_type'}" string="Plan Type"/>
+		   </xpath>
+
+            </field>
+	</record>
+
+
+
+	</data>
+</openerp>

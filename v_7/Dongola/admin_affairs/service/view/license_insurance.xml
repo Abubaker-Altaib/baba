@@ -1,0 +1,350 @@
+<openerp>
+	<data>
+	    <!--Vehicles Insurance  -->      
+	    
+		<report auto="False" menu="False" id="vehicle_insurance" model="fleet.vehicle.log.contract" 
+               name="veh_insurance" rml="addons/service/report/vehicles_insurance_report.rml" 
+               string="Print Vehicle Insurance" />
+               
+		<record id="vehicle_insurance_form" model="ir.ui.view">
+		<field name="name">vehicle.insurance.form</field>
+		<field name="model">fleet.vehicle.log.contract</field>
+		<field name="arch" type="xml">
+	    	<form string="Vehicles Insurance" version="7.0">
+	           	<header>
+                    
+                    <button modifiers="{'invisible': [['state', '=', 'closed']]}"
+                        icon="gtk-cancel" name="contract_close" states="open" type="object"
+                        class="oe_highlight" string="Terminate" />
+                    <button icon="gtk-cancel" type="object" name="draft"
+                        states="cancel" string=" Set to Draft" class="oe_highlight" />
+                    <button icon="gtk-cancel" type="object" name="cancel"
+                        states="draft" string="Cancel Request" class="oe_highlight" />
+                    <button icon="gtk-cancel" type="object" name="cancel"
+                        states="confirm_so" string="Cancel Request" class="oe_highlight"
+                        groups="admin_affairs.group_service_officer" />
+                    <button name="%(vehicle_insurance)d" string="Print Vehicle Insurance" type="action"
+							icon="gtk-print"/>
+                    <button icon="gtk-cancel" type="object" name="cancel"
+                        states="confirm_ss" string="Cancel Request" class="oe_highlight"
+                        groups="service.group_service_section_manager" />
+                    <button icon="gtk-cancel" type="object" name="cancel"
+                        states="confirm_sm" string="Cancel Request" class="oe_highlight"
+                        groups="admin_affairs.group_section_manager" />
+
+                    <button icon="gtk-cancel" type="object" name="cancel"
+                        states="affairs_mg" string="Cancel Request" class="oe_highlight" />
+
+                    
+                    <button icon="gtk-cancel" type="object" name="cancel"
+                        states="human_financial" string="Cancel Request" class="oe_highlight" />
+                    
+          
+                    
+                    <button type="object" name="confirm_ss" states="draft" string="Confirm"
+                            groups="admin_affairs.group_section_manager" class="oe_highlight"/>
+
+                    <button type="object" name="to_affairs_mg" groups="service.group_service_section_manager"
+                    states="confirm_ss" string="Admin Affairs Manager" class="oe_highlight" />
+
+                    <button type="object" name="to_human_financial"
+                    states="affairs_mg" string="Human Resources And Financial Manager" class="oe_highlight" 
+                    groups="base_custom.group_general_hr_manager"/>
+
+                    <button type="object" name="general_mg"
+                    states="human_financial" string="General Manager" class="oe_highlight" 
+                    groups="base_custom.group_account_general_manager"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open"/>					
+            	</header>
+	            <sheet>
+	                <h1>
+		               <label for="name" string="Reference"/>
+			           <field name="name" class="oe_inline" readonly="1"/>
+				    </h1>
+	                <group>
+	                   <group>
+	                        <field name="cost_subtype_id"  required="1" domain="[('category','=','insurance')]" 
+	                            attrs="{'readonly':[('state','not in',('draft',))],
+	                                    'required':[('state','=','draft')]}"
+	                                    on_change="onchange_service_type(cost_subtype_id)"
+	                                    context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}"/>
+                            <field name="department_id" attrs="{'readonly':[('state','!=','draft')],
+                                                                'required':[('state','=','draft')]}"/>
+                            <field name="insurer_id"  required = "1"
+                               attrs="{'readonly':[('state','!=','draft')]}" />
+                            <field name="purchaser_id" attrs="{'readonly':[('state','not in',('draft',))],}"/>
+                        	<field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                        	<field name="cat_subtype" readonly="1" invisible="1"/>
+                        	         
+	                    </group>
+	                    <group>
+                            <field name="date"   string="Request Date"
+                                   attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')]}"/>
+                            <field name="start_date" string="Insurance Date" 
+                                   attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')]}"/>
+	                        <field name="expiration_date"  string="End Date" 
+	                               attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')]}"/>
+                            <field name="payment_method" invisible='1'/>
+                            
+                             <field name="amount"   invisible='1' />
+                             <field name="sum_cost" string="Total Costs" readonly ="1"/>
+	                    </group>
+	                </group>
+	                
+	                <notebook>
+	                    <page string="Details">
+                            <button name='department_vehicle' attrs="{'invisible':[('state','!=','draft')]}" type="object" string="Import Vehicle" confirm="this will override the current lines"/>
+	                        <group>
+	                            <field name="cost_ids" attrs="{'readonly':[('state','!=','draft')]}"
+	                                nolabel="1" on_change="on_change_indic_cost(cost_ids)">
+	                                <tree version="7.0" editable='top'>
+	                                    <field name="vehicle_id" domain="[('ownership','=','owned'),('status','=','active')]" required="1"/>
+	                                    <field name="vehicle_cost"  required= "1"/>
+	                                    <field name="amount" sum="Cost" string="Cost" required= "1"/>
+	                                </tree>
+	                            </field>
+	                        </group>
+	                        
+	                      
+	                    </page>
+
+                        <page string="Payments" >
+                                <group>
+                                    <field name="generated_cost_ids" 
+                                        nolabel="1" sum="total">
+                                        <tree version="7.0" editable="bottom" create='false'>
+                                            <field name="date" readonly="1"/>
+                                            <field name="voucher_id" colspan="4" nolabel="1" readonly="1"/>
+                                            <field name="amount" string="Amount" readonly="0"/>
+                                            <field name="total" sum="total" />
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+	                       
+	                </notebook>
+	                <group string="Notes">
+	                      <field name="notes" nolabel="1" placeholder="Write here all other information relative to this contract" />
+	                </group>
+	               </sheet>
+	           </form>
+            </field>
+        </record>
+        
+	    <record id='vehicle_insurance_tree' model='ir.ui.view' >
+            <field name="name">vehicle.insurance.tree</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Vehicles Insurance" version="7.0">
+                    <field name="start_date"  string="Insurance Date" />
+                    <field name="expiration_date" string="End Date"/>
+                    <field name="days_left" invisible="1"/>
+                    <field name="cost_subtype_id"/>
+                    <field name="insurer_id" />
+                    <field name="sum_cost" string="Cost"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_vehicle_insurance">
+            <field name="name">Vehicles Insurance</field>
+            <field name="res_model">fleet.vehicle.log.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('cost_subtype_id.category','=','insurance')]</field>
+            <field name="context">{'default_payment_method':'voucher','action':'service.vehicle_insurance_menu'}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create  insurance . 
+              </p>
+              <p>
+              		Add a new Insurance to specific vehicle(s).
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="vehicle_insurance_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vehicle_insurance_form"/>
+            <field name="act_window_id" ref="action_vehicle_insurance"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="vehicle_insurance_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="vehicle_insurance_tree"/>
+            <field name="act_window_id" ref="action_vehicle_insurance"/>
+        </record>
+		 <menuitem  id="vehicle_insurance_menu" name="Vehicles Insurance" parent="fleet.fleet_vehicles" 
+             action="action_vehicle_insurance" sequence="11"/>
+             
+             
+       <!--Vehicles License  -->      
+             
+      <record id="vehicle_license_form" model="ir.ui.view">
+		<field name="name">vehicle.license.form</field>
+		<field name="model">fleet.vehicle.log.contract</field>
+		<field name="arch" type="xml">
+	    	<form string="Vehicles License" version="7.0">
+	           	<header>
+                    <button modifiers="{'invisible': [['state', '=', 'closed']]}"
+							icon="gtk-cancel" name="contract_close" states="open" type="object"
+							class="oe_highlight" string="Terminate" />
+                    <button icon="gtk-cancel" type="object" name="draft"
+                        states="cancel" string=" Set to Draft" class="oe_highlight" />
+                    <button icon="gtk-cancel" type="object" name="cancel"
+                        states="draft" string="Cancel Request" class="oe_highlight" />
+                    <button icon="gtk-cancel" type="object" name="cancel"
+                        states="confirm_so" string="Cancel Request" class="oe_highlight"
+                        groups="admin_affairs.group_service_officer" />
+                    <button icon="gtk-cancel" type="object" name="cancel"
+                        states="confirm_ss" string="Cancel Request" class="oe_highlight"
+                        groups="service.group_service_section_manager" />
+                    <button icon="gtk-cancel" type="object" name="cancel"
+                        states="confirm_sm" string="Cancel Request" class="oe_highlight"
+                        groups="admin_affairs.group_section_manager" />
+                    
+                    <button icon="gtk-cancel" type="object" name="cancel" groups="service.group_service_section_manager"
+                        states="affairs_mg" string="Cancel Request" class="oe_highlight" />
+
+                    
+                    <button icon="gtk-cancel" type="object" name="cancel"
+                        states="human_financial" string="Cancel Request" class="oe_highlight" />
+
+                     
+                    <button type="object" name="confirm_ss" states="draft" string="Confirm"
+                            groups="admin_affairs.group_section_manager" class="oe_highlight"/>
+
+                    <button type="object" name="to_affairs_mg" groups="service.group_service_section_manager"
+                    states="confirm_ss" string="Admin Affairs Manager" class="oe_highlight" />
+
+                    <button type="object" name="to_human_financial"
+                    states="affairs_mg" string="Human Resources And Financial Manager" class="oe_highlight" 
+                    groups="base_custom.group_general_hr_manager"/>
+
+                    <button type="object" name="general_mg"
+                    states="human_financial" string="General Manager" class="oe_highlight" 
+                    groups="base_custom.group_account_general_manager"/>
+
+                    <!--button type="object" name="open_license" states="general_mg" string="create Payment"
+                        class="oe_highlight"/-->
+                    <field name="state" widget="statusbar" statusbar_visible="draft,affairs_mg,human_financial"/>					
+            	</header>
+	            <sheet>
+	                <h1>
+		               <label for="name" string="Reference"/>
+			           <field name="name" class="oe_inline" readonly="1"/>
+				    </h1>
+	                <group>
+	                   <group>
+	                        <field name="cost_subtype_id"  required="1" domain="[('category','=','license')]" 
+	                            attrs="{'readonly':[('state','not in',('draft',))],
+	                                    'required':[('state','=','draft')]}"
+	                                    on_change="onchange_service_type(cost_subtype_id)"
+	                                    context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}"/>
+                            <field name="department_id" attrs="{'readonly':[('state','not in',('draft'))],'required':[('state','=','draft')]}"/>
+                        	<field name="purchaser_id" attrs="{'readonly':[('state','not in',('draft',))],}"/>
+                        	<field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                        	<field name="cat_subtype" readonly="1" invisible="1"/>
+                        	<field name="enrich_id"   readonly= "1" attrs="{'invisible':[('enrich_id','=',False)],}"
+                            domain="[('type','=','enrich'),('state','=','done')]"
+                            context="{'form_view_ref': 'admin_affairs.view_payment_enrich_view_form', 'default_type':'enrich'}"/>
+                        	         
+	                    </group>
+	                    <group>
+                            <field name="date"  attrs="{'readonly':[('state','not in',('draft',))],'required':[('state','=','draft')]}"/>
+                            <field name="start_date"  attrs="{'readonly':[('state','not in',('draft'))],'required':[('state','=','draft')]}"/>
+	                        <field name="expiration_date"  
+	                           	attrs="{'readonly':[('state','not in',('draft'))],'required':[('state','=','draft')]}"/>
+                            <field name="payment_method"  invisible="1"/>
+                             <field name="amount"  string="Activation Cost"  invisible='1'/>
+                             <field name="sum_cost" string="Total Costs" readonly ="1"/>
+	                    </group>
+	                </group>
+	                
+	                <notebook>
+	                <page string="Vehicles">
+	                 <field colspan="4" name="vehicles_ids" attrs="{'readonly':[('state','!=','draft')]}" domain="[('ownership','=','owned'),('department_id','=',department_id)]"/>
+                               
+                           
+                       </page>
+	                    <page string="Suplier">
+	                        <group>
+	                            <field name="cost_ids" attrs="{'readonly':[('state','!=','draft')]}"
+	                                nolabel="1" on_change="on_change_indic_cost(cost_ids)">
+	                                <tree version="7.0" editable='bottom'>  
+	                                    <field name="insurer_id" required= "1"/>
+	                                    <field name="amount" sum="Costs" string="Cost" required= "1"/>
+	                                </tree>
+	                            </field>
+	                        </group>	                      
+	                    </page>
+	
+                       <page string="Taxes" invisible="1">
+                           <group>
+                               <field name="tax_ids" nolabel="1" 
+                               	attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                           </group>
+                       </page>
+	                       
+	                </notebook>
+	                <group string="Notes">
+	                      <field name="notes" nolabel="1" placeholder="Write here all other information relative to this contract" />
+	                </group>
+	               </sheet>
+	           </form>
+            </field>
+        </record>
+        
+	    <record id='vehicle_license_tree' model='ir.ui.view' >
+            <field name="name">vehicle.license.tree</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Vehicles License" version="7.0">
+                    <field name="start_date"  />
+                    <field name="expiration_date"/>
+                    <field name="days_left" invisible="1"/>
+                    <field name="cost_subtype_id"/>
+                    <field name="insurer_id" />
+                    <field name="sum_cost" string="Cost" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_vehicle_license">
+            <field name="name">Vehicles License</field>
+            <field name="res_model">fleet.vehicle.log.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('cost_subtype_id.category','=','license')]</field>
+            <field name="context">{'default_payment_method':'enrich','action':'service.vehicle_license_menu'}</field>
+            
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create  license . 
+              </p>
+              <p>
+              		Add a new license to specific vehicle(s).
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="vehicle_license_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vehicle_license_form"/>
+            <field name="act_window_id" ref="action_vehicle_license"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="vehicle_license_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="vehicle_license_tree"/>
+            <field name="act_window_id" ref="action_vehicle_license"/>
+        </record>
+		 <menuitem  id="vehicle_license_menu" name="Vehicles License" parent="fleet.fleet_vehicles" 
+             action="action_vehicle_license" sequence="11"/>
+	</data>
+</openerp>

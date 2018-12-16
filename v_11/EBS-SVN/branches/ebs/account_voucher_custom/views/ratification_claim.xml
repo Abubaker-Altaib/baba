@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+		<!-- Payment Requests views -->
+
+        <record model="ir.ui.view" id="view_payment_requests_form">
+            <field name="name">account.voucher.ratification.payment.requests.form</field>
+            <field name="model">account.voucher</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <form string="Payment Requests">
+	            	<header>
+	            		<!-- department manager -->
+	            		<button name="confirm1" type="object" string="Confirm " class="oe_highlight" states="draft" groups="account_custom.group_department_manager"
+	            		attrs="{'invisible':['|',('ratification','=',False)]}" />
+	            		
+	            		<!-- directory manager -->
+	            		<button name="confirm" type="object" string="Confirm" class="oe_highlight" 
+	            		states="confirm1" groups="account_custom.group_director_manager"
+	            		attrs="{'invisible':['|',('ratification','=',False)]}" />
+
+	            		<button name="budget_confirmatin_approved_cancel" type="object"  string="Cancel " 
+						class="oe_highlight"  states="confirm1,no_approve" 
+						groups="account_custom.group_director_manager"
+						attrs="{'invisible':['|',('ratification','=',False)]}" />
+
+                       <button name="check_budget" type="object" string="Check Budget" 
+	            		states="no_approve" groups="account_custom.group_director_manager"
+	            		attrs="{'invisible':['|',('ratification','=',False)]}"  class="oe_highlight"/>
+
+
+	            		<!-- set to draft for all groups -->
+	            		<button name="action_cancel_draft" type="object" states="cancel" 
+						string="Set to Draft " attrs="{'invisible':['|',('ratification','=',False)]}"  />
+
+	            		<!-- service manager -->
+
+	            		<button name="change_state" string="Approve " states="confirm2" 
+	            	    type="object" attrs="{'invisible':['|',('ratification','=',False)]}" 
+	            	    class="oe_highlight" groups="account_custom.group_service_manager"/>
+	            		 
+	            		<button name="budget_confirmatin_approved_cancel" type="object"
+	            		string="Cancel " states="confirm2"  class="oe_highlight"
+	            		attrs="{'invisible':['|',('ratification','=',False)]}" groups="account_custom.group_service_manager" />
+
+	            		<!--<button name="action_cancel_draft" type="object" states="cancel" 
+						string="Set to Draft " attrs="{'invisible':['|',('ratification','=',False)]}" groups="account_custom.group_service_manager" />-->
+						
+	            		<!-- ratifi list -->
+
+	            		<button name="approved" string="Approve " type="object" 
+	            	    states="budget_approved" attrs="{'invisible':['|','|',('ratf_approve','=',False),('ratification','=',False)]}"
+	            	    class="oe_highlight"/>
+
+	            	    <button name="budget_confirmatin_approved_cancel" type="object"
+	            		string="Cancel" states="budget_approved"  class="oe_highlight"
+	            		attrs="{'invisible':['|','|',('ratf_approve','=',False),('ratification','=',False)]}" groups="account_custom.group_service_manager" />
+
+	            		<!--<button name="action_cancel_draft" type="object" states="cancel" 
+						string="Set to Draft " attrs="{'invisible':['|','|',('ratf_approve','=',False),('ratification','=',False)]}" groups="account_custom.group_service_manager" />-->
+
+	            	    <!--<button name="change_state" string="Approve" states="confirm2" 
+	            	    type="object" attrs="{'invisible':['|',('ratification','=',False)]}" 
+	            	    class="oe_highlight"/>-->
+
+	            	    <!--<button name="budget_confirmatin_approved_cancel" type="object"
+	            		string="Cancel" states="confirm2" 
+	            		attrs="{'invisible':['|',('ratification','=',False)]}" class="oe_highlight"/>-->
+	            	     
+	            	     <!-- exp manager -->
+	            	    <!---->
+	            	     
+						<!--<button name="budget_confirmatin_approved_cancel"  states="budget_approved" type="object"  string="Cancel" attrs="{'invisible':['|',('ratification','=',False)]}" class="oe_highlight"/>-->
+						
+					     
+						<!--<button name="action_cancel_draft" type="object" states="cancel" 
+						string="Set to Draft" attrs="{'invisible':['|',('ratification','=',False)]}" />-->
+
+	            		<field name="state" widget="statusbar" statusbar_visible="draft,proforma,cancel"/>
+	            	</header>
+                	<sheet>
+	                    <group>
+	                        <group>
+								<field name="ratf_approve" invisible="1" />
+                            	<field name="voucher_type" invisible="1" />
+	                            <field name="partner_id" domain="[('supplier','=',True)]" string="Vendor" context="{'default_customer': 0, 'search_default_supplier': 1, 'default_supplier': 1}"/>
+	                            <field name="pay_now" required="1" invisible="1" />
+	        					<field name="period_id" required="1" domain="[('date_start','&lt;=',date),('date_stop','&gt;=',date)]" />
+	                            <field name="account_id" />
+	                            <field name="company_id" invisible="1" />
+	                            <field name="ratification" invisible="1" />
+	                        </group>
+	                        <group>
+	                            <field name="journal_id" domain="[('type','=','purchase')]" widget="selection" groups="account.group_account_user"/>
+	                            <field name="date" string="Bill Date"/>
+	                            <field name="currency_id_ebs" />
+	                        </group>
+	                    </group>
+	                    <notebook>
+	                        <page string="Bill Information">
+	                            <field name="line_ids">
+	                                <tree string="Voucher Lines" editable="bottom">
+	                                    <field name="product_id" domain="[('ratification','=',True)]" context="{'form_view_ref':'account_voucher_custom.view_services_form','default_ratification':True}" required="1" />
+	                                    <field name="name"/>
+	                                    <field name="account_id" groups="account.group_account_user"/>
+	                                    <field name="account_analytic_id" domain="[('company_id', '=', parent.company_id)]" groups="analytic.group_analytic_accounting"/>
+	                                    <field name="quantity"/>
+	                                    <field name="price_unit"/>
+	                                    <field name="tax_ids" widget="many2many_tags" domain="[('type_tax_use','=','purchase')]"/>
+	                                    <field name="price_subtotal"/>
+	                                    <field name="currency_id" invisible="1"/>
+	                                    <field name="company_id" invisible="1"/>
+	                                </tree>
+	                            </field>
+	                            <group>
+	                                <group class="oe_subtotal_footer oe_right">
+	                                    <field name="tax_amount"/>
+	                                    <field name="tax_correction" attrs="{'invisible': [('tax_amount','=',0)]}"/>
+	                                    <field name="amount"/>
+	                                </group>
+	                                <field name="narration" placeholder="Internal Notes" nolabel="1"/>
+	                            </group>
+	                        </page>
+	                    </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Services views -->
+
+        <record model="ir.ui.view" id="view_services_form">
+            <field name="name">product.template.ratification.services.form</field>
+            <field name="model">product.template</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <form string="Services">
+                	<sheet>
+	                    <div class="oe_title">
+	                        <label class="oe_edit_only" for="name" string="Service Name"/>
+	                        <h1><field name="name" placeholder="Service Name"/></h1>
+	                    </div>
+	                    <div>
+	                    	<field name="ratification" invisible="1" />
+	                    </div>
+	                    <notebook>
+	                        <page string="General Information" name="general_information">
+	                            <group>
+	                                <group name="group_general">
+	                                    <field name="type" invisible="1" />
+	                                    <field name="categ_id" string="Category"/>
+	                                </group>
+	                                <group>
+	                                	<field name="property_account_expense_id" required="1" />
+	                                </group>
+	                            </group>
+	                        </page>
+	                    </notebook>
+                	</sheet>
+                </form>
+            </field>
+        </record>
+
+		<!-- actions -->
+
+        <record id="action_payment_requests_view" model="ir.actions.act_window">
+            <field name="name">Payment Requests</field>
+            <field name="res_model">account.voucher</field>
+        	<field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('ratification','=',True)]</field>
+            <field name="context">{'default_voucher_type': 'purchase','default_ratification':True,'default_state':'submit'}</field>
+        </record>
+        <record id="action_payment_requests_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="action_payment_requests_view"/>
+        </record>
+        <record id="action_payment_requests_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_payment_requests_form"/>
+            <field name="act_window_id" ref="action_payment_requests_view"/>
+        </record>
+
+        <!-- overwrite voucher action domain -->
+        <record model="ir.actions.act_window" id="account_voucher.action_purchase_receipt">
+            <field name="domain">[('journal_id.type','=','purchase'), ('voucher_type','=','purchase'),('state','in',['draft','proforma','confirmed','approved','reviewed','posted','waiting','paid','cancel'])]</field>
+            <field name="context">{'default_voucher_type': 'purchase', 'voucher_type': 'purchase'}</field>
+        </record>
+
+        <record id="action_services_view" model="ir.actions.act_window">
+            <field name="name">Services</field>
+            <field name="res_model">product.template</field>
+        	<field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('ratification','=',True)]</field>
+            <field name="context">{'default_ratification':True,'default_type':'service'}</field>
+        </record>
+        <record id="action_services_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="action_services_view"/>
+        </record>
+        <record id="action_services_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_services_form"/>
+            <field name="act_window_id" ref="action_services_view"/>
+        </record>
+
+		<!-- Menuitems -->
+		<menuitem id="menu_ratification_claim" name="Ratification Claim" sequence="40" groups="account_custom.group_department_manager,account_custom.group_director_manager,account_custom.group_service_manager,account_custom.group_expenditure_unit,account_custom.group_financial_manager,account_custom.group_internal_auditor,account_custom.group_financial_section"/>
+
+		<menuitem parent="menu_ratification_claim" name="Configuration"
+		id="menu_ratification_claim_configuration" sequence="1" groups="account_custom.group_expenditure_unit,account_custom.group_financial_manager,account_custom.group_financial_section"/>
+
+		<menuitem parent="menu_ratification_claim" name="Payment requests" groups="account_custom.group_department_manager,account_custom.group_director_manager,account_custom.group_service_manager,account_custom.group_expenditure_unit,account_custom.group_financial_manager,account_custom.group_internal_auditor,account_custom.group_financial_section" id="menu_ratification_claim_payment_requests" sequence="0" action="action_payment_requests_view" />
+
+		<menuitem parent="menu_ratification_claim_configuration" name="Services"
+			id="menu_ratification_claim_configuration_services" sequence="0" action="action_services_view" />
+	</data>
+</odoo>

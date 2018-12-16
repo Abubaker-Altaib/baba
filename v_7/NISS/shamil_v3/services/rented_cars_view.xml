@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+		<!-- Rented Cars Record Form,Tree View & Action -->
+
+		<record id="view_rented_cars_view_form" model="ir.ui.view">
+			<field name="name">rented.cars.form</field>
+			<field name="model">rented.cars</field>
+			<field name="arch" type="xml">
+			     <form string="Rented Cars" version="7.0">
+                                  <header>
+	                                <button name="confirmed" states="draft" string="Confirmed"  class="oe_highlight"
+						confirm="Are you sure you want to Confirm this request?"/> 						<button name="cancel" states="draft,confirmed" string="Cancel Request"  class="oe_highlight"
+					        confirm="Are you sure you want to Cancel this request?" />
+					<button name="ir_action_cancel_draft" states="cancel"  class="oe_highlight"
+						string="Set to Draft" type="object" />
+				        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancel" />
+                                  </header>
+				  <sheet>
+					<group colspan="2" col="4">
+						<field name="name" colspan="2" />				
+						<field name="date" colspan="2" />
+						<field name="department_id" colspan="2" />
+						<field name="employee_id" colspan="2" />						
+						<field name="partner_id" colspan="2" />
+                                                <field name="car_id" colspan="2"/>
+						<field name="car_number" colspan="2"/>
+                                                <field name="company_id" colspan="2"/>
+				        </group>
+					<group  colspan="2" col="4">
+						<field name="date_of_rent" colspan="2" required="1" />
+						<field name="date_of_return" colspan="2" required="1" />
+						<field name="cost_of_rent" colspan="2" required="1"/>	
+						<field name="cost_rate" colspan="2" required="1"/>						
+				        </group>
+					<notebook colspan="4">	
+					    <page string="Taxes">
+						<field name="taxes_id" colspan="2"/>
+				                    <group col="4" colspan="4">						
+							<field name="amount_tax" />
+							<field name="amount_untaxed" />
+							<field name="amount_total"/>      
+					             </group>
+					    </page>										
+					   <page string="Notes">
+						<field name="notes" colspan="4" nolabel="1" />
+					   </page>												
+					</notebook>
+				    </sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="view_rented_cars_tree" model="ir.ui.view">
+			<field name="name">rented.cars.tree</field>
+			<field name="model">rented.cars</field>
+			<field name="arch" type="xml">
+				<tree string="Rented Cars">
+					<field name="name" colspan="2" />				
+					<field name="date" colspan="2" />
+					<field name="department_id" colspan="2" />						
+					<field name="partner_id" colspan="2" />						
+					<field name="car_id" colspan="2"/>
+					<field name="car_number" colspan="2"/>
+					<field name="date_of_rent" colspan="2"  />
+					<field name="date_of_return" colspan="2"  />	
+					<field name="amount_total" sum="Total amount" colspan="2"/>
+					<field name="company_id" colspan="2"/>						
+					<!--button string="Course Cat" name="rewite_total" icon="gtk-index" type="object"/-->
+				</tree>
+			</field>
+		</record>
+
+		<!-- Rented Cars Search Filter -->
+
+		<record id="view_rented_cars_filter" model="ir.ui.view">
+			<field name="name">rented.cars.list.select</field>
+			<field name="model">rented.cars</field>
+			<field name="arch" type="xml">
+				<search string="Search for Press Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="date" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="partner_id" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="car_id" colspan="1"/>
+                                        <field name="car_number" colspan="1"/>
+					<separator orientation="vertical" />					
+	             			<field name="department_id" colspan="1" widget="selection"/>
+					<separator orientation="vertical" />					
+					<field name="company_id" colspan="2"/>						
+
+					<newline />
+
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Partner" icon="terp-personal"
+							domain="[]" context="{'group_by':'partner_id'}" />
+						<filter string="Car" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'car_id'}" />
+						<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+						<filter string="Department" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'department_id'}" />	
+						<filter string="Company" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'company_id'}" />						
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<!-- Rented cars allowances archive Record Form,Tree View & Action -->
+		<record id="view_rented_cars_allowances_archive_form" model="ir.ui.view">
+			<field name="name">rented.cars.allowances.archive.form</field>
+			<field name="model">rented.cars.allowances.archive</field>
+			<field name="arch" type="xml">
+			    <form string="Rented cars Allowances Archive" version="7.0">
+				<sheet>
+				    <group col="4" colspan="2">
+					<field name="name" colspan="2"/>	
+					<field name="partner_id" colspan="2"/>	
+					<field name="month" colspan="2" />
+					<field name="year" colspan="2" />
+					<field name="transfer" colspan="2" />
+					<field name="company_id" groups="base.group_multi_company" widget="selection"/>
+				    </group>
+				    <notebook colspan="4">	
+					<page string="Rent car details">
+                        		    <field colspan="4" name="allowances_lines" nolabel="1" >
+                                                <tree editable="top" string="Car Lines">
+						        <field name="department_id" />
+						        <field name="rent_id" />
+							<field name="car_id" />
+							<field name="cost_of_rent" />
+							<field name="deduct_days" />
+							<field name="deduct_amount" />
+							<field name="amount_untaxed" />
+							<field name="amount_tax" />
+							<field name="amount_total" />
+						</tree>
+                        	            </field>
+                                        </page>											
+				    </notebook>
+				    <group colspan="4" col="6">
+					<field name="amount_untaxed" colspan="2" />
+					<field name="amount_tax" colspan="2" />
+					<field name="amount_total" colspan="2" />
+				    </group>
+				    <button colspan="2" name="action_create_ratification"  string="Create Ratification" type="object" 
+                                            icon="terp-gtk-go-back-rtl" confirm="Are you sure you want to create Account Ratification?"
+                                            attrs="{'invisible':[('transfer','=',True)]}"/>
+				</sheet>
+			    </form>
+			</field>
+		</record>
+
+
+		<record id="view_rented_cars_archive_tree" model="ir.ui.view">
+			<field name="name">rented.cars.allowances.archive.tree</field>
+			<field name="model">rented.cars.allowances.archive</field>
+			<field name="arch" type="xml">
+				<tree string="Rented Cars Allowances Archive">
+					<field name="name"/>	
+					<field name="partner_id" />
+					<field name="month" />
+					<field name="year" />
+					<field name="company_id" groups="base.group_multi_company"/>
+					<field name="transfer" />
+					<field name="amount_untaxed" />
+					<field name="amount_tax" />
+					<field name="amount_total" /> 
+				</tree>
+			</field>
+		</record>
+
+<!-- Rented cars allowances archive lines Form,Tree View  -->
+
+		<record id="view_rented_cars_allowances_lines_form" model="ir.ui.view">
+			<field name="name">rented.cars.allowances.lines.form</field>
+			<field name="model">rented.cars.allowances.lines</field>
+			<field name="arch" type="xml">
+				<form string="Allowances Lines" version="7.0">
+				     <sheet>
+					   <group>
+					        <field name="department_id" />
+					        <field name="rent_id" />
+						<field name="car_id" />
+						<field name="cost_of_rent" />
+						<field name="deduct_days" />
+						<field name="deduct_amount" />
+						<field name="amount_untaxed" />
+						<field name="amount_tax" />
+						<field name="amount_total" />
+					   </group>
+				     </sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_rented_cars_allowances_lines_tree" model="ir.ui.view">
+			<field name="name">rented.cars.allowances.lines.tree</field>
+			<field name="model">rented.cars.allowances.lines</field>
+			<field name="arch" type="xml">
+				<tree string="Allowances Lines">
+					<field name="rent_id" />
+					<field name="car_id" />
+					<field name="cost_of_rent" />
+					<field name="deduct_days" />
+					<field name="deduct_amount" />
+					<field name="amount_untaxed" />
+					<field name="amount_tax" />
+					<field name="amount_total" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- rented cars Archive service Search Filter -->
+
+		<record id="view_rented_cars_allowances_archive_filter" model="ir.ui.view">
+			<field name="name">rented.cars.allowances.archive.filter</field>
+			<field name="model">rented.cars.allowances.archive</field>
+			<field name="arch" type="xml">
+				<search string="Rented Cars Allowances Archive">
+				    <field name="name"/>
+				    <separator orientation="vertical" />	
+				    <field name="partner_id"/>
+				    <separator orientation="vertical" />
+                    			<field name="department_id" widget="selection"/>
+					<separator orientation="vertical" />
+					<field name="month" />
+					<field name="year"/>
+					<separator orientation="vertical" />
+					<field name="transfer"/>
+					<newline />
+					<group expand="0" string="Extended Filters..." colspan="4" col="20" >
+			       		<field name="date"/>
+					<field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                	</group>
+                	<newline/>   
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Partner" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'partner_id'}" />
+						<filter string="Transfer" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'transfer'}" />
+						<filter string="Company" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+					</group>
+				</search>
+			</field>
+		</record>
+
+               <record id="rented_cars_allowances_archive_action" model="ir.actions.act_window">
+			<field name="res_model">rented.cars.allowances.archive</field>
+			<field name="domain">[]</field>
+		</record>
+
+		<!-- Menu -->
+
+		<record id="rented_cars_action" model="ir.actions.act_window">
+			<field name="res_model">rented.cars</field>
+			<field name="domain">[]</field>
+		</record>
+        <menuitem id="menu_rented_cars" name="Rented Cars"
+          parent="admin_affairs.menu_admin_affairs_operations" sequence="2"/>
+
+       <menuitem id="menu_rented_cars_details" name="Rented Cars Details"
+			parent="menu_rented_cars" action="rented_cars_action" />
+
+
+        <menuitem id="menu_rented_cars_allowances" name="Rented Cars Allowances"
+          parent="menu_rented_cars" sequence="4"/>
+
+       <menuitem id="rented_cars_allowances_archive" name="Rented Cars Allowances Archive"
+			parent="menu_rented_cars_allowances" action="rented_cars_allowances_archive_action" />
+
+
+
+
+
+	</data>
+</openerp>

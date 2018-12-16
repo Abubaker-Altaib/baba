@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_journal_custom_hijri" 
+           inherit_id="account_finance_reporting.report_journal_custom">
+    <xpath expr="//t[@name='form_date']" position="replace">
+        <t   name="form_date" t-if="not data['form']['date_to']  ">
+            <td name="form_date" colspan="2" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" >
+            <strong t-if="data['form']['date_from']">from date:</strong><span t-esc="data['form']['date_from']" t-if="data['form']['date_option'] == 'greg' or data['form']['date_option'] == 'both'"/> <sapn  t-if="data['form']['date_option'] == 'both'">Corresponding </sapn> <span t-esc="o.gregorian_to_hijri(data['form']['date_from'])" t-if="data['form']['date_option'] == 'isl' or data['form']['date_option'] == 'both'"/>
+            </td>
+        </t>
+    </xpath>
+
+    <xpath expr="//t[@name='date_to']" position="replace">
+         <t name="date_to" t-if="data['form']['date_to']">
+                                    
+        <td name="date_to" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" >
+          <strong t-if="data['form']['date_from']">from date:</strong><span t-esc="data['form']['date_from']" t-if="data['form']['date_option'] == 'greg' or data['form']['date_option'] == 'both'"/> <sapn  t-if="data['form']['date_option'] == 'both'">Corresponding </sapn> <span t-esc="o.gregorian_to_hijri(data['form']['date_from'])" t-if="data['form']['date_option'] == 'isl' or data['form']['date_option'] == 'both'"/>
+        </td>
+        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+           
+          <strong>to date:</strong><span t-esc="data['form']['date_to']" t-if="data['form']['date_option'] == 'greg' or data['form']['date_option'] == 'both'"/> <sapn  t-if="data['form']['date_option'] == 'both'">Corresponding </sapn> <span t-esc="o.gregorian_to_hijri(data['form']['date_to'])" t-if="data['form']['date_option'] == 'isl' or data['form']['date_option'] == 'both'"/>
+        </td>
+    </t>
+    </xpath>
+
+    <xpath expr="//td[@name='date_even_row']" position="replace">
+        <td name="date_even_row" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" > <span t-field="aml.date" t-if="data['form']['date_option'] == 'greg' or data['form']['date_option'] == 'both'"/> <sapn  t-if="data['form']['date_option'] == 'both'">Corresponding </sapn> <span t-esc="o.gregorian_to_hijri(aml.date)" t-if="data['form']['date_option'] == 'isl' or data['form']['date_option'] == 'both'"/>
+        </td>
+    </xpath>
+
+    <xpath expr="//td[@name='date_odd_row']" position="replace">
+        <td name="date_odd_row" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" > <span t-field="aml.date" t-if="data['form']['date_option'] == 'greg' or data['form']['date_option'] == 'both'"/> <sapn  t-if="data['form']['date_option'] == 'both'">Corresponding </sapn> <span t-esc="o.gregorian_to_hijri(aml.date)" t-if="data['form']['date_option'] == 'isl' or data['form']['date_option'] == 'both'"/>
+        </td>
+    </xpath>
+
+        
+
+</template>
+
+
+
+</odoo>

@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_job_form_website_published_button" model="ir.ui.view" >
+        <field name="name">hr.job.form.inherit.published.button</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="website_hr_recruitment.view_hr_job_form_website_published_button"/>
+        <field name="arch" type="xml">
+            <button name="website_publish_button" position="replace">
+                <button class="oe_stat_button" name="website_publish_button"
+                    type="object" icon="fa-globe" attrs="{'invisible':['|',('state','!=','approved'),('no_of_recruitment','&lt;=',0)]}">
+                    <field name="website_published" widget="website_button"/>
+                </button>
+            </button>
+        </field>
+    </record>
+
+<template id="apply_update" inherit_id="website_hr_recruitment.apply" customize_show="True">
+
+<xpath expr="//div//div" position="before">
+   <div class="h2 mgn0" style="color:#0B615E;"> Personal information </div>
+</xpath>
+<xpath expr="/t//div" position="attributes">
+   <attribute name="t-att-style">"background-color:#F2F2F2;"</attribute>
+</xpath>
+<xpath expr="//t//div/h2" position="attributes">
+   <attribute name="t-att-style">"color:#088A85;"</attribute>
+</xpath>
+<xpath expr="//t//div/h1" position="attributes">
+   <attribute name="t-att-style">"color:#0B615E;"</attribute>
+</xpath>
+<xpath expr="//label" position="attributes">
+   <attribute name="t-att-style">"color:#088A85;"</attribute>
+</xpath>
+<xpath expr="//form//div[1]//div//label" position="attributes">
+   <attribute name="t-att-style">"color:#088A85;"</attribute>
+</xpath>
+<xpath expr="//form//div[2]//div//label" position="attributes">
+   <attribute name="t-att-style">"color:#088A85;"</attribute>
+</xpath>
+<xpath expr="//form//div[3]//div//label" position="attributes">
+   <attribute name="t-att-style">"color:#088A85;"</attribute>
+</xpath>
+<xpath expr="//form//div[4]//div//label" position="attributes">
+   <attribute name="t-att-style">"color:#088A85;"</attribute>
+</xpath>
+<xpath expr="//form//div[5]//div//label" position="attributes">
+   <attribute name="t-att-style">"color:#088A85;"</attribute>
+</xpath>
+ <xpath expr="//div//div[5]" position="before">
+   <div class="h2 mgn0" style="color:#0B615E;"> Upload CV </div>
+</xpath>
+  <xpath expr="//div//div//div[1]" position="after">
+    <div class="form-group form-field o_website_form_required_custom">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="gender">Gender</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+        <select id="Gender" name="gender" class="form-control">
+                 <option value="male">Male</option>
+                 <option value="female">Female</option>
+        </select>
+    </div>
+</div>
+    <div class="form-group form-field o_website_form_required_custom">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="marital">Marital</label>
+        </div>
+
+        <div class="col-md-7 col-sm-8">
+
+        <select id="Marital" name="marital" class="form-control">
+                 <option value="single">Single</option>
+                 <option value="married">Married</option>
+                 <option value="widower">Widower</option>
+                 <option value="divorced">Divorced</option>
+        </select>
+        </div>
+    </div>
+    <div t-attf-class="form-group #{error.get('country_id') and 'has-error' or ''}">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="country_id">Nationality</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+             <select id="country_id" name="country_id" class="form-control">
+                 <option value="">Country...</option>
+                     <t t-foreach="countries" t-as="c">
+                        <option t-att-value="c.id" t-att-selected="c.id == (country and country.id or -1)">
+                            <t t-esc="c.name" />
+                        </option>
+                    </t>
+             </select>
+        </div>
+    </div>
+    <div class="form-group form-field o_website_form_required_custom">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="date_of_Birth">Date Of Birth</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+            <input type="date" class="form-control o_website_form_input" name="date_of_Birth" required=""/>
+        </div>
+    </div>
+    <div class="form-group form-field o_website_form_required_custom">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="address">Address</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+            <input type="text" class="form-control o_website_form_input" name="address" required=""/>
+        </div>
+    </div>
+</xpath>
+<xpath expr="//div//div//div[9]" position="after">
+    <div class="h2 mgn0" style="color:#0B615E;"> Educational information </div>
+
+    <div t-attf-class="form-group #{error.get('type_id') and 'has-error' or ''}">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="type_id">Acadimic Qualifications</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+             <select id="type_id" name="type_id" class="form-control">
+                 <option value="">Qualifications...</option>
+                     <t t-foreach="qualificationss" t-as="q">
+                        <option t-att-value="q.id" t-att-selected="q.id == (qualifications and qualifications.id or -1)">
+                            <t t-esc="q.name" />
+                        </option>
+                    </t>
+             </select>
+        </div>
+    </div>
+    <div class="form-group form-field o_website_form_required_custom">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="Score">Score</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+        <select id="score" name="score" class="form-control">
+                 <option value="">Score..</option>
+                 <option value="excellent">Excellent</option>
+                 <option value="vgood">very good</option>
+                 <option value="good">good</option>
+                 <option value="acceptable">Acceptable or Weak</option>
+        </select>
+        </div>
+    </div>
+    <div class="form-group form-field o_website_form_required_custom">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="qualified_year">Qualified Year</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+            <input type="date" class="form-control o_website_form_input" name="qualified_year" required=""/>
+        </div>
+    </div>
+    <div class="form-group form-field o_website_form_required_custom">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="institute">Institute</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+            <input type="text" class="form-control o_website_form_input" name="institute" required=""/>
+        </div>
+    </div>
+    <div t-attf-class="form-group #{error.get('skills_ids') and 'has-error' or ''}">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="skills_ids">Skills</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+                     <t t-foreach="skills" t-as="s">
+                        <input type="checkbox" name="skills_ids" t-att-value="s.id" t-att-selected="s.id == (skill and skill.id or -1)"> 
+                            <t t-esc="s.name" />
+                        </input>
+                    </t>
+        </div>
+    </div>
+    <div class="h2 mgn0" style="color:#0B615E;"> Job Information </div>
+    <div class="form-group form-field o_website_form_required_custom">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="type_of_target">Targeted</label>
+        </div>
+
+        <div class="col-md-7 col-sm-8">
+        <select id="Targeted" name="type_of_target" class="form-control">
+                 <option value="male">Arenas of Male</option>
+                 <option value="female">Schools Of Female</option>
+        </select>
+    </div>
+    </div>
+    <div class="form-group form-field o_website_form_required_custom">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="specialize_experience">Specialize Experience</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+            <input type="number" class="form-control o_website_form_input" name="specialize_experience" required=""/>
+        </div>
+    </div>
+
+    <div class="form-group form-field o_website_form_required_custom">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="general_experience">General Experience</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+            <input type="number" class="form-control o_website_form_input" name="general_experience" required=""/>
+        </div>
+    </div>
+
+    <div class="form-group form-field o_website_form_required_custom" >
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="salary_expected">salary expected</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+            <input type="text" class="form-control o_website_form_input" name="salary_expected" required=""/>
+        </div>
+    </div>
+
+    <div class="form-group form-field o_website_form_required_custom">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="last_salary">Last Salary</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+            <input type="text" class="form-control o_website_form_input" name="last_salary" required=""/>
+        </div>
+    </div>
+    <div t-attf-class="form-group #{error.get('Official_time') and 'has-error' or ''}">
+        <div class="col-md-3 col-sm-4 text-right">
+            <label class="control-label" style="color:#088A85;" for="Official_time">Official Time</label>
+        </div>
+        <div class="col-md-7 col-sm-8">
+             <select id="Official_time" name="Official_time" class="form-control">
+                 <option value="">Official Time...</option>
+                     <t t-foreach="Officialtimes" t-as="of">
+                        <option t-att-value="of.id" t-att-selected="of.id == (Officialtime and Officialtime.id or -1)">
+                            <t t-esc="of.name" />
+                        </option>
+                    </t>
+             </select>
+        </div>
+    </div>
+ </xpath>
+</template>
+
+<template id="detail_update" inherit_id="website_hr_recruitment.detail" customize_show="True">
+        <xpath expr="//div//div[3]" position="replace">
+            <div></div>
+        </xpath>
+        <xpath expr="//section" position="replace">
+            <section class="mb16 bg-white">
+                <div class="container">
+                    <div class="pull-right">
+                        <a t-attf-href="/jobs/apply/#{job.id}" class="btn btn-primary btn-lg pull-right mt32 mb4">Apply Now!</a>
+                    </div>
+                    <label class="mb0 mt16"><a href="/jobs">Jobs</a></label> /
+                    <h1 class="mb0 mt0" t-field="job.name"/>
+                    <h2 class="mt0" t-field="job.sequence"/>
+                    <br></br>
+                    <h4 align="left" style="display: inline">General Experience:</h4>
+                    <h4  style="display: inline" class="mt0" t-field="job.general_experience"/> 
+                    <br></br>
+                    <h4 align="left" style="display: inline">Specialized Experience:</h4>
+                    <h4 style="display: inline" class="mt0" t-field="job.specialize_experience"/>
+                    <br></br>
+                    <h4 align="left" style="display: inline">Degree:</h4>
+                    <h4  style="display: inline" class="mt0" t-esc="degree.name"/> 
+                    <br></br>
+                </div>
+            </section>
+        </xpath>
+        <xpath expr="//div//div[2]" position="replace">
+                <div class="col-md-4 mt4">
+                <div class="panel panel-info">
+                <div class="panel-heading text-center">
+                        <h2 style="margin: 0">Objectives</h2>
+                        <p style="margin: 0" class="text-muted">
+                            Job Objectives ...
+                        </p>
+                </div>
+                    <!-- List group -->
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                          <h4 class="mb1 mt1" t-field="job.goals"/>
+                        </li>  
+                   </ul>
+                    <div class="panel-footer text-center">
+                        <p class="text-muted">
+                            <i> </i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mt4">
+                <div class="panel panel-info">
+                <div class="panel-heading text-center">
+                        <h2 style="margin: 0">Description</h2>
+                        <p style="margin: 0" class="text-muted">
+                            Job Description...
+                        </p>
+                </div>
+                    <!-- List group -->
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                          <h4 class="mb1 mt1" t-field="job.description"/>
+                        </li>  
+                   </ul>
+                    <div class="panel-footer text-center">
+                        <p class="text-muted">
+                            <i>  </i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mt4">
+                <div class="panel panel-info">
+                <div class="panel-heading text-center">
+                        <h2 style="margin: 0">Taskes</h2>
+                        <p style="margin: 0" class="text-muted">
+                            Job Taskes...
+                        </p>
+                </div>
+                    <!-- List group -->
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                          <h4 class="mb1 mt1" t-field="job.tasks"/>
+                        </li>  
+                   </ul>
+                    <div class="panel-footer text-center">
+                        <p class="text-muted">
+                            <i>  </i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mt4">
+                <div class="panel panel-info">
+                <div class="panel-heading text-center">
+                        <h2 style="margin: 0">Personal Attributes</h2>
+                        <p style="margin: 0" class="text-muted">
+                            Job Personal Attributes...
+                        </p>
+                </div>
+                    <!-- List group -->
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                          <h4 class="mb1 mt1" t-field="job.personal_chars"/>
+                        </li>  
+                   </ul>
+                    <div class="panel-footer text-center">
+                        <p class="text-muted">
+                            <i>  </i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mt4">
+                <div class="panel panel-info">
+                <div class="panel-heading text-center">
+                        <h2 style="margin: 0">Work Situations</h2>
+                        <p style="margin: 0" class="text-muted">
+                            Job Work Situations...
+                        </p>
+                </div>
+                    <!-- List group -->
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                          <h4 class="mb1 mt1" t-field="job.work_situations"/>
+                        </li>  
+                   </ul>
+                    <div class="panel-footer text-center">
+                        <p class="text-muted">
+                            <i> </i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mt4">
+                <div class="panel panel-info">
+                <div class="panel-heading text-center">
+                        <h2 style="margin: 0">Skills</h2>
+                        <p style="margin: 0" class="text-muted">
+                            Job Skills...
+                        </p>
+                </div>
+                    <!-- List group -->
+                    <ul class="list-group">
+                        <t t-foreach="Skills" t-as="S">
+                          <li class="list-group-item">
+                            <h4 class="mb1 mt1" t-field="S.name"/>
+                          </li>
+                        </t>  
+                   </ul>
+                    <div class="panel-footer text-center">
+                        <p class="text-muted">
+                            <i>  </i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mt4">
+                <div class="panel panel-info">
+                <div class="panel-heading text-center">
+                        <h2 style="margin: 0">Languages</h2>
+                        <p style="margin: 0" class="text-muted">
+                           Job Languages ...
+                        </p>
+                </div>
+                    <!-- List group -->
+                    <ul class="list-group">
+                        <t t-foreach="Languages" t-as="l">
+                          <li class="list-group-item">
+                            <h4  style="display: inline">Language:</h4>
+                            <h4 class="mb0 mt0" style="display: inline" t-field="l.lang_id.name"/>
+                            <br></br>
+                            <h4  style="display: inline">Type:</h4>
+                            <h4 class="mb0 mt0" style="display: inline" t-field="l.tpye"/>
+                            <br></br>
+                            <h4  style="display: inline">Level:</h4>
+                            <h4 class="mb0 mt0" style="display: inline" t-field="l.level"/>
+                          </li>
+                       </t>  
+                   </ul>
+                    <div class="panel-footer text-center">
+                        <p class="text-muted">
+                            <i>  </i>
+                        </p>
+                    </div>
+                </div>
+            </div>
+          </xpath>
+
+        </template>
+
+<template id="index_update" inherit_id="website_hr_recruitment.index" customize_show="True">
+        <xpath expr="//div[2]//div//div[2]//ul//li//div//div" position="replace">
+            <div class="text-muted">
+                <i class="fa fa-clock-o"/> <span t-field="job.date_closed"/>
+            </div>
+        </xpath>
+</template>
+
+        <record model="ir.ui.view" id="hr_job_form_inherit">
+            <field name="name">hr job inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr.view_hr_job_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                        <page string="Recruitment">
+                            <group>
+                                <field name="date_closed"/>
+                            </group>
+                        </page>
+                </xpath>
+                    </field>
+        </record>
+
+</odoo>

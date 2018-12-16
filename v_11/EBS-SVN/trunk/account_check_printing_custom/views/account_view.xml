@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--record id="view_account_move_check_form" model="ir.ui.view"> <field name="name">account.move.check.form</field> 
+            <field name="model">account.move</field> <field name="inherit_id" ref="account.view_move_form" /> <field name="type">form</field> 
+            <field name="arch" type="xml"> <xpath expr="//field[@name='partner_id']" position="after"> <field name="canceled_chk" invisible="1" 
+            /> </xpath> </field> </record -->
+        <!-- Journal View -->
+
+        <record id="view_account_journal_form_inherited" model="ir.ui.view">
+            <field name="name">account.journal.form.inherited</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account_check_printing.view_account_journal_form_inherited" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='check_sequence_id']" position="replace">
+                    <field name="checkno_sequence_id" />
+                    <field name="grace_period" attrs="{'invisible':[('type','not in',['bank','cash'])]}" />
+                    <field name="check_dimension" />
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Check Log View -->
+
+        <record id="check_log_filter" model="ir.ui.view">
+            <field name="name">check.log.select</field>
+            <field name="model">check.log</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search Log">
+                    <group col='16' colspan='4'>
+                        <field name="name" />
+                        <field name="status" />
+                        <field name="check_no" />
+                        <field name="journal_id" domain="[('type','=','bank' ),('allow_check_writing','=',True)]"
+                            widget="selection" select="1" />
+                        <field name="date_due" />
+                    </group>
+                    <newline />
+                    <group expand="0" string="Group By...">
+                        <filter string="Status" icon="terp-partner" domain="[]" context="{'group_by':'status'}" />
+                        <filter string="Banks" icon="terp-partner" domain="[]" context="{'group_by':'journal_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="check_log_form">
+            <field name="name">check.log.form</field>
+            <field name="model">check.log</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+
+                <form string="Check Log" delete="false" create="false">
+                    <sheet>
+                        <group>
+                            <field name="partner_id" readonly="1" />
+                            <field name="journal_id" readonly="1" />
+                            <field name="date_due" />
+                            <field name="check_no" readonly="1" />
+                            <field name="name" readonly="1" attrs="{'invisible':[('name','=',False)]}"/>
+                            <field name="voucher_name" readonly="1" attrs="{'invisible':[('voucher_name','=',False)]}"/>
+                            <field name="status" readonly="1" />
+                            <field name="signed" attrs="{'readonly':[('status','!=','active')]}" />
+                            <field name="company_id" widget="selection" groups="base.group_multi_company" />
+                        </group>
+                    </sheet>
+                </form>
+
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="check_log_tree">
+            <field name="name">check.log.tree</field>
+            <field name="model">check.log</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string='Check Log' delete="false" create="false">
+                    <field name="partner_id" readonly="1" />
+                    <field name="journal_id" readonly="1" />
+                    <field name="check_no" readonly="1" />
+                    <field name="name" readonly="1" />
+                    <field name="date_due" />
+                    <field name="status" readonly="1" />
+                    <field name="signed" attrs="{'readonly':[('status','!=','active')]}" />
+                    <field name="company_id" widget="selection" groups="base.group_multi_company" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_check_log" model="ir.actions.act_window">
+            <field name="name">Check Log</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">check.log</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="check_log_filter" />
+            <field name="view_id" ref="check_log_tree" />
+        </record>
+        <menuitem name="Check Log" id="menu_check_log" action="action_check_log" parent="account.account_reports_management_menu"
+            sequence="360" />
+        <!-- #v9 menuitem name="Check Log" id="menu_check_log" action="action_check_log" parent="account.menu_finance_reporting" 
+            groups="account_voucher_custom.group_account_expense_pay" sequence="360" / -->
+
+
+        <record model="ir.ui.view" id="account_check_dimension_form">
+            <field name="name">account.check.dimension.form</field>
+            <field name="model">account.check.dimension</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Check Dimension">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" />
+                                <field name="font_size" />
+                                <field name="date" placeholder="x,y" />
+                                <field name="beneficiary" placeholder="x,y" />
+                                <field name="amount" placeholder="x,y" />
+                                <field name="number" placeholder="x,y" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="account_check_dimension_tree">
+            <field name="name">account.check.dimension.tree</field>
+            <field name="model">account.check.dimension</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Check Dimension">
+                    <field name="name" />
+                    <field name="date" />
+                    <field name="beneficiary" />
+                    <field name="amount" />
+                    <field name="number" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_account_check_dimension" model="ir.actions.act_window">
+            <field name="name">Check Dimension</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.check.dimension</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_check_dimension_tree" />
+        </record>
+        <menuitem name="Check Dimension" id="menu_account_check_dimension" action="action_account_check_dimension"
+            parent="payment.root_payment_menu" sequence="360" />
+        <!-- #v9 menuitem name="Check Dimension" id="menu_account_check_dimension" action="action_account_check_dimension" 
+            parent="account.menu_configuration_misc" sequence="360" / -->
+
+
+
+        <!-- Check Option in Journal -->
+        <!--#v9: record id="view_account_journal_form" model="ir.ui.view"> <field name="name">account.journal.form</field> 
+            <field name="model">account.journal</field> <field name="type">form</field> <field name="inherit_id" ref="account.view_account_journal_form" 
+            /> <field name="arch" type="xml"> <field name="type" on_change="onchange_type(type, currency)" /> <field name="entry_posted" 
+            position="after"> <field name="allow_check_writing" attrs="{'invisible':[('type','!=','bank')]}" /> <field name="use_preprint_check" 
+            attrs="{'invisible':[('type','!=','bank')]}" /> </field> <field name="sequence_id" required="0" position="after"> <field 
+            name="check_sequence" attrs="{'invisible':[('allow_check_writing','=',False)]}" /> <field name="check_dimension" attrs="{'invisible':[('allow_check_writing','=',False)]}" 
+            /> <field name="grace_period" attrs="{'invisible':[('type','not in',['bank','cash'])]}" /> </field> <field name="allow_date" 
+            position="replace"> <field name="allow_date" /> </field> </field> </record -->
+
+        <!-- Check Format Option in Company -->
+        <!--v9: record id="check_format_company" model="ir.ui.view"> <field name="name">res.company.check.format</field> 
+            <field name="model">res.company</field> <field name="type">form</field> <field name="inherit_id" ref="base.view_company_form" 
+            /> <field name="arch" type="xml"> <page string="Configuration" position="inside"> <separator string="Default Check layout" 
+            colspan="4" /> <field name="check_layout" /> <field name="currency_format" /> <newline /> </page> </field> </record -->
+
+
+        <record id="view_account_payment_form_inherited" model="ir.ui.view">
+            <field name="name">account.payment.form.inherited</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_type']" position="after">
+                    <field name="journal_type" invisible="1" />
+                </xpath>
+
+                <xpath expr="//button[@name='post']" position="before">
+                    <button name="print_report" class="oe_highlight" string="Print Bank Letter" type="object"
+                        attrs="{'invisible': ['|', '|',('journal_type','in',['cash']),('payment_method_code', '!=', 'manual'), ('state', '=', 'draft')], 'readonly': [('state', '!=', 'draft')]}" />
+                </xpath>
+
+            </field>
+        </record>
+        <record id="view_account_voucher_sale_form_inherited" model="ir.ui.view">
+            <field name="name">account.voucher.form.inherited</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_sale_receipt_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='proforma_voucher']" position="before">
+                    <button name="print_checks" class="oe_highlight" attrs="{'invisible': ['|', ('pay_now', '!=', 'pay_now'), ('state', '!=', 'posted')]}" string="Print Check" type="object"/>
+                    <button name="unmark_sent" attrs="{'invisible': ['|', ('pay_now', '!=', 'pay_now'), ('state', '!=', 'sent')]}" string="Unmark Sent" type="object"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="after">
+                    <field name="check_amount_in_words" attrs="{'invisible': [('pay_now', '!=', 'pay_now')], 'readonly': [('state', '!=', 'draft')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="check_manual_sequencing" invisible="1" readonly="1"/>
+                    <field name="check_number" attrs="{'invisible': ['|', ('pay_now', '!=', 'pay_now'), ('check_number', '=', 0)]}"/>
+                </xpath>
+
+            </field>
+        </record>
+        <record id="view_account_voucher_purchase_form_inherited" model="ir.ui.view">
+            <field name="name">account.voucher.form.inherited</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_purchase_receipt_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='proforma_voucher']" position="before">
+                    <button name="print_checks" class="oe_highlight" attrs="{'invisible': ['|', ('pay_now', '!=', 'pay_now'), ('state', '!=', 'posted')]}" string="Print Check" type="object"/>
+                    <button name="unmark_sent" attrs="{'invisible': ['|', ('pay_now', '!=', 'pay_now'), ('state', '!=', 'sent')]}" string="Unmark Sent" type="object"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="after">
+                    <field name="check_amount_in_words" attrs="{'invisible': [('pay_now', '!=', 'pay_now')], 'readonly': [('state', '!=', 'draft')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="check_manual_sequencing" invisible="1" readonly="1"/>
+                    <field name="check_number" attrs="{'invisible': ['|', ('pay_now', '!=', 'pay_now'), ('check_number', '=', 0)]}"/>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

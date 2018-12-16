@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+         <act_window name="Return Picking"
+		    res_model="fuel.return.picking"
+		    src_model="fuel.picking"
+		    view_mode="form"
+		    target="new"
+           	    key2="client_action_multi"
+            	    multi="True"
+		   id="act_stock_fuel_return_picking"/>
+
+        <record id="fuel_return_memory_tree_in" model="ir.ui.view">
+            <field name="name">fuel.return.picking.memory.tree</field>
+            <field name="model">fuel.return.picking.memory</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" string="Product Moves">
+                    <field name="product_id" />
+                    <field name="quantity" />
+                    
+                </tree>
+            </field>
+        </record>
+        
+        <record id="fuel_return_memory_form_in" model="ir.ui.view">
+            <field name="name">fuel.return.picking.memory.from</field>
+            <field name="model">fuel.return.picking.memory</field>
+            <field name="arch" type="xml">
+                <form string="Return Picking" version="7.0">
+                    <group col="4" colspan="4">
+                        <field name="product_id" />
+                        <field name="quantity" />
+                    </group>
+                 </form>
+            </field>
+        </record>   
+
+        <record id="view_fuel_return_picking_form" model="ir.ui.view">
+            <field name="name">Return lines</field>
+            <field name="model">fuel.return.picking</field>
+            <field name="arch" type="xml">
+                <form string="Return lines" version="7.0">
+                    <label string="Provide the quantities of the returned products." colspan="4"/>
+                    <group col="4" colspan="4">
+		            <separator string="" colspan="4"/>
+		            <field name="product_return_moves"  nolabel="1" colspan="6"/>
+		            <!--field name="invoice_state" /-->
+		            <separator string="" colspan="4" />
+                    </group>
+                    <footer>
+                        <button name="create_returns" string="Return" class="oe_highlight"  type="object"  />
+                        or
+                  	<button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+    </data>
+</openerp>

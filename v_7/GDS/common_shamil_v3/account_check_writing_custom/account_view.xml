@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Check Log -->
+		<record id="check_log_filter" model="ir.ui.view">
+			<field name="name">check.log.select</field>
+			<field name="model">check.log</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Log">
+					<group col='16' colspan='4'>
+						<field name="name" />
+						<field name="status" />
+						<field name="check_no" />
+						<field name="journal_id"
+							domain="[('type','=','bank' ),('allow_check_writing','=',True)]"
+							widget="selection" select="1" />
+						<field name="date_due" />
+					</group>
+					<newline />
+					<group expand="0" string="Group By...">
+						<filter string="Status" icon="terp-partner" domain="[]"
+							context="{'group_by':'status'}" />
+						<filter string="Banks" icon="terp-partner" domain="[]"
+							context="{'group_by':'journal_id'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="check_log_form">
+			<field name="name">check.log.form</field>
+			<field name="model">check.log</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Check Log" delete="false" create="false">
+					<field name="partner_id" readonly="1" />
+					<field name="journal_id" readonly="1" />
+					<field name="date_due" />
+					<field name="check_no" readonly="1" />
+					<field name="name" readonly="1" />
+					<field name="status" readonly="1" />
+					<field name="signed" attrs="{'readonly':[('status','!=','active')]}" />
+					<field name="company_id" widget="selection" groups="base.group_multi_company" />
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="check_log_tree">
+			<field name="name">check.log.tree</field>
+			<field name="model">check.log</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string='Check Log' delete="false" create="false">
+					<field name="partner_id" readonly="1" />
+					<field name="journal_id" readonly="1" />
+					<field name="check_no" readonly="1" />
+					<field name="name" readonly="1" />
+					<field name="date_due" />
+					<field name="status" readonly="1" />
+					<field name="signed" attrs="{'readonly':[('status','!=','active')]}" />
+					<field name="company_id" widget="selection" groups="base.group_multi_company" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_check_log" model="ir.actions.act_window">
+			<field name="name">Check Log</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">check.log</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="check_log_filter" />
+			<field name="view_id" ref="check_log_tree" />
+		</record>
+
+		<menuitem name="Check Log" id="menu_check_log" action="action_check_log"
+			parent="account.menu_finance_reporting" groups="account_voucher_custom.group_account_expense_pay"
+			sequence="360" />
+
+		<!-- Check Option in Journal -->
+		<record id="view_account_journal_form" model="ir.ui.view">
+			<field name="name">account.journal.form</field>
+			<field name="model">account.journal</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="account.view_account_journal_form" />
+			<field name="arch" type="xml">
+				<field name="type" on_change="onchange_type(type, currency)" />
+				<field name="entry_posted" position="after">
+					<field name="allow_check_writing" attrs="{'invisible':[('type','!=','bank')]}" />
+					<field name="use_preprint_check" attrs="{'invisible':[('type','!=','bank')]}" />
+				</field>
+				<field name="sequence_id" required="0" position="after">
+					<field name="check_sequence"
+						attrs="{'invisible':[('allow_check_writing','=',False)]}" />
+					<field name="grace_period"
+						attrs="{'invisible':[('type','not in',['bank','cash'])]}" />
+				</field>
+				<field name="allow_date" position="replace">
+					<field name="allow_date" />
+				</field>
+			</field>
+		</record>
+
+		<!-- Check Format Option in Company -->
+		<record id="check_format_company" model="ir.ui.view">
+			<field name="name">res.company.check.format</field>
+			<field name="model">res.company</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="base.view_company_form" />
+			<field name="arch" type="xml">
+				<page string="Configuration" position="inside">
+					<separator string="Default Check layout" colspan="4" />
+					<field name="check_layout" />
+					<field name="currency_format" />
+					<newline />
+				</page>
+			</field>
+		</record>
+		<record id="view_account_move_check_form" model="ir.ui.view">
+			<field name="name">account.move.check.form</field>
+			<field name="model">account.move</field>
+			<field name="inherit_id" ref="account.view_move_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<field name="period_id" position="after">
+					<field name="canceled_chk" readonly="1" />
+				</field>
+			</field>
+		</record>
+	</data>
+</openerp>

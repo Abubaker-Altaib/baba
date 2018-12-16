@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<document filename="Account Budget.pdf">
+  <template pageSize="(842.0,595.0)" title="Account Budget" author="NCTR" allowSplitting="20">
+    <pageTemplate id="first">
+	<frame id="first" x1="1.3cm" y1="0.9cm" width="786" height="440"/>
+    </pageTemplate>
+  </template>
+
+  <stylesheet>
+
+    <blockTableStyle id="Content_Table">
+	<blockValign value="CENTER"/>
+	<blockAlignment value="CENTER"/>
+	<blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+	<lineStyle kind="GRID" colorName="#e6e6e6"/>
+	<blockTopPadding length="8"/>
+	<blockBottomPadding length="4"/>
+    </blockTableStyle>
+
+    <initialize>
+	<paraStyle name="all" alignment="justify"/>
+    </initialize>
+
+    <paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Header_Table_Header_Centre" fontName="Helvetica-Bold" fontSize="8.0" alignment="CENTER"/>
+    <paraStyle name="Header_Table_Detail_Centre" fontName="Helvetica" fontSize="8.0" alignment="CENTER"/>
+    <paraStyle name="Content_Table_Detail" fontName="Helvetica-Bold" fontSize="8.0" alignment="RIGHT" rightIndent="8"/>
+    <paraStyle name="Content_Table_Header" fontName="Helvetica-Bold" fontSize="9.0" alignment="CENTER"/>
+
+    <images/>
+  </stylesheet>
+
+  <story>
+    <para style="Tilte">تقرير الموازنة</para>
+    <para> <font color="white"> </font> </para>
+
+    <para style="Content_Table_Detail">[[ repeatIn(objects, 'budget') ]]</para>
+    <blockTable colWidths="575.0,220.0">
+      <tr>
+		<td>
+		     <para style="Content_Table_Detail">[[ budget.period_id.name ]]</para>
+		</td>
+		<td>
+		     <para style="Content_Table_Detail">[[ budget.analytic_account_id.name ]]</para>
+		</td>
+      </tr>
+    </blockTable>
+    <blockTable colWidths="115.0,115.0,115.0,115.0,115.0,220.0" style="Content_Table" repeatRows="1">
+      <tr>
+		<td>
+		     <para style="Content_Table_Header">المتبقي</para>
+		</td>
+		<td>
+		     <para style="Content_Table_Header">الصرف الفعلي</para>
+		</td>
+		<td>
+		     <para style="Content_Table_Header">المبلغ المحجوز</para>
+		</td>
+	    <td>
+		     <para style="Content_Table_Header">دعم/ تحويل/ ترحيل</para>
+		</td>
+		<td>
+		     <para style="Content_Table_Header">المبلغ المُخطط</para>
+		</td>
+	        <td>
+		     <para style="Content_Table_Header">الحساب</para>
+		</td>
+      </tr>
+      <tr>	
+        <td>
+		   <para style="Content_Table_Detail"> [[ formatLang(line.residual_balance) ]]
+			<font>[[ (line.residual_balance  &lt; 0 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+		   </para>
+		</td>
+		<td>
+		     <para style="Content_Table_Detail"> [[ formatLang(line.balance) ]] 
+			<font>[[ (line.residual_balance  &lt; 0 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+		   </para>
+		</td>	
+	    <td>
+		   <para style="Content_Table_Detail"> [[ formatLang(line.confirm) ]] 
+			<font>[[ (line.residual_balance  &lt; 0 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+		   </para>
+		</td>	
+	    <td>
+		   <para style="Content_Table_Detail"> [[ formatLang(line.total_operation) ]] 
+			<font>[[ (line.residual_balance  &lt; 0 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+		   </para>
+		</td>      
+		<td>
+		     <para style="Content_Table_Detail"> [[ formatLang(line.planned_amount) ]] 
+			<font>[[ (line.residual_balance  &lt; 0 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+		   </para>
+		</td>	
+		<td>
+		   <para style="Content_Table_Detail">
+			[[ repeatIn(budget.account_budget_line, 'line') ]]
+			[[ line.general_account_id.name ]]
+			<font>[[ (line.residual_balance  &lt; 0 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+		   </para>
+		</td>
+      </tr>      
+      <tr>	
+        <td>
+		   <para style="Content_Table_Detail"> [[ formatLang(total['residual_balance']) ]] </para>
+		</td>
+		<td>
+		     <para style="Content_Table_Detail"> [[ formatLang(total['balance']) ]] </para>
+		</td>	
+	    <td>
+		   <para style="Content_Table_Detail"> [[ formatLang(total['confirm']) ]] </para>
+		</td>	
+	    <td>
+		   <para style="Content_Table_Detail"> [[ formatLang(total['total_operation']) ]] </para>
+		</td>        
+		<td>
+		     <para style="Content_Table_Detail"> [[ formatLang(total['planned_amount']) ]] </para>
+		</td>	
+		<td>
+		   <para style="Content_Table_Detail"> [[ repeatIn(budget_total(budget), 'total') ]] المجمـــــــــــــــوع </para>
+		</td>
+      </tr>
+    </blockTable>
+  </story>
+</document>

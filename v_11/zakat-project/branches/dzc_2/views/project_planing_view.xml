@@ -1,0 +1,185 @@
+
+<odoo>
+  <data>
+    <record id="project_planning_view_tree" model="ir.ui.view">
+      <field name="name"> Project Planning Tree</field>
+      <field name="model">dzc2.project.planning</field>
+      <field name="arch" type="xml">
+        <tree>
+         <field name="code"/>
+          <field name="name"/>
+          <field name="duration_from"/>
+          <field name="duration_to"/>
+          <field name="total_budget"/>
+          <field name="total_executed_budget"/>
+          <field name="total_project_target"/>
+          <field name="total_execued_projects"/>
+          <field name="state"/>
+          
+
+        </tree>
+      </field>
+    </record>
+
+    <!-- Form view for project plan_idsning model -->
+    <record id="‫‪project_planning_view_form" model="ir.ui.view">
+      <field name="name">Project Planning Form</field>
+      <field name="model">dzc2.project.planning</field>
+      <field name="arch" type="xml">
+        <form>
+         <header>
+           <button name="confirm_action" 
+            string="Confirm"
+            states="draft," 
+            type="object" 
+            class="oe_highlight" />
+
+            <button name="approve_action" string="Approve" states="confirm," type="object" class="oe_highlight" />
+
+            <button name="done_action" string="Done" states="approve," type="object" class="oe_highlight" />
+
+            <button name="cancel_action" string="Cancel" states="draft,confirm,approve" type="object" class="oe_highlight" />
+
+            <button name="set_to_draft_action" string="Set To Draft" states="cancel" type="object" class="oe_highlight" />
+
+            <field name="state" widget="statusbar"  />
+          </header>
+
+          <sheet>
+            <group col="4" colspan="2">
+             <field name="code"/>
+             <field name="date_of_plan" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+<field name="name" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+           </group>
+           <group col="4" colspan="2" string="Duration">
+              <field name="duration_from" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+            
+              <field name="duration_to" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+          </group>
+          <group col="4" colspan="2" string="Planning For Project">
+
+            
+            <field name="total_budget" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+            <field name="total_project_target" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+            <field name="total_execued_projects" readonly="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+             <field name="total_executed_budget" readonly="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+              <field name="company_id" readonly="1"/>
+              <field name="user_id" readonly="1"/>
+
+            
+          </group>
+
+          <notebook>
+            <page string="Planning Details">
+              <field name="plan_ids" attrs="{'readonly':[('state', '=', 'done')]}">
+                <tree editable="bottom">
+                  <field name="state_plan_ids" required="1" context="{'states_ids':parent.plan_ids  }"/>
+                  <field name="percentage" required="1"/>
+                  <field name="share_from_budget" required="1"/>
+                  <field name="share_from_projects" required="1"/>
+                  <field name="execute_from_projects" readonly="1" />
+                  <field name="execute_from_budget" readonly="1"/>
+                  <field name="performance" readonly="1" />
+                </tree>
+              </field>
+            </page>
+          </notebook>
+
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- project plan_ids search view-->
+
+  <record id="project_plan_view_search" model="ir.ui.view">
+   <field name="name">dzc2.project.planning.search</field>
+   <field name="model">dzc2.project.planning</field>
+   <field name="arch" type="xml">
+
+     <search string="Search Opportunities">
+       <field name="name"/>
+       <field name="duration_from"/>
+      <field name="duration_to"/>
+
+       <group expand="0" string="Group By">
+          <filter string="Duration From" context="{'group_by': 'duration_from'}"/>
+          <filter string="Duration To" context="{'group_by': 'duration_to'}"/>
+          
+          <filter string="State " context="{'group_by': 'state'}"/>
+
+          <filter string="Users" context="{'group_by': 'user_id'}"/>
+          <filter string="Company" context="{'group_by': 'company_id'}"/>
+
+        </group>
+     </search>
+
+   </field>
+ </record>
+
+ <record id="plan_idsning_conf_action" model="ir.actions.act_window">
+  <field name="name">Planning Of Projects</field>
+  <field name="res_model">dzc2.project.planning</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record>
+
+<!-- project plan_idsnnig menu -->
+<menuitem name="Planning For Projects"
+  id="project_planning_form_menu_action"
+  parent="almsakeen_menu"
+  action="plan_idsning_conf_action"
+  sequence="5"/>
+<!-- case study tree view -->
+<record id="msakeen_case_study_view_tree" model="ir.ui.view">
+      <field name="name">zakat application tree</field>
+      <field name="model">zakat.aplication.form</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="faqeer_id"/>
+          <field name="national_number"/>
+          <field name="state_id"/>
+          <field name="local_state_id"/>
+          <field name="admin_unit_id"/>
+          <field name="state"/>
+        </tree>
+      </field>
+  </record>
+  <!-- case study menu -->
+
+<!-- case form view -->
+<record id="form_view_inherit_zakat_application_form" model="ir.ui.view">
+        <field name="name">zakat aplication form Inherit</field>
+        <field name="model">zakat.aplication.form</field>
+        <field name="inherit_id" ref="dzc_1.view_zakat_application_form"/>
+        <field name="arch" type="xml">
+                <xpath expr="//form//field[@name='create_project']" position="after">
+                <field name="project_created" attrs="{'invisible':[('create_project','not in',['e_c','e_s'])],
+                'readonly':[('state', '=','done')],
+                'required':[('create_project','in',['e_c','e_s'])]}"/>
+                </xpath>
+        </field>
+    </record>
+
+
+ <record id="case_study_mskaeen_action" model="ir.actions.act_window">
+  <field name="name">Case Study</field>
+  <field name="res_model">zakat.aplication.form</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+  <field name="domain">[('case_type', '=', 'project')]</field>
+  <field name="view_id" ref="msakeen_case_study_view_tree"/>
+  <field name="context">{'default_case_type':'project'}</field>
+</record>
+<menuitem id="case_study_msakeen_menu"
+      parent="almsakeen_menu"
+      name="Case Study"
+      action="case_study_mskaeen_action"
+      sequence="1"/>
+</data>
+</odoo>

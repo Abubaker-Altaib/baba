@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<record id="fleet_vehicle_cost_filter" model="ir.ui.view">
+			<field name="name">fleet.vehicle.cost.search</field>
+			<field name="model">fleet.vehicle.cost</field>
+			<field name="arch" type="xml">
+				<search string="Search For Contract">
+					<group expand='0' string='Group by...'>
+						<filter string="Partner" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'insurer_id'}" />
+						<filter string="Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'cost_subtype_id'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="fleet_vehicle_cost_custom_form" model="ir.ui.view">
+			<field name="name">fleet.vehicle.cost.form.custom</field>
+			<field name="model">fleet.vehicle.cost</field>
+			<field name="arch" type="xml">
+				<form version="7.0" string="contracts">
+					<header>
+						<button name="confirm" states="draft"
+                            string="Confirm" type="object" icon="gtk-convert"/>
+						
+						<button name="smanager" states="confirm"
+                            string="Section Manager Approve" type="object" icon="gtk-convert" groups="admin_affairs.group_section_manager"/>
+
+						<button name="dmanager" states="smanager"
+                            string="Department Manager Approve" type="object" icon="gtk-convert"  groups="base.group_department_manager"/>
+
+						<button name="gdmanager" states="dmanager"
+                            string="General Department Manager Approve" type="object" icon="gtk-convert" groups="purchase_wafi.group_general_department_manager"/>
+						
+						<button name="create_payment" states="gdmanager"
+                            string="General Manager Approve" type="object" icon="gtk-convert" groups="base_custom.group_account_general_manager"/>
+						
+						<field name="state" widget="statusbar" statusbar_visible="draft,gmanager"/>
+					</header>
+					<group>
+						<group>
+							<field name="cost_subtype_id" readonly="1"/>
+							<field name="insurer_id" readonly="1"/>
+						</group>
+						<group>
+							<field name="amount" readonly="1"/>
+							<field name="voucher_id" readonly="1"/>
+							<field name="progress"  on_change="on_change_progress(progress,amount)"
+							attrs="{'readonly':[('state','=','gmanager')]}"/>
+						</group>
+						<group>
+							<field name="notes"  />
+							<field name="contract_type" readonly="1"/>
+						</group>
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="fleet_vehicle_cost_custom_tree" model="ir.ui.view">
+			<field name="name">fleet.vehicle.cost.tree.custom</field>
+			<field name="model">fleet.vehicle.cost</field>
+			<field name="arch" type="xml">
+				<tree version="7.0" string="contracts">
+					<field name="cost_subtype_id"  />
+					<field name="insurer_id"  />
+					<field name="amount"  />
+					<field name="progress"  on_change="on_change_progress(progress,amount)"/>
+					<field name="notes"  />
+					<field name="contract_type"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="action_contract_cost">
+            <field name="name">Services Costs</field>
+            <field name="res_model">fleet.vehicle.cost</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form,tree</field>
+			<field name="search_view_id" ref="fleet_vehicle_cost_filter"/>
+            <field name="domain">[('auto_generated','=',True),('voucher_id','=',False)]</field>
+        </record>
+
+		<record model="ir.actions.act_window.view" id="action_contract_cost_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="fleet_vehicle_cost_custom_tree"/>
+            <field name="act_window_id" ref="action_contract_cost"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_contract_cost_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fleet_vehicle_cost_custom_form"/>
+            <field name="act_window_id" ref="action_contract_cost"/>
+        </record>
+
+        <menuitem id="contract_cost_menu" name="Services Costs" parent="service.admin_affairs_service_menu" 
+                   action="action_contract_cost" sequence="3"/>
+
+		<record model="ir.ui.view" id="view_fleet_vehicle_form_inherit">
+			<field name="name">fleet.vehicle.form.inherit</field>
+			<field name="model">fleet.vehicle</field>
+			<field name="inherit_id" ref="admin_affairs.view_fleet_vehicle_form_inherit" />
+			<field name="arch" type="xml">
+				<xpath expr="//form/sheet/notebook/page[@string='Notes']" position="before">
+					<page string="Maintainace" groups="service.group_vehicle_maintenace"
+						attrs="{'invisible':[('ownership','!=','owned')]}">
+						<group>
+							<group>
+								<field name="expected_odometer"
+									attrs="{'readonly':[('state','in',('confirm','outservice'))]}" />
+							</group>
+							<group>
+								<field name="next_maintenance_date"
+									attrs="{'readonly':[('state','in',('confirm','outservice'))]}" />
+							</group>
+						</group>
+						<group>
+							<field name="purchase_requisitions" >
+								<tree version="7.0" editable="bottom">
+									<field name="purchase_requisition" />
+									<field name="product_id"/>
+									<field name="product_qty"/>
+									<field name="product_uom_id"/>
+									<field name="price"/>
+								</tree>
+							</field>
+						</group>
+					</page>
+				</xpath>
+			</field>
+		</record>
+
+		
+
+		<record id="fleet_vehicle_log_contract_tree_inherit" model="ir.ui.view">
+			<field name="name">fleet.vehicle.log.contract.tree.inherit</field>
+			<field name="model">fleet.vehicle.log.contract</field>
+			<field name="inherit_id" ref="fleet.fleet_vehicle_log_contract_tree" />
+			<field name="arch" type="xml">
+				<tree string="Contract logs">
+					<field name="driver_id" />
+					<!--field name="employee_id" /-->
+				</tree>
+			</field>
+		</record>
+
+		<record id="admin_affairs_account_custom_form_inherit" model="ir.ui.view">
+			<field name="name">admin_affairs.account.form.inherit</field>
+			<field name="model">admin_affairs.account</field>
+			<field name="inherit_id" ref="admin_affairs.admin_affairs_account_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='analytic_id']" position="after">
+					<field name="service_id" domain="[('category','!=','service')]" 
+						context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}"/>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="id_admin_affairs_payment_roof_form_inherit" model="ir.ui.view">
+			<field name="name">admin.affairs.payment.roof.form.inherit</field>
+			<field name="model">admin.affairs.payment.roof</field>
+			<field name="inherit_id" ref="admin_affairs.id_admin_affairs_payment_roof_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//form/sheet/group[1]/field[@name='model_id']" position="after">
+					<field name="service_id" domain="[('category','not in',('service','both','license','insurance'))]" 
+						context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}"/>
+				</xpath>
+			</field>
+		</record>
+
+
+		<record id="view_payment_enrich_view_form_custom2" model="ir.ui.view">
+			<field name="name">payment.enrich.form.inherit</field>
+			<field name="model">payment.enrich</field>
+			<field name="inherit_id" ref="admin_affairs.view_payment_enrich_view_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='department_id']" position="after">
+					<field name="service_id" attrs="{'readonly':[('state','!=','draft')] }" domain="[('category','not in',('service','insurance')),('building','=',False)]"/>
+				</xpath>
+				<xpath expr="//field[@name='enrich_lines']" position="replace">
+					<field colspan="4" name="enrich_lines" nolabel="1">
+						<tree editable="top" string="">
+							<field name="name" />
+							<field name="service_id" domain="[('category','!=','service')]" context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}"/>
+							<field name="department_id" />
+							<field name="date" />
+							<field name="cost" />
+							<field name="state" />
+							<field name="owner_id" invisible="1"/>
+							<field name="model_id" invisible="1"/>
+							<button icon="terp-gtk-go-back-rtl" name="done" states="draft"
+								string="Process" type="object" context="{'owner':owner_id,'model_id':model_id}"
+								confirm="Are you sure you want to Confirm this request?" />
+							<button icon="gtk-cancel" name="cancel" states="draft" 
+								string="Cancel" type="object" context="{'owner':owner_id,'model_id':model_id}"
+								confirm="Are you sure you want to Cancel this request?" />
+							<button icon="terp-gtk-go-back-rtl" context="{'owner':owner_id,'model_id':model_id}"
+								name="ir_action_cancel_draft" states="cancel,delaied" 
+								string="Reset" type="object" confirm="set this request to draft?"/>
+							<button name="delay" states="draft" string="Delay" context="{'owner':owner_id,'model_id':model_id}" 
+								type="object" confirm="set this request to be delaied?"/>
+							<button name="%(admin_affairs.enrich_receive_notification)d" 
+								groups="admin_affairs.group_enrich_report" colspan="2"
+								string="Print Receive Notification" states="done" type="action"
+								icon="gtk-print" />
+						</tree>
+					</field>
+				</xpath>
+			</field>
+		</record>
+
+        <record id="admin_affairs_account_tree_inherit" model="ir.ui.view">
+            <field name="name">admin_affairs.account.tree.inherit</field>
+            <field name="model">admin_affairs.account</field>
+            <field name="inherit_id" ref="admin_affairs.admin_affairs_account_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='model_id']" position="after">
+                    <field name="service_id"/>
+                </xpath>
+            </field>
+        </record>
+
+
+		<record id="fleet_service_type_tree_inherit" model="ir.ui.view">
+			<field name="name">fleet.service.type.tree</field>
+			<field name="model">fleet.service.type</field>
+			<field name="inherit_id" ref="fleet.fleet_vehicle_service_types_tree" />
+			<field name="arch" type="xml">
+				<xpath expr="/tree" position="replace">
+					<tree string="Service Types" version="7.0">
+						<field name="name" />
+						<field name="category" />
+					</tree>
+				</xpath>
+
+			</field>
+		</record>
+
+		<record id="fleet_service_type_form_inherit" model="ir.ui.view">
+			<field name="name">fleet.service.type.form.inherit</field>
+			<field name="model">fleet.service.type</field>
+			<field name="arch" type="xml">
+				<form string="Service Type" version="7.0">
+					<sheet>
+						<group>
+							<group>
+								<field name="name" />
+								<field name="parent_id" domain="[('category','!=','service'),('building','=',False)]" 
+									attrs="{'readonly':[('category','!=','service')]}" />
+							</group>
+							<group>
+								<field name="category" />
+								<field name="cost" attrs="{'invisible':[('category','not in',('service','hall'))]}"/>
+							</group>
+							<group>
+                            	<field name="active"/>
+                            	<field name="time_to_request" attrs="{'invisible':[('category','!=','hospitality')]}"/>
+                            </group>
+                    	</group>
+	                    <group>
+	                    	<notebook>
+	                    		<page string="Included services">
+			                        <field name="child_ids" context="{'category': 'service'}" string="Included services" on_change="onchange_child_ids(child_ids)" >
+			                        	<tree version="7.0" editable='top'>
+											<field name="name"  />
+											<field name="cost" on_change="onchange_free(cost,is_free)" />
+											<field name="category" invisible='1'/>
+											<field name="is_free" on_change="onchange_free(cost,is_free)"/>
+										</tree>
+			                        </field>
+			                    </page>
+
+			                    <page string="Users" 
+			                    	attrs="{'invisible':['|',('time_to_request','in',[False,0]),('category','!=','hospitality')]}">
+			                        <field name="users"/>
+			                    </page>
+
+			                    <page string="Hall Types" 
+			                    	attrs="{'invisible':[('category','!=','hall')]}">
+			                        <field name="hall_type"/>
+			                    </page>
+								<page string="Linked Halls" 
+			                    	attrs="{'invisible':[('category','!=','hall')]}">
+			                        <field name="linked_to_hall" nolabel="1" domain="[('category','=','hall')]"/>
+			                    </page>
+		                    </notebook>
+	                    </group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+                <record id="fleet.fleet_vehicle_service_types_act" model="ir.actions.act_window">
+                    <field name="domain">[('category','!=','service'),('building','=',False)]</field>
+                </record>
+        <record model="ir.actions.act_window.view" id="custom_service_types_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="fleet_service_type_tree_inherit"/>
+            <field name="act_window_id" ref="fleet.fleet_vehicle_service_types_act"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="custom_service_types_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fleet_service_type_form_inherit"/>
+            <field name="act_window_id" ref="fleet.fleet_vehicle_service_types_act"/>
+        </record>
+
+		<record id="hall_form" model="ir.ui.view">
+			<field name="name">Halls form</field>
+			<field name="model">service.hall_availability</field>
+			<field name="arch" type="xml">
+				<form string="Halls Form" version="7.0">
+				<field name="state" invisible="1"/>
+				<button name="cancel_reg" string="Delete" states="draft" groups="admin_affairs.group_admin_affair_manager,admin_affairs.group_service_officer"
+				type="object"/>
+				<button name="draft" string="Draft" states="cancel" groups="admin_affairs.group_admin_affair_manager,admin_affairs.group_service_officer"
+				type="object"/>
+					<group>
+						<group>
+							
+							<field name="name"/>
+							<field name="hall_id" groups="admin_affairs.group_admin_affair_manager"
+							domain="[('category','=','hall')]"/> 
+							<field name="date_start"/> 
+						</group>
+						<group>
+							<field name="date_stop"/> 
+							<field name="weekday"/>
+							<field name="contract_id" readonly="1"/>
+						</group>
+
+						<group>
+							<field name="hall_reg_type" readonly="1"/> 
+							<field name="department_id" readonly="1"/>
+							<field name="insurer_id" readonly="1"/>
+						</group>
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="hall_calendar" model="ir.ui.view">
+			<field name="name">Halls Calendar</field>
+			<field name="model">service.hall_availability</field>
+			<field name="arch" type="xml">
+				<calendar string="Halls Calendar" color="hall_id" date_start="date_start" date_stop="date_stop">
+					<field name="name"/>       
+				</calendar>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="action_holl_availability">
+            <field name="name">Halls Calendar</field>
+            <field name="res_model">service.hall_availability</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">calendar</field>
+        </record>
+
+		<menuitem  id="holl_availability_menu" name="Halls Calendar" parent="admin_affairs_service_menu" 
+             action="action_holl_availability" sequence="13"/>
+
+
+<!-- Additional field for product to identify is product belong to admin affaris -->
+
+
+		<record model="ir.ui.view" id="view_product_product_admin_affaris_inheritt">
+			<field name="name">admin.product.product.form.inherit</field>
+			<field name="model">product.product</field>
+			<field name="inherit_id" ref="product.product_normal_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='categ_id']" position="after">
+                            		<label for="is_admin_affaris" class="oe_edit_only"/>
+					<field name="is_admin_affaris" groups="service.group_building_service_officer"/>       
+				</xpath>
+			</field>
+		</record>
+	
+	<record id="hall_reg_type_form" model="ir.ui.view">
+			<field name="name">hall.reg.type.form</field>
+			<field name="model">hall.reg.type</field>
+			<field name="arch" type="xml">
+				<form string="Hall Registration Type" version="7.0">
+					<sheet>
+						<group>
+							<field name="name" />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="action_hall_reg_type_form">
+            <field name="name">Hall Registration Type</field>
+            <field name="res_model">hall.reg.type</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+        </record>
+
+		<!--menuitem id="action_hall_reg_type_form_menu" name="Hall Registration Types" parent="admin_affairs.admin_affairs_configuration_menu" 
+                   action="action_hall_reg_type_form"/-->
+
+	</data>
+</openerp>

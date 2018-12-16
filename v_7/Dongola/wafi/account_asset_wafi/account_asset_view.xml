@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+        <!-- Category -->
+        <record model="ir.ui.view" id="view_account_asset_category_form3">
+            <field name="name">account.asset.category.form</field>
+            <field name="model">account.asset.category</field>
+            <field name="inherit_id" ref="account_asset_custom.view_account_asset_category_form2"/>
+            <field name="arch" type="xml">
+				<xpath expr="//field[@name='account_reval_id']" position="after">
+					<field name="account_rehabilitation_id" domain="[('type', '!=', 'view'), ('company_id', '=', company_id)]" />
+				</xpath>
+            </field>
+        </record>
+      <!-- History -->  
+        <record model="ir.ui.view" id="view_account_asset_history_form">
+            <field name="name">account.asset.history.form</field>
+            <field name="model">account.asset.history</field>
+            <field name="inherit_id" ref="account_asset_custom.view_account_asset_history_form"/>
+            <field name="arch" type="xml">
+				<xpath expr="//field[@name='type']" position="after">
+					<field name="rehab_type"  attrs="{'readonly':[('type','!=','reval')]}"/>
+				</xpath>
+            </field>
+        </record>      
+      <!-- Asset -->  
+        <record model="ir.ui.view" id="view_account_asset_asset_form">
+            <field name="name">account.asset.asset.form</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset_custom.view_account_asset_asset_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='history_ids']/tree/field[@name='date']" position="before">
+                    <field name="rehab_type"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="product_normal_custom_form_view" model="ir.ui.view">
+            <field name="name">product.normal.form.inherit_asset</field>
+            <field name="model">product.product</field>
+            <!--field name="priority">5</field-->
+            <field name="inherit_id" ref="account.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[5]" position="inside">
+                    <group>
+                        <field name="asset_track" on_change="onchange_asset_track(asset_id)"/>
+                        <field name="asset_category_id" attrs="{'invisible':[('asset_track','!=','asset')],'required':[('asset_track','==','asset')]}" colspan="2" />
+                        <field name="asset_id" colspan="2" />
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="invoice_supplier_form_custom_field">
+            <field name="name">account.invoice.supplier.custom.field.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account_asset.view_invoice_asset_category"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='asset_category_id']" position="replace">
+                    <field name="asset_track" on_change="onchange_asset_track(asset_id)"/>
+                    <field name="asset_category_id"
+                     attrs="{'readonly':[('asset_track','!=','asset')],'required':[('asset_track','==','asset')]}" colspan="2" />
+                    <field name="asset_id" attrs="{'readonly':[('asset_track','!=','asset_part')],'required':[('asset_track','==','asset_part')]}" />
+                </xpath>
+            </field>
+        </record>
+
+</data>
+</openerp>

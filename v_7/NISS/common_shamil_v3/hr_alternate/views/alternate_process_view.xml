@@ -1,0 +1,155 @@
+<openerp>
+    <data>
+        <record id="view_hr_alternative_process_search" model="ir.ui.view">
+            <field name="name">hr.alternative.process.search</field>
+            <field name="model">hr.alternative.process</field>
+            <field name="arch" type="xml">
+                <search string="group by">
+                    <field name="alternative_setting_id"/>
+                    <field name="state"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Category" icon="terp-folder-green" context="{'group_by':'alternative_setting_id'}" help="Category"/>
+                        <filter string="State" icon="terp-folder-green" context="{'group_by':'state'}" help="State"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model='ir.ui.view' id='hr_alternative_process_tree'>
+            <field name='name'>alternative process tree</field>
+            <field name='model'>hr.alternative.process</field>
+            <field name='type'>tree</field>
+            <field name='arch' type='xml'>
+                <tree string="alternative process tree" version="7.0">
+                    <field name="alternative_setting_id" />
+                    <field name="date_from" />
+                    <field name="date_to" />
+                </tree>
+            </field>
+        </record>
+        <record model='ir.ui.view' id='hr_alternative_process_form'>
+            <field name='name'>alternative process Form</field>
+            <field name='model'>hr.alternative.process</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string="alternative process Form" version="7.0">
+                    <header>
+                        <button string="Set to Draft" name="draft" states="confirmed" type="object" icon="gtk-convert"  groups="hr_custom_military.hr_emp_process_user"/>
+                        <button string="Confirm" name="confirm" states="draft" type="object" icon="gtk-apply"  groups="hr_custom_military.hr_emp_process_user"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed" statusbar_colors='{"confirmed":"blue","draft":"green"}'/>
+                    </header>
+                    <sheet>
+                        <label for="sequance" class="oe_edit_only" string="Sequance"/>
+                             <h1>
+                                 <field name="sequance" class="oe_inline" placeholder="Sequance" style="width: 6em" readonly="1"/>
+                             </h1> 
+                        <group>
+                             <field name="number" required="True" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+                            <field name="alternative_process_collective_id" readonly="1" attrs="{'invisible':[('alternative_process_collective_id','=', False)]}"/>
+                            <field name="alternative_setting_id" required="True" attrs="{'readonly':[('alternative_process_collective_id','!=', False)]}" on_change="onchange_alternative_setting_id(alternative_setting_id)"/>
+                        </group>
+                        <group>
+                            <field name="date_from" required="True" attrs="{'readonly':[('alternative_process_collective_id','!=', False)]}"/>
+                            <field name="date_to" required="True" attrs="{'readonly':[('alternative_process_collective_id','!=', False)]}"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <button name="fetch" string="Fetch" type="object"  groups="hr_custom_military.hr_emp_process_user"/>
+                            <field name="degrees_ids" invisible="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Employees">
+                                <field name="lines_ids">
+                                    <tree string="Employees" editable="top" delete="0" create="0">
+                                        <field name="employee_id" context="{'alternative_setting_id':parent.alternative_setting_id}" options="{'no_open':True,'create': false, 'create_edit': false}" required="True" domain="[('state','=','approved'), ('degree_id','in',parent.degrees_ids[0][2])]"/>
+                                        <field name="degree" readonly="1" options="{'no_open':True,'create': false, 'create_edit': false}"/>
+                                        <field name="date" readonly="1"/>
+                                        <field name="weekday" readonly="1"/>
+                                        <button string="Set to Draft" name="draft" states="confirmed" type="object" icon="gtk-convert"  groups="hr_custom_military.hr_emp_process_user"/>
+                                        <button string="Confirm" name="confirm" states="draft" type="object" icon="gtk-apply"  groups="hr_custom_military.hr_emp_process_user"/>
+                                        <field name="state" readonly="1" statusbar_visible="draft,confirmed"/>
+                                    </tree>
+                                </field>
+                                <group>
+                                        <field name="alternative1" options="{'no_open':True,'create': false, 'create_edit': false}" domain="[('state','=','approved'), ('degree_id','in',degrees_ids[0][2])]" attrs="{'required':[('lines_ids','!=', [])]}"  context="{'alternative_setting_id':alternative_setting_id}"/>
+                                        <field name="alternative2" options="{'no_open':True,'create': false, 'create_edit': false}" domain="[('state','=','approved'), ('degree_id','in',degrees_ids[0][2])]" attrs="{'required':[('lines_ids','!=', [])]}"  context="{'alternative_setting_id':alternative_setting_id}"/>
+                                    </group>
+                            </page>
+                            <page string="Report setting">
+                                <group>
+                                    <field name="report_header"/>
+                                    <field name="report_alerts"/>
+                                </group>
+                                </page>
+                        </notebook>
+                        
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_hr_alternative_process_form" model="ir.actions.act_window">
+            <field name="name">alternative process</field>
+            <field name="res_model">hr.alternative.process</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem name="Alternative" id="menu_hr_alternative_process_main" parent="hr_custom.menu_hr_payroll_processes"/>
+        <menuitem name="Alternative process" action="action_hr_alternative_process_form" id="menu_action_hr_alternative_process_form" parent="menu_hr_alternative_process_main"/>
+        <record model='ir.ui.view' id='hr_alternative_process_collective_tree'>
+            <field name='name'>alternative process collective tree</field>
+            <field name='model'>hr.alternative.process.collective</field>
+            <field name='type'>tree</field>
+            <field name='arch' type='xml'>
+                <tree string="alternative process collective tree" version="7.0">
+                    <field name="date_from" />
+                    <field name="date_to" />
+                </tree>
+            </field>
+        </record>
+        <record model='ir.ui.view' id='hr_alternative_process_collective_form'>
+            <field name='name'>alternative process collective Form</field>
+            <field name='model'>hr.alternative.process.collective</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string="alternative process collective Form" version="7.0">
+                    <header>
+                        <button string="Set to Draft" name="draft" states="confirmed" type="object" icon="gtk-convert"  groups="hr_custom_military.hr_emp_process_user"/>
+                        <button string="Confirm" name="confirm" states="draft" type="object" icon="gtk-apply"  groups="hr_custom_military.hr_emp_process_user"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed" statusbar_colors='{"confirmed":"blue","draft":"green"}'/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="date_from" required="True"/>
+                            <field name="date_to" required="True"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <button name="fetch" string="Fetch" type="object"  groups="hr_custom_military.hr_emp_process_user"/>
+                        </group>
+                        <notebook>
+                            <page string="Categories">
+                                <field name="lines_ids">
+                                    <tree string="Categories" delete="0" create="0">
+                                        <field name="alternative_setting_id" />
+                                        <field name="date_from" />
+                                        <field name="date_to" />
+                                        <button string="Set to Draft" name="draft" states="confirmed" type="object" icon="gtk-convert"  groups="hr_custom_military.hr_emp_process_user"/>
+                                        <button string="Confirm" name="confirm" states="draft" type="object" icon="gtk-apply"  groups="hr_custom_military.hr_emp_process_user"/>
+                                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_hr_alternative_process_collective_form" model="ir.actions.act_window">
+            <field name="name">alternative process collective</field>
+            <field name="res_model">hr.alternative.process.collective</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem name="Alternative process collective" action="action_hr_alternative_process_collective_form" id="menu_action_hr_alternative_process_collective_form" parent="menu_hr_alternative_process_main"/>
+    </data>
+</openerp>

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+
+
+<!-- Inherit RES GROUPS From  -->
+    <record model="ir.ui.view" id="view_groups_form_inherit">
+		<field name="name">res.groups.form.inherit</field>
+		<field name="model">res.groups</field>
+        <field name="inherit_id" ref="base.view_groups_form"/>
+		<field name="arch" type="xml">
+              <field name="comment"  position="replace">
+                     <field name="comment" required="1"   placeholder="Please Write The Purpose Of This Group Here .... "/>
+              </field>
+        </field>
+    </record>
+
+
+
+
+
+
+<!-- Inherit RES USERS From  -->
+
+    <record model="ir.ui.view" id="view_users_form_inherit">
+            <field name="name">res.users.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+              <group string="Allowed Companies" position="after" >
+		         <group string="Allowed Departments">
+                     	<field name="department_ids" readonly="1"/>
+	             </group>
+                </group>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_department_form_simple_modif_inherited1">
+            <field name="name">view.department.form.hr.inherited1</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form_simple_modif" />
+            <field name="arch" type="xml">
+
+                <field name="company_id" position="after">
+                     	<field name="department_ids" readonly="1"/>
+                </field>
+            </field>
+        </record>
+
+ 
+<!-- Inherit HR Department From  -->
+  <record model="ir.ui.view" id="hr_department_view_inherit">
+			<field name="name">hr.department.form.inherit</field>
+			<field name="model">hr.department</field>
+			<!--field name="type">form</field-->
+			<field name="inherit_id" ref="hr.view_department_form" />
+			<field name="arch" type="xml">
+
+                      <field name="manager_id" position="replace">
+                     <field name="manager_id" on_change="onchange_manager(manager_id)"/>
+                     <field name="pervious_manger_id" />
+                     <field name="manager_user_id" required="1"/>
+              </field>
+
+                     
+
+            </field>
+    </record>
+
+
+
+<!-- Granted Rights Order Menu , Form , Tree ,Action -->
+    <record model="ir.ui.view" id="granted_rights_order_form">
+		<field name="name">Granted Rights Order Form</field>
+		<field name="model">granted.rights.order</field>
+		<field name="arch" type="xml">
+         <form string="Granted Rights Order" version="7.0">
+          <header>
+             <field name="state" widget="statusbar" statusbar_visible="draft,granted,revoked"  statusbar_colors='{"draft":"blue","granted":"green","revoked":"grey"}'/>
+          </header>
+
+            <button name="check_scheduler"  string="Check scheduler"    type="object" />
+
+
+         
+		  <sheet>
+		       <div class="oe_title">
+		                <h1>
+		                    <label string="Granting Rights Order" />
+                             <field name="name" colspan="2" widget="handle" /> 
+		                </h1>
+
+		       </div>
+                  
+		        <group >
+
+                          <group col="2" >
+                            <field name="delegation_type" colspan="2" required="1" attrs="{'readonly' : [('state' , '!=' , 'draft')]}" />
+
+                            <field name="holiday_order_id" colspan="2" attrs="{'readonly' : [('state' , '!=' , 'draft')], 'required': [('delegation_type','=','holiday')], 'invisible': [('delegation_type','!=','holiday')]}" domain="[('employee_id','=', employee_donor ),('state' , 'in' , ['draft' ,'confirm'] )]" on_change="on_change_holiday_order(holiday_order_id)"/>
+
+	                          <field name="mission_order_id" colspan="2" attrs="{'readonly' : [('state' , '!=' , 'draft')], 'required': [('delegation_type','=','mission')], 'invisible': [('delegation_type','!=','mission')]}" domain="[('state' , 'not in' , ['draft' ,'completed', 'validated'] )]" on_change="on_change_mission_order(mission_order_id)"/>
+		                      <field name="employee_donor"  colspan="2" readonly="1" on_change="on_change_donor_employee(employee_donor)"/>
+	                          <field name="start_grant_date"  colspan="2" required="1" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+	                          <field name="department_id"  colspan="2" />
+                              <field name="company_id"  colspan="2" />
+          
+
+                          </group >
+                          <group col="2"> 
+	                          <field name="order_date" colspan="2" required="1" readonly="1" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+		                      <field name="employee_candidate"  colspan="2" domain="[('state','=', 'approved'),('id' , '!=' , employee_donor )]"  attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+                          	  <field name="end_grant_date"  colspan="2" required="1" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+                              <field name="is_a_amanger"  colspan="2" />
+
+
+                          </group>
+
+
+
+                </group>
+
+		        
+		       <notebook>
+                    
+                     <page string="Rights" colspan="4" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"> 
+                                                         
+                             <field name="donor_groups_ids"  colspan="2" attrs="{'required' : [('state' , '=' , 'draft')] , 'readonly' : [('state' , '!=' , 'draft')]}">
+                                    <tree editable="bottom"  create="false">
+						                    <field name="group_id" required="1" readonly="1"/>
+					                        <field name="name" />
+						                    <field name="granted" />
+
+				                    </tree>
+  
+                             </field>
+                       
+
+
+                         
+		            </page>
+                    <page string="Notes" colspan="4" attrs="{'readonly' : [('state' , '!=' , 'draft')]}">
+
+                               <field name="note"  colspan="2" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/> 
+
+		            </page>
+		            
+		       </notebook>
+		  </sheet>
+
+                                    				
+	        </form>
+	     </field>
+
+   </record>
+
+
+         <record id="granted_rights_order_tree" model="ir.ui.view">
+			<field name="name">Granted Rights Order Tree</field>
+			<field name="model">granted.rights.order</field>
+			<field name="arch" type="xml">
+				<tree  string="Granted Rights Order" colors="grey:state in ('done','cancel');blue:state in ('draft')">
+					<field name="name" />
+                    <field name="employee_donor" />
+                    <field name="employee_candidate" />
+                    <field name="delegation_type" />
+                    <field name="mission_order_id" attrs="{'invisible':[('delegation_type','!=','mission')]}"/>
+                    <field name="holiday_order_id" attrs="{'invisible':[('delegation_type','!=','holiday')]}"/>
+                    <field name="state" />
+				</tree>
+ 
+
+			</field>
+          </record>
+
+
+
+
+
+
+
+
+
+     
+
+
+
+       <record id="action_granted_rights_order" model="ir.actions.act_window">
+            <field name="name">Action Granted Rights Order</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">granted.rights.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="filter" eval="True"/>
+        </record>
+
+
+<!-- Granted Rights Order Lines Form , Tree -->
+    <record model="ir.ui.view" id="granted_rights_order_lines_form">
+		<field name="name">Granted Rights Order Lines Form</field>
+		<field name="model">granted.rights.order.lines</field>
+		<field name="arch" type="xml">
+         <form string="Granted Rights Order" version="7.0">
+         
+
+
+
+
+         
+		  <sheet>
+		       <div class="oe_title">
+		                <h1>
+                             <field name="name" colspan="2"  widget="handle" /> 
+		                </h1>
+
+		       </div>
+                  
+		        <group >
+
+                          <group col="2" >
+	                          <field name="group_id" colspan="2" required="1"/>
+	                          <field name="order_id" colspan="2" invisible="1"/>
+
+	                      
+                          </group >
+                          <group col="2"> 
+		                      <field name="granted"  colspan="2" />
+                          
+
+                          </group>
+
+
+
+                </group>
+
+		        
+		       
+		     </sheet>
+
+                                    				
+	        </form>
+	     </field>
+
+   </record>
+
+
+         <record id="granted_rights_order_lines_tree" model="ir.ui.view">
+			<field name="name">Granted Rights Order Lines Tree</field>
+			<field name="model">granted.rights.order.lines</field>
+			<field name="arch" type="xml">
+				<tree  string="Granted Rights Order Lines" >
+					<field name="name" required="1"/>
+                    <field name="group_id" />
+                    <field name="granted" />
+				</tree>
+ 
+
+			</field>
+          </record>
+
+
+
+
+
+       <menuitem action="action_granted_rights_order" name="Granted Rights Orders"  id="menu_granted_rights_order" parent="hr_holidays.menu_open_ask_holidays" sequence="5" groups="group_hr_granted_rights_user"/>
+
+
+
+
+
+
+
+
+
+
+
+
+    </data>
+</openerp>
+
+
+
+
+
+
+ 

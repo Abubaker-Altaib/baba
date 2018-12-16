@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+		<!-- Add button request fuel for employee mission form -->
+
+                <record model="ir.ui.view" id="hr_employee_mission_form_view_inherit2">
+                <field name="name">hr.employee.mission.inherit.form</field>
+                <field name="model">hr.employee.mission</field>
+                <field name="type">form</field>
+                <field name="inherit_id" ref="hr_mission.hr_employee_mission_form_view"/>
+                <field name="arch" type="xml">
+                 <xpath expr='//field[@name="transport"]' position='after'>
+                    <field name="fuel_requested" attrs="{'invisible':[('transport','not in',('1','4'))]}"/>
+                    <group colspan="2" col="2" attrs="{'invisible':[('state','!=','approved')]}">
+                      	<group colspan="2" col="2" attrs="{'invisible':[('transport','not in',('1','4'))]}">
+                      		<button string="Request Fuel and car" name="request_fuel"  type="object" icon="gtk-apply" attrs="{'invisible':[('fuel_requested','=',True)]}"/>
+                        </group>                 
+                      </group>
+                </xpath>
+                </field>
+            </record>  
+
+	</data>
+</openerp>

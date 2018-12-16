@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Commites Create Wizard View-->
+        <record id="commites_wizard_form_view" model="ir.ui.view">
+            <field name="name">Commites Creation wizard</field>
+            <field name="model">commites_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Commites Creation wizard" version="7.0">
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company" required="1"/>
+                            <field name="details_type" required="1"/>
+                            <field name="process_type" attrs="{'invisible':[('details_type','!=','hr.movements.degree')],'required':[('details_type','=','hr.movements.degree')]}"/>
+                        </group>
+                        
+                        <div >
+                            <label string="Date "/>
+                            <field name="date_from" domain="[('date_from','&lt;=',date_to)]" required="1"/>
+                            <sub>
+                                <b>&#160;&#160; - &#160;&#160;</b>
+                                <b>&#160;&#160;</b>
+                            </sub>
+                            <field name="date_to" domain="[('date_to','&gt;=',date_from)]" required="1"/>
+                        </div>
+                    </group>
+                    <footer groups="hr_custom_military.hr_emp_process_user">
+                        <button name="create_type" string="create" type="object" class="oe_highlight"/>                         or                                                                                                                                                                                                                
+                        <button special="cancel" string="Cancel" class="oe_link"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!-- Commites Create Wizard Action-->
+        <record id="action_wizard_committe_create" model="ir.actions.act_window">
+            <field name="name">Commites Creation wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">commites_wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="commites_wizard_form_view"/>
+            <field name="target">new</field>
+        </record>
+        <!-- Commites Create Wizard Menu-->
+        <menuitem name="Commites Creation wizard" parent="menu_action_hr_committe_main" action="action_wizard_committe_create" id="action_wizard_committe_create_menu" sequence="0"/>
+    </data>
+</openerp>

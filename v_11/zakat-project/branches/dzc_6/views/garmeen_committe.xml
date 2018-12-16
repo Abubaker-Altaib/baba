@@ -1,0 +1,93 @@
+<odoo>
+  <data>
+
+    <record id="garmeen_committe_tree" model="ir.ui.view">
+      <field name="name"> Garmeen Committe</field>
+      <field name="model">garmeen.committte</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="code"/>
+          <field name="name"/>
+          <field name="state_id"/>
+          <field name="local_state_id"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Form view  model -->
+    <record id="‫‪gorm_commetee_view_form" model="ir.ui.view">
+      <field name="name">Gorm Types Form</field>
+      <field name="model">garmeen.committte</field>
+      <field name="arch" type="xml">
+        <form>
+			<header>
+				<button name="confirm_action" string="Confirm" states="draft," type="object" class="oe_highlight" />
+				<button name="done_action" string="Done" states="confirm," type="object" class="oe_highlight" />
+				<button name="cancel_action" string="Cancel" states="draft,confirm," type="object" class="oe_highlight" />
+				<button name="draft_action" string="Set To Draft" states="cancel" type="object" class="oe_highlight" />
+				<field name="state" widget="statusbar"/>
+			</header>
+
+          <sheet>
+            <group colspan="2" string="Garmeen Committe">
+				<group>
+					<field name="code" readonly="1"/>
+					<field name="name" required="1" attrs="{'readonly':[('state', 'in', ('done','cancel'))]}"/>
+					<field name="state_id" required="1" attrs="{'readonly':[('state', 'in', ('done','cancel'))]}"/>
+					<field name="company_id" required="1" readonly="1"/>
+					
+				</group>
+				<group>
+					<field name="date" required="1" readonly="1"/>
+					<field name="local_state_id" required="1" attrs="{'readonly':[('state', 'in', ('done','cancel'))]}"/>
+				</group>
+            </group>
+            <notebook>
+				<page string="Orders">
+					<field name="order_ids" attrs="{'readonly':[('state', 'in', ('done','cancel'))]}"/>
+				</page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+
+    <record id="garmeen_committe_view_search" model="ir.ui.view">
+     <field name="name">garmeen committe</field>
+     <field name="model">garmeen.committte</field>
+     <field name="arch" type="xml">
+
+       <search string="Search Opportunities">
+         <field name="name"/>
+         <field name="code"/>
+       </search>
+
+     </field>
+   </record>
+
+
+
+   <record id="garmeen_committte_action" model="ir.actions.act_window">
+    <field name="name">Garmeen Committe</field>
+    <field name="res_model">garmeen.committte</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+
+
+  <menuitem id="garmeen_committe_menu"
+    name="Garmeen Committe"    
+    sequence="3"
+    parent="dzc6_menu"
+    action="garmeen_committte_action"
+    />
+
+    
+
+      
+        </data>
+      </odoo>
+

@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Sea Insurance Activity-->
+
+        <record id="wkf_sea_insurance" model="workflow">
+            <field name="name">wkf.sea.insurance</field>
+            <field name="osv">sea.insurance</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_sea_insurance_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_sea_insurance"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+        <record id="wkf_sea_insurance_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_sea_insurance"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>  
+        </record>
+        <record id="wkf_sea_insurance_insurance_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_sea_insurance"/>
+            <field name="name">insurance_confirm</field>
+            <field name="kind">function</field>
+            <field name="action">insurance_confirm()</field>  
+        </record>
+        <record id="wkf_sea_insurance_admin_affaris_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_sea_insurance"/>
+            <field name="name">admin_affaris_confirm</field>
+            <field name="kind">function</field>
+            <field name="action">admin_affaris_confirm()</field>  
+        </record>
+        <record id="wkf_sea_insurance_gm_aprrove" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_sea_insurance"/>
+            <field name="name">gm_aprrove</field>
+            <field name="kind">function</field>
+            <field name="action">gm_aprrove()</field>  
+        </record>
+        <record id="wkf_sea_insurance_insurance_service" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_sea_insurance"/>
+            <field name="name">insurance_service</field>
+            <field name="kind">function</field>
+            <field name="action">insurance_service()</field>  
+        </record>
+        <record id="wkf_sea_insurance_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_sea_insurance"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>  
+            <field name="flow_stop">True</field>          
+        </record>
+        <record id="wkf_sea_insurance_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_sea_insurance"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+        </record>
+
+
+<!-- Sea Insurance Transition-->
+
+
+
+        <record id="wkf_sea_insurance_darft_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_draft"/>
+            <field name="act_to" ref="wkf_sea_insurance_confirmed"/>
+            <field name="signal">confirmed</field>
+        </record>
+        <record id="wkf_sea_insurance_confirmed_to_insurance_confirm" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_confirmed"/>
+            <field name="act_to" ref="wkf_sea_insurance_insurance_confirm"/>
+            <field name="signal">insurance_confirm</field>
+        </record>
+        <record id="wkf_sea_insurance_insurance_confirm_to_admin_affaris_confirm" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_insurance_confirm"/>
+            <field name="act_to" ref="wkf_sea_insurance_admin_affaris_confirm"/>
+            <field name="signal">admin_affaris_confirm</field>
+        </record>
+        <record id="wkf_sea_insurance_admin_affaris_confirm_to_gm_aprrove" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_admin_affaris_confirm"/>
+            <field name="act_to" ref="wkf_sea_insurance_gm_aprrove"/>
+            <field name="signal">gm_aprrove</field>
+        </record>
+        <record id="wkf_sea_insurance_gm_aprrove_to_insurance_service" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_gm_aprrove"/>
+            <field name="act_to" ref="wkf_sea_insurance_insurance_service"/>
+            <field name="signal">insurance_service</field>
+        </record>
+
+        <record id="wkf_sea_insurance_insurance_service_to_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_insurance_service"/>
+            <field name="act_to" ref="wkf_sea_insurance_done"/>
+            <field name="signal">done</field>
+        </record>
+
+<!--Cancel Transition-->
+
+        <record id="wkf_sea_insurance_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_draft"/>
+            <field name="act_to" ref="wkf_sea_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_sea_insurance_done_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_confirmed"/>
+            <field name="act_to" ref="wkf_sea_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_sea_insurance_insurance_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_insurance_confirm"/>
+            <field name="act_to" ref="wkf_sea_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_sea_insurance_admin_affaris_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_admin_affaris_confirm"/>
+            <field name="act_to" ref="wkf_sea_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_sea_insurance_gm_aprrove_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_gm_aprrove"/>
+            <field name="act_to" ref="wkf_sea_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_sea_insurance_insurance_service_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_insurance_service"/>
+            <field name="act_to" ref="wkf_sea_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_sea_insurance_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_cancel"/>
+            <field name="act_to" ref="wkf_sea_insurance_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+        <!--record id="wkf_sea_insurance_done_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_sea_insurance_done"/>
+            <field name="act_to" ref="wkf_sea_insurance_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record-->
+
+
+
+
+<!-- Stock Insurance Activity-->
+
+        <record id="wkf_stock_insurance" model="workflow">
+            <field name="name">wkf.stock.insurance</field>
+            <field name="osv">stock.insurance</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_stock_insurance_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_stock_insurance"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+        <record id="wkf_stock_insurance_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_stock_insurance"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>  
+        </record>
+        <record id="wkf_stock_insurance_insurance_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_stock_insurance"/>
+            <field name="name">insurance_confirm</field>
+            <field name="kind">function</field>
+            <field name="action">insurance_confirm()</field>  
+        </record>
+        <record id="wkf_stock_insurance_admin_affaris_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_stock_insurance"/>
+            <field name="name">admin_affaris_confirm</field>
+            <field name="kind">function</field>
+            <field name="action">admin_affaris_confirm()</field>  
+        </record>
+        <record id="wkf_stock_insurance_gm_aprrove" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_stock_insurance"/>
+            <field name="name">gm_aprrove</field>
+            <field name="kind">function</field>
+            <field name="action">gm_aprrove()</field>  
+        </record>
+        <record id="wkf_stock_insurance_insurance_service" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_stock_insurance"/>
+            <field name="name">insurance_service</field>
+            <field name="kind">function</field>
+            <field name="action">insurance_service()</field>  
+        </record>
+        <record id="wkf_stock_insurance_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_stock_insurance"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>  
+            <field name="flow_stop">True</field>          
+        </record>
+        <record id="wkf_stock_insurance_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_stock_insurance"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+        </record>
+
+
+<!-- stock Insurance Transition-->
+
+
+
+        <record id="wkf_stock_insurance_darft_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_draft"/>
+            <field name="act_to" ref="wkf_stock_insurance_confirmed"/>
+            <field name="signal">confirmed</field>
+        </record>
+        <record id="wkf_stock_insurance_confirmed_to_insurance_confirm" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_confirmed"/>
+            <field name="act_to" ref="wkf_stock_insurance_insurance_confirm"/>
+            <field name="signal">insurance_confirm</field>
+        </record>
+        <record id="wkf_stock_insurance_insurance_confirm_to_admin_affaris_confirm" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_insurance_confirm"/>
+            <field name="act_to" ref="wkf_stock_insurance_admin_affaris_confirm"/>
+            <field name="signal">admin_affaris_confirm</field>
+        </record>
+        <record id="wkf_stock_insurance_admin_affaris_confirm_to_gm_aprrove" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_admin_affaris_confirm"/>
+            <field name="act_to" ref="wkf_stock_insurance_gm_aprrove"/>
+            <field name="signal">gm_aprrove</field>
+        </record>
+        <record id="wkf_stock_insurance_gm_aprrove_to_insurance_service" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_gm_aprrove"/>
+            <field name="act_to" ref="wkf_stock_insurance_insurance_service"/>
+            <field name="signal">insurance_service</field>
+        </record>
+
+        <record id="wkf_stock_insurance_insurance_service_to_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_insurance_service"/>
+            <field name="act_to" ref="wkf_stock_insurance_done"/>
+            <field name="signal">done</field>
+        </record>
+
+<!--Cancel Transition-->
+
+        <record id="wkf_stock_insurance_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_draft"/>
+            <field name="act_to" ref="wkf_stock_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_stock_insurance_done_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_confirmed"/>
+            <field name="act_to" ref="wkf_stock_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_stock_insurance_insurance_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_insurance_confirm"/>
+            <field name="act_to" ref="wkf_stock_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_stock_insurance_admin_affaris_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_admin_affaris_confirm"/>
+            <field name="act_to" ref="wkf_stock_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_stock_insurance_gm_aprrove_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_gm_aprrove"/>
+            <field name="act_to" ref="wkf_stock_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_stock_insurance_insurance_service_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_insurance_service"/>
+            <field name="act_to" ref="wkf_stock_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_stock_insurance_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_cancel"/>
+            <field name="act_to" ref="wkf_stock_insurance_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+        <!--record id="wkf_stock_insurance_done_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_stock_insurance_done"/>
+            <field name="act_to" ref="wkf_stock_insurance_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record-->
+
+
+
+<!-- Sea Insurance Activity-->
+
+        <record id="wkf_bankers_insurance" model="workflow">
+            <field name="name">wkf.bankers.insurance</field>
+            <field name="osv">bankers.insurance</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_bankers_insurance_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_bankers_insurance"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+        <record id="wkf_bankers_insurance_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_bankers_insurance"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>  
+        </record>
+        <record id="wkf_bankers_insurance_insurance_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_bankers_insurance"/>
+            <field name="name">insurance_confirm</field>
+            <field name="kind">function</field>
+            <field name="action">insurance_confirm()</field>  
+        </record>
+        <!--record id="wkf_bankers_insurance_admin_affaris_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_bankers_insurance"/>
+            <field name="name">admin_affaris_confirm</field>
+            <field name="kind">function</field>
+            <field name="action">admin_affaris_confirm()</field>  
+        </record-->
+        <record id="wkf_bankers_insurance_gm_aprrove" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_bankers_insurance"/>
+            <field name="name">gm_aprrove</field>
+            <field name="kind">function</field>
+            <field name="action">gm_aprrove()</field>  
+        </record>
+        <!--record id="wkf_bankers_insurance_insurance_service" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_bankers_insurance"/>
+            <field name="name">insurance_service</field>
+            <field name="kind">function</field>
+            <field name="action">insurance_service()</field>  
+        </record-->
+        <record id="wkf_bankers_insurance_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_bankers_insurance"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>  
+            <field name="flow_stop">True</field>          
+        </record>
+        <record id="wkf_bankers_insurance_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_bankers_insurance"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+        </record>
+
+
+<!-- Bankers Insurance Transition-->
+
+
+
+        <record id="wkf_bankers_insurance_darft_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_draft"/>
+            <field name="act_to" ref="wkf_bankers_insurance_confirmed"/>
+            <field name="signal">confirmed</field>
+        </record>
+        <record id="wkf_bankers_insurance_confirmed_to_insurance_confirm" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_confirmed"/>
+            <field name="act_to" ref="wkf_bankers_insurance_insurance_confirm"/>
+            <field name="signal">insurance_confirm</field>
+        </record>
+        <!--record id="wkf_bankers_insurance_insurance_confirm_to_admin_affaris_confirm" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_insurance_confirm"/>
+            <field name="act_to" ref="wkf_bankers_insurance_admin_affaris_confirm"/>
+            <field name="signal">admin_affaris_confirm</field>
+        </record-->
+        <record id="wkf_bankers_insurance_admin_affaris_confirm_to_gm_aprrove" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_insurance_confirm"/>
+            <field name="act_to" ref="wkf_bankers_insurance_gm_aprrove"/>
+            <field name="signal">gm_aprrove</field>
+        </record>
+        <!--record id="wkf_bankers_insurance_gm_aprrove_to_insurance_service" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_gm_aprrove"/>
+            <field name="act_to" ref="wkf_bankers_insurance_insurance_service"/>
+            <field name="signal">insurance_service</field>
+        </record-->
+
+        <record id="wkf_bankers_insurance_gm_approve_to_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_gm_aprrove"/>
+            <field name="act_to" ref="wkf_bankers_insurance_done"/>
+            <field name="signal">done</field>
+        </record>
+
+<!--Cancel Transition-->
+
+        <record id="wkf_bankers_insurance_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_draft"/>
+            <field name="act_to" ref="wkf_bankers_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_bankers_insurance_done_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_confirmed"/>
+            <field name="act_to" ref="wkf_bankers_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_bankers_insurance_insurance_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_insurance_confirm"/>
+            <field name="act_to" ref="wkf_bankers_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <!--record id="wkf_bankers_insurance_admin_affaris_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_admin_affaris_confirm"/>
+            <field name="act_to" ref="wkf_bankers_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record-->
+
+
+        <record id="wkf_bankers_insurance_gm_aprrove_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_gm_aprrove"/>
+            <field name="act_to" ref="wkf_bankers_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <!--record id="wkf_bankers_insurance_insurance_service_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_insurance_service"/>
+            <field name="act_to" ref="wkf_bankers_insurance_cancel"/>
+            <field name="signal">cancel</field>
+        </record-->
+
+        <record id="wkf_bankers_insurance_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_cancel"/>
+            <field name="act_to" ref="wkf_bankers_insurance_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+        <!--record id="wkf_bankers_insurance_done_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_bankers_insurance_done"/>
+            <field name="act_to" ref="wkf_bankers_insurance_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record-->
+
+
+    </data>
+</openerp>
+

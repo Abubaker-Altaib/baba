@@ -1,0 +1,27 @@
+- 
+  Creating a account.budget.confirmation record one
+- 
+  !record {model: account.budget.confirmation, id: account_budget_confirmation_for_report}:
+    amount: 400.0
+    analytic_account_id: account.analytic_administratif
+    budget_residual: 0.0
+    date: '2013-01-08'
+    general_account_id: account.xfa
+    name: 2013/001
+    note: 'Purchase Approval: 2013/PR-0002 \nDepartment: Research & Development \nPurposes:
+      direct.\nDate: 2013-01-08  \nProducts: Kit Keyboard + Mouse\n '
+    partner_id: base.res_partner_desertic_hispafuentes
+    period_id: account.period_1
+    ref: 2013/PR-0002
+    state: draft
+    type: purchase
+-
+  I print budget report
+-
+  !python {model: account.budget.confirmation}: |
+    import netsvc, tools, os
+    (data, format) = netsvc.LocalService('report.account.account.budget.object1').create(cr, uid, [ref('account_budget_confirmation_for_report')], {}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'account_budget_confirmation-report_account_account_budget_object1'+format), 'wb+').write(data)
+-
+  report is print  

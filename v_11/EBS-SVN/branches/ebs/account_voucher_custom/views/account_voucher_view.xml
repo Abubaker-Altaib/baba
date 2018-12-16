@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+
+        <!--  Purchase Vouchers -->
+		<record model="ir.ui.view" id="view_purchase_receipt_form_inherit">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher.view_purchase_receipt_form"/>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+
+			<xpath expr="//button[@name='proforma_voucher']" position="after">
+                    <field name="payment_complete" invisible="1"/>
+                    <button name="%(action_account_voucher_payment)d" string="Payment" type="action" attrs="{'invisible': ['|','|',('pay_now', '!=', 'pay_later'),('payment_complete', '=', True),('state','!=','posted')]}"  />
+                    <button name="open_payment_view" string="Moves Payment" type="object" context="{'move_active_id':id,'default_readonly_amount':True,'default_hide_account_id':True}" attrs="{'invisible': ['|','|',('pay_now', '!=', 'installments'),('state','!=','waiting'),('payment_complete','=',True)]}" />
+		<!--field name="ratf_approve" invisible="1" /-->
+ <button name="action_confirmed" type="object" string="Confirm " class="oe_highlight" states="draft" groups="account_custom.group_expenditure_unit" />
+
+                    <button name="action_approved" type="object" string="Approve" class="oe_highlight" states="confirmed" groups="account_custom.group_financial_section" />
+
+                    <button name="action_reviewed" type="object" string="Review " states="approved" class="oe_highlight" groups="account_custom.group_internal_auditor" />
+
+		</xpath>
+
+                <xpath expr="//button[@name='proforma_voucher']" position="replace">
+                    <!--i need it for installment and paylater , we can't let it show just in review state, need discussion-->
+                    <button name="proforma_voucher" string="Validate" class="oe_highlight" type="object" states="draft,reviewed" groups="account_custom.group_financial_manager"/>
+                    
+                </xpath>
+
+
+                <xpath expr="//field[@name='line_ids']/tree" position="attributes">
+                    <attribute name="colors">gray:state=='cancel';red:state=='no_approve'</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='account_analytic_id']" position="after">
+                    <field name="state"/>
+                </xpath>
+
+				<!--xpath expr="//field[@name='line_ids']/tree" position="attributes">
+					<attribute name="colors">gray:state=='cancel';red:state=='no_approve'</attribute>
+				</xpath>
+
+				<xpath expr="//field[@name='line_ids']/tree/field[@name='account_analytic_id']" position="after">
+					<field name="state"/>
+				</xpath-->
+
+				<xpath expr="//field[@name='currency_id']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                    <attribute name="groups">base.group_multi_currency</attribute>
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='pay_now']" position="after">
+                    <field name="installment_type" attrs="{'invisible': [('pay_now', '!=', 'installments')], 'required': [('pay_now', '=', 'installments')],'readonly':[('state', '!=', 'draft')]}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='account_id']" position="after">
+                    <field name="middle_payment_account" domain="[('analytic_required','=',False)]" attrs="{'invisible':['|',('pay_now', '!=', 'installments'),('installment_type', '!=', 'middle_payment')],'required':[('pay_now', '=', 'installments'),('installment_type', '=', 'middle_payment')],'readonly':[('state', '!=', 'draft')]}"/>
+                    <field name="pre_paid_exp_account" domain="[('analytic_required','=',False)]" attrs="{'invisible':['|',('pay_now', '!=', 'installments'),('installment_type', '!=', 'pre_paid_expense')],'required':[('pay_now', '=', 'installments'),('installment_type', '=', 'pre_paid_expense')],'readonly':[('state', '!=', 'draft')]}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='payment_journal_id']" position="after">
+                	<field name="payment_method_id" widget="radio" attrs="{'invisible': [('pay_now', '!=', 'pay_now')], 'required': [('pay_now', '=', 'pay_now')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="replace" />
+                <xpath expr="//field[@name='name']" position="before">
+                	<field name="department_id" attrs="{'required':[('state','=','draft')]}"/>
+                    <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                    <field name="payment_complete" invisible="1" />
+		    <!--field name='ratification' invisible='True'/-->
+                    <field name="paid" />
+                </xpath>
+                <xpath expr="//field[@name='date']" position="attributes">
+                    <attribute name="attrs">{'required':[('state','=','draft')]}</attribute>
+                </xpath>
+                 <xpath expr="//field[@name='account_date']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_due']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='reference']" position="replace">
+
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="reference"/>
+
+                </xpath>
+
+
+
+                <xpath expr="//field[@name='period_id']" position="replace">
+
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="period_id"/>
+
+                </xpath>
+
+
+                <xpath expr="//notebook[1]/page[2]" position="after">
+                    <page string="Moves"  attrs="{'invisible':[('pay_now','!=','installments')]}">
+
+                        <field name="move_ids">
+                            <tree editable="bottom" options='{"no_open": 1,"no_create": 1}' default_order='date'>
+                                <field name="id" invisible="1"/>
+                                <field name="date"/>
+                                <field name="name"/>
+                                <field name="partner_id"/>
+                                <field name="ref"/>
+                                <field name="journal_id"/>
+                                <field name="amount"/>
+                                <field name="state"/>
+                                <button name="post" string="Post" type="object" context="{'active_move_id':id}" attrs="{'invisible':[('state','!=','draft')]}"/>
+                                <field name="payment_state"/>
+                                <button name="open_payment_view" string="Payment" type="object" context="{'move_active_id':id}" attrs="{'invisible':[('payment_state','!=','draft')]}" />
+
+                            </tree>
+                        </field>
+
+                    </page>
+                </xpath>
+
+			</field>
+		</record>
+
+        <!-- inherit search view in voucher -->
+        <record id="voucher_search_view_inherit" model="ir.ui.view">
+            <field name="name">voucher.search.view.inherit</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_voucher_filter_vendor"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//group[1]" position="before">
+                    <field name="department_id" string="Department"/>
+                    <field name="company_id" string="Company"/>
+                    <field name="state" string="State"/>
+                    <field name="user_id" string="User"/>
+                </xpath>
+
+                <xpath expr="//group[1]" position="inside">
+                    <filter string="Department" domain="[]" context="{'group_by':'department_id'}"/>
+                    <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
+                    <filter string="User" domain="[]" context="{'group_by':'user_id'}"/>
+                    
+                </xpath>
+            </field>
+        </record>
+
+		<!--  Sale Vouchers -->
+        <record model="ir.ui.view" id="view_sale_receipt_form">
+            <field name="name">account.voucher.sale.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_sale_receipt_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='proforma_voucher']" position="after">
+                    <button name="%(action_account_voucher_payment)d" string="Payment"   type="action" attrs="{'invisible': ['|','|',('pay_now', '!=', 'pay_later'),('paid', '=', True),('state','!=','posted')]}"  />
+                    <button name="open_payment_view" string="Moves Payment" type="object" context="{'move_active_id':id}" attrs="{'invisible': ['|','|',('pay_now', '!=', 'installments'),('state','!=','waiting'),('paid','=',True)]}" />
+                </xpath>
+                <xpath expr="//field[@name='currency_id']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                    <attribute name="groups">base.group_multi_currency</attribute>
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payment_journal_id']" position="after">
+                	<field name="payment_method_id" widget="radio" 
+                        attrs="{'invisible': [('pay_now', '!=', 'pay_now')], 'required': [('pay_now', '=', 'pay_now')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="replace" />
+                <xpath expr="//field[@name='name']" position="before">
+                	<field name="department_id" attrs="{'required':[('state','=','draft')]}"/>
+                    <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                    <field name="paid" />
+                </xpath>
+                <xpath expr="//field[@name='date']" position="attributes">
+                    <attribute name="attrs">{'required':[('state','=','draft')]}</attribute>
+                </xpath>
+                 <xpath expr="//field[@name='account_date']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_due']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//notebook[1]/page[2]" position="after">
+                    <page string="Moves"  attrs="{'invisible':[('pay_now','!=','installments')]}">
+
+                        <field name="move_ids">
+                            <tree editable="bottom" options='{"no_open": 1,"no_create": 1}' default_order='date'>
+                                <field name="id" invisible="1"/>
+                                <field name="date"/>
+                                <field name="name"/>
+                                <field name="partner_id"/>
+                                <field name="ref"/>
+                                <field name="journal_id"/>
+                                <field name="amount"/>
+                                <field name="state"/>
+                                <button name="post" string="Post" type="object" context="{'active_move_id':id}" attrs="{'invisible':[('state','!=','draft')]}"/>
+                                <field name="payment_state"/>
+                                <button name="open_payment_view" string="Payment" type="object" context="{'move_active_id':id}" attrs="{'invisible':[('payment_state','!=','draft')]}" />
+
+                            </tree>
+                        </field>
+
+                    </page>
+                </xpath>
+
+			</field>
+		</record>
+
+
+        <!--Domain in purchase voucher tree-->
+
+
+       	<record model="ir.actions.act_window" id="account_voucher.action_purchase_receipt">
+     	    <field name="domain">[('journal_id.type','=','purchase'), ('voucher_type','=','purchase'),('state','in',['draft','proforma','approved','auditor_approved','approved3','approved2','waiting','paid','posted','done','cancel'])]</field>
+            <field name="context">{'default_voucher_type': 'purchase', 'voucher_type': 'purchase'}</field>
+		</record>
+
+
+
+	</data>
+</odoo>

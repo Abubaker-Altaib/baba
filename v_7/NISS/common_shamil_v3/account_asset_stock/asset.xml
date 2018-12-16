@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_account_asset_asset_form_inherit" model="ir.ui.view">
+            <field name="name">account.asset.asset.form.inherit</field>
+            <field name="model">account.asset.asset</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account_asset_custody.view_account_asset_asset_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <group colspan="2">
+                        <field name="product_id" colspan="2"/>
+                        <field name="stock_location_id" colspan="2"/>
+                    </group>
+                </xpath>
+                <xpath expr="//page[1]" position="replace">
+                    <page string="Asset Log">
+                        <field name="asset_log_ids" readonly="1">
+                            <tree string="Asset Lines">
+                                <field name="date" />
+                                <field name="employee_id" />
+                                <field name="department_id" />
+                                <field name="office_id" />
+                                <field name="state" />
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//div[@class='oe_title']" position="inside">
+                    <label for="serial" class="oe_edit_only"/>
+                        <h1>
+                            <field name="serial" class="oe_inline"/>
+                        </h1>
+                    
+                </xpath>
+                <xpath expr="//field[@name='office_id']" position="after">
+                    <field name="picking_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='employee_id']" position="before">
+                    <field name="user_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                </xpath>
+                <xpath expr="//page[@string='History']" position="replace">
+                </xpath>
+                <xpath expr='//field[@name="executing_agency"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="main_type"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="department_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')],'invisible':[('custody_type','=','personal')]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="office_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="custody_type"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="picking_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="time_scale"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="employee_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="request_date"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="return_date"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="state_rm"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="product_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_asset_asset_filter_inherit" model="ir.ui.view">
+            <field name="name">account.asset.asset.search</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset_custody.view_account_asset_asset_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id']" position="after">
+                    <field name="serial"/>
+                </xpath>
+                
+            </field>
+        </record>
+        
+        <record id="stock_partial_picking_form_inherit" model="ir.ui.view">
+            <field name="name">stock.partial.picking.form</field>
+            <field name="model">stock.partial.picking</field>
+            <field name="inherit_id" ref="stock.stock_partial_picking_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='move_ids']" position="before">
+                    <field name="type" invisible="1"/>
+                    <field name="picking_id" invisible="1"/>
+                    <field name="custody" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='prodlot_id']" position="replace">
+                    <field name="type" invisible="1"/>
+                    <field name="serials" widget="many2many_tags" domain="[('name','=',False)]" 
+                    attrs="{'readonly':[('type','!=','in')]}">
+                        <tree editable="top">
+                            <field name="name"/>
+                        </tree>
+                    </field>
+                </xpath>
+                <xpath expr="//button[@name='do_partial']" position="after">
+                    <button name="save" string="save" type="object" context="{'move_ids':move_ids}" attrs="{'invisible':[('custody','!=',True)]}" />
+                    <button name="un_save" string="Unsave" type="object" context="{'move_ids':move_ids}" attrs="{'invisible':[('custody','!=',True)]}"/>                                                
+                </xpath>
+                <xpath expr="//field[@name='move_ids']" position="after">
+                    <notebook>
+                        <page string="Assets" attrs="{'invisible':['|',('type','!=','out'),('custody','!=',True)]}">
+                            <field name="picking_out_assets" context="{'picking_out_assets':picking_out_assets,'picking_id':picking_id,'move_ids':move_ids}">
+                                <tree name="Assets"  editable="top"> 
+                                    <field name="product_id" required="1" on_change="onchange_product(product_id)"
+                                        context="{'picking_out_assets':parent.picking_out_assets,'picking_id':parent.picking_id,'move_ids':move_ids}"/>
+                                    <field name="is_serializable" invisible="1"/>
+                                    <field name="executing_agency" invisible="1"/>
+                                    <field name="asset_id" on_change="onchange_asset(asset_id, product_id)" 
+                                        domain="[('product_id','=',product_id),('asset_type','=','custody'),('state_rm','in',['draft','released'])]" 
+                                        required="1" context="{'picking_out_assets':parent.picking_out_assets,'picking_id':parent.picking_id}"
+                                    />
+                                    <field name="serial" attrs="{'readonly': [('is_serializable','!=',True)], 'required': [('is_serializable','=',True)]}" 
+                                        on_change="onchange_serial(serial, product_id, parent.picking_out_assets)"/>
+                                    <field name="office_id" attrs="{'required': [('executing_agency','not in',['arms','oc'])]}"/>
+                                </tree>  
+                            </field>
+                        </page>
+                    </notebook>
+                </xpath>
+                <xpath expr="//field[@name='move_ids']" position="attributes">
+                    <attribute name="on_change">onchange_move_ids(move_ids,type,custody,picking_out_assets)</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,333 @@
+<?xml version="1.0"?>
+<document filename="Account Balance.pdf">
+<template pageSize="(595.0,880.0)" title="Account Balance"
+		author="NCTR" allowSplitting="30">
+		<pageTemplate id="first">
+			<frame id="first" x1="1.3cm" y1="0.9cm" width="900" height="440" />
+		</pageTemplate>
+	</template>
+
+	<stylesheet>
+		<blockTableStyle id="Tilte_Table">
+			<blockAlignment value="LEFT" />
+			<blockValign value="TOP" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Content_Table">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+			<blockBackground colorName="#D3D3D3" start="1,1"
+				stop="-2,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="12" />
+			<blockBottomPadding length="8" />
+		</blockTableStyle>
+		s<blockTableStyle id="Content_Table2">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#e6e6e6" start="0,0"
+				stop="-1,0" />
+			<blockBackground colorName="#e6e6e6" start="1,1"
+				stop="-2,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="12" />
+			<blockBottomPadding length="8" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Header_Table">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Inner_Header_Table">
+			<blockAlignment value="LEFT" />
+			<blockValign value="CENTER" />
+			<lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0"
+				stop="1,-1" />
+		</blockTableStyle>
+
+		<initialize>01/01/2018
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+
+		<paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0"
+			alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0" />
+		<paraStyle name="Header_Table_Header_Centre" fontName="Helvetica-Bold"
+			fontSize="8.0" alignment="CENTER" />
+		<paraStyle name="Header_Table_Detail_Centre" fontName="Helvetica"
+			fontSize="8.0" alignment="CENTER" />
+		<paraStyle name="Content_Table_Detail" fontName="Helvetica-Bold"
+			fontSize="9.0" alignment="RIGHT" rightIndent="4" />
+		<paraStyle name="Content_Table" fontName="Helvetica"
+			fontSize="8.0" alignment="RIGHT" rightIndent="8" />
+		<paraStyle name="Content_Table_Header" fontName="Helvetica-Bold"
+			fontSize="9.0" alignment="CENTER" rightIndent="0" />
+<paraStyle name="Content_Table_Header3" fontName="Helvetica-Bold"
+			fontSize="9.0" alignment="RIGHT" rightIndent="0" />
+
+<paraStyle name="Content_Table_Header2" fontName="Helvetica-Bold"
+			fontSize="9" alignment="CENTER" rightIndent="1" />
+			<paraStyle name="Tilte11" fontName="Helvetica-Bold" fontSize="6" alignment="RIGHT" spaceBefore="12.0" spaceAfter="6.0"/>
+
+		<images />
+	</stylesheet>
+
+	<story>
+
+ 
+ 
+
+	  <para style="Tilte">
+ 
+ 
+
+ 
+    </para> 
+
+
+
+
+ 
+ <para style="Tilte">  بسم الله الرحمن الرحيم</para>
+		<para style="Tilte">   [[ company.name ]]</para>
+ 		<para style="Tilte">  ملخص  							  [[ get_account_name(data['form']) ]] في  الفترة [[ data['form']['date_from_arabic'] ]]  الي  [[ data['form']['date_to_arabic'] ]] </para>
+ <para style="Tilte">     الإيضاح ([[ get_account_code(data['form']) ]]  )   </para>
+
+ 	  <para style="Content_Table_Header">
+      <font color="white">gggggggggggggggg </font>
+
+    </para>
+		    <para style="Tilte11">التاريخ: [[data['form'].get('arabic_date_current')]]    </para>
+
+
+				    
+
+ 
+ 
+		
+		 
+		
+		<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[ without move & with initial]~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<section>[[ (not data['form'].get('moves',False) and data['form'].get('initial_balance',False)) or removeParentNode('section') ]]
+			<blockTable colWidths="80.0,80.0,80.0,80.0,200.0" rowHeights="18"
+				style="Content_Table"   >
+				<tr>
+					<td>
+						<para style="Content_Table_Header">الرصيد</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">دائن</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">مدين</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">الرصيد  المرحل</para>
+					</td>
+					<td>01/01/2018
+						<para style="Content_Table_Header">الحساب</para>
+					</td>
+					 
+				</tr>
+				 
+			</blockTable>
+		</section>
+
+<!-- TOTLAS-->
+
+<section>
+
+
+ <para style="Content_Table_Header">[[ repeatIn(liness(data['form']), 'v') ]]</para>
+ 
+
+<blockTable colWidths="80.0,80.0,80.0,80.0,200.0"  rowHeights="18" style="Content_Table"  >
+				 
+				<tr>
+					<td>
+						<para style="Content_Table_Header2">[[formatLang(abs(v['balance'] +v['init_balance'])) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2"> [[formatLang(v['credit'] ) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2">[[formatLang(v['debit'] ) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2">  
+
+						[[formatLang(abs(v['init_balance']) ) ]]  </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2">[[ v['name'] ]]  </para>
+					</td>
+					 
+				</tr>
+
+
+ 
+				 
+
+
+</blockTable>
+ 
+		
+</section>
+<section>
+ <para style="Content_Table_Header">[[repeatIn(get_parent(data['form']), 'cc') ]]</para>
+[[ (not data['form'].get('moves',False) and data['form'].get('initial_balance',False)) or removeParentNode('section') ]]
+
+			<blockTable colWidths="80.0,80.0,80.0,80.0,200.0" rowHeights="18"
+				style="Content_Table2"   >
+				<tr>
+					<td>
+						<para style="Content_Table_Header2">[[formatLang((cc['balance'] +cc['init_balance']) )]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2"> [[formatLang(cc['credit'] ) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2">[[formatLang(cc['debit'] ) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2">  [[formatLang((cc['init_balance']) ) ]]  </para>
+					</td>
+									<td>
+						<para style="Content_Table_Header"> [[ cc['name'] ]]</para>
+					</td>
+					 
+				</tr>
+				 
+			</blockTable>
+ 
+<section>
+
+<para>[[ repeatIn(lines(data['form'],cc['code']), 'b') ]]</para>
+ 
+
+<blockTable colWidths="80.0,80.0,80.0,80.0,200.0" style="Tilte_Table" repeatRows="1">
+				 
+				<tr>
+					<td>
+						<para style="Content_Table_Header2">[[formatLang((b['balance'] +b['init_balance'])) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2"> [[formatLang(b['credit'] ) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2">[[formatLang(b['debit'] ) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2">  [[formatLang(b['init_balance'] ) ]]  </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2">	[[ b['name'] ]]  </para>
+					</td>
+					 
+				</tr>
+
+
+ 
+				 
+
+
+</blockTable>
+ 
+		
+</section>
+
+
+</section>
+
+
+
+
+
+ 
+
+<section>
+ <para style="Content_Table_Header">[[repeatIn(get_parents(data['form']), 'n') ]]</para>
+[[ (not data['form'].get('moves',False) and data['form'].get('initial_balance',False)) or removeParentNode('section') ]]
+
+			<blockTable colWidths="80.0,80.0,80.0,80.0,200.0" rowHeights="18"
+				style="Content_Table"   >
+				<tr>
+ 
+					<td>
+						<para style="Content_Table_Header2">[[formatLang(n['balance'] +n['init_balance']) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2"> [[formatLang(n['credit'] ) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2">[[formatLang(n['debit'] ) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Header2">  [[formatLang(n['init_balance']) ]]  </para>
+					</td>
+									<td>
+						<para style="Content_Table_Header"> [[ n['name'] ]]</para>
+					</td>
+					 
+
+					 
+				</tr>
+				 
+			</blockTable>
+ 
+<section>
+ <para style="Content_Table_Header">[[ repeatIn(account_partners(data['form'],n['code']),'p' )]]</para>
+[[ (not data['form'].get('moves',False) and data['form'].get('initial_balance',False)) or removeParentNode('section') ]]
+
+ 
+ 
+
+<blockTable colWidths="80.0,80.0,80.0,80.0,200.0" style="Tilte_Table"  >
+				 
+				<tr>
+
+				<td>
+					<para style="Content_Table_Header">[[ formatLang(abs(p['init_bal']+p['debit']-p['credit'])) ]]	</para>
+				</td>
+				<td>
+					<para style="Content_Table_Header"> [[ formatLang(p['credit']) ]] </para>
+				</td>
+				<td>
+					<para style="Content_Table_Header">[[ formatLang(p['debit']) ]]</para>
+				</td>
+				<td>
+					<para style="Content_Table_Header">[[ formatLang(abs(p['init_bal']) )]]</para>
+				</td>
+				<td>
+					<para style="Content_Table_Header">[[ p['name'] ]]</para>
+				</td>
+				 
+			</tr>
+
+
+ 
+				 
+
+
+</blockTable>
+ 
+		
+</section></section>
+
+
+
+
+
+
+
+
+ 
+ 
+	</story>
+</document>

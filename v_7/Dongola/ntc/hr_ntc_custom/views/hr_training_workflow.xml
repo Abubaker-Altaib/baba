@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<!-- Activities -->
+		<record id="act_approved2" model="workflow.activity" >
+			<field name="wkf_id" ref="hr_training.wkf_hr_employee_training" />
+			<field name="name">request</field>
+			<field name="action">write({'state':'approved2'})</field>
+			<field name="kind">function</field>
+		</record>
+<!-- Transition for Training Manager Approve-->
+
+		<record model="workflow.transition" id="t01">
+			<field name="act_from" ref="hr_training.act_validate" />
+			<field name="act_to" ref="hr_training.act_approve" />
+			<field name="signal">training_manager_aprove</field>
+		</record>
+
+		<record model="workflow.transition" id="t02">
+			<field name="act_from" ref="hr_training.act_validate" />
+			<field name="act_to" ref="act_approved2" />
+			<field name="signal">training_validate2</field>
+		</record>
+
+		<record model="workflow.transition" id="t03">
+			<field name="act_from" ref="act_approved2" />
+			<field name="act_to" ref="hr_training.act_approve" />
+			<field name="signal">validate2_approve</field>
+		</record>
+
+	</data>
+</openerp>

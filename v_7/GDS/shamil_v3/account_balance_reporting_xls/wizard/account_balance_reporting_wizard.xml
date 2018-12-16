@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<report id="report_account_balance_reporting_default_non_zero"
+			string="Generic balance report (non zero lines)"
+			model="account.balance.reporting"
+			name="report_account_balance_reporting.generic_non_zero"
+			rml="addons/account_balance_reporting/report/generic_non_zero_report.rml"
+			auto="True"
+			menu="False"
+			header="True" />
+        <!-- Print wizard (orm.TransientModel) -->
+        <record id="wizard_account_balance_reporting_print" model="ir.ui.view">
+            <field name="name">account.balance.reporting.print.wizard.form</field>
+            <field name="model">account.balance.reporting.print.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Print report" version="7.0">
+                    <group>
+                    <field string="Report" name="report_id" required="True" />
+                    <field string="Design" name="report_xml_id" required="True" domain="[('model','=','account.balance.reporting')]" />
+                    </group>
+                    <footer>
+                        <button name="print_report" string="Print" type="object" class="oe_highlight" />
+                    <button icon="gtk-execute"
+                            name="xls_export"
+                            string="Export"
+                            context="{'xls_export': 1}"
+                            type="object"/>
+                        o
+                        <button special="cancel" string="Cancel" class="oe_link" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window name="Financial report"
+            res_model="account.balance.reporting.print.wizard"
+            src_model="account.balance.reporting"
+            view_mode="form"
+            target="new"
+            id="account_balance_reporting_print_wizard_act_window" />
+
+        <record id="account_balance_reporting_print_wizard_ir_values" model="ir.values">
+            <field name="name">Financial report</field>
+            <field name="key2">client_print_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('account_balance_reporting_print_wizard_act_window'))"/>
+            <field name="key">action</field>
+            <field name="model">account.balance.reporting</field>
+        </record>
+
+
+    </data>
+</openerp>

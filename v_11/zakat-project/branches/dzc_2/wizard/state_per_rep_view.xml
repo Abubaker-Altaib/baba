@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+ <record id="mywiz_view_course_wizard" model="ir.ui.view">
+    <field name="name">State Percentage Report</field>
+    <field name="model">state.percentage.wizard</field>
+    <field name="arch" type="xml">
+        <form string="State Percentage Report">
+            <group>
+                <group>
+                    <field name="date_from" required="1"/>
+                    <field name="state" widget="many2many_tags"/>
+                </group>
+                <group>
+                    <field name="date_to" required="1"/>
+                </group>
+
+            </group>
+            <footer>
+                <button  name="print_report" string="Print" type="object" class="btn-primary" />
+                <button string="Cancel" class="btn-default" special="cancel" />
+            </footer>
+        </form>
+    </field>
+</record> 
+
+<record id="state_per_rep_action" model="ir.actions.act_window">
+    <field name="name">State Percentage Report</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">state.percentage.wizard</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+</record>
+
+<menuitem name="State Percentage Report"
+    parent="dzc_2_report_menu"
+    action="state_per_rep_action" 
+    id="state_per_rep_menu"/> 
+
+
+
+    <!--State Status Report -->
+    <record id="state_status_view_wizard" model="ir.ui.view">
+        <field name="name">States Status Report</field>
+        <field name="model">state.status.wizard</field>
+        <field name="arch" type="xml">
+            <form string="States Status Summary">
+                <group>
+                    <group>
+                        <field name="date_from" required="1"/>
+                        <field name="state" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field name="date_to" required="1"/>
+                    </group>
+
+                </group>
+                <footer>
+                    <button  name="print_report" string="Print" type="object" class="btn-primary" />
+                    <button string="Cancel" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record> 
+
+    <record id="state_status_action" model="ir.actions.act_window">
+        <field name="name">State Status Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">state.status.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem name="States Status Report"
+        parent="dzc_2_report_menu"
+        action="state_status_action" 
+        id="state_status_menu"/> 
+
+
+        <!--Executed projects in State  Report -->
+        <record id="state_executed_view_wizard" model="ir.ui.view">
+            <field name="name">Executed Projects In State Report</field>
+            <field name="model">state.executed.projects.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Executed Projects In State ">
+                    <field name="company_id" invisible="1"/>
+
+                    <group col="4" colspan="2">
+                        <field name="date_from" required="1"/>
+                        <field name="date_to" required="1"/>
+
+                        <field name="state" widget="many2many_tags"  domain="[('company_id' , '=' , company_id)]"/>
+                        <field name="projects" widget="many2many_tags"/>
+                        
+                    </group>
+                    <footer>
+                        <button  name="print_report" string="Print" type="object" class="btn-primary" />
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record> 
+
+        <record id="state_executed_projects_action" model="ir.actions.act_window">
+            <field name="name">State Executed projects Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">state.executed.projects.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem name="Executed Projects In States"
+            parent="dzc_2_report_menu"
+            action="state_executed_projects_action" 
+            id="state_executed_projects_menu"/> 
+
+
+            <!-- local state percantage report -->
+
+            <record id="local_state_percantage_view" model="ir.ui.view">
+                <field name="name">Local State Percentage Report</field>
+                <field name="model">local.state.percantage.wizard</field>
+                <field name="arch" type="xml">
+                    <form string="Leaves Summary">
+                        <group>
+                            <group>
+                                <field name="date_from" required="1"/>
+                                <field name="local_state" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="date_to" required="1"/>
+                            </group>
+
+                        </group>
+                        <footer>
+                            <button  name="print_report" string="Print" type="object" class="btn-primary" />
+                            <button string="Cancel" class="btn-default" special="cancel" />
+                        </footer>
+                    </form>
+                </field>
+            </record> 
+
+            <record id="local_state_per_rep_action" model="ir.actions.act_window">
+                <field name="name">executed Local State Projects Report</field>
+                <field name="type">ir.actions.act_window</field>
+                <field name="res_model">local.state.percantage.wizard</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">form</field>
+                <field name="target">new</field>
+            </record>
+
+            <menuitem name="Local State Percentage Report"
+                parent="dzc_2_report_menu"
+                action="local_state_per_rep_action" 
+                id="local_state_per_rep_menu"/>
+
+
+
+                <!-- Done Project Detail -->
+
+                <!-- Wizard view -->
+                <record id="done_project_detail_form_view" model="ir.ui.view">
+                    <field name="name">Done Projects Report</field>
+                    <field name="model">zakat.doneprojectdetail</field>
+                    <field name="arch" type="xml">
+                        <form>
+                            <group string="Duration">
+                                <label for="date_from"/>
+                                <div>
+                                    <field name="date_from" required="1" style="width:15%; margin-right:2%;"/>
+
+                                    <field name="date_to" required="1" style="width:15%; margin-right:2%;"/>
+                                </div>
+                            </group>
+                            <group string="Project Information">
+                                <field name="project_ids" widget="many2many_tags"/>
+                                <field name="state_ids" widget="many2many_tags"/>
+                            </group>
+                            <footer>
+                                <button name="done_project_detail" string="Print" type="object" class="btn-primary"/>
+                                <button string="Cancel" special="cancel" class="btn-default"/>
+                            </footer>
+                        </form>
+                    </field>
+                </record>
+
+                <!--wizard Action view-->
+                <record id="done_project_detail_action" model="ir.actions.act_window">
+                    <field name="name">Done Project</field>
+                    <field name="res_model">zakat.doneprojectdetail</field>
+                    <field name="view_mode">form</field>
+                    <field name="view_type">form</field>
+                    <field name="target">new</field>
+                    <field name="type">ir.actions.act_window</field>
+                </record>
+                <!-- this is the analysis report -->
+                <record id="project_analysis_view" model="ir.ui.view">
+                    <field name="name">Project Analysis</field>
+                    <field name="model">project.analysis</field>
+                    <field name="arch" type="xml">
+                        <form string="Leaves Summary">
+                            <group>
+                                <group>
+                                    <field name="date_from" required="1"/>
+                                    <field name="sectors" widget="many2many_tags"/>
+                                    <field name="project_type" widget="many2many_tags"
+                                        domain="[('view_type','=','view')]"/>                        
+                                    </group>
+                                    <group>
+                                        <field name="date_to" required="1"/>
+                                        <field name="local_state" widget="many2many_tags"/>                        
+                                    </group>
+                                </group>
+                                <footer>
+                                    <button  name="print_report" string="Print" type="object" class="btn-primary" />
+                                    <button string="Cancel" class="btn-default" special="cancel" />
+                                </footer>
+                            </form>
+                        </field>
+                    </record> 
+                    <record id="own" model="ir.actions.act_window">
+                        <field name="name">Project Ownership Report</field>
+                        <field name="type">ir.actions.act_window</field>
+                        <field name="res_model">proj.own.wizard</field>
+                        <field name="view_type">form</field>
+                        <field name="view_mode">form</field>
+                        <field name="target">new</field>
+                    </record>   
+                    <record id="project_own" model="ir.ui.view">
+                        <field name="name">Projects Ownership Report</field>
+                        <field name="model">proj.own.wizard</field>
+                        <field name="arch" type="xml">
+                            <form string="Report Values">
+                                <group >
+                                    <group>
+                                        <field name="date_from" required="1"/>
+                                        <field name="state" widget="many2many_tags"/>
+                                    </group>
+                                    <group>
+                                        <field name="date_to" required="1"/>
+                                        <field name="projects" widget="many2many_tags"/>
+                                    </group>
+
+                                </group>
+                                <footer>
+                                    <button  name="print_report" string="Print" type="object" class="btn-primary" />
+                                    <button string="Cancel" class="btn-default" special="cancel" />
+                                </footer>
+                            </form>
+                        </field>
+                    </record> 
+                    <menuitem name="Project Ownership Report"
+                        parent="dzc_2_report_menu"
+                        action="own" 
+                        id="ownership_rep_menu"/>  
+
+                        <record id="project_analysis_action" model="ir.actions.act_window">
+                            <field name="name">Project Analysis Report</field>
+                            <field name="type">ir.actions.act_window</field>
+                            <field name="res_model">project.analysis</field>
+                            <field name="view_type">form</field>
+                            <field name="view_mode">form</field>
+                            <field name="target">new</field>
+                        </record>
+
+                        <menuitem name="Project Analysis Report"
+                            parent="dzc_2_report_menu"
+                            action="project_analysis_action" 
+                            id="project_analysis_menu"/>
+
+
+                            <!-- Menuitem-->
+                            <menuitem id="done_project_detail_menu" parent="dzc_2_report_menu" name="Done Project Detail" action="done_project_detail_action"/>
+
+                            <!-- Done Project Detail -->
+
+
+
+
+
+                        </odoo>

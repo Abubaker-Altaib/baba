@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_picking_out_form_inherit" model="ir.ui.view">
+            <field name="name">stock.picking.out.form.inherit</field>
+            <field name="model">stock.picking.out</field>
+            <field name="inherit_id" ref="stock.view_picking_out_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/header//button[@name='action_assign']" position="attributes">
+                        <attribute name="invisible">True</attribute>
+                </xpath>
+
+               <field name="min_date" position="before">
+                        <field name="request" />
+              </field>
+            </field>
+         </record>
+
+        <record id="view_exchange_order_form_inherit" model="ir.ui.view">
+            <field name="name">stock.exchange.order.form.inherit</field>
+            <field name="model">exchange.order</field>
+            <field name="inherit_id" ref="stock_exchange.exchange_order_form"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                        <field name="executing_agency" />
+              </field>
+            </field>
+         </record>
+
+        <record id="view_return_exchange_order_form_inherit" model="ir.ui.view">
+            <field name="name">return.exchange.order.form.inherit</field>
+            <field name="model">exchange.order</field>
+            <field name="inherit_id" ref="stock_exchange.return_order_form"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                        <field name="executing_agency" />
+              </field>
+            </field>
+         </record>
+
+	<record model="ir.ui.view" id="view_stock_journal_form1_inherit">
+        <field name="name">Stock Journals</field>
+        <field name="model">stock.journal</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="stock_exchange.view_stock_journal_form1"/>
+        <field name="arch" type="xml">
+                <field name="request_no" position="before">
+                        <field name="executing_agency" />
+                        <field name="need_visit" />
+
+           </field>        
+        </field>
+    </record>
+    </data>
+</openerp>

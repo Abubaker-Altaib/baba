@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data noupdate="0">   
+    		<record id="base.group_loan_user" model="res.groups">
+        		<field name="name">Loan / user</field>
+    		</record>
+
+    		<record id="base.group_loan_manager" model="res.groups">
+			<field name="name">Loan / manager</field>
+	        </record>
+	</data>
+
+	<data noupdate="1">  
+                <record id="hr_employee_loan_user_rule" model="ir.rule">
+			<field name="name">HR employee loan user</field>
+			<field model="ir.model" name="model_id" ref="hr.model_hr_employee"/>
+			<field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_user'))]"/>
+		 </record> 
+		<record id="rule_loan_manager" model="ir.rule">
+			<field name="model_id" ref="model_hr_employee_loan"/>
+			<field name="domain_force">[(1,'=',1)]</field>
+			<field name="name">HR loan manager</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_manager')), (4,ref('base.group_hr_overview'))]"/>
+		</record>
+		<record id="rule_loan_archive_manager" model="ir.rule">
+			<field name="model_id" ref="model_hr_loan_archive"/>
+			<field name="domain_force">[(1,'=',1)]</field>
+			<field name="name">HR loan archive manager</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_manager')), (4,ref('base.group_hr_overview'))]"/>
+		</record>
+		<record id="rule_loan_user" model="ir.rule">
+			<field name="model_id" ref="model_hr_employee_loan"/>
+                       <field name="domain_force">['|',('employee_id.company_id','child_of',[user.company_id.id]),('employee_id.company_id','=',False)]</field>
+			<field name="name">HR loan user</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_user'))]"/>
+		</record>
+		<record id="rule_loan_archive_user" model="ir.rule">
+			<field name="model_id" ref="model_hr_loan_archive"/>
+                        <field name="domain_force">['|',('employee_id.company_id','child_of',[user.company_id.id]),('employee_id.company_id','=',False)]</field>
+			<field name="name">HR loan archive user</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_user'))]"/>
+		</record>
+
+		
+
+	</data>
+</openerp>

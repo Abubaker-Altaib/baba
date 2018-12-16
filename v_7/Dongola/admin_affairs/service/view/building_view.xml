@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="fleet_service_type_form_building" model="ir.ui.view">
+            <field name="name">building.form</field>
+            <field name="model">fleet.service.type</field>
+            <field name="arch" type="xml">
+            <form string="Building" version="7.0">
+		        <sheet>
+		            <group>
+		                <group>
+		                    <field name="name"/>
+		                    <field name="parent_id" domain="[('building','=',True)]"/>
+		                </group>
+		                <group>
+		                    <field name="address"/>
+		                    <field name="cost"/>
+                            <field name="price"/>
+		                    <field name="building" invisible='1'/>
+		                </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="location_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="child_ids" domain="[('category','=','building'),('building','=',True)]" 
+                        widget="many2many" context="{'building':True,'category':'building'}">
+                                <tree version="7.0">
+                                    <field name="name"  />
+                                    <field name="cost"  />
+                                    <field name="price" string="Price"/>
+                                    <!--field name="quantity" /-->
+                                    <field name="category" invisible='1'/>
+                                </tree>
+                        </field>
+                    </group>
+		            
+		        </sheet>
+            </form>
+            </field>
+	</record>
+                
+       <record id="fleet_service_type_building_tree_tree" model="ir.ui.view">
+                <field name="name">building.tree</field>
+                <field name="model">fleet.service.type</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                <tree string="Building" version="7.0" readonly="1">
+                    <field name="name" />
+                    <field name="parent_id" domain="[('building','=',True)]"/>
+                    <field name="cost" />
+                </tree>
+                </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_building">
+            <field name="name">Building</field>
+            <field name="res_model">fleet.service.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('building','=',True)]</field>
+            <field name="context">{'building':True,'category':'building'}</field>
+
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new Building. 
+              </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="custom_Building_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="fleet_service_type_building_tree_tree"/>
+            <field name="act_window_id" ref="action_building"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="custom_Building_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fleet_service_type_form_building"/>
+            <field name="act_window_id" ref="action_building"/>
+        </record>
+        <menuitem id="building_service_menu" parent="admin_affairs.menu_administrative_affairs_root"
+                  name="Building" sequence="2" 
+                  groups="group_building_service_officer,service.group_service_section_manager,base_custom.group_general_department_manager,base_custom.group_department_manager,base_custom.group_general_hr_manager,base_custom.group_account_general_manager"/>
+        <menuitem  name="Building" parent="building_service_menu" 
+            id="building_service" action="action_building" sequence="1"
+            groups="group_building_service_officer,service.group_service_section_manager,base_custom.group_general_department_manager,base_custom.group_department_manager,base_custom.group_general_hr_manager,base_custom.group_account_general_manager"/>
+                
+        <record model='ir.ui.view' id='contract_building_form'>
+            <field name="name">contract.building.form</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+                <form string="Building/Location Services" version="7.0">
+                    <header>
+                            <button modifiers="{'invisible': [['state', '=', 'closed']]}"
+                                icon="gtk-cancel" name="contract_close" states="open" type="object"
+                                class="oe_highlight" string="Terminate" />
+                            <button icon="gtk-cancel" type="object" name="draft"
+                                states="cancel" string=" Set to Draft" class="oe_highlight" />
+                            <button icon="gtk-cancel" type="object" name="cancel"
+                                states="draft" string="Cancel Request" class="oe_highlight" groups="service.group_building_maintenace"/>
+                            <button icon="gtk-cancel" type="object" name="cancel"
+                                states="confirm_so" string="Cancel Request" class="oe_highlight"
+                                groups="admin_affairs.group_service_officer" />
+                            <button icon="gtk-cancel" type="object" name="cancel"
+                                states="confirm_ss" string="Cancel Request" class="oe_highlight"
+                                groups="service.group_service_section_manager" />
+                            <button icon="gtk-cancel" type="object" name="cancel"
+                                states="confirm_sm" string="Cancel Request" class="oe_highlight"
+                                />
+                            
+                            <button icon="gtk-cancel" type="object" name="cancel"
+                                states="affairs_mg" string="Cancel Request" class="oe_highlight" />
+
+                            <button icon="gtk-cancel" type="object" name="cancel"
+                            states="request" string="Cancel Request" class="oe_highlight" 
+                            groups="admin_affairs.group_admin_affair_maintenance"/>
+
+                            <button icon="gtk-cancel" type="object" name="cancel"
+                            states="confirm" string="Cancel Request" class="oe_highlight" 
+                            groups="service.group_hospitality_service_officer"/>
+
+                            <button icon="gtk-cancel" type="object" name="cancel" groups="service.group_service_section_manager"
+                            states="general_mg" string="Cancel Request" class="oe_highlight" />
+
+                    
+                            <button icon="gtk-cancel" type="object" name="cancel"
+                            states="human_financial" string="Cancel Request" class="oe_highlight" />
+                            <div class="oe_button_box oe_left" attrs="{'invisible':[('state','not in',('open','toclose','closed'))]}">
+                                <!--button type="object" name="transfer" string="Transfer"
+                                        attrs="{'invisible':['|',('amount','&lt;=',0),
+                                        ('payment_method','!=','voucher')]}"  
+                                        help="Vehicle rent contract transfer" class=" oe_highlight oe_left" /-->
+                                <button type="object" name="extend_action" string="Extend"
+                                    attrs="{'invisible':[('payment_method','!=','voucher')]}"
+                                    class="oe_button oe_highlight" />
+
+                                <button type="object" name="renew_action" string="Renew"
+                                    attrs="{'invisible':[('payment_method','!=','voucher')]}"
+                                    class="oe_button oe_highlight" />
+                            </div>
+
+                            <button name="request" 
+                            string="Request" type="object" icon="gtk-convert" groups="service.group_building_maintenace"
+                            attrs="{'invisible': ['|',('state','!=','draft'),('contract_type','!=','fault')]}"/>
+
+                            <button name="request" 
+                            string="Request" type="object" icon="gtk-convert" groups="service.group_service_section_manager"
+                            attrs="{'invisible': ['|',('state','!=','draft'),('contract_type','=','fault')]}"/>
+
+                            <button name="confirm" states="request" context="{'contract_type':contract_type}"
+                                string="Confirm" type="object" icon="gtk-convert" groups="admin_affairs.group_admin_affair_maintenance"/>
+
+                            <button icon="terp-gtk-go-back-rtl" type="object" name="approve"
+							string="Approve" groups="service.group_building_service_officer"
+                            context="{'contract_type':contract_type,'internal':internal,'payment_method':payment_method}"
+                            attrs="{'invisible': ['|',('state','!=','confirm'),('contract_type','=','fault')]}"/>
+
+
+                            <button icon="terp-gtk-go-back-rtl" type="object" name="approve"
+							string="Approve" groups="service.group_building_service_officer"
+                            context="{'contract_type':contract_type,'internal':internal,'payment_method':payment_method}"
+                            attrs="{'invisible': ['|',('state','!=','confirm'),('contract_type','!=','fault')]}"/>
+
+                            <button icon="terp-gtk-go-back-rtl" type="object" name="open"
+							states="approved_mo" string="Maintenance Officer" groups="admin_affairs.group_admin_affair_maintenance"/>
+                            
+                            <button type="object" name="affairs_mg" groups="admin_affairs.group_admin_affair_manager"
+							states="affairs_mg" string="Admin Affairs Manager" class="oe_highlight" />
+
+                            <button type="object" name="human_financial"
+                                states="human_financial" string="human resources and financial Manager" class="oe_highlight" 
+                                groups="base_custom.group_general_hr_manager"/>
+
+                            <button name="general_mg" states="general_mg"
+                                string="General Manager" type="object" icon="gtk-convert" groups="base_custom.group_account_general_manager" />
+
+                            <field name="state" widget="statusbar" statusbar_visible="draft,cancel,closed"/>                   
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" class="oe_inline" attrs="{'invisible': [('name','=','/')]}" readonly="1"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="building_id" required="1" domain="[('building','=',True),('parent_id','=',False)]" 
+                                       attrs="{'readonly':[('state','not in',('draft','confirm'))]}"
+                                       context="{'form_view_ref': 'service.fleet_service_type_form_building', 'building':True,'category':'building'}"/>
+                                <field name="cost_subtype_id"  required="1" 
+                                       domain="[('category','=','building'),('building','=',False)]"  
+                                       attrs="{'readonly':[('state','not in',('draft','confirm'))],
+                                            'required':[('state','=','draft')]}"
+                                        on_change="onchange_service_type(cost_subtype_id)"
+                                        context="{'form_view_ref': 'service.fleet_service_type_form_inherit', 'building':False,'category':'building'}"/>
+                                <field name="department_id" attrs="{'readonly':[('state','not in',('draft'))],'required':[('state','=','draft')]}"/>
+                                <field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                                <field name="contract_type" on_change="onchange_contract_type(cost_ids, faults_ids, contract_type)"
+                                       attrs="{'readonly':[('state','not in',('draft','confirm'))],'required':[('state','in',('draft','confirm'))]}"/>
+                                <field name="internal" attrs="{'invisible':[('contract_type','!=','fault')],'readonly':[('state','not in', ('draft','confirm','request') )]}"
+                                groups="service.group_building_service_officer,admin_affairs.group_admin_affair_maintenance,admin_affairs.group_admin_affair_manager,base_custom.group_general_hr_manager,base_custom.group_account_general_manager"
+                            />
+                                        
+                                
+                            </group>
+                            <group attrs="{'invisible':[('state','in',('draft'))]}">
+                                <field name="date" string="Invoice Date" 
+                                       attrs="{'readonly':[('state','not in',('draft','request','confirm'))],'required':[('state','=','draft','request','confirm')]}"/>
+                                
+                                       
+                                <field name="payment_method"   on_change="on_change_pay_method(payment_method)"
+		                                attrs="{'readonly':[('state','not in',('request','confirm','draft'))],
+                                                'required':[('state','in',('confirm','request') )]}"/>
+                                                
+		                        <field name="enrich_id"  domain="['|',('service_id','=',cost_subtype_id),('service_id','=',False),('type','=','enrich'),('state','=','done'),('residual_amount','&gt;=',sum_cost)]" 
+		                                attrs="{'required':[('payment_method','==','enrich')],
+		                                'invisible':[('payment_method','!=','enrich')],
+		                                'readonly':[('state','not in',('draft','confirm','request'))],}" 
+                                        context="{'form_view_ref': 'admin_affairs.view_payment_enrich_view_form', 'default_type':'enrich'}"/>
+		                        
+                                
+                                <label for="cost_generated" attrs="{'invisible':[('payment_method','!=','voucher')]}"/>
+                                <div attrs="{'invisible':[('payment_method','!=','voucher')]}">
+                                    <field name="cost_generated"  class="oe_inline" 
+                                    	attrs="{'invisible': [('cost_frequency','=','no')],
+                                    			'readonly':[('state','not in',('draft','confirm','request'))],}" />
+                                    			
+                                    <field name="cost_frequency"  class="oe_inline" on_change="emptyinstallment()" 
+                                            	attrs="{'readonly':[('state','not in',('draft','confirm','request'))],}"/>
+                                </div>
+								<field name="installment"  attrs="{'invisible': [('cost_frequency','=','no')]}"/>
+								
+                                
+                            </group>
+                             
+                        </group>
+                        <group  string="Contract details" 
+                        groups="service.group_building_service_officer,admin_affairs.group_admin_affair_maintenance,admin_affairs.group_admin_affair_manager,base_custom.group_general_hr_manager,base_custom.group_account_general_manager">
+                            <group>
+                                <field name="insurer_id"  
+                                       attrs="{'readonly':[('state','not in',('confirm_ss','draft','request','confirm'))],
+                                             'required':[('state','in',('confirm_ss','request','confirm') ),('payment_method','=','voucher'),('internal','=',False)],'invisible':[('internal','=',True)]}"/>
+                                <field name="purchaser_id" 
+                                	attrs="{'readonly':[('state','not in',('draft','confirm_ss',))]}"/>
+                          </group>
+                           <group>
+                                <field name="start_date" attrs="{'readonly':[('state','not in',('confirm_ss','draft','request','confirm'))],
+                                                                 'required':[('state','=','confirm')]}"/>
+                                <field name="expiration_date" attrs="{'readonly':[('state','not in',('confirm_ss','draft','request','confirm'))],
+                                                                      'required':[('state','=','confirm')]}"/>
+                            </group>
+                             
+							</group>
+                        <notebook>
+                            <page string="Building Items" groups="service.group_building_maintenace"
+                                attrs="{'invisible':[('contract_type','!=','service')]}">
+                                <button name='fill_inventory' type="object" string="Fill" attrs="{'invisible':[('state','not in',('draft','request','confirm'))]}"/>
+                                <group>
+                                    <field name="cost_ids" nolabel="1" on_change="onchange_value()" attrs="{'readonly':[('state','not in',('draft','request','confirm'))]}">
+                                        <tree version="7.0" editable='top'>
+                                            <field name="cost_subtype_id" string="Items" 
+                                                domain="[('category','=','building'),('parent_id','=',parent.building_id)]" on_change="onchange_service(cost_subtype_id)"/>
+                                            <field name="product_id"  string="Product" invisible="1"/>
+											<field name="quantity" string="Quantity" invisible="1"/>
+											<field name="form_date"  />
+											<field name="date_to"  />
+											<field name="progress"  />
+											<field name="responsible" widget="many2many_tags" />
+                                            <field name="amount" string="Indicative Cost"  on_change="onchange_value(amount,quantity)"/>
+                                            <field name="price" string="Price"/>
+                                            <field name="total" string="Total" sum="Price"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                               
+                            </page>
+
+                            <page string="Tasks" groups="service.group_building_maintenace" attrs="{'invisible':[('contract_type','!=','contract')]}">
+                                <field name="tasks_ids" widget="one2many" 
+                                 nolabel="1" attrs="{'readonly':[('state','not in',('draft', 'request', 'confirm'))]}">
+                                    <tree version="7.0" editable='top'> 
+                                        <field name="cost_subtype_id" string="Tasks"
+                                        domain="[('category','=','building'),('parent_id','=',parent.building_id)]" on_change="onchange_service(cost_subtype_id)"/>
+                                        <field name="product_id"  string="Product" invisible="1"/>
+                                        <field name="quantity" string="Quantity" invisible="1"/>
+                                        <field name="form_date"  />
+                                        <field name="date_to"  />
+                                        <field name="progress"  />
+                                        <field name="responsible" widget="many2many_tags" />
+                                        <field name="amount" string="Indicative Cost"  on_change="onchange_value(amount,quantity)"/>
+                                        <field name="total" string="Total" sum="Price"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Faults" groups="service.group_building_maintenace" 
+                                attrs="{'invisible':[('contract_type','!=','fault')],'readonly':[('state','not in',('draft','request'))]}">
+                                <field name="faults_ids" widget="one2many" 
+                                 nolabel="1" attrs="{'readonly':[('state','not in',('draft', 'request', 'confirm'))]}">
+                                    <tree version="7.0" editable='top'> 
+                                        <field name="fault_id"  domain="[('type','=','fault')]" required="1"/>
+                                        <field name="solution_ids" widget="many2many_tags" domain="[('type','=','solution')]"
+                                        />
+                                        <field name="responsible" widget="many2many_tags"
+                                        />
+                                        <field name="start_time" string="Evaluation Date" readonly="1" on_change="onchange_time(start_time,end_time)"/>
+                                        <field name="end_time"  string="Finish Date" on_change="onchange_time(start_time,end_time)"
+                                        />
+                                        <field name="expected_time" widget="float_time" 
+                                        />
+                                        <field name="time" widget="float_time" readonly="1" />
+                                        <field name="progress"  />
+                                        <field name="quantity" invisible="1"/>
+                                        <field name="note"  />
+                                        <field name="amount" string="Cost"  on_change="onchange_value(amount,quantity)" sum="Price"/>
+                                        <field name="total" string="Total" sum="Price" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+
+                            <page string="Products" groups="service.group_building_maintenace">
+                                <button name='fill_product' type="object" string="Fill" attrs="{'invisible':[('state','not in',('draft','request','confirm'))]}"/>
+                                <button name='request_product' type="object" string="Request Product" attrs="{'invisible':[('state','not in',('draft','request','confirm'))]}"/>
+                                <group><field name="stock_id" readonly="1" /></group>
+                                
+                                <group>
+                                    <field name="cost_product" nolabel="1" on_change="onchange_value()" attrs="{'readonly':[('state','not in',('draft','request','confirm'))]}">
+                                        <tree version="7.0" editable='top'>
+                                            <field name="product_id"  domain="[('is_admin_affaris','=',True)]" string="Product" on_change="onchange_product(product_id)" required='1'/>
+											<field name="quantity" string="Quantity" />
+                                            <field name="amount" string="Indicative Cost"  on_change="onchange_value(amount,quantity)"/>
+                                            <field name="total" string="Total" sum="Price"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Payments" attrs="{'invisible':['|',('payment_method','in',('enrich','nothing')),('state','not in',('open','toclose','closed'))]}" >
+                                <group>
+                                    <field name="generated_cost_ids" 
+                                        nolabel="1" sum="total">
+                                        <tree version="7.0" editable="bottom" create='false'>
+                                            <field name="date" readonly="1"/>
+                                            <field name="voucher_id" colspan="4" nolabel="1"
+                                                context="{'form_view_ref': 'account_voucher.view_purchase_receipt_form'}" readonly="1"/>
+                                            <field name="amount" string="Amount" readonly="0"/>
+                                            <field name="total" sum="total" />
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Taxes" invisible="1">
+                                <group>
+                                    <field name="tax_ids" nolabel="1" 
+                                        attrs="{'readonly':[('state','in',('confirm_ss','confirm_so','cancel','closed','open'))]}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                         <group>
+                        		<field name="notes" nolabel="1" placeholder="Notes" />
+                                <group class="oe_subtotal_footer oe_right">
+	                                <field name="sum_cost" string="Total Costs"/>
+	                                <field name="amount" string="Activation Cost" 
+	                                attrs="{'readonly':['|',('state','not in',('draft','confirm_ss','confirm'))], 'invisible':[('payment_method','!=','voucher')]}"/>
+	                                <field name="paid" />
+	                                <field name="residual" class="oe_subtotal_footer_separator" />
+                                </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model='ir.ui.view' id='contract_building_tree'>
+            <field name="name">contract.building.tree</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Contract logs" version="7.0">
+                    <field name="cost_subtype_id"/>
+                    <field name="start_date"/>
+                    <field name="expiration_date"/>
+                    <field name="days_left" invisible="1"/>
+                    <field name="insurer_id"/>
+                    <field name="amount" string="Activation Cost"/>
+                    <field name="cost_generated"/>
+                    <field name="cost_frequency"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_building_contract">
+            <field name="name">Building/Location Services</field>
+            <field name="res_model">fleet.vehicle.log.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('cost_subtype_id.category','=','building')]</field>
+            <field name="context">{'default_payment_method':'voucher','action':'service.building_cont_menu'}</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="contract_building_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="contract_building_tree"/>
+            <field name="act_window_id" ref="action_building_contract"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="contract_building_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="contract_building_form"/>
+            <field name="act_window_id" ref="action_building_contract"/>
+        </record>
+        
+	    <menuitem id="building_cont_menu" name="Building/Location Services" parent="building_service_menu" 
+                   action="action_building_contract" sequence="3"
+                   groups="group_building_service_officer,service.group_service_section_manager,base_custom.group_general_department_manager,base_custom.group_department_manager,base_custom.group_general_hr_manager,base_custom.group_account_general_manager"/>
+
+
+        <record id="building_maintenance_faults_solutions_form" model="ir.ui.view">
+            <field name="name">faults.solution.form</field>
+            <field name="model">building.maintenance.faults.solution</field>
+            <field name="arch" type="xml">
+            <form string="Faults/Solutions" version="7.0">
+		        <sheet>
+		            <group>
+		                <group>
+		                    <field name="name" required="1"/>
+		                    <field name="responsible" widget="many2many_tags"
+                            attrs="{'invisible':[('type','!=','fault')]}"/>
+		                </group>
+		                <group>
+		                    <field name="priority"
+                            attrs="{'invisible':[('type','!=','fault')],'required':[('type','=','fault')]}" />
+		                    <field name="category_id" required="1"/>
+		                </group>
+                        <group>
+		            <field name="type" required="1"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+		        </sheet>
+            </form>
+            </field>
+	    </record>
+                
+        <record id="building_maintenance_faults_solutions_tree" model="ir.ui.view">
+                <field name="name">faults.solutions.tree</field>
+                <field name="model">building.maintenance.faults.solution</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                    <tree string="Faults/Solutions" version="7.0" readonly="1">
+                        <field name="name" />
+		        <field name="category_id"/>
+                        <field name="responsible" widget="many2many_tags"/>
+                        <field name="priority" />
+                        <field name="type"/>
+                    </tree>
+                </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_building_maintenance_faults_solutions">
+            <field name="name">Faults Solutions</field>
+            <field name="res_model">building.maintenance.faults.solution</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new Fault / Solution . 
+              </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="faults_solutions_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="building_maintenance_faults_solutions_tree"/>
+            <field name="act_window_id" ref="action_building_maintenance_faults_solutions"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="faults_solutions_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="building_maintenance_faults_solutions_form"/>
+            <field name="act_window_id" ref="action_building_maintenance_faults_solutions"/>
+        </record>
+        <menuitem  name="Faults Solutions" parent="admin_affairs.admin_affairs_configuration_menu" 
+            id="faults_solutions_menu" action="action_building_maintenance_faults_solutions" sequence="1"/>
+
+	<!-- Soultion and Fault configurtion menu,form,tree-->
+        <record id="faults_solution_category_formm" model="ir.ui.view">
+            <field name="name">faults.solution.category.form</field>
+            <field name="model">faults.solution.category</field>
+            <field name="arch" type="xml">
+            <form string="Faults/Solutions Category" version="7.0">
+		        <sheet>
+		            <group>
+		                <group>
+		                    <field name="name" required="1"/>
+		                    <field name="specific_user"/>
+		                </group>
+                    	    </group>
+                        <notebook>
+                            <page string="Faults/Solutions Category" groups="service.group_building_maintenace" attrs="{'invisible':[('specific_user','==',False)]}">
+		                <group>
+		                    <field name="users"/>
+		                </group>
+			    </page>
+                        </notebook>
+
+		        </sheet>
+            </form>
+            </field>
+	    </record>
+                
+        <record id="faults_solution_category_treee" model="ir.ui.view">
+                <field name="name">faults.solution.category.tree</field>
+                <field name="model">faults.solution.category</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                    <tree string="Faults/Solutions" version="7.0" readonly="1">
+                        <field name="name" />
+                        <field name="specific_user"/>
+                        <field name="users" />
+                    </tree>
+                </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_faults_solution_category">
+            <field name="name">Faults Solutions Category</field>
+            <field name="res_model">faults.solution.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new Fault / Solution Category. 
+              </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="faults_solution_category_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="faults_solution_category_treee"/>
+            <field name="act_window_id" ref="action_faults_solution_category"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="faults_solution_category_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="faults_solution_category_formm"/>
+            <field name="act_window_id" ref="action_faults_solution_category"/>
+        </record>
+        <menuitem  name="Faults Solutions Category" parent="admin_affairs.admin_affairs_configuration_menu" 
+            id="faults_solutions_category_menu" action="action_faults_solution_category" sequence="1"/>
+    </data>
+</openerp>

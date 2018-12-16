@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+
+		<!-- Budgets Operations -->
+		<record model="ir.ui.view" id="account_budget_operation_view_tree">
+			<field name="name">account.budget.operation.view.tree</field>
+			<field name="model">account.budget.operation</field>
+			<field name="arch" type="xml">
+				<tree
+					colors="blue:state in ('draft');gray:state in ('cancel');black:state in ('done')"
+					string="Budget Operations">
+					<field name="name" />
+					<field name="type" />
+					<field name="budget_type" groups="account_budget_custom.group_cash_budget"/>
+					<field name="budget_line" />
+					<field name="amount" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="account_budget_operation_view" model="ir.ui.view">
+			<field name="name">account.budget.operation.view.form</field>
+			<field name="model">account.budget.operation</field>
+			<field name="arch" type="xml">
+				<form string="Budget Operations" version="7.0">
+					<header>
+						<button name="action_cancel_draft" states="cancel" type="object"
+							string="Set to Draft" icon="terp-stock_effects-object-colorize" />
+						<button name="cancel" string="Cancel" states="complete,confirm,approve" 
+							icon="gtk-cancel" type="object"/>
+						<button name="complete" string="Complete" states="draft" type="object" />
+						<button name="confirm" string="Confirm" states="complete" type="object"/>
+						<button name="approve" string="Approve" states="confirm" type="object" />
+						<button name="done" string="Execute" states="approve" type="object" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,complete,confirm,approve,done" />
+					</header>
+					<sheet string="Budget Operations">
+						<div class="oe_title">
+							<label for="name" class="oe_edit_only" />
+							<h1>
+								<field name="name" readonly="1" />
+							</h1>
+						</div>
+						<group col="4">
+							<field name="type" on_change="onchange_ttype(type)" attrs="{'invisible':[('budget_type','=','cash')]}"/>
+							<field name="transfer_type" attrs="{'invisible': [('type','!=','transfer')], 'required':[('type','=','transfer')]}" />
+							<field name="budget_type" on_change="onchange_budget_type(budget_type)"
+						           groups="account_budget_custom.group_cash_budget" attrs="{'invisible':[('type','=','close')]}"/>
+							<field name="from_company_id" widget="selection"
+                             					      groups="base.group_multi_company" 
+                              					      on_change="onchange_company_id('from')" />
+
+                              					<field name="budget_line"
+                                                       			   domain="[('company_id','=',from_company_id)]" 
+                                                       			   attrs="{'required': [('type','=','transfer')], 'invisible':['|',('type','=','close'),('type','=','increase')], 'readonly': [('state','!=','draft')]}"/>
+
+							<field name="amount"
+								 attrs="{'readonly': ['|','|',('type','=','transfer'),('state','!=','draft'),('type','=','close')], 'invisible':[('type','=','increase')]}" />
+							
+							<separator colspan="4" />
+						</group>
+
+							<notebook>
+								<page string="Budget Transfer"
+									 attrs="{'readonly': [('state','!=','draft')],'required': [('type','=','transfer')], 'invisible':[('type','=','close')]}">
+									
+									<field name="line_ids" colspan="4" nolabel="1" on_change="onchange_line_ids(line_ids)"
+								 	  attrs="{'readonly': [('state','!=','draft')],'required': [('type','=','transfer')], 'invisible':[('type','=','close')]}">
+										<tree string="" editable="top">
+											<field name="line_id" domain="[('company_id','=',parent.from_company_id)]" />
+											<field name="amount" sum="Total" />
+										</tree>
+										<form string="From Budgets" version="7.0">
+											<field name="line_id" domain="[('company_id','=',parent.from_company_id)]" />
+											<field name="amount" sum="Total" />
+										</form>
+									</field>
+								</page>
+
+								<page string=" Budget Close" 
+									 attrs="{'readonly': [('state','!=','draft')],'required': [('type','=','close')], 'invisible':[('type','!=','close')]}"
+								 	 select="1">
+									<field name="budget_line_ids" attrs="{'readonly': [('state','!=','draft')],'required': [('type','=','close')], 'invisible':[('type','!=','close')]}" />
+
+								</page>
+
+							</notebook>
+
+						
+					</sheet>
+				</form>
+			</field>
+		</record>
+			<record id="budget_operation_filter" model="ir.ui.view">
+			<field name="name">account.budget.operation.filter</field>
+			<field name="model">account.budget.operation</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Budget Operations">
+					<group expand="0" string="Group By...">
+						<filter string="Type" icon="terp-stock_effects-object-colorize" domain="[]"
+							context="{'group_by':'type'}" />
+						<filter string="Budget Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'budget_type'}" />
+						<filter string="Status" icon="terp-stock_effects-object-colorize"  domain="[]"
+							context="{'group_by':'state'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="action_account_budget_operation_menu" model="ir.actions.act_window">
+			<field name="name">Budget Operations</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.budget.operation</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="account_budget_operation_view_tree" />
+		</record>
+
+		<menuitem name="Budget Transfer/Increase Operations" parent="menu_account_budget"
+			action="action_account_budget_operation_menu" sequence="2" id="menu_budget_operation" />
+
+		<record id="act_budget_operation_link" model="ir.actions.act_window">
+			<field name="name">Budget Operation Log</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.budget.operation.history</field>
+			<field name="src_model">account.budget.operation</field>
+			<field name="domain">[('reference',
+				'=','account.budget.operation,'+str(active_id))]</field>
+		</record>
+
+		<!--record model="ir.values" id="account_budget_operation_value">
+			<field name="model_id"
+				ref="account_budget_custom.model_account_budget_operation" />
+			<field name="name">Budget Operation Log</field>
+			<field name="key2">client_action_relate</field>
+			<field name="value"
+				eval="'ir.actions.act_window,' + str(ref('act_budget_operation_link'))" />
+			<field name="key">action</field>
+			<field name="model">account.budget.operation</field>
+		</record-->
+	</data>
+</openerp>

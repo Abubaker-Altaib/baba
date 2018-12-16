@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <odoo>
+    <data>
+
+       <!-- Insurance Company form -->
+       <record id="insurance_company_form" model="ir.ui.view">
+           <field name="name">Insurance Company</field>
+           <field name="model">hr.insurance.company</field>
+           <field name="arch" type="xml">
+               <form string="Insurance Company">
+                   <sheet>
+                       <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                       </div>
+                           <group>
+                               <field name="name"/>
+                               <field name="partner_id"/>
+                           </group>
+                   </sheet>
+               </form>
+          </field>
+      </record>
+
+
+      <!-- Insurance Company tree -->
+      <record id="insurance_company_tree" model="ir.ui.view">
+          <field name="name">Insurance Company</field>
+          <field name="model">hr.insurance.company</field>
+          <field name="arch" type="xml">
+              <tree string="Insurance Company">
+                  <field name="name"/>
+                  <field name="partner_id"/>
+              </tree>
+          </field>
+      </record>
+            <!-- Insurance document form -->
+      <record id="hr_insurance_document_form" model="ir.ui.view">
+           <field name="name">Insurance Document</field>
+           <field name="model">hr.insurance.document</field>
+           <field name="arch" type="xml">
+               <form string="Insurance Document">
+                   <sheet>
+                       <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                       </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"  placeholder="Document Name"/>
+                            </h1>
+                        </div>
+                       <group>
+                           <group>
+                               <field name="code"/>
+                               <field name="start_date"/>
+                           </group>
+                            <group>
+                               <field name="insurance_company_id"/>
+                               <field name="end_date"/>
+                           </group>
+
+                      </group>
+                      <group string="Price">
+                        <field name="prices_ids" widget="one2many_list" nolabel="1">
+                          <tree string="Task" editable="top">
+                                    <field name="insurance_category_id"/>
+                                    <field name="price"/>
+                                    <field name="relation"/>
+                                  </tree>
+                                </field>
+                      </group>
+                   </sheet>
+               </form>
+          </field>
+      </record>
+
+            <!-- Insurance Document tree -->
+      <record id="hr_insurance_document_tree" model="ir.ui.view">
+          <field name="name">Insurance Document</field>
+          <field name="model">hr.insurance.document</field>
+          <field name="arch" type="xml">
+              <tree string="Insurance Document">
+                  <field name="code"/>
+                  <field name="name"/>
+                  <field name="insurance_company_id"/>
+                  <field name="start_date"/>
+                  <field name="end_date"/>
+              </tree>
+          </field>
+      </record>
+      <record id="hr_employee_insurance_form" model="ir.ui.view">
+           <field name="name">Employee Insurance</field>
+           <field name="model">hr.employee.insurance</field>
+           <field name="arch" type="xml">
+               <form string="Employee Insurance">
+                <header>
+                      <button string="New" name="set_draft" class="oe_highlight" states="open,pending" 
+                        type="object"/>
+                      <button string="Run" name="set_open" class="oe_highlight" states="draft,close" 
+                        type="object"/>             
+                      <button string="Pend" name="set_pending" class="oe_highlight" 
+                        states="open" type="object"/>
+                      <button string="Expire" name="set_close" class="oe_highlight" 
+                      states="open" type="object"/>
+                      <button string="Cancel" name="set_cancel" states="open" type="object" class="oe_highlight"/>
+                      <field name="state" widget="statusbar" statusbar_visible="draft,open,pending,close"/> 
+                    </header>
+                   <sheet>
+                        <div class="oe_title">
+                            <label for="employee_id" class="oe_edit_only"/>
+                            <h1>
+                                <field name="employee_id"  placeholder="Employee"/>
+                            </h1>
+                        </div>
+                       <group>
+                           <group>
+                               <field name="insurance_no"/>
+                               <field name="type"/>
+                               <field name="price"/>
+                               <field name="start_date"/>
+                               <field name="end_date"/>
+                           </group>
+                            <group>
+                               <field name="relation_id"/>
+                               <field name="insurance_company_id"/>
+                               <field name="insurance_document_id" domain="[('insurance_company_id', '=',insurance_company_id)]"/>
+                               <field name="insurance_category_id"/>
+                           </group>
+                      </group>
+                   </sheet>
+               </form>
+          </field>
+      </record>
+      <record id="hr_employee_insurance_tree" model="ir.ui.view">
+          <field name="name">Employee Insurance</field>
+          <field name="model">hr.employee.insurance</field>
+          <field name="arch" type="xml">
+              <tree string="Employee Insurance">
+                  <field name="employee_id"/>
+                  <field name="insurance_no"/>
+                  <field name="price"/>
+                  <field name="relation_id"/>
+                  <field name="insurance_company_id"/>
+                  <field name="insurance_document_id"/>
+                  <field name="insurance_category_id"/>
+                  <field name="start_date"/>
+                  <field name="end_date"/>
+              </tree>
+          </field>
+      </record>
+
+            <!-- Insurance Document action -->
+      <record id="insurance_document_action" model="ir.actions.act_window">
+           <field name="name">Insurance Document</field>
+           <field name="res_model">hr.insurance.document</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree,form</field>
+       </record>
+
+
+      <!--   Insurance Company action -->
+       <record id="insurance_company_action" model="ir.actions.act_window">
+           <field name="name">Insurance Company</field>
+           <field name="res_model">hr.insurance.company</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree,form</field>
+       </record>
+        <!--   Employee Insurance action -->
+       <record id="hr_employee_insurance_action" model="ir.actions.act_window">
+           <field name="name">Employee Insurance</field>
+           <field name="res_model">hr.employee.insurance</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree,form</field>
+       </record>
+
+    <!-- Insurance Category form -->
+       <record id="insurance_category_form" model="ir.ui.view">
+           <field name="name">Insurance Category</field>
+           <field name="model">hr.insurance.category</field>
+           <field name="arch" type="xml">
+               <form string="Insurance Category">
+               
+                  <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="insurance_company_id"/>
+                        </group>
+                        <group>
+                            
+                            <field name="code"/>
+                        </group>
+                    </group>
+                   
+                           <group >
+                              <field name="category_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
+                          </group>
+
+                   </sheet>
+               </form>
+          </field>
+      </record>
+
+      <!-- Insurance Category tree -->
+      <record id="insurance_category_tree" model="ir.ui.view">
+          <field name="name">Insurance Category</field>
+          <field name="model">hr.insurance.category</field>
+          <field name="arch" type="xml">
+              <tree string="Insurance Category">
+                  <field name="name"/>
+                  <field name="code"/>
+              </tree>
+          </field>
+      </record>
+
+      <!--   Insurance Category action -->
+       <record id="insurance_category_action" model="ir.actions.act_window">
+           <field name="name">Insurance Category</field>
+           <field name="res_model">hr.insurance.category</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree,form</field>
+       </record>
+
+
+
+    <!-- Menuitems -->
+    <menuitem
+          name="Insurance Configuration"
+          id="menu_insurance_config"
+          parent="hr.menu_human_resources_configuration" sequence="51" groups="hr.group_hr_user"/> 
+
+    <menuitem
+          name="Insurance Document"
+          id="menu_insurance_document"
+          action="insurance_document_action"
+          parent="menu_insurance_config"
+          sequence="3"/>
+
+    <menuitem
+          name="Insurance Company"
+          id="menu_insurance_company"
+          action="insurance_company_action"
+          parent="menu_insurance_config"
+          sequence="1"/>
+
+    <menuitem
+          name="Insurance Category"
+          id="menu_insurance_category"
+          action="insurance_category_action"
+          parent="menu_insurance_config"
+          sequence="2"/>
+    <menuitem 
+      id="menu_employee_insurance" 
+      name="Employee Insurance" 
+      parent="hr_custom.menu_hr_management"
+      sequence="6"
+      action="hr_employee_insurance_action" />
+    </data>
+</odoo>

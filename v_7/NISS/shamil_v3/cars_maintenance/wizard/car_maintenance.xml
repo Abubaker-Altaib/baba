@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Car Maintenance Wizard View-->
+
+    	<record id="view_car_maintenance_wiz" model="ir.ui.view">
+            <field name="name">car maintenance wiz</field>
+            <field name="model">car.maintenance.wiz</field>
+            <field name="arch" type="xml">
+               <form string="Cars Maintenances Report" version="7.0">
+        		<separator string="Car Maintenance Report" colspan="4"/>
+            		<group  col="4" colspan="4">
+		    		<field name="company_id"   /><newline/>
+		    		<field name="Date_from"  />
+		    		<field name="Date_to" />
+		            	<field name="car_id" />
+		            	<field name="partner_id" />
+		            	<field name="department_id"  domain="[('company_id', '=',company_id)]"/>
+		            	<field name="product_id"  domain="[('spare_ok', '=',True)]"/>
+		    		<field name="maintenance_type" />
+		    		<field name="state" />
+		    		<field name="details"/>
+    			</group>
+                    <footer>
+           	    	<button name="print_report" string="Print" type="object" icon="gtk-ok" colspan="2"   class="oe_highlight"/>or
+			<button special="cancel" string="_Cancel" icon="gtk-cancel" colspan="2"/>
+                    </footer>
+
+    			</form>
+            </field>
+		</record>
+<!-- car maintenance Wizard Action-->
+        <record id="action_car_maintenance_wiz" model="ir.actions.act_window">
+            <field name="name">car Maintenance Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">car.maintenance.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_car_maintenance_wiz"/>
+            <field name="target">new</field>
+        </record>
+
+
+<!-- car maintenance Wizard Menu-->
+      
+ 
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Cars Maintenances Report"
+                parent="fleet_reports_menu"
+                action="action_car_maintenance_wiz"
+                id="menu_car_maintenance_report"
+                />
+
+    </data>
+</openerp>

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record model="ir.ui.view" id="department_view_inherit">
+      <field name="name">hr.department.view.inherit</field>
+      <field name="model">hr.department</field>
+      <field name="type">form</field>
+      <field name="inherit_id" ref="hr.view_department_form"/>
+      <field name="arch" type="xml">
+        <xpath expr='//field[@name="parent_id"]' position="after" version="7.0">
+          <field name="payroll_employee_id" />
+        </xpath>
+      </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="payroll_scale_view_inherit">
+      <field name="name">hr.salary.scale.view.inherit</field>
+      <field name="model">hr.salary.scale</field>
+      <field name="type">form</field>
+      <field name="inherit_id" ref="hr_payroll_custom.view_salary_scale_form"/>
+      <field name="arch" type="xml">
+        <xpath expr='//field[@name="employee_type"]' position="after" version="7.0">
+          <field name="sequence" />
+        </xpath>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="hr_payroll_main_archive_view_inherit">
+      <field name="name">hr.payroll.main.archive.view.inherit</field>
+      <field name="model">hr.payroll.main.archive</field>
+      <field name="type">form</field>
+      <field name="inherit_id" ref="hr_payroll_custom.view_hr_payroll_main_archive_form"/>
+      <field name="arch" type="xml">
+        <xpath expr='//field[@name="department_id"]' position="after" version="7.0">
+          <field name="payroll_employee_id" />
+        </xpath>
+      </field>
+    </record>
+
+
+<!--     
+   ============
+hr department payroll
+   ============
+-->
+
+	<record id="view_hr_department_payroll_form" model="ir.ui.view">
+	                   <field name="name">hr.department.payroll.form</field>
+	                   <field name="model">hr.department.payroll</field>
+	                   <field name="type">form</field>
+	                   <field name="arch" type="xml">
+	                       <form string="Department Of Payroll">
+	                         <field name="name" string="Name"/> 
+	                         <field name="type"/>
+	                          <field name="sector_id" domain="[('type' , '=' , 'sector')]" attrs="{'invisible' : [('type' , '=' , 'sector')] , 'required' : [('type' , '=' , 'group')]}"/>
+                           <field name="department_id" /> 
+	                       </form>
+	                   </field>
+	               </record>
+	               <record id="view_hr_department_payroll_tree" model="ir.ui.view">
+	                   <field name="name">hr.department.payroll.tree</field>
+	                   <field name="model">hr.department.payroll</field>
+	                   <field name="type">tree</field>
+	                   <field name="arch" type="xml">
+	                       <tree string="Department Of Payroll">
+                                   <field name="name"/>
+                                   <field name="department_payroll_ids" />
+	                       </tree>
+	                   </field>
+	               </record>
+	               
+	               <record id="open_hr_department_payroll_action" model="ir.actions.act_window">
+	       	            <field name="name">Department Of Payroll</field>
+	       	            <field name="res_model">hr.department.payroll</field>
+	       	            <field name="view_type">form</field>
+	       	            <field name="view_mode">tree,form</field>
+	       	            <field name="view_id" ref="view_hr_department_payroll_tree"/>	       	           
+	               </record>
+          <menuitem id="hr_department_payroll_menu" name="department payroll" sequence="7" parent="hr_custom.menu_hr_main_configuration" action="open_hr_department_payroll_action"/>
+
+
+            <!--        
+        ============
+        Employee  inherits
+        ============
+        -->
+       <record id="view_employee_form_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_employee_form_inherit2"/>
+            <field name="arch" type="xml">
+               
+               <xpath expr='//field[@name="bonus_id"]' position="after" version="7.0"> 
+			         <field name="sector_id" colspan="2" context="{'form_view_ref' : 'hr_payroll_custom_niss.view_hr_department_payroll_form', 'default_type' : 'sector'}" domain="[('type' , '=' , 'sector')]"/>
+			         <field name="payroll_employee_id" colspan="2" context="{'form_view_ref' : 'hr_payroll_custom_niss.view_hr_department_payroll_form' , 'default_type' : 'group'}" domain="[('type' , '=' , 'group') ,('sector_id' , '=' , sector_id)]"/>
+                     </xpath>
+        </field>
+            
+        </record>
+
+
+
+
+<!--
+   ============
+        contractor  inherits
+        ============
+        -->
+       <record id="view_employee_form_inherit3" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_contractor_form_inherit"/>
+            <field name="arch" type="xml">
+               
+               <xpath expr='//field[@name="bonus_id"]' position="after" version="7.0"> 
+			         <field name="sector_id" colspan="2" context="{'form_view_ref' : 'hr_payroll_custom_niss.view_hr_department_payroll_form', 'default_type' : 'sector'}" domain="[('type' , '=' , 'sector')]"/>
+			         <field name="payroll_employee_id" colspan="2" context="{'form_view_ref' : 'hr_payroll_custom_niss.view_hr_department_payroll_form' , 'default_type' : 'group'}" domain="[('type' , '=' , 'group') ,('sector_id' , '=' , sector_id)]"/>
+                     </xpath>
+        </field>
+            
+        </record>
+     
+		
+
+
+
+<!--Salary Suspend Archive-->
+  
+ <record model="ir.ui.view" id="hr2_basic_salary_suspend_archive_view">
+                <field name="name">hr2.basic.salary.suspend.archive.form</field>
+                <field name="model">hr2.basic.salary.suspend.archive</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                    <form string="Salary Suspend Archive">
+                          <field name="employee_id" select="1"/>
+			  <field name="suspend_date"/>
+			  <field name="suspend_type"/>
+                          <separator string="" colspan="4"  />
+			  <field name="comments" nolabel="1"/>
+                    </form>
+                </field>
+            </record>
+            <record model="ir.ui.view" id="hr2_basic_salary_suspend_archive_tree_view">
+                <field name="name">hr2.basic.salary.suspend.archive.tree</field>
+                <field name="model">hr2.basic.salary.suspend.archive</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                    <tree editable="top"  string="Salary Suspend Archive">
+                       <field name="employee_id" />
+			  <field name="suspend_date" />
+			  <field name="suspend_type"/>
+			  <field name="comments" />
+                    </tree>
+                </field>
+            </record>
+               <record id="hr2_basic_salary_suspend_archive_tree" model="ir.actions.act_window">
+			<field name="name">Salary Suspend Archive</field>
+			<field name="res_model">hr2.basic.salary.suspend.archive</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr2_basic_salary_suspend_archive_tree_view"/>
+	</record>
+	  <!-- salary suspend archive search-->
+ <record id="hr2_basic_salary_suspend_archive_filter" model="ir.ui.view">
+            <field name="name">hr2.basic.salary.suspend.archive.filter</field>
+            <field name="model">hr2.basic.salary.suspend.archive</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search Salary Suspend Archive">
+                    
+			<field name="employee_id" />
+                   
+			
+                        <field name="suspend_date"/>  
+                        
+                    
+                   <filter string="suspend_type" icon="terp-personal" domain="[]"
+						context="{'group_by':'suspend_type'}" />
+		</search>
+            </field>
+        </record>
+<!--end-->
+
+<report id="hr_payroll_custom_niss.payroll_listing_salary_rep" string="Department Listing"
+      model="hr.employee.salary.addendum" name="payroll.listing.salary"
+      rml="hr_payroll_custom_niss/report/payroll_listing_department.rml" auto="False"
+      header="True" menu="True" />
+
+<report id="hr_payroll_custom_niss.payroll_listing_department_months" string="Department Listing"
+      model="hr.employee.salary.addendum" name="payroll.department.listing.months"
+      rml="hr_payroll_custom_niss/report/payroll_listing_department_months.rml" auto="False"
+      header="True" menu="True" />
+
+       <report auto="False" 
+            id="hr_transfer_report" 
+            menu="False" 
+            model="hr.allowance.deduction.archive" 
+            name="hr.employee.transfer" 
+            file="hr_payroll_custom_niss/report/hr_transfer_report.mako"
+            report_type="webkit" 
+            string="Employee Transfer Report" 
+            header="False"/>
+
+            <!--record id="view_hr_allow_deduc_exception_filter" model="ir.ui.view">
+			<field name="name">salary suspend</field>
+			<field name="model">hr2.basic.salary.suspend.archive</field>
+			<field name="arch" type="xml">
+				<search string="">
+
+					<field name="employee_id" />
+					<field name="suspend_type" />
+					
+					<field name="suspend_date" />
+					 
+					<filter string="suspend_type" icon="terp-personal" domain="[]"
+						context="{'group_by':'suspend_type'}" />
+					 
+				</search>
+			</field>
+		</record-->
+    <record model="ir.ui.view" id="view_allowance_deduction_form_inherit">
+      <field name="name">hr.allowance.deduction.form.inherit</field>
+      <field name="model">hr.allowance.deduction</field>
+      <field name="type">form</field>
+      <field name="inherit_id" ref="hr_payroll_custom.view_allowance_deduction_form"/>
+      <field name="arch" type="xml">
+        <xpath expr='//notebook//page[@string="Departments"]' position="after" version="7.0">
+          <page string="Group">
+           <field name="payroll_department_ids" colspan="4" nolabel="1"/>
+          </page>
+        </xpath>
+      </field>
+    </record>
+
+<record id="hr_custom.view_employee_tree_inherit" model="ir.ui.view">
+             <field name="name">view.employee.tree.inherit</field>
+             <field name="model">hr.employee</field>
+             <field name="inherit_id" ref="hr.view_employee_tree"/>
+             <field name="arch" type="xml">
+                <tree string="Employees"  position="replace">
+                <tree colors="red:state in ('refuse');blue:state in ('draft');black:state in ('approved')" string="employee" >
+                    <field name="emp_code" select="1"/>
+                    <field name="degree_id"/>
+                    <field name="name"/>
+                    <field name="payroll_employee_id" />
+                    <field name="state"/>
+
+                </tree>
+                </tree>  
+             </field>
+        </record>
+
+   <menuitem id="hr2_basic_salary_suspend_archive_tree_menu" name="Salary Suspend Archive" parent="hr_custom.menu_hr_payroll_processes" action="hr2_basic_salary_suspend_archive_tree" sequence = "2"/>
+    </data>
+</openerp>

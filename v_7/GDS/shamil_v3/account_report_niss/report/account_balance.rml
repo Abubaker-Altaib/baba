@@ -1,0 +1,521 @@
+<?xml version="1.0"?>
+<document filename="Account Balance.pdf">
+<template pageSize="(595.0,842.0)" title="Account Balance"
+		author="NCTR" allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="1.3cm" y1="0.9cm" width="900" height="440" />
+		</pageTemplate>
+	</template>
+
+	<stylesheet>
+		<blockTableStyle id="Tilte_Table">
+			<blockAlignment value="LEFT" />
+			<blockValign value="TOP" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Content_Table">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Header_Table">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Inner_Header_Table">
+			<blockAlignment value="LEFT" />
+			<blockValign value="CENTER" />
+			<lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0"
+				stop="1,-1" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+
+		<paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0"
+			alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0" />
+		<paraStyle name="Header_Table_Header_Centre" fontName="Helvetica-Bold"
+			fontSize="8.0" alignment="CENTER" />
+		<paraStyle name="Header_Table_Detail_Centre" fontName="Helvetica"
+			fontSize="8.0" alignment="CENTER" />
+		<paraStyle name="Content_Table_Detail" fontName="Helvetica-Bold"
+			fontSize="8.0" alignment="CENTER"  />
+		<paraStyle name="Content_Table" fontName="Helvetica"
+			fontSize="8.0" alignment="RIGHT" rightIndent="8" />
+		<paraStyle name="Content_Table_Header" fontName="Helvetica-Bold"
+			fontSize="10.0" alignment="CENTER" rightIndent="4" />
+                <paraStyle name="Content_Table_Header_Right" fontName="Helvetica-Bold"
+			fontSize="10.0" alignment="RIGHT" rightIndent="4" />
+
+		<images />
+	</stylesheet>
+
+	<story>
+		<para style="Tilte">ميزان المراجعة</para>
+
+	  <para style="Header_Table_Detail_Centre">
+      <font color="white"> </font>
+    </para>
+
+				<blockTable colWidths="130.0,130.0,100.0,80.0,100.0" style="Header_Table">
+			<tr>
+				<td>
+					<para style="Header_Table_Header_Centre">المعاملات المقصودة</para>
+				</td>
+				<td>
+	   <para style="Header_Table_Header_Centre">فلترة حسب [[ get_filter(data) ]] [[ get_filter(data)!='No Filters' and
+						get_filter_Trans(data) ]]</para>				</td>
+				<td>
+					<para style="Header_Table_Header_Centre">عرض الحساب</para>
+				</td>
+				<td>
+					<para style="Header_Table_Header_Centre">السنة المالية</para>
+				</td>
+
+				<td>
+					<para style="Header_Table_Header_Centre">[[ get_label_according_model(data) ]]</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_target_move(data) ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_filter(data)=='No Filters' and
+						get_filter_Trans(data) or removeParentNode('blockTable') ]]</para>
+						
+							<blockTable colWidths="58.0,58.0" style="Inner_Header_Table">
+						[[ get_filter(data)=='Date'  or removeParentNode('blockTable') ]]
+						<tr>
+							<td>
+								<para style="Header_Table_Header_Centre">تاريخ النهاية</para>
+							</td>
+							<td>
+								<para style="Header_Table_Header_Centre">تاريخ البداية</para>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_end_date(data) ]]</para>
+							</td>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_start_date(data) ]]</para>
+							</td>
+						</tr>
+					</blockTable>
+					<blockTable colWidths="58.0,58.0" style="Inner_Header_Table">
+						[[ get_filter(data)=='Periods' or removeParentNode('blockTable') ]]
+						<tr>
+							<td>
+								<para style="Header_Table_Header_Centre">الفترة النهائية</para>
+							</td>
+							<td>
+								<para style="Header_Table_Header_Centre">الفترة الإبتدائية</para>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_end_period(data)]]</para>
+							</td>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_start_period(data)]]</para>
+							</td>
+						</tr>
+					</blockTable>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_display_account(data) ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_fiscalyear(data) or '' ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_account(data) or '' ]]</para>
+				</td>
+			</tr>
+		</blockTable>
+
+				    <para style="Header_Table_Detail_Centre">
+      <font color="white"> </font>
+    </para>
+		
+		<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[ without move & without initial]~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<section>[[ (not data['form'].get('moves',False) and not data['form'].get('initial_balance',False)) or removeParentNode('section') ]]
+			<blockTable colWidths="100.0,100.0,100.0,180.0,60.0" style="Content_Table" repeatRows="1">
+				<tr>
+					<td>
+						<para style="Content_Table_Header">الرصيد</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">داين</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">مدين</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">الحساب</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">الرمز</para>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(a['balance']) ]] [[ company.currency_id.symbol ]]
+							</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[ formatLang(a['balance']) ]] [[ company.currency_id.symbol ]]
+							</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font')]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(a['credit']) ]]</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[ formatLang(a['credit']) ]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(a['debit']) ]]</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[formatLang(a['debit']) ]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							[[ a['name'] ]][[(get_multi_company(data,a['id'])) ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							[[ repeatIn(lines(data['form']), 'a') ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+							<i>[[ a['code'] or removeParentNode('tr') ]]</i>
+						</para>
+					</td>
+				</tr>
+			</blockTable>
+		</section>
+		
+		<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[ with move & with initial]~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<section>[[ (data['form'].get('moves',False) and data['form'].get('initial_balance',False)) or removeParentNode('section') ]]
+			<blockTable colWidths="88.0,88.0,88.0,88.0,118.0,200.0,50.0" style="Content_Table" repeatRows="1">
+				<tr>
+					<td>
+						<para style="Content_Table_Header">الرصيد</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">المعاملة</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">داين</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">مدين</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">الرصيد الافتتاحي</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header" alignment="RIGHT">الحساب</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">الرمز</para>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font')]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(abs(a['init_balance']+ a['debit'] - a['credit'])) ]]
+							</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[ formatLang(abs(a['init_balance']+ a['debit'] - a['credit']))
+								]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(a['balance']) ]] [[ company.currency_id.symbol ]]
+							</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[ formatLang(a['balance']) ]] [[ company.currency_id.symbol ]]
+							</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font')]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(a['credit']) ]]</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[ formatLang(a['credit']) ]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(a['debit']) ]]</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[formatLang(a['debit']) ]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font')]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(a['init_balance']) ]]</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[ formatLang(a['init_balance']) ]]</font>
+							<font color="white"> . </font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							[[ a['name'] ]][[(get_multi_company(data,a['id'])) ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							[[ repeatIn(lines(data['form']), 'a') ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+							<i>[[ a['code'] or removeParentNode('tr') ]]</i>
+						</para>
+					</td>
+				</tr>
+			</blockTable>
+		</section>
+
+		<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[ with move & without initial]~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<section>[[ (data['form'].get('moves',False) and not data['form'].get('initial_balance',False)) or removeParentNode('section') ]]
+			<blockTable colWidths="100.0,100.0,100.0,100.0,260.0,60.0" style="Content_Table" repeatRows="1">
+				<tr>
+					<td>
+						<para style="Content_Table_Header">الرصيد</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">المعاملة</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">داين</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">مدين</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">الحساب</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">الرمز</para>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font')]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(abs(a['init_balance']+ a['debit'] - a['credit'])) ]]
+							</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[ formatLang(abs(a['init_balance']+ a['debit'] - a['credit']))
+								]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(a['balance']) ]] [[ company.currency_id.symbol ]]
+							</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[ formatLang(a['balance']) ]] [[ company.currency_id.symbol ]]
+							</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font')]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(a['credit']) ]]</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[ formatLang(a['credit']) ]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+							<font>[[ a['type']=='view' and removeParentNode('font') ]][[
+								formatLang(a['debit']) ]]</font>
+							<font>[[ a['type']&lt;&gt;'view' and removeParentNode('font') ]]
+								[[formatLang(a['debit']) ]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail" alignment="RIGHT">
+							[[ a['name'] ]][[(get_multi_company(data,a['id'])) ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+	
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							[[ repeatIn(lines(data['form']), 'a') ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+							<i>[[ a['code'] or removeParentNode('tr') ]]</i>
+						</para>
+					</td>
+				</tr>
+			</blockTable>
+		</section>
+		
+		<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[ without move & with initial]~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<section>[[ (not data['form'].get('moves',False) and data['form'].get('initial_balance',False)) or removeParentNode('section') ]]
+			<blockTable colWidths="75.0,75.0,75.0,75.0,75.0,125.0,55.0"
+				style="Content_Table" repeatRows="1">
+				<tr>
+					<td>
+						<para style="Content_Table_Header">رصيد اخر المدة</para>
+					</td>
+                                        <td>
+						<para style="Content_Table_Header">حركة المدة</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">داين المدة</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">مدين المدة</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">رصيد اول المدة</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">اسم الحساب</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">رقم الحساب</para>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<para style="Content_Table_Detail">
+							[[formatLang(a['balance']+a['init_balance']) ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+						</para>
+					</td>
+                                        <td>
+						<para style="Content_Table_Detail">
+							[[formatLang(a['balance']) ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font')]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							[[formatLang(a['credit']) ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font')]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							[[formatLang(a['debit']) ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							[[formatLang(a['init_balance']) ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]] </font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail" alignment="RIGHT">
+							[[a['name'] ]][[(get_multi_company(data,a['id'])) ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]] </font>
+						</para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							[[repeatIn(lines(data['form']), 'a') ]]
+							<font>[[ (a['type']&lt;&gt;'view' and
+								setTag('para','para',{'fontName':"Helvetica"})) or
+								removeParentNode('font') ]]</font>
+							<i>[[ a['code'] or removeParentNode('tr') ]]</i>
+						</para>
+					</td>
+				</tr>
+			</blockTable>
+        
+		</section>
+	</story>
+</document>

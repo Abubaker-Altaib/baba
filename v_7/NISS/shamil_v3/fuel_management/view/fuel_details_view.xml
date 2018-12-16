@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+			<record id="view_fleet_vehicle_filter_inherit" model="ir.ui.view">
+			<field name="name">fleet.vehicle.select.inherit</field>
+			<field name="model">fleet.vehicle</field>
+			<field name="inherit_id" ref="admin_affairs.view_fleet_vehicle_filter"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='state']" position="after">
+					<field name="fuel_card" />
+					<field name="fuel_slice" />
+				</xpath>
+			</field>
+			</record>
+
+           	<record model="ir.ui.view" id="view_fleet_vehicle_form_inherit">
+			<field name="name">fleet.vehicle.form.inherit</field>
+			<field name="model">fleet.vehicle</field>
+            <field name="inherit_id" ref="admin_affairs.view_fleet_vehicle_form_inherit"/>
+			<field name="arch" type="xml">
+				<!--xpath expr="//field[@name='fuel_type']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath-->
+				<xpath expr="//field[@name='type']" position="attributes">
+					<attribute name="on_change">get_product_qty(type, location, employee_id, use, company_id, fuel_type, department_id, belong_to)</attribute>
+					
+				</xpath>
+				<xpath expr="//field[@name='location']" position="attributes">
+					<attribute name="on_change">get_product_qty(type, location, employee_id, use, company_id, fuel_type, department_id, belong_to)</attribute>
+					
+				</xpath>
+				<xpath expr="//field[@name='employee_id']" position="attributes">
+					<attribute name="on_change">get_product_qty(type, location, employee_id, use, company_id, fuel_type, department_id, belong_to)</attribute>
+					
+				</xpath>
+				<xpath expr="//field[@name='use']" position="attributes">
+					<attribute name="on_change">get_product_qty(type, location, employee_id, use, company_id, fuel_type, department_id, belong_to)</attribute>
+					
+				</xpath>
+				<xpath expr="//field[@name='company_id']" position="attributes">
+					<attribute name="on_change">get_product_qty(type, location, employee_id, use, company_id, fuel_type, department_id, belong_to)</attribute>
+					
+				</xpath>
+				<xpath expr="//field[@name='department_id']" position="attributes">
+					<attribute name="on_change">get_product_qty(type, location, employee_id, use, company_id, fuel_type, department_id, belong_to)</attribute>
+					
+				</xpath>
+				<xpath expr="//form/sheet/notebook/page[@string='Notes']" position="before"> 
+					<page string="Fuel Details">
+
+						<group col="5">
+							<field name="code" colspan="2"/>
+							<field name="code_plate" colspan="2"/>
+						</group>
+
+						<group col="5">
+							<field name="fuel_card" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+							<field name="fuel_slice" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+						</group>
+
+						<group col="5" >
+							<!--field name="fuel_type" required="1" on_change="reset_id()" colspan="2"/-->
+							<field name="fuel_type" required="1" on_change="get_product_qty(type, location, employee_id, use, company_id, fuel_type, department_id, belong_to)" colspan="2"/>
+							<field name="product_id" colspan="2"
+							context="{'form_view_ref':'fuel_management.fuel_normal_form_view',
+							'default_fuel_ok': True,'default_fuel_type':fuel_type,'default_location':location}"
+							domain="[('fuel_type','=',fuel_type),('location','=',location)]"
+							on_change="get_uom_domin(product_id)"
+							readonly="1"/>
+							<field name="fuel_amount_id" invisible="1"/>
+						</group>
+
+						<group col="5" >
+							<field name="fueltankcap" colspan="2"/>
+							<field name="product_uom" class="oe_inline" colspan="2" groups="product.group_uom" readonly="1" />
+						</group>
+						<group col="4" >
+							<field name="fuel_exchange_status" attrs="{'readonly':[('state','!=','draft')]}" />
+							<field name="fuel_stop_reason_id" attrs="{'invisible':[('fuel_exchange_status','!=','stop')] , 'required':[('fuel_exchange_status','=','stop')], 'readonly':[('state','!=','draft')]}" />
+						</group>
+
+						<group col="7" >
+							<field name="monthly_plan" colspan="2"  invisible="0"  attrs="{'readonly':[('state','!=','draft')]}"/>
+							<field name="product_qty" class="oe_inline" colspan="2" readonly="1" attrs="{
+									'invisible':[('monthly_plan','!=',True)]}"  />
+							<field name="additional_qty" class="oe_inline" colspan="2" readonly="1" attrs="{
+									'invisible':[('monthly_plan','!=',True)]}"  />
+						</group>
+
+					</page>
+
+					<page string="Fuel Plans">
+
+						<group col="5">
+							<field name="fuel_plan_ids" nolabel="1" colspan="2" attrs="{
+									'invisible':[('monthly_plan','!=',True)]}" />
+						</group>
+
+					</page>
+				</xpath>
+			</field>
+		</record>
+
+		<!-- Vehicle Move -->
+
+		<record id="vehicle_move_form" model="ir.ui.view">
+			<field name="name">vehicle.move.form</field>
+			<field name="model">vehicle.move</field>
+			<field name="inherit_id" ref="admin_affairs.vehicle_move_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='done']" position="attributes">
+					<attribute name="groups">fuel_management.group_fuel_officer,fuel_management.group_fuel_manager</attribute>
+					
+				</xpath>
+				<xpath expr="//button[@name='refuse']" position="attributes">
+					<attribute name="groups">fuel_management.group_fuel_officer,fuel_management.group_fuel_manager</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<!--record model="ir.ui.view" id="view_fleet_vehicle_form_inherit2">
+			<field name="name">fleet.vehicle.form.inherit2</field>
+			<field name="model">fleet.vehicle</field>
+            <field name="inherit_id" ref="admin_affairs.view_fleet_vehicle_form_inherit"/>
+		    <field name="groups_id" eval="[(6, 0, [ref('base.group_fuel_plan') ])]"/>
+		    <field name="arch" type="xml">
+		        <field name='monthly_plan' position="attributes">
+		            <attribute name="attrs">{'readonly':[('state','not in',['draft'])]}</attribute>
+		        </field>
+		    </field>
+		</record-->
+
+		<!--record model="ir.ui.view"  id="view_fleet_vehicle_form_inherit3">
+		    <field name="name">fleet.vehicle.form.inherit3</field>
+		    <field name="model">fleet.vehicle</field>
+		    <field name="inherit_id" ref="view_fleet_vehicle_form_inherit"/>
+		    <field name="arch" type="xml">
+		        <field name="monthly_plan" position="attributes">
+		            <attribute name="readonly">0</attribute>
+		        </field>
+		        <field name="product_qty" position="attributes">
+		            <attribute name="readonly">0</attribute>
+		        </field>
+		    </field>
+		</record-->
+
+		<!--record model='ir.actions.act_window' id='fleet_vehicle_act'>
+            <field name="name">Vehicles</field>
+            <field name="res_model">fleet.vehicle</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="help" type="html">
+              
+            </field>
+        </record-->
+
+        <!--record id="vehicle_place_form" model="ir.ui.view">
+			<field name="name">vehicle.place.form</field>
+			<field name="model">vehicle.place</field>
+			<field name="inherit_id" ref="admin_affairs.vehicle_place_form"/>
+			<field name="arch" type="xml">
+				<field name="share" position="after">
+					<field name="product_ids" domain="[('fuel_ok','=',True)]" required="1"
+						context="{'form_view_ref':'fuel_management.fuel_normal_form_view','default_fuel_ok':True,'default_company_id':company_id}"/>
+				</field>
+           	</field>
+		</record-->
+
+	</data>
+</openerp>

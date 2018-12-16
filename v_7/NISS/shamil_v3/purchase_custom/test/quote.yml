@@ -1,0 +1,97 @@
+- 
+  Creating a pur.quote record one
+- 
+  !record {model: pur.quote, id: pur_quote_q2}:
+    amount_tax: 0.0
+    amount_total: 300.0
+    amount_untaxed: 300.0
+    delivery_period: 0.0
+    name: 2013/Q-00003
+    pq_ir_ref: ireq_m_pr0
+    pq_pro_ids:
+      - name: Processor AMD Athlon XP 1800+
+        price_unit: 20.0
+        price_unit_tax: 0.0
+        price_unit_total: 20.0
+        product_id: product.product_product_cpu1
+        product_qty: 5.0
+      - name: Regular case fan 80mm
+        price_unit: 10.0
+        price_unit_tax: 0.0
+        price_unit_total: 10.0
+        product_id: product.product_product_fan
+        product_qty: 20.0
+    q_no: 2
+    #supplier_id: base.res_partner_desertic_hispafuentes
+   
+- 
+  Creating a pur.quote record two
+- 
+  !record {model: pur.quote, id: pur_quote_q3}:
+    amount_tax: 0.0
+    amount_total: 300.0
+    amount_untaxed: 300.0
+    delivery_period: 0.0
+    name: 2013/Q-00004
+    pq_ir_ref: ireq_m_pr0
+    pq_pro_ids:
+      - name: Processor AMD Athlon XP 1800+
+        price_unit: 10.0
+        price_unit_tax: 0.0
+        price_unit_total: 10.0
+        product_id: product.product_product_cpu1
+        product_qty: 5.0
+      - name: Regular case fan 80mm
+        price_unit: 5.0
+        price_unit_tax: 0.0
+        price_unit_total: 10.0
+        product_id: product.product_product_fan
+        product_qty: 20.0
+    q_no: 2
+    supplier_id: base.res_partner_desertic_hispafuentes
+-
+ I create third quote
+-
+  !python {model: ireq.m}: |
+    ireq_id = self.search(cr, uid, [('id','=',ref('ireq_m_pr0'))])  
+    context.update({
+        'partner_id': ref('base.res_partner_desertic_hispafuentes'),
+        'delv_plan': '7'
+    })
+    line_id = self.create_quote(cr, uid, ireq_id, context = context)    
+    
+-
+  In order to test the quote flow I compute the total of the listed products
+-
+  I check the total untaxed amount of the quote is correctly computed
+-
+  !assert {model: pur.quote, id: pur_quote_q3, string: The amount of quote is not correctly computed}:
+    - sum([l.price_subtotal for l in pq_pro_ids]) == amount_untaxed
+   
+-
+  I confirm on quotes.
+-
+  !workflow {model: pur.quote, action: quote_confirm, ref: pur_quote_q3}
+-
+  I approve one quote and cancell the others.
+-
+  !workflow {model: pur.quote, action: done, ref: pur_quote_q3}
+-
+  I approve on internal requistion by purchase department.
+-
+  !workflow {model: ireq.m, action: approve1, ref: ireq_m_pr0}
+-
+  I approve on internal requistion by Supply department.
+-
+  !workflow {model: ireq.m, action: approve2, ref: ireq_m_pr0}
+
+-
+ I Make Purchase Order for selected quote
+-
+  !python {model: pur.quote}: |
+    quote_id = self.search(cr, uid, [('id','=',ref('pur_quote_q3'))])
+    self.make_purchase_order(cr, uid, quote_id, {})
+
+
+
+

@@ -1,0 +1,80 @@
+<?xml version="1.0" ?>
+<openerp>
+	<data>
+		<!-- Workflow definition -->
+		<record model="workflow" id="wkf_substitution">
+			<field name="name">hr.employee.substitution.wkf</field>
+			<field name="osv">hr.employee.substitution</field>
+			<field name="on_create">True</field>
+		</record>
+		<!-- Activities -->
+		<record model="workflow.activity" id="act_draft">
+			<field name="wkf_id" ref="wkf_substitution" />
+			<field name="name">draft</field>
+			<field name="flow_start">True</field>
+		</record>
+		<record model="workflow.activity" id="act_complete">
+			<field name="wkf_id" ref="wkf_substitution" />
+			<field name="name">complete</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'complete'})</field>
+		</record>
+		<record model="workflow.activity" id="act_confirm">
+			<field name="wkf_id" ref="wkf_substitution" />
+			<field name="name">confirm</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'confirm'})</field>
+		</record>
+		<record model="workflow.activity" id="act_approve">
+			<field name="wkf_id" ref="wkf_substitution" />
+			<field name="name">approve</field>
+			<field name="kind">function</field>
+			<field name="action">action_approve()</field>
+		</record>
+		<record model="workflow.activity" id="act_done">
+			<field name="wkf_id" ref="wkf_substitution" />
+			<field name="name">done</field>
+			<field name="kind">function</field>
+			<field name="action">action_done()</field>
+		</record>
+		<record model="workflow.activity" id="act_cancel">
+			<field name="wkf_id" ref="wkf_substitution" />
+			<field name="name">cancel</field>
+			<field name="kind">function</field>
+			<field name="flow_stop">True</field>
+			<field name="kind">stopall</field>
+			<field name="action">write({'state':'cancel'})</field>
+		</record>
+		<!-- Transitions -->
+		<record model="workflow.transition" id="t1">
+			<field name="act_from" ref="act_draft" />
+			<field name="act_to" ref="act_complete" />
+			<field name="signal">complete</field>
+		</record>
+		<record model="workflow.transition" id="t2">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_confirm" />
+			<field name="signal">confirm</field>
+		</record>
+		<record model="workflow.transition" id="t21">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_confirm" />
+			<field name="condition"> is_manger()</field>
+		</record>
+		<record model="workflow.transition" id="t3">
+			<field name="act_from" ref="act_confirm" />
+			<field name="act_to" ref="act_approve" />
+			<field name="signal">approve</field>
+		</record>
+		<record model="workflow.transition" id="t4">
+			<field name="act_from" ref="act_confirm" />
+			<field name="act_to" ref="act_cancel" />
+			<field name="signal">cancel</field>
+		</record>
+		<record model="workflow.transition" id="t5">
+			<field name="act_from" ref="act_approve" />
+			<field name="act_to" ref="act_done" />
+			<field name="signal">done</field>
+		</record>
+	</data>
+</openerp>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="reemployement" model="workflow">
+			<field name="name">Reemployement Basic Workflow</field>
+			<field name="osv">hr.employee.reemployment</field>
+			<field name="on_create">True</field>
+		</record>
+		<!-- Activities -->
+		<record id="act_draft" model="workflow.activity">
+			<field name="wkf_id" ref="reemployement" />
+			<field name="flow_start">True</field>
+			<field name="name">draft</field>
+		</record>
+		<record id="act_draft_complete" model="workflow.activity">
+			<field name="wkf_id" ref="reemployement" />
+			<field name="name">complete</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'complete'})</field>
+		</record>
+		<record id="act_confirm" model="workflow.activity">
+			<field name="wkf_id" ref="reemployement" />
+			<field name="name">confirm</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'confirm'})</field>
+		</record>
+		<record id="act_approve" model="workflow.activity">
+			<field name="wkf_id" ref="reemployement" />
+			<field name="name">approve</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'approve'})</field>
+		</record>
+		<record id="act_cancel" model="workflow.activity">
+			<field name="wkf_id" ref="reemployement" />
+			<field name="name">cancel</field>
+			<field name="kind">function</field>
+			<field name="flow_stop">True</field>
+			<field name="action">write({'state':'cancel'})</field>
+		</record>
+		<record id="act_done" model="workflow.activity">
+			<field name="wkf_id" ref="reemployement" />
+			<field name="name">done</field>
+			<field name="action">action_done()</field>
+			<field name="kind">function</field>
+			<field name="flow_stop">True</field>
+		</record>
+		<!-- Transitions -->
+		<record id="trans_draft_complete" model="workflow.transition">
+			<field name="act_from" ref="act_draft" />
+			<field name="act_to" ref="act_draft_complete" />
+			<field name="signal">complete</field>
+		</record>
+		<record id="trans_complete_confirm" model="workflow.transition">
+			<field name="act_from" ref="act_draft_complete" />
+			<field name="act_to" ref="act_confirm" />
+			<field name="signal">confirm</field>
+			<field name="condition">reemployment_check()</field>
+		</record>
+		<record id="trans_complete_cancel" model="workflow.transition">
+			<field name="act_from" ref="act_draft_complete" />
+			<field name="act_to" ref="act_cancel" />
+			<field name="signal">cancel</field>
+			<field name="condition">not reemployment_check()</field>
+		</record>
+		<record id="trans_confirm_approve" model="workflow.transition">
+			<field name="act_from" ref="act_confirm" />
+			<field name="act_to" ref="act_approve" />
+			<field name="signal">approve</field>
+		</record>
+		<record id="trans_approve_done" model="workflow.transition">
+			<field name="act_from" ref="act_approve" />
+			<field name="act_to" ref="act_done" />
+			<field name="signal">done</field>
+		</record>
+		<record id="trans_approve_cancel" model="workflow.transition">
+			<field name="act_from" ref="act_approve" />
+			<field name="act_to" ref="act_cancel" />
+			<field name="signal">cancel</field>
+		</record>
+	</data>
+</openerp>

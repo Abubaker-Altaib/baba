@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<!-- Plan Configuration -->
+		<record model="ir.ui.view" id="hr_training_plan_form_view_inherit">
+			<field name="name">hr.training.plan.form.inherit</field>
+			<field name="model">hr.training.plan</field>
+			<field name="inherit_id" ref="hr_training.hr_training_plan_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//sheet" position="before">
+					<header>
+						<button name="approve" string="General Manager" states="draft"
+							groups="base.group_training_manager,base.group_training_user" />
+						<button name="rejected" string="Reject" states="draft"
+							groups="base.group_training_manager,base.group_training_user" />
+						<button name="confirm" string="National Council" states="approved"
+							groups="base.group_training_manager,base.group_training_user" />
+						<button string="Set to Draft" name="set_to_draft" type="object"
+							states="rejected" icon="gtk-convert" />
+
+						<field name="state" widget="statusbar" statusbar_visible="approved,confirmed" />
+					</header>
+				</xpath>
+				<xpath expr='//field[@name="name"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				<xpath expr='//field[@name="code"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				<xpath expr='//field[@name="percentage"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				<xpath expr='//field[@name="classification"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				
+				<xpath expr='//field[@name="classification"]' position="after">
+				    <field name="type" attrs="{'readonly':[('state','!=','draft')]}"/>
+				</xpath>
+				
+				<xpath expr='//field[@name="start_date"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				<xpath expr='//field[@name="end_date"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				<xpath expr='//field[@name="suggested_course_ids"]' position="replace">
+					<field name="suggested_course_ids" nolabel="1" >
+						<tree string="Suggested Courses">
+							<field name="name" />
+							<field name="company_id" groups="base.group_multi_company" />
+							<field name="plan_id" />
+							<field name="course_id" />
+							<field name="code"  />
+							<field name="training_place" />
+							<field name="state" />
+							<button string="To General Manager Approve" name="approved_gen" states="approved"
+								type="object" attrs="{'invisible':[('state','!=','draft')]}" icon="terp-camera_test"
+								groups="base.group_training_manager,base.group_training_user" />
+								
+							<button string="To Approved" name="approved2" states="approved_gen" type="object"
+								attrs="{'invisible':[('state','!=','approved_gen')]}" icon="terp-camera_test"
+								groups="base.group_training_manager,base.group_training_user" />
+
+							<button string="To Reject" name="rejected2" states="approved"
+								attrs="{'invisible':[('state','!=','draft')]}" icon="gtk-cancel"
+								groups="base.group_training_manager,base.group_training_user" />
+
+							<button string="To Reject" name="rejected2" states="approved_gen"
+								attrs="{'invisible':[('state','!=','approved_gen')]}" icon="gtk-cancel"
+								groups="base.group_training_manager,base.group_training_user" />
+						</tree>
+					</field>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_training_plan_tree_view_inherit">
+			<field name="name">hr.training.plan.tree.inherit</field>
+			<field name="model">hr.training.plan</field>
+			<field name="inherit_id" ref="hr_training.hr_training_plan_tree_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="end_date"]' position="after">
+					<field name="state" />
+				</xpath>
+			</field>
+		</record>
+	</data>
+</openerp>

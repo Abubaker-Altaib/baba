@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+         <record id="act_budget" model="workflow.activity">
+            <field name="wkf_id" ref="stock_exchange.exchange_order"/>
+            <field name="name">budget</field>
+            <field name="kind">subflow</field>
+            <field name="subflow_id" search="[('osv','=','account.budget.confirmation')]" type="int"/>
+            <field name="action">action_budget_create()</field>
+        </record>
+        <record id="act_budget_approved" model="workflow.activity">
+            <field name="wkf_id" ref="stock_exchange.exchange_order"/>
+            <field name="name">budget_approved</field>
+            <field name="action">changes_state({'state':'budget_yes'})</field>
+            <field name="kind">function</field>
+        </record>
+        <record id="act_budget_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="stock_exchange.exchange_order"/>
+            <field name="name">budget_cancel</field>
+            <field name="action">changes_state({'state':'budget_no'})</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act_approve_qty" model="workflow.activity">
+            <field name="wkf_id" ref="stock_exchange.exchange_order"/>
+            <field name="name">approve_qty</field>
+            <field name="kind">function</field>
+            <field name="action">changes_state({'state': 'approved_qty'})</field>
+        </record>
+
+        <!-- Transition-->
+
+         <record id="stock_exchange.trans_approve_order" model="workflow.transition">
+            <field name="act_from" ref="stock_exchange.act_confirmed"/>
+            <field name="act_to" ref="act_budget"/>
+            <field name="signal">exchange_approve</field>
+            <field name="condition">total_amount&gt;0</field>
+        </record>
+        <record id="stock_exchange.trans_confirm_approve2" model="workflow.transition">
+            <field name="act_from" ref="stock_exchange.act_confirmed"/>
+            <field name="act_to" ref="act_budget"/>
+            <field name="signal">exchange_approves</field>
+            <field name="condition">not has_category_manager()</field>
+        </record>
+        <record id="stock_exchange.trans_category_manger_approve_order" model="workflow.transition">
+            <field name="act_from" ref="stock_exchange.act_category_manager"/>
+            <field name="act_to" ref="act_budget"/>
+            <field name="signal">exchange_approves</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+            </record>
+        <record id="trans_approve_buget" model="workflow.transition">
+            <field name="act_from" ref="act_budget"/>
+            <field name="act_to" ref="act_budget_approved"/>
+            <field name="signal">subflow.valid</field>
+        </record>
+       <record id="trans_budget_budget_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_budget"/>
+            <field name="act_to" ref="act_budget_cancel"/>
+            <field name="signal">subflow.cancel</field>
+        </record>
+        <record id="trans_cancel_budget" model="workflow.transition">
+            <field name="act_from" ref="act_budget_cancel"/>
+            <field name="act_to" ref="act_budget"/>
+            <field name="signal">resend_budget</field>
+        </record>
+        <record id="trans_budget_approved_order" model="workflow.transition">
+            <field name="act_from" ref="act_budget_approved"/>
+            <field name="act_to" ref="stock_exchange.act_approve_order"/>
+        </record>
+        <record id="trans_approve_order_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_budget_approved"/>
+            <field name="act_to" ref="stock_exchange.act_cancel"/>
+            <field name="signal">exchange_cancel</field>
+            <!--field name="group_id" ref="group_exchange_approved" /-->
+            </record>
+
+	<record id="trans_approve_order_cancelss" model="workflow.transition">
+            <field name="act_from" ref="act_budget_approved"/>
+            <field name="act_to" ref="stock_exchange.act_cancel"/>
+            <field name="signal">exchange_cancels</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+            </record>
+
+        <record id="trans_budget_cancel2" model="workflow.transition">
+            <field name="act_from" ref="act_budget_cancel"/>
+            <field name="act_to" ref="stock_exchange.act_cancel"/>
+            <field name="signal">exchange_cancels</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+        </record>
+        <record id="trans_budget_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_budget_cancel"/>
+            <field name="act_to" ref="stock_exchange.act_cancel"/>
+            <field name="signal">exchange_cancel</field>
+            <!--field name="group_id" ref="group_exchange_approved" /-->
+        </record>
+
+
+    </data>
+</openerp>

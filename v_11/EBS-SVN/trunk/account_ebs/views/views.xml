@@ -1,0 +1,171 @@
+<odoo>
+    <data>
+        <!-- explicit list view definition -->
+
+
+        <record model="ir.ui.view" id="invoice_supplier_form_inherit">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <!--xpath expr="//button[@name='proforma_voucher']" position="replace">
+                    <button name="proforma_voucher" string="Validate" class="oe_highlight" type="object" attrs="{'invisible':['|',('check_lines','!=',True),('state','!=','no_approve')]}"/>
+                </xpath-->
+                <xpath expr="//button[@name='action_invoice_open']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="states"></attribute>
+                </xpath>
+                <xpath expr="//form/header" position="inside">
+                    <button name="validate_input" type="object" string="Approve" class="oe_highlight" states="draft"/>
+                    <button name="approve_expen_unit" type="object" string="Approve" class="oe_highlight"
+                            states="approved"/>
+                    <button name="cancel_expen_unit" type="object" string="Reject" class="oe_highlight"
+                            states="approved"/>
+
+                    <button name="approved3" type="object" string="Approve" class="oe_highlight" states="approved2"
+                            groups="account_custom.group_financial_section"/>
+                    <button name="cancel_approved3" type="object" string="Reject" class="oe_highlight"
+                            states="approved2" groups="account_custom.group_financial_section"/>
+
+                    <button name="auditor_approved" type="object" string="Approve" class="oe_highlight"
+                            states="approved3" groups="account_custom.group_internal_auditor"/>
+                    <button name="cancel_auditor_approved" type="object" string="Reject" class="oe_highlight"
+                            states="approved3" groups="account_custom.group_internal_auditor"/>
+
+                    <button name="financial_m_approved" type="object" string="Approve" class="oe_highlight"
+                            states="auditor_approved" groups="account_custom.group_financial_manager"/>
+                    <button name="cancel_financial_m_approved" type="object" string="Reject" class="oe_highlight"
+                            states="auditor_approved" groups="account_custom.group_financial_manager"/>
+                    <button name="check_budget" string="Check Budget" class="oe_highlight" states="no_approve,no_approve2" type="object"/>
+                    <button name="unlink_line_confirmation" string="Set To Draft" class="oe_highlight" states="no_approve,no_approve2" type="object"/>
+
+                    <!--<button name="set_draft" type="object" string="Set To Draft Custom" class="oe_highlight"/>-->
+                </xpath>
+
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='account_analytic_id']" position="after">
+                    <!--<field name="budget_confirm_id"/>-->
+                    <field name="state"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="invoice_form_inherit">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <!--xpath expr="//button[@name='proforma_voucher']" position="replace">
+                    <button name="proforma_voucher" string="Validate" class="oe_highlight" type="object" attrs="{'invisible':['|',('check_lines','!=',True),('state','!=','no_approve')]}"/>
+                </xpath-->
+
+                <xpath expr="//button[@id='account_invoice_payment_btn']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible':['|',('revenue_type','=','deferred_revenue'),('state','!=','open')]}
+                    </attribute>
+                    <attribute name="states"></attribute>
+
+
+                </xpath>
+                <xpath expr="//button[7]" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible':['|',('revenue_type','=','deferred_revenue'),('state','!=','open')]}
+                    </attribute>
+                    <attribute name="states"></attribute>
+
+
+                </xpath>
+                <xpath expr="//button[@name='invoice_print']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible':['|',('revenue_type','=','deferred_revenue'),('state','!=','open')]}
+                    </attribute>
+                    <attribute name="states"></attribute>
+
+
+                </xpath>
+
+                <xpath expr="//button[@name='action_invoice_open']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible':['|',('revenue_type','in',('deferred_revenue','direct_revenue','month_revenue')),('state','!=','draft')]}
+                    </attribute>
+                    <attribute name="states"></attribute>
+
+
+                </xpath>
+
+                <xpath expr="//form/header" position="inside">
+                    <button name="action_invoice_open_custom"
+                            type="object" string="Validate"
+                            class="oe_highlight"
+                            attrs="{'invisible':['|',('revenue_type','not in',('deferred_revenue','direct_revenue','month_revenue')),('state','!=','draft')]}"/>
+                <button name="action_invoice_cancel" string="Cancel Invoice"  type="object" class="oe_highlight"  attrs="{'invisible':['|',('state','!=','wating_payments'),('revenue_type','=','direct_revenue')]}" />
+                </xpath>
+
+
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="revenue_type" attrs="{'readonly':[('state','!=','draft')]}"/>
+                    <field name="installment_number" attrs="{'invisible':[('revenue_type','!=','deferred_revenue')],'readonly':[('state','!=','draft')]}"/>
+                    <field name="middle_account"
+                           attrs="{'invisible':[('revenue_type','!=','deferred_revenue')],'required':[('revenue_type','=','deferred_revenue')],'readonly':[('state','!=','draft')]}"/>
+                    <field name="month_revenue_date" attrs="{'invisible':[('revenue_type','!=','month_revenue')],'required':[('revenue_type','=','month_revenue')],'readonly':[('state','!=','draft')]}" />
+<field name="journal_id_invoice" domain="[('type','=','bank')]" attrs="{'invisible':[('revenue_type','!=','direct_revenue')],'required':[('revenue_type','=','direct_revenue')],'readonly':[('state','!=','draft')]}" />
+                </xpath>
+
+                <xpath expr="//notebook[1]" position="inside">
+                    <page string="Moves" attrs="{'invisible':[('move_ids','=',[])]}">
+                        <field name="move_ids"/>
+
+                    </page>
+
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <!-- actions opening views on models -->
+        <!--
+        <record model="ir.actions.act_window" id="account_ebs.action_window">
+          <field name="name">account_ebs window</field>
+          <field name="res_model">account_ebs.account_ebs</field>
+          <field name="view_mode">tree,form</field>
+        </record>
+        -->
+
+        <!-- server action to the one above -->
+        <!--
+        <record model="ir.actions.server" id="account_ebs.action_server">
+          <field name="name">account_ebs server</field>
+          <field name="model_id" ref="model_account_ebs_account_ebs"/>
+          <field name="state">code</field>
+          <field name="code">
+            action = {
+              "type": "ir.actions.act_window",
+              "view_mode": "tree,form",
+              "res_model": self._name,
+            }
+          </field>
+        </record>
+        -->
+
+        <!-- Top menu item -->
+        <!--
+        <menuitem name="account_ebs" id="account_ebs.menu_root"/>
+        -->
+        <!-- menu categories -->
+        <!--
+        <menuitem name="Menu 1" id="account_ebs.menu_1" parent="account_ebs.menu_root"/>
+        <menuitem name="Menu 2" id="account_ebs.menu_2" parent="account_ebs.menu_root"/>
+        -->
+        <!-- actions -->
+        <!--
+        <menuitem name="List" id="account_ebs.menu_1_list" parent="account_ebs.menu_1"
+                  action="account_ebs.action_window"/>
+        <menuitem name="Server to list" id="account_ebs" parent="account_ebs.menu_2"
+                  action="account_ebs.action_server"/>
+        -->
+    </data>
+</odoo>

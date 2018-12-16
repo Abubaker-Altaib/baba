@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+     <record id="job_cancel_view" model="ir.ui.view">
+        <field name="name">Job Cancel</field>
+        <field name="model">job.cancel.wiz</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                        <field name="job_id" options="{'no_create': True, 'no_open': True}" invisible="True"/>
+                        <field name="date" />
+                </group>
+                <group>
+                    <field name="reason" placeholder="Reason..."/>
+                </group>
+                <footer>
+                    <button name="cancel_job" string="Cancel Job" type="object" class="oe_highlight"/>
+                    <button string="Discard" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <act_window id="cancel_job_wiz_action"
+    name="Cancel Job"
+    src_model="hr.job"
+    res_model="job.cancel.wiz"
+    view_type="form" view_mode="form"
+    context="{'default_job_id': active_id}"
+    target="new"/>
+</odoo>

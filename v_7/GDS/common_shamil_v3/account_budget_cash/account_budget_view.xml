@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+<!--  Budgets  -->
+
+        <record model="ir.ui.view" id="account_budget_view_form">
+            <field name="name">account.budget.view.form</field>
+            <field name="model">account.budget</field>
+            <field name="inherit_id" ref="account_budget_custom.account_budget_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Planned Budget']" position="after">
+						<page string="Cash Budget">
+							<field name="account_cash_budget_line" colspan="4" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+								<tree string="Budget Lines" editable="top">                                 
+									<field name="general_account_id" domain="[('company_id','=',parent.company_id),('type','=','other')]"/>
+									<field name="cash_total_operation" readonly="True"/>
+									<field name="balance" sum="Balance"/>
+									<field name="cash_residual_balance" sum="Residual Balance"/>    		         
+								</tree>
+							</field>						
+						</page>
+                   </xpath>
+            </field>
+        </record>
+
+
+<!-- history -->
+
+
+		<record model="ir.ui.view" id="account_budget_operation_history_view_search">
+			<field name="name">account.budget.operation.history.search</field>
+			<field name="model">account.budget.operation.history</field>
+			<field name="inherit_id" ref="account_budget_custom.account_budget_operation_history_view_search"/>
+			<field name="arch" type="xml">
+                <xpath expr="//filter[@name='name']" position="after">
+		              	<filter string="Budget Type" name="type" icon="terp-stock_effects-object-colorize" 
+		              			domain="[]" context="{'group_by':'type'}"/>
+                </xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="account_budget_operation_history_view_tree">
+			<field name="name">account.budget.operation.history.tree</field>
+			<field name="model">account.budget.operation.history</field>
+			<field name="inherit_id" ref="account_budget_custom.account_budget_operation_history_view_tree"/>
+			<field name="arch" type="xml">
+               <xpath expr="//field[@name='name']" position="after">
+					<field name="type"/>
+               </xpath>
+			</field>
+		</record>
+
+<!--   Budget  Lines  -->
+
+		<record model="ir.ui.view" id="account_budget_lines_view_tree">
+            <field name="name">account.budget.lines.tree</field>
+            <field name="model">account.budget.lines</field>
+            <field name="inherit_id" ref="account_budget_custom.account_budget_lines_view_tree"/>
+			<field name="arch" type="xml">
+               <xpath expr="//field[@name='total_operation']" position="after">
+            	     <field name="cash_total_operation" readonly="True" sum="Cash Total Operation"/> 
+               </xpath>
+               <xpath expr="//field[@name='residual_balance']" position="after">
+            	     <field name="cash_residual_balance"   readonly="True" sum="Cash Residual Amount"/>  		         
+               </xpath>
+			</field>
+		</record>
+
+	</data>
+</openerp>
+
+

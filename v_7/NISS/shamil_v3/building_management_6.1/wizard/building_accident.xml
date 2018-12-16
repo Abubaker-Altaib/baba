@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Building Accident Wizard View-->
+
+    	<record id="view_building_accident_wiz" model="ir.ui.view">
+            <field name="name">building accident wiz</field>
+            <field name="model">building.accident.wiz</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Building Accident Report">
+        		<separator string="Building Accident Report" colspan="4"/>
+            		<group col="6" colspan="6">
+            			<field name="company_id" colspan="4"/>
+       					<newline/>
+           			<field name="accident_category" colspan="2"/>
+           			<field name="partner_id" colspan="2"/>
+       					<newline/>
+            			<field name="Date_from" colspan="2"/>
+           			<field name="Date_to" colspan="2"/>
+       					<newline/>
+            			<field name="accident_type_id" widget="selection" colspan="2"/>
+            			<field name="state" colspan="2"/>
+       					<newline/>
+				<field name="car_id" colspan="2" attrs="{'invisible':[('accident_category', '!=', 'car')]}" />
+				<field name="station_id" colspan="2" attrs="{'invisible':[('accident_category', '!=', 'station')]}" domain="[('building_category','=','station')]" />
+				<field name="building_id" colspan="2" attrs="{'invisible':[('accident_category', '!=', 'building')]}" domain="[('building_category','=','building')]"/>
+       			<newline/>
+    			</group>
+            		<group col="4" colspan="4">
+				<button special="cancel" string="_Cancel" icon="gtk-cancel" colspan="2"/>
+           	    		<button name="print_report" string="Print" type="object" icon="gtk-ok" colspan="2"/>
+    			</group>
+    			</form>
+            </field>
+		</record>
+<!-- Building Accident Wizard Action-->
+        <record id="action_wizard_building_accident" model="ir.actions.act_window">
+            <field name="name">building accident wiz</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">building.accident.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_building_accident_wiz"/>
+            <field name="target">new</field>
+        </record>
+
+
+<!-- Building Accident Wizard Menu-->
+      
+ 
+        <menuitem
+                name="Building Management Report"
+                parent="admin_affairs.main_menu_report"
+                id="menu_building_report"
+                />
+
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Building Accident Report"
+                parent="menu_building_report"
+		action="action_wizard_building_accident"
+                id="menu_building_accident_report"
+                />
+
+    </data>
+</openerp>

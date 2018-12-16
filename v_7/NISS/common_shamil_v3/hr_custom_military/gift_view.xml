@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<record id="hr_gift_form" model="ir.ui.view">
+	     	<field name="name">hr.medal.form</field>
+	        <field name="model">hr.medal</field>
+	        <field name="type">form</field>
+	        <field name="arch" type="xml">
+	        	<form string="gifts" version="7.0">
+	        		<group col="4">
+	        				<field name="code" />
+	        				<field name="name" />
+	        				<field name="scale_id" />
+	        				<field name="type" />	
+	        				<field name="company_id" groups="base.group_multi_company"/>			
+	        		</group>
+	        	</form>
+	        </field>
+	    </record>
+
+	    <record id="hr_employee_medal_tree" model="ir.ui.view">
+	     	<field name="name">hr.employee.medal.tree</field>
+	        <field name="model">hr.employee.medal</field>
+	        <field name="type">tree</field>
+	        <field name="arch" type="xml">
+	        	<tree string="Medals" version="7.0">
+	        		<field name="state" invisible="1" />
+	        		<field name="employee_id" domain="[('state','=','approved')]" />
+	        		<field name="medal_id"/>
+	        		<field name="date" />
+	        	</tree>
+	        </field>
+	    </record>
+
+	    <record id="hr_employee_medal_form" model="ir.ui.view">
+	     	<field name="name">hr.employee.medal.form</field>
+	        <field name="model">hr.employee.medal</field>
+	        <field name="type">form</field>
+	        <field name="arch" type="xml">
+	        	<form string="Wissams and Noodels" version="7.0">
+	        		<header>
+	        			<field name="state" invisible="1" />
+	        			<button type="object" string="Confirm" name="do_confirm" states="draft" class="oe_highlight" groups="hr_custom_military.hr_emp_punish_user"/>
+	        			<field name="state" widget="statusbar" statusbar_visible="draft,done"/> 
+	        		</header>
+	        		<sheet>
+	        			<group col="4">
+	        				<field name="employee_id" on_change="onchange_employee(employee_id)"/>
+	        				<field name="date"/>
+	        				<field name="medal_id"/>
+	        				<field name="department_id"/>
+	        				<field name="decision"/>
+	        				<field name="discription"/>
+	        				<field name="company_id" groups="base.group_multi_company"/>
+	        			</group>
+
+	        			<notebook>
+	        				<page string="Reason">
+	        					<field name="reason"/>
+	        				</page>
+	        				<page string="notes">
+	        					<field name="notes"/>
+	        				</page>
+	        			</notebook>
+	        		</sheet>
+	        	</form>
+	        </field>
+	    </record>
+
+		<record id="hr_gift_form" model="ir.ui.view">
+	     	<field name="name">hr.gift.form</field>
+	        <field name="model">hr.gift</field>
+	        <field name="type">form</field>
+	        <field name="arch" type="xml">
+	        	<form string="gifts" version="7.0">
+	        		<sheet>
+	        			<group col="4">
+	        				<field name="name" />
+	        				<field name="code" />
+	        				<field name="company_id" groups="base.group_multi_company"/>
+	        				<!--field name="sequence" />
+	        				<field name="scale_id" /-->				
+	        			</group>
+	        			<group >
+	        				<field name="type" on_change="on_change_type(type)"/>
+	        				<field name="main_gift_id" attrs="{'invisible' : [('type' , '!=' , 'normal')] , 'required' : [('type' , '=' , 'normal')]}" context="{'default_type':'main'}"/>
+	        				<field name="period_type" attrs="{'invisible' : [('type' , '!=' , 'main')] , 'required' : [('type' , '=' , 'main')]}" />
+
+	        				
+	        			</group>
+	        			<group col="2">
+	        				
+	        				<field name="gift" string="Gift" attrs="{'invisible' : [('type' , '!=' , 'normal')]}" />
+	        				<field name="is_cash"  attrs="{'invisible' : [('type' , '!=' , 'normal')]}" />
+	        				<field name="allowance_id" attrs="{'invisible' : [('is_cash' , '=' , False)], 'required' : [('is_cash' , '=' , True)]}" domain="[('name_type','=','allow')]" context="{'default_name_type':'allow','default_allowance_type':'in_cycle'}"/>
+	        			</group>
+	        			<group col="4">
+	        				<field name="give_condition" attrs="{'invisible' : [('type' , '!=' , 'normal')] , 'required' : [('type' , '=' , 'normal')]}" />
+	        				
+	        				<field name="years" attrs="{'invisible' : [('type' , '!=' , 'normal')]}" />
+	        			</group>
+	        			<group>
+	        				<field name="last_gift_id" attrs="{'invisible' : ['|',('give_condition' , '!=' , 'last_gift_date'),('type' , '!=' , 'normal')] , 'required' : [('give_condition' , '=' , 'last_gift_date'),('type' , '=' , 'normal')]}" domain="[('id' , '!=' , id) , ('type' , '=' , 'normal')]"  context="{'default_type':'normal'}"/>
+	        			<!--group col="6">
+	        				<field name="years" attrs="{'invisibl e' : [('type' , '!=' , 'normal')]}" />
+	        				<field name="months" attrs="{'invisible' : [('type' , '!=' , 'normal')]}"  />
+	        				<field name="days" attrs="{'invisible' : [('type' , '!=' , 'normal')]}" /-->
+	        			</group>
+	        		</sheet>
+	        	</form>
+	        </field>
+	     </record>
+
+	     <record id="medal_action" model="ir.actions.act_window">
+			<field name="name">Noodels.Wissam</field>
+			<field name="res_model">hr.medal</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to define a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+
+		<record id="employee_medal_action" model="ir.actions.act_window">
+			<field name="name">Employee.Noodels.Wissam</field>
+			<field name="res_model">hr.employee.medal</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to define a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+
+
+		<record id="gift_action" model="ir.actions.act_window">
+			<field name="name">gifts</field>
+			<field name="res_model">hr.gift</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to define a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+
+		<record id="hr_long_service_tree" model="ir.ui.view">
+	     	<field name="name">hr.gift.tree</field>
+	        <field name="model">hr.long.service</field>
+	        <field name="type">tree</field>
+	        <field name="arch" type="xml">
+	        	<tree string="gifts" version="7.0">
+	        		<field name="state" invisible="1" />
+	        		<field name="employee_id" domain="[('state','=','approved')]" />
+	        		<field name="gift_id" />
+	        		<field name="next_gift_id" />
+	        		<field name="date" />
+	        	</tree>
+	        </field>
+	    </record>
+
+		<record id="hr_long_service_form" model="ir.ui.view">
+	     	<field name="name">hr.gift.form</field>
+	        <field name="model">hr.long.service</field>
+	        <field name="type">form</field>
+	        <field name="arch" type="xml">
+	        	<form string="gifts" version="7.0">
+	        		<header>
+	        			<field name="state" invisible="1" />
+	        			<button type="object" string="Confirm" name="do_confirm" states="draft" class="oe_highlight" groups="hr_custom_military.hr_emp_punish_user"/>
+	        			<button type="object" string="Set to draft" name="set_to_draft" states="done" groups="hr_custom_military.hr_emp_punish_user"/>
+	        			<button type="object" string="Payment" name="do_payment" class="oe_highlight" attrs="{'invisible' : ['|' , '|' ,('state' , '!=' , 'done'), ('amount' , '=' , 0)  , ('voucher_id' , '!=' , False)]}" groups="hr_custom_military.hr_emp_punish_user" />
+	        			<field name="state" widget="statusbar" statusbar_visible="draft,done"/> 
+	        		</header>
+
+	        		<sheet>
+	        			<group>
+	        				<field name="employee_id" on_change="onchange_employee(employee_id)" domain="[('state','=','approved')]" />	
+		        		</group>
+		        		<group col="4">
+		        			<field name="main_gift" on_change="onchange_main_gift(main_gift)"/>
+		        			<field name="gift_id" domain="[('main_gift_id' , '=' , main_gift)]" on_change="onchange_gift(employee_id ,gift_id , date)"/>	
+	        			</group>
+	        			<group col="4">
+	        				<field name="date" />
+	        				<field name="next_gift_id" readonly="1"/>	
+	        				<field name="gift" readonly="1"/>
+		        			<field name="next_allow_date"  readonly="1"/>
+		        			<field name="amount"  readonly="1"/>	
+		        			<field name="voucher_id"  readonly="1"/>
+		        			<field name="company_id" groups="base.group_multi_company"/>
+	        			</group>
+	        			<notebook>
+	        				<page string="Service Details">
+	        					<group col="1" colspan="4">
+	        					<table class="date_table">
+	        						<tr>
+	        							<th>
+
+	        							</th>
+	        							<th>
+	        								years
+	        							</th>
+	        							<th>
+	        								months
+	        							</th>
+	        							<th>
+	        								days
+	        							</th>
+	        						</tr>
+	        						<tr>
+	        							<td>
+	        								Actual Service
+	        							</td>
+	        							<td>
+	        								<field name="service_years" readonly="1"/>
+	        							</td>
+	        							<td>
+	        								<field name="service_months" readonly="1"/>
+	        							</td>
+	        							<td>
+	        								<field name="service_days" readonly="1"/>
+	        							</td>
+	        						</tr>
+	        						<tr>
+	        							<td>
+	        								 Additional Service
+	        							</td>
+	        							<td>
+	        								<field name="added_years" readonly="1"/>
+	        							</td>
+	        							<td>
+	        								<field name="added_months" readonly="1"/>
+	        							</td>
+	        							<td>
+	        								<field name="added_days" readonly="1"/>
+	        							</td>
+	        						</tr>
+	        						<tr>
+	        							<td>
+	        								Total Service
+	        							</td>
+	        							<td>
+	        								<field name="total_years" readonly="1"/>
+	        							</td>
+	        							<td>
+	        								<field name="total_months" readonly="1"/>
+	        							</td>
+	        							<td>
+	        								<field name="total_days" readonly="1"/>
+	        							</td>
+	        						</tr>
+	        					</table>
+	        				</group>
+	        				</page>
+	        				<page string="Details">
+	        					<field name="details"  />
+	        				</page>
+	        				<page string="Notes">
+	        					<field name="notes" />
+	        				</page>
+	        			</notebook>
+	        		</sheet>
+	        	</form>
+	        </field>
+	     </record>
+
+		<record id="hr_long_service_filter" model="ir.ui.view">
+			<field name="name">hr_long_service_filter</field>
+			<field name="model">hr.long.service</field>
+			<field name="arch" type="xml">
+				<search string="Long Service">
+					<field name="employee_id" />
+					<separator orientation="vertical" />
+					<newline/>
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Employee" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'employee_id'}" />
+						<separator orientation="vertical" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+	     <record id="hr_long_service_form_action" model="ir.actions.act_window">
+			<field name="name">Long.Service</field>
+			<field name="res_model">hr.long.service</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="hr_long_service_filter" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to define a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+		<menuitem id="medal_menu" name="Wissams and Noodels"
+			parent="hr_custom_military.menu_hr_process_configuration" action="medal_action" />
+		<menuitem id="gift_menu" name="Gifts"
+			parent="hr_custom_military.menu_hr_process_configuration" action="gift_action" />
+		<menuitem id="long_service_menu" name="Long Service"
+			parent="hr_violation_punishment.menu_hr_violation_punishment" action="hr_long_service_form_action" sequence="2"/>
+		<menuitem id="employee_medal_menu" name="Employee Wissams/Noodels"
+			parent="hr_violation_punishment.menu_hr_violation_punishment" action="employee_medal_action" sequence="1"/>
+		
+		<menuitem id="hr_violation_punishment.menu_hr_violation_punishment" name="Violation/Punishment/Reward"
+			parent="hr.menu_hr_root" sequence="5" groups="hr_custom_military.hr_emp_punish_user"/>
+
+	</data>
+</openerp>

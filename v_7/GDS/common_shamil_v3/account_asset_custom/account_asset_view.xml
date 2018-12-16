@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+     <menuitem id="menu_finance_assets" name="Fixed Assets"  sequence="9"/>
+     <menuitem id="menu_finance_assets_configration" name="Configration" parent="menu_finance_assets" sequence="20"/>
+     <menuitem id="account_asset.menu_finance_assets" name="Assets" parent="menu_finance_assets" sequence="9"/>
+     <menuitem id="account_asset.menu_action_account_asset_asset_list_normal" name="Asset Categories" parent="menu_finance_assets_configration" sequence="10" />
+
+     <!--Asset Details Report-->
+
+    <report auto="False" id="accountasset" model="account.asset.asset"
+			name="asset.detaill" rml="account_asset_custom/report/asset_detail.rml"
+			string="Asset Details" />
+    <!-- End of Report -->
+
+    <record model="ir.ui.view" id="account_asset.view_account_asset_category_form">
+        <field name="name">account.asset.category.form</field>
+        <field name="model">account.asset.category</field>
+        <field name="arch" type="xml">
+            <form string="Asset category" version="7.0">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Depreciation">
+		            <group string="Depreciation Dates">
+		                <field name="method_time"/>
+		                <field name="method_number" attrs="{'invisible':[('method_time','=','end')], 'required':[('method_time','=','number')]}"/>
+		                <field name="method_period"/>
+		                <field name="method_end" attrs="{'required': [('method_time','=','end')], 'invisible':[('method_time','=','number')]}"/>
+		            </group>
+		            <group string="Depreciation Method">
+		                <field name="method"/>
+		                <field name="method_progress_factor" attrs="{'invisible':[('method','=','linear')], 'required':[('method','=','degressive')]}"/>
+		                <field name="prorata"/>
+		                <field name="open_asset"/>
+		            </group>
+
+
+			<separator string="Notes"/>
+			<field name="note"/>	
+			</page>
+                        <page string="Account Setting">
+		            <group colspan="4" col="4">
+		                <field name="journal_id"/>
+		                <field name="account_asset_id" on_change="onchange_account_asset(account_asset_id)"/>
+		                <field name="account_depreciation_id" string="Acc. Depreciation Account"/>
+		                <field name="account_expense_depreciation_id"/>
+		            </group>
+				<separator string="Operation accounts"/>	<newline/>
+		            <group colspan="4" col="4">
+
+		                <field name="account_pl_id"/>
+		                <field name="account_initial_id"/>
+		                <field name="account_reval_id"/>
+		                <field name="account_sale_id"/>
+		            </group>
+		            <group groups="analytic.group_analytic_accounting" string="Analytic Information">
+		                <field name="account_analytic_id"/>
+		            </group>
+			</page>
+                    </notebook>
+
+
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+	<record model="ir.ui.view" id="view_account_asset_asset_form">
+		<field name="name">account.asset.asset.form</field>
+		<field name="model">account.asset.asset</field>
+		<field name="inherit_id" ref="account_asset.view_account_asset_asset_form"/>
+		<field name="arch" type="xml">
+
+			<xpath expr="//button[@name='set_to_close']" position="after">
+                   	     <button name="suspend" states="open" string="Stop depreciation" type="object" class="oe_highlight"/>
+                   	     <button name="resume" states="suspend" string="Resume depreciation" type="object" />
+			</xpath>
+			<xpath expr="//field[@name='company_id']" position="after">
+		                    <field name="location_id" />
+		                    <field name="serial_no" />
+		                    <field name="custody_type" />
+                        </xpath>
+			<xpath expr="//page[@string='History']" position="replace">
+		                <page string="Operation">
+		                    <field name="history_ids" >
+		                        <tree string="Operation Lines" editable="top" colors="blue:state == 'draft';black:state == 'posted'">
+		                            <field name="type"  on_change="onchange_type(False,type)" />
+		                            <field name="date"  />
+		                            <field name="account_id"  
+					    attrs="{'readonly':[('type','=','abandon')],'required':[('type','in',('initial','revalue','sale'))]}"  />
+		                            <field name="name"  />
+		                            <field name="amount"  attrs="{'readonly':[('type','=','abandon')]}"  />
+		                            <field name="state"  />
+		                            <button name="create_operation_move"  attrs="{'invisible':[('state','in',('posted','reversed'))]}" icon="gtk-execute" string="Create Move" type="object"/>
+
+                                            <button name="%(wizard_operation_reverse)d"  attrs="{'invisible':['|',('state','!=','posted'),('type','=','initial')]}" icon="gtk-execute" string="Reverse Move" type="action"/>
+
+		                        </tree>	
+		                    </field>
+		                </page>
+		                <page string="Move Lines">
+		                    <field name="account_move_line_ids" readonly="1"/>
+		                </page>
+			</xpath>
+		</field>
+	</record>
+#---------------------------------------------------------------------------
+# Asset History
+#---------------------------------------------------------------------------
+
+
+    <record model="ir.ui.view" id="view_account_asset_history_form">
+        <field name="name">account.asset.history.form</field>
+        <field name="model">account.asset.history</field>
+        <field name="arch" type="xml">
+            <form string="Asset History" version="7.0">
+                    <header>
+                        <button name="create_operation_move"    string="Post" type="object"  icon="gtk-convert" 
+					   attrs="{'invisible':[('state','in',('posted','reversed'))]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,running,done"/>
+                    </header>
+                    <group  col="4">
+                        <field name="asset_id"/>
+
+                        <field name="date"/>
+                        <field name="type" on_change="onchange_type(asset_id,type)"/>
+                        <field name="account_id" required="1" attrs="{'readonly':[('type','=','abandon')]}"/>
+                        <field name="amount"  attrs="{'readonly':[('type','=','abandon')]}"/>
+                        <field name="user_id"/>
+                    </group>
+
+                <separator string="Notes"/>
+                <field name="note"/>
+
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_account_asset_history_tree">
+        <field name="name">account.asset.history.tree</field>
+        <field name="model">account.asset.history</field>
+        <field name="arch" type="xml">
+            <tree string="Asset history"  colors="blue:state == 'draft';black:state == 'posted'">
+                <field name="asset_id"/>
+                <field name="type"/>
+                <field name="date"/>
+                <field name="amount"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_account_asset_history_form">
+        <field name="name">Assets History</field>
+        <field name="res_model">account.asset.history</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+        <record id="action_asset_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_asset_history_tree"/>
+            <field name="act_window_id" ref="action_account_asset_history_form"/>
+        </record>
+
+        <record id="action_asset_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_asset_history_form"/>
+            <field name="act_window_id" ref="action_account_asset_history_form"/>
+        </record>
+
+    <!--menuitem parent="account_asset.menu_finance_assets" id="menu_account_asset_history" name='Asset History' action="action_account_asset_history_form"/-->
+        <record model="ir.ui.view" id="view_company_inherit_form">
+            <field name="name">res.company.form.inherit</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="model">res.company</field>
+            <field name="arch" type="xml">
+		<xpath expr="//field[@name='currency_id']" position="after">
+			<field name="skip_depr" />
+		</xpath>
+            </field>
+        </record>
+</data>
+</openerp>

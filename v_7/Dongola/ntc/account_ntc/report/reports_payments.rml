@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<document filename="Payments.pdf">
+	<template pageSize="(610.0,842.0)" title="Print Payments"
+		author="NCTR" allowSplitting="20">
+		<pageTemplate>
+			<frame id="first" x1="1.3cm" y1="0.9cm" width="800" height="500" />
+			<pageGraphics>
+				<image x="1.3cm" y="25.0cm" height="77" width="180">[[company.logo or removeParentNode('image') ]]</image>
+			</pageGraphics>
+		</pageTemplate>
+	</template>
+	<stylesheet>
+		<blockTableStyle id="Table1">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="9" />
+			<blockBottomPadding length="10" />
+		</blockTableStyle>
+		
+		<blockTableStyle id="Table2">
+			<blockAlignment value="CENTER"/>
+			<blockValign value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="9" />
+			<blockBottomPadding length="15" />
+		</blockTableStyle>
+		
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		
+		<paraStyle name="Main_header" alignment="CENTER"
+			fontName="Microsoft Sans Serif" fontSize="16.0" spaceBefore="0.0"
+			spaceAfter="20.0" />
+			
+		<paraStyle name="P5" rightIndent="0.0" leftIndent="0.0"
+			fontName="Helvetica-Bold" fontSize="12.0" leading="30" alignment="CENTER"
+			spaceBefore="5.0" spaceAfter="5.0" />
+				
+		<paraStyle name="P6" fontName="Helvetica-Bold" fontSize="12.0"
+			leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" />
+			
+		<paraStyle name="P7" fontName="Helvetica" fontSize="12.0"
+			leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" />
+			
+		<paraStyle name="P8" fontName="Helvetica-Bold" fontSize="12.0"
+			leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" />
+			
+		<paraStyle name="P9" fontName="Helvetica" fontSize="12.0"
+			leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" />
+		<images />
+	</stylesheet>
+	<story>
+		
+		<para style="P5">
+			<font color="white">
+			</font>
+		</para>
+	
+		<para style="Main_header">بسم الله الرحمن الرحيم [[ repeatIn(objects,'invoice') ]]</para>
+		<para style="P5">تقرير دفعيات أمر الدفع المستديم</para>
+
+		<blockTable colWidths="150.0,120.0,150.0,120.0" style="Table1">
+			<tr>
+				<td>
+					<para style="P7">[[ invoice.date_invoice ]]</para>
+				</td>
+				<td>
+					<para style="P6">تاريخ الأمر</para>
+				</td>
+				<td>
+					<para style="P7">[[ invoice.number or '/']]</para>
+				</td>
+				<td>
+					<para style="P6">الرقم</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="P7">[[ invoice.journal_id.name ]]</para>
+				</td>
+				<td>
+					<para style="P6">نوع الأمر</para>
+				</td>
+				<td>
+					<para style="P7">[[ invoice.partner_id.name ]]</para>
+				</td>
+				<td>
+					<para style="P6">المستفيد</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="P7">[[ invoice.date_due ]]</para>
+				</td>
+				<td>
+					<para style="P6">تاريخ الإستحقاق</para>
+				</td>
+				<td>
+					<para style="P7">[[ invoice.payment_term.name ]]</para>
+				</td>
+				<td>
+					<para style="P6">شروط الدفع</para>
+				</td>
+			</tr>
+		</blockTable>
+
+		<para style="P5">
+			<font color="white">
+			</font>
+		</para>
+		
+		<blockTable colWidths="150.0,120.0,150.0,120.0" style="Table2">
+			<tr>
+				<td>
+					<para style="P8">حالة الدفعية</para>
+				</td>
+				<td>
+					<para style="P8">مبلغ الدفعية</para>
+				</td>
+				<td>
+					<para style="P8">تاريخ الدفعية</para>
+				</td>
+				<td>
+					<para style="P8">رقم الدفعية</para>
+				</td>
+			</tr>
+			<tr> 
+			    <para style="P7">[[ repeatIn(lines(invoice),'line') ]]</para>
+				<td>
+					<para style="P9">[[ line['state']=='draft' and 'فى البداية' or line['state']=='posted' and 'مرحَلة' or line['state']=='paid' and 'مدفوع' or line['state']=='partial_payment' and 'دفع جزئي' or line['state']=='not_paid' and 'غير مدفوع']]</para>
+				</td>
+				<td>
+					<para style="P9">[[ line['amount'] or '0.0' ]]</para>
+				</td>
+				<td>
+					<para style="P9">[[ line['date'] ]]</para>
+				</td>
+				<td>
+					<para style="P9">[[ line['number'] ]] </para>	
+				</td>
+			</tr>
+		</blockTable>
+	</story>
+</document>

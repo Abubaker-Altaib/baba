@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="hr_mission.hr_mission_menu" model="ir.ui.menu">
+			<field name="groups_id" eval="[(4,ref('hr_custom_military.hr_emp_mission_setting'))]"/>
+		</record>
+		<record model="ir.ui.view" id="mission_form_view_inherit">
+			<field name="name">hr.employee.mission.view.inherit</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_mission_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="set_to_draft_mission"]' position="before" version="7.0">
+					<button string="Move Order" name="mission_move_order" attrs="{'invisible' : ['|','|',('need_move_order' , '=' , False),('state','in',['rejected','draft']),('move_order_id','!=',False)]}" type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_mission_user" />
+				</xpath>
+				<xpath expr='//button[@name="confirm_mission"]' position="replace" version="7.0">
+					<button string="Confirm" name="confirm_mission" type="object" states="completed"
+							groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+
+
+
+				<xpath expr='//button[@name="complete_mission"]' position="replace" version="7.0">
+					<button string="Complete" name="complete_mission" states="draft"
+							groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+
+				<xpath expr='//button[@name="validate_mission"]' position="replace" version="7.0">
+					<button string="Validate" name="validate_mission" states="confirmed"
+							groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+
+				<xpath expr='//button[@name="approve_mission"]' position="replace" version="7.0">
+					<button string="Approve" name="approve_mission" states="validated"
+							groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+
+				<xpath expr='//button[@name="reject_mission"]' position="replace" version="7.0">
+					<button string="Reject" name="reject_mission"
+							states="completed,confirmed,validated,approved" groups="hr_custom_military.hr_emp_mission_user"
+							icon="gtk-cancel" />
+				</xpath>
+
+				<xpath expr='//button[@name="set_to_draft_mission"]' position="replace" version="7.0">
+					<button string="Set to Draft" name="set_to_draft_mission" type="object" states="rejected"
+							groups="hr_custom_military.hr_emp_mission_user" />
+				</xpath>
+
+
+
+				<xpath expr='//field[@name="mission_leader"]' position="after" version="7.0">
+					<field name="move_order_id" attrs="{'readonly' : [('state' , '=' , 'approved')]}" domain="[('mission_move_id' , '=' , False) , ('type' , '=' , 'mission') , ('move_date' ,'&gt;=', start_date), ('move_date' ,'&lt;=', end_date),('state','!=','draft')]"/>
+				</xpath>
+				<xpath expr='//field[@name="mission_line"]' position="replace" version="7.0">
+					<field name="need_move_order" invisible="0" />
+					<field colspan="4" name="mission_line"
+									context="{'default_type':'1','default_mission_fees':mission_fee,'default_start_date':start_date,'default_end_date':end_date,'default_days':days,'tree_view_ref' : 'hr_mission.hr_employee_mission_line_tree_view'}"
+									nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}">
+									<tree editable="top" string="Employee mission">
+										<field name="employee_id" colspan="4"
+									on_change="onchange_employee(employee_id,parent.mission_id,parent.days,context)"  context="{'mission_line':parent.mission_line}"/>
+										<field name="type"   invisible="1"/>
+										<field name="days" on_change="onchange_line_date(start_date, end_date, days,'days')"/>
+										<field name="mission_amounts"/>
+										<field name="mission_fees"/>
+										<field name="start_date" on_change="onchange_line_date(start_date, end_date, days,'start_date')" invisible="0"/>
+										<field name="end_date" on_change="onchange_line_date(start_date, end_date, days,'end_date')"  invisible="0" />
+										<field name="move_order_id"  invisible="1" domain="[('employee_id' , '=' , employee_id) ,('date' ,'&gt;=', start_date), ('date' ,'&lt;=', end_date) ,('type' , '=' , 'mission') , ('mission_id' , = , False),('state','!=','draft')]"/>
+										<field name="notes" />
+
+									</tree>
+								</field>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="opreation_form_view_inherit">
+			<field name="name">hr.employee.mission.view.inherit</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_operation_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="set_to_draft_mission"]' position="before" version="7.0">
+					<button string="Move Order" name="opreation_move_order" attrs="{'invisible' : ['|','|',('need_move_order' , '=' , False),('state','in',['rejected','draft']),('move_order_id','!=',False)]}" type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_mission_user" />
+				</xpath>
+				<xpath expr='//button[@name="confirm_mission"]' position="replace" version="7.0">
+					<button string="Confirm" name="confirm_mission" type="object" states="completed"
+							groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+
+
+				<xpath expr='//button[@name="complete_mission"]' position="replace" version="7.0">
+					<button string="Complete" name="complete_mission" states="draft"
+							groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+
+				<xpath expr='//button[@name="validate_mission"]' position="replace" version="7.0">
+					<button string="Validate" name="validate_mission" states="confirmed"
+							groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+
+				<xpath expr='//button[@name="approve_mission"]' position="replace" version="7.0">
+					<button string="Approve" name="approve_mission" states="validated"
+							groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+
+				<xpath expr='//button[@name="reject_mission"]' position="replace" version="7.0">
+					<button string="Reject" name="reject_mission"
+							states="completed,confirmed,validated,approved" groups="hr_custom_military.hr_emp_mission_user"
+							icon="gtk-cancel" />
+				</xpath>
+
+				<xpath expr='//button[@name="set_to_draft_mission"]' position="replace" version="7.0">
+					<button string="Set to Draft" name="set_to_draft_mission" type="object" states="rejected"
+							groups="hr_custom_military.hr_emp_mission_user" />
+				</xpath>
+
+
+
+
+				<xpath expr='//field[@name="mission_leader"]' position="after" version="7.0">
+					<field name="move_order_id" attrs="{'readonly' : [('state' , '=' , 'approved')]}" domain="[('mission_move_id' , '=' , False) , ('type' , '=' , 'opreation') , ('move_date' ,'&gt;=', start_date), ('move_date' ,'&lt;=', end_date),('state','!=','draft')]"/>
+				</xpath>
+				<xpath expr='//tree/field[@name="notes"]' position="before" version="7.0">
+						<field name="move_order_id"  invisible="1" />
+				</xpath>
+
+				<xpath expr='//field[@name="mission_line"]' position="replace" version="7.0">
+					<field name="need_move_order" invisible="0" />
+					<field colspan="4" name="mission_line"
+									context="{'default_type':'2','default_start_date':start_date,'default_end_date':end_date,'default_days':days,'tree_view_ref' : 'hr_mission.hr_employee_mission_line_tree_view'}"
+									nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}">
+									<tree editable="top" string="Employee mission">
+										<field name="employee_id" colspan="4"
+									on_change="onchange_employee(employee_id,parent.mission_id,parent.days,context)" context="{'mission_line':parent.mission_line}"/>
+										<field name="days" on_change="onchange_line_date(start_date, end_date, days,'days')"/>
+										<field name="mission_amounts"   string="Operation amount"/>
+										<field name="start_date" on_change="onchange_line_date(start_date, end_date, days,'start_date')" invisible="0"/>
+										<field name="end_date"  on_change="onchange_line_date(start_date, end_date, days,'end_date')" invisible="0" />
+										<field name="move_order_id"  invisible="0" domain="[('employee_id' , '=' , employee_id) ,('date' ,'&gt;=', start_date), ('date' ,'&lt;=', end_date) ,('type' , '=' , 'opreation') ,('mission_id' , '=' , False),('state','!=','draft')]"/>
+										<field name="notes"/>
+									</tree>
+					</field>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="transmission_form_view_inherit">
+			<field name="name">hr.employee.mission.view.inherit</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_transmission_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="set_to_draft_mission"]' position="before" version="7.0">
+					<button string="Move Order" name="transmission_move_order" attrs="{'invisible' : ['|',('need_move_order' , '=' , False),('state','in',['rejected','draft'])]}" type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_mission_user" />
+				</xpath>
+
+				<xpath expr='//button[@name="confirm_transmission"]' position="replace" version="7.0">
+					<button string="Confirmation" name="confirm_transmission" states="draft"
+						groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+
+				<xpath expr='//button[@name="pending"]' position="replace" version="7.0">
+					<button string="Pending" name="pending" states="open"
+						groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+
+				<xpath expr='//button[@name="open"]' position="replace" version="7.0">
+					<button string="Open" name="open" states="pending"
+						groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+
+				<xpath expr='//button[@name="close_transmission"]' position="replace" version="7.0">
+					<button string="Close" name="close_transmission" states="open"
+						groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+				
+				<xpath expr='//button[@name="reject_transmission"]' position="replace" version="7.0">
+					<button string="Reject" name="reject_transmission"
+						states="open" groups="hr_custom_military.hr_emp_mission_user"
+						icon="gtk-cancel" />
+				</xpath>
+				
+				<xpath expr='//button[@name="set_to_draft_mission"]' position="replace" version="7.0">
+					<button string="Set to Draft" name="set_to_draft_mission" type="object" states="rejected,close"
+						groups="hr_custom_military.hr_emp_mission_user" />
+				</xpath>
+
+
+				<field name="dept_report" position="replace">
+					<field name="dept_report" attrs="{'readonly':[('state','=','closed')]}"/>
+					<field name="move_order_dest" attrs="{'invisible':[('dept_report','=',False)],'required':[('dept_report','=',True)],'readonly':[('state','=','closed')]}"/></field>
+				<xpath expr='//field[@name="department_id"]' position="after" version="7.0">
+					<field name="need_move_order" />
+				</xpath>
+				<xpath expr='//tree/field[@name="notes"]' position="before" version="7.0">
+						<field name="move_order_id" domain="[('mission_id' , '=' , False) , ('type' , '=' , 'transmission') , ('date' ,'&gt;=', start_date), ('date' ,'&lt;=', end_date),('state','!=','draft')]" invisible="0" />
+				</xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_employee_mission_form_view">
+			<field name="name">hr.employee.mission.form</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_mission_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="mission_line"]/tree/field[@name="employee_id"]' position="replace">
+					<field name="employee_id" domain="[('state','=','approved')]" colspan="4" on_change="onchange_employee(employee_id,parent.mission_id,parent.days,context)" context="{'mission_line':parent.mission_line}"/>
+				</xpath>
+				<xpath expr='//button[@name="recalcuate_days"]' position="replace">
+					<field name="arch_flag" invisible="1" />
+					<button string="Recalculate" name="recalcuate_days"
+										attrs="{'invisible':['|',('state','in',('approved','rejected')),('arch_flag','=',True)]}"
+										class="oe_link oe_edit_only" icon="terp-stock_format-scientific"
+										type="object" groups="base.group_hr_user" />
+				</xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_employee_operation_form_view">
+			<field name="name">hr.employee.mission.form</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_operation_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="mission_line"]/tree/field[@name="employee_id"]' position="replace">
+					<field name="employee_id" domain="[('state','=','approved')]" colspan="4" on_change="onchange_employee(employee_id,parent.mission_id,parent.days,context)" context="{'mission_line':parent.mission_line}"/>
+				</xpath>
+
+				<xpath expr='//button[@name="recalcuate_days"]' position="replace">
+					<field name="arch_flag" invisible="1" />
+					<button string="Recalculate" name="recalcuate_days"
+									attrs="{'invisible':['|',('state','in',('approved','rejected')),('arch_flag','=',True)]}"
+									class="oe_link oe_edit_only" icon="terp-stock_format-scientific"
+									type="object" groups="base.group_hr_user" />
+				</xpath>
+
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_employee_transmission_form_view">
+			<field name="name">hr.employee.mission.form</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_transmission_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="mission_line"]/tree/field[@name="employee_id"]' position="replace">
+					<field name="employee_id" domain="[('state','=','approved')]" colspan="4" on_change="onchange_employee(employee_id,parent.mission_id,parent.days,context)" context="{'mission_line':parent.mission_line}"/>
+				</xpath>
+				<xpath expr='//button[@name="confirm_transmission"]' position="replace">
+					<button string="Confirmation" name="confirm_transmission" states="draft" type="object" groups="hr_custom_military.hr_emp_mission_user" icon="gtk-apply" />
+				</xpath>
+				<xpath expr='//field[@name="illness"]' position="replace">
+					<field nolabel="1" name="illness" context="{'default_type':'transmission','default_transmission_id':id}">
+						<form string="Mediction" version="7.0">
+							<header>
+								<button type="object" string="Confirm" name="do_confirm" states="draft" class="oe_highlight" />
+								<field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+							</header>
+							<sheet>
+								<group>
+									<field name="employee_id" domain="[('state','=','approved')]" attrs="{'readonly':[('state','!=', 'draft')]}" context="{'same':parent.mission_line}"/>
+								</group>
+								<group col="4">
+									<field name="date" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+									<field name="illness" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+								</group>
+								<group col="2">
+									<field name="type" />
+									<field name="holiday_id" attrs="{'invisible' : [('type' , '!=' , 'holiday')]}" />
+									<field name="transmission_id" attrs="{'invisible' : [('type' , '!=' , 'transmission')]}" />
+									<field name="commision_id" attrs="{'invisible' : [('type' , '!=' , 'commision')]}" />
+								</group>
+								<notebook>
+									<page string="Doctor">
+										<group col="4">
+											<field name="med_option_id" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+											<field name="end_date" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+										</group>
+										<field name="doctor_comment" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+									</page>
+								</notebook>
+							</sheet>
+						</form>
+						<tree>
+							<field name="employee_id"/>
+							<field name="date"/>
+							<field name="med_option_id"/>
+							<field name="state"/>
+						</tree>
+					</field>
+				</xpath>
+
+				<xpath expr='//button[@name="set_to_draft_mission"]' position="replace">
+					<button string="Set to Draft" name="set_to_draft_mission" type="object"
+							groups="base.group_hr_manager,base.group_hr_user" attrs="{'invisible':['|',('state','not in',('rejected','close')),('arch_flag','=',True)]}"/>
+					<field name="arch_flag" invisible="1" />
+				</xpath>
+
+				<xpath expr='//button[@name="recalcuate_days"]' position="replace">
+					<button string="Recalculate" name="recalcuate_days"
+										attrs="{'invisible':['|',('state','in',('approved','rejected')),('arch_flag','=',True)]}"
+										class="oe_link oe_edit_only" icon="terp-stock_format-scientific"
+										type="object" groups="base.group_hr_user" />
+				</xpath>
+
+			</field>
+		</record>
+	</data>
+</openerp>  

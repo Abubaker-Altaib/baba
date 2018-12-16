@@ -1,0 +1,31 @@
+- 
+  Creating a account.fiscalyear record
+- 
+  !record {model: account.fiscalyear, id: account_fiscalyear_fiscalyearx1}:
+    code: FY2013
+    company_id: base.main_company
+    date_start: '2013-01-01'
+    date_stop: '2013-12-31'
+    name: Fiscal Year X 2013
+       
+- 
+  Creating a account.period record
+- 
+  !record {model: account.period, id: account_period_x1}:
+    code: X01/2013
+    company_id: base.main_company
+    date_start: '2013-01-01'
+    date_stop: '2013-01-31'
+    fiscalyear_id: account_fiscalyear_fiscalyearx1
+    name: XX 01/2013
+    special: true
+- 
+  I test unlink a period
+-     
+    
+  !python {model: account.period}: |
+    self.unlink(cr, uid, [ref("account_period_x1")], context=None)
+    
+- 
+  I test unlink name_get(self, cr, uid, ids, context=None)
+-   

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+
+  <data>
+
+   
+  <!-- Form , Tree , Menu and Action For Release Order -->
+    <record model="ir.ui.view" id="custody_release_order_form">
+		<field name="name">custody.release.order.form</field>
+		<field name="model">custody.release.order</field>
+		<field name="arch" type="xml">
+                <form string="Release Order" version="7.0" create="false">
+                  <header>
+                    <button name="confirm" states="draft" string="Confirm" confirm="Are you sure you want to confirm this request?" />
+		    
+		    <button name="verify" states="confirm" string="Verify From Custody" confirm="Are you sure you complete the verification process?"/>
+		    <button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" />
+	            <button name="cancel" states="draft" string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to cancel this request?" />
+                 
+                  <field name="state" widget="statusbar" readonly="1" statusbar_visible="draft,confirm,assign,cancel" />
+                  </header>
+		  <sheet>
+		       <div class="oe_title">
+		                <h1>
+		                    <label string="Custody Release Request" />
+		                </h1>
+                                
+		       </div>
+                        <!--   -->
+                       <div class="oe_button_box oe_right " name="buttons"> 
+
+			             <button name="action_make_incoming_shipment" type="object" string="Create Incoming Shipment" class="oe_inline" icon="STOCK_EXECUTE"
+						               attrs="{'invisible': [('create_picking','!=', False)]}" confirm="Are you sure you want to apply this operation"/>
+                               </div>
+		       <group >
+                          <group >
+	                  <field name="name" readonly="1" colspan="2" widget="handle" required="1"/> 
+		          <field name="location_id" required="1" widget="selection" domain="[('usage' , '=' , 'internal')]" attrs="{'readonly': [('state','!=', 'draft')]}"/> 
+                          </group >
+                          <group > 
+                          <field name="department_id" colspan="2" />
+                          <field name="create_picking" colspan="2" />
+                          </group >
+                         </group>
+		        
+		       <notebook >
+		          <page string="Custody Lines" colspan="4">
+		                <field name="custody_lines"  attrs="{'readonly' : [('state' , '=' , 'verify')] }">
+		                        <tree editable="bottom" string="Custody Lines" create="false">
+		                            <field name="custody_id" readonly="1"/>
+		                            <field name="name" readonly="1"/>
+		                            <field name="employee_id" readonly="1"/>
+                                            <field name="release_date" readonly="1"/>
+                                            <field name="damage" />
+		                        </tree>           
+		                </field>
+		          </page>
+
+		       </notebook>
+		  </sheet>
+            <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers"/>
+              <field name="message_ids" widget="mail_thread"/>
+            </div>
+	     
+	        </form>
+	     </field>
+
+   </record>
+
+  <record id="custody_release_order_tree" model="ir.ui.view">
+			<field name="name">custody.release.order.tree</field>
+			<field name="model">custody.release.order</field>
+			<field name="arch" type="xml"> 
+				<tree fonts="bold:message_unread==True" colors="grey:state in ('cancel','done');red:state =='draft'" string="Custody Orders"  create="false">
+					<field name="name" />
+					<field name="department_id"/>	
+                                        <field name="state"/>	
+                                        <field name="message_unread" invisible="1"/>
+                                        <field name="message_summary" invisible="1"/>
+				</tree>
+ 
+			</field>
+  </record>
+
+
+    <record id="custody_release_order_search_form" model="ir.ui.view">
+            <field name="name">custody.release.order.search.form</field>
+            <field name="model">custody.release.order</field>
+            <field name="arch" type="xml">
+               <search string="Orders">
+                    <field name="department_id" string="Department"/>
+                    <field name="state"/>
+                    <separator/>
+                    <filter icon="terp-mail-message-new" string="Unread Messages" name="message_unread" domain="[('message_unread','=',True)]"/>
+                    <separator/>
+                    <filter name="draft" string="New Orders" domain="[('state','=','draft')]" help="New Orders" icon="terp-check"/>
+                    <group expand="0" string="Group By...">
+
+                        <filter string="Department" name="group_department_id" icon="terp-folder-violet" domain="[]" context="{'group_by':'department_id'}"/>
+
+
+                    </group>
+           </search>
+            </field>
+        </record>
+
+
+
+
+ <record model="ir.actions.act_window" id="action_custody_release_order_form">
+        <field name="name">custody release order Action</field>
+        <field name="res_model">custody.release.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                The Release Custody Order will Created From The Wizard or Custody Form. 
+              </p><p>
+                Use this menu to search within your Custodies Release Orders by
+                references, department,state. .
+              </p>
+            </field>
+ </record>
+
+
+                  
+                  <menuitem id="menu_custody_release_order" 
+                             icon="terp-partner"
+                             action="action_custody_release_order_form" 
+                             name="Release Custody Order" 
+                             parent="menu_account_pact_child"
+                             web_icon="images/pos.png" 
+                             web_icon_hover="images/pos-hover.png"/>
+                  
+
+
+
+
+
+   
+
+
+
+     </data>
+</openerp>

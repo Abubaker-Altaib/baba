@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <record id="view_sale_costs_report_trees" model="ir.ui.view">
+        <field name="name">sale.report.tree</field>
+        <field name="model">sale.costs.report</field>
+        <field name="arch" type="xml">
+            <tree  create="false" string="تقرير المنتجات">
+                <field name="name" string="المنتج" />
+
+                <field name="mrp_qty" string="الكمية المنتجة" />
+                <field name="mrp_amount" string="تكلفة الإنتاج" />
+                <field name="sale_qty" string="الكمية المباعة" />
+                <field name="sale_amount" string="مبلغ المبيعات" />
+                <field name="sale_percentage" string="نسبة المبيعات" />
+                <field name="profit_percentage" string="نسبة الأرباح" />
+           </tree>
+        </field>
+    </record>
+
+    
+    <!--record id="view_sale_costs_report_search" model="ir.ui.view">
+        <field name="name">sale.costs.report.search</field>
+        <field name="model">sale.costs.report</field>
+        <field name="arch" type="xml">
+            <search string="sale And Costs">
+                <field name="sale_id"  string="أمر الإنتاج"/>
+                <field name="product_id"  string="المنتج" />
+                <field name="product_state" string="الحالة"/>   
+                <field name="begin"  string="تاريخ البداية"/>      
+                <field name="end" string="تاريخ النهاية" /> 
+                <filter icon="terp-go-year" string="State" name="product_state" context="{'product_state':'done'}"/>   
+                <filter string="Unposted" icon="terp-document-new" domain="[('product_state','=','draft')]" />
+                <filter string="Posted" icon="terp-camera_test" domain="[('product_state','=','done')]" />
+                <group expand="1" string="Group By...">
+                    <filter string="State" name="product_state" icon="terp-go-month" context="{'group_by':'product_state'}" help=""/>
+                 </group>
+            </search>
+        </field>
+    </record-->
+
+
+
+
+    <record id="action_sale_report" model="ir.actions.act_window">
+        <field name="name">تقرير الإنتاج والبيع</field>
+        <field name="res_model">sale.costs.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,graph</field>
+        <field name="view_id" ref="view_sale_costs_report_trees"/>
+        <!--field name="search_view_id" ref="view_sale_costs_report_search"/-->
+    </record>
+   <menuitem id="menu_action_sale_costs" action="action_sale_report" name="تقرير الإنتاج والبيع" parent="menu_mrp_report"/>
+
+</data>
+</openerp>

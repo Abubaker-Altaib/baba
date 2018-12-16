@@ -1,0 +1,31 @@
+<openerp>
+	<data noupdate="1">
+        <record id="category_accounting" model="ir.module.category">
+            <field name="name">Accounting</field>
+        </record>
+		<record id="group_account_readonly" model="res.groups">
+			<field name="name">Account Review</field>
+			<field name="category_id" ref="category_accounting" />
+			<field eval="[(6,0,[ref('account.menu_finance_configuration')])]"
+				name="menu_access" />
+		</record>
+		<record id="group_account_auditor" model="res.groups">
+			<field name="name">Account Auditor</field>
+			<field name="category_id" ref="category_accounting" />
+			<field name="implied_ids" eval="[(4, ref('account.group_account_user'))]" />
+		</record>
+		 <record id="group_account_public" model="res.groups">
+			<field name="name">public</field>
+			<field name="category_id" ref="category_accounting" />
+			<field name="implied_ids" eval="[(4, ref('account.group_account_user'))]" />
+		</record> 
+		<record id="group_account_controller" model="res.groups">
+			<field name="name">Account Controller</field>
+			<field name="category_id" ref="category_accounting" />
+			<field name="implied_ids" eval="[(4, ref('account.group_account_user'))]" />
+		</record>
+        <record id="base_custom.group_account_general_manager" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('account.group_account_user')),(4, ref('account_custom.group_account_readonly'))]" />
+        </record>
+	</data>
+</openerp>

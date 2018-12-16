@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="account_trial_balance_inherit_arabic_niss"
+			model='ir.ui.view'>
+			<field name="name">Trial Balance</field>
+			<field name="model">account.balance.report</field>
+			<field name="inherit_id"
+				ref="account_arabic_reports.account_trial_balance_inherit_arabic" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='initial_balance']"
+					position="after">
+					<field name="currency_id" attrs="{'readonly':[('display_account','not in',['with_currency','bal_all'] )], 'required':[('display_account','=','with_currency')] }"/>
+                                        <field name="all_account" attrs="{'invisible':[('display_account','!=','with_currency')]}"/>
+                                        <field name="account_id" attrs="{'invisible':[('display_account','!=','bal_all')]}"/>
+					<newline />
+				</xpath>
+
+			</field>
+		</record>
+
+
+	</data>
+</openerp>

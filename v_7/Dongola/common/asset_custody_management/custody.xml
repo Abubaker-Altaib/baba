@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+         <menuitem id="menu_pact_configration_child" 
+                             icon="terp-partner" 
+                             name="Custody Configrations" 
+                             parent="menu_account_pact_root"
+                             web_icon="images/pos.png" 
+                             web_icon_hover="images/pos-hover.png"
+                             sequence="3" />
+              
+
+	  <record model="ir.ui.view" id="custody_custody_form_id">
+		<field name="name">account.asset.asset.custody.form</field>
+		<field name="model">account.asset.asset</field>
+		<field name="arch" type="xml">
+                <form string="Pact Order" version="7.0" >
+
+
+                  <header>
+                                        <field name="state" widget="statusbar" readonly="1" statusbar_visible="draft,open,released,abandon" />
+                  </header>
+		  <sheet>
+		       
+                       <field name="image_medium" widget='image' class="oe_left oe_avatar"/>
+                       <field name="load_category_image" invisible="1"/>
+                        <div class="oe_title">
+                            <div class="oe_edit_only">
+                               <label for="name"  string="Full Name"/>
+                            </div>
+                            <h1>
+                                <!--field name="name"/-->
+                                <field name="full_name"/>
+                            </h1>
+                           </div>
+		       <div class="oe_button_box oe_right " name="buttons"> 
+
+			<button name="create_release_order" type="object" string="Create Release Order" class="oe_inline" icon="STOCK_EXECUTE"
+						                attrs="{'invisible': ['|',('state','!=', 'open'),('create_release_order','!=', False)]}" confirm="Are you sure you want to apply this operation"/>
+                       </div>
+                       <group>
+		       <group >
+ 	                  <field name="category_company_id" colspan="2" required="1"  on_change="onchange_company(category_company_id)" widget="selection" attrs="{'readonly' : [('state' , '!=' , 'draft' )] }"/> 
+			  <field name="category_id" colspan="2" required="1"  attrs="{'readonly' : [('state' , '!=' , 'draft' )] }"/> 
+			  <field name="version_id" colspan="2"  required="1" domain="[( 'category_id' , '=' , category_id )]" attrs="{'readonly' : [('state' , '!=' , 'draft' )] }"/>
+                          <field name="user_id" colspan="2" readonly="1" attrs="{'readonly' : [('state' , '!=' , 'draft' )] }" invisible="1"/>
+
+                        </group>
+                        <group>
+	                  <field name="code" colspan="2" required="1" attrs="{'readonly' : [('state' , '!=' , 'draft' )] }"/> 
+	                  <field name="custody_specification"  colspan="2" attrs="{'required' : [('state' , 'in' , ['draft'] ) ] , 'readonly' : [('state' , '!=' , 'draft' )]  }"/> 
+                          <field name="department_id" colspan="2" attrs="{'invisible' : [('state' , 'in' , ['draft','released'] ) ] , 'readonly' : [('state' , '=' , 'open' )]  }" />
+                          <field name="current_employee" colspan="2"  attrs="{'invisible' : [('state' , 'in' , ['draft','released'] ) ] , 'readonly' : [('state' , '=' , 'open' )]   }" domain="[( 'department_id' , '=' , department_id )]" on_change="onchange_employee(current_employee)"/>
+
+
+                      </group>
+                     </group>
+                     <notebook >
+		          <page string="Custody Log" colspan="4">
+		                <field name="log_ids"  readonly="1" />
+		                         
+
+		          </page>
+                          <page string="Other Info" colspan="4">
+                           <group>
+                               <group >
+		                     <field name="period_type"   readonly="1" colspan="2" />
+		                     <field name="expacted_return_date"  readonly="1" colspan="2" />
+                             <field name="stock_location_id"   readonly="1" colspan="2" />
+
+                               </group> 
+                               <group >
+		                     <field name="ref"   readonly="1" colspan="2" />
+                             <field name="product_id"   readonly="1" colspan="2" />
+                             <field name="custody_location_id"   readonly="1" colspan="2" />
+                               </group> 
+                               <group >
+		                     <field name="create_release_order"   readonly="1" colspan="2" invisible="1"/>
+
+                               </group> 
+                           </group> 
+		          </page>
+
+		       </notebook>
+		  </sheet>
+
+	     
+	        </form>
+	     </field>
+
+   </record>
+
+
+   <record model="ir.ui.view" id="custody_custody_custom_tree">
+		<field name="name">account.asset.asset.tree</field>
+		<field name="model">account.asset.asset</field>
+		<field name="arch" type="xml">
+                <tree string="Custody" >
+                           <field name="full_name" />
+                           <field name="product_id" />
+                           <field name="department_id" />
+                           <field name="current_employee" />
+                           <field name="state" />
+               </tree>
+               </field>
+    </record>
+
+
+
+	<record model="ir.ui.view" id="custody_custody_kanban">
+		<field name="name">Custody Kanban</field>
+		<field name="model">account.asset.asset</field>
+		<field name="priority">10</field>
+		<field name="arch" type="xml">
+                <kanban version="7.0" class="oe_background_grey">
+		        <field name="name"/>
+		        <templates>
+		            <t t-name="kanban-box">
+		                <div class="oe_company_vignette">
+		                    <div class="oe_custody_name">
+		                        <a type="open"><img t-att-src="kanban_image('account.asset.asset', 'image_medium', record.id.value)" class="oe_company_picture"/></a>
+		                    </div>
+		                    <div class="oe_custody_details">
+		                        <h4>
+		                            <a type="open"><field name="name"/></a>
+		                        </h4>
+		                        <ul>
+		                            
+		                            <li t-if="record.category_company_id.raw_value"><field name="category_company_id"/></li>
+		                            <li t-if="record.category_id.raw_value"><field name="category_id"/></li>
+		                            <li t-if="record.version_id.raw_value"><field name="version_id"/></li>
+		                            <li t-if="record.code.raw_value"><b>Barcode: </b><field name="code"/></li>
+		                            <li t-if="record.department_id.raw_value"><b>Department: </b><field name="department_id"/></li>
+		                            <li t-if="record.current_employee.raw_value"><b>Employee: </b><field name="current_employee"/></li>
+
+		                        </ul>
+		                    </div>
+		                </div>
+		                <script>
+		                    $('.oe_employee_picture').load(function() { if($(this).width() > $(this).height()) { $(this).addClass('oe_employee_picture_wide') } });
+		                </script>
+		            </t>
+		        </templates>
+		    </kanban>
+
+		</field>
+	    </record>
+
+
+
+
+
+
+
+
+
+
+
+       <record id="view_custody_custody_filter" model="ir.ui.view">
+            <field name="name">account.asset.asset.list.select</field>
+            <field name="model">account.asset.asset</field>
+            <field name="arch" type="xml">
+                <search string="Search Custodies">                
+                    <field name="name" select="1" readonly="1"/>
+                     <separator orientation="vertical"/>
+                    <field name="code" select="1" />
+                     <separator orientation="vertical"/>
+                    <field name="version_id" select="1"/>
+                    <field name="category_id" select="1"/>
+                    <field name="product_id"/>
+
+                  <newline/>
+                  <group>
+                    <!--filter icon="terp-document-draft" name="draft_custody" string="draft" domain="[('state','=','draft')]" separator="1" /-->
+                  </group>
+                  <group expand="0" string="Group By..." colspan="4" col="10">
+                    <filter string="Department" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'department_id'}"/>
+                    <filter string="Employee" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'current_employee'}"/>
+                    <filter string="Category" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'category_id'}"/>
+                    <filter string="Version" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'version_id'}"/>
+                    <filter string="Product" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'product_id'}"/>
+                    <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+
+                </group>
+              </search>
+            </field>
+        </record>
+
+
+
+
+
+
+
+
+
+
+
+
+        <record model="ir.actions.act_window" id="action_custody_custody_form">
+			<field name="name">Pact Custody Action</field>
+			<field name="res_model">account.asset.asset</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">kanban,form,tree</field>
+            <field name="search_view_id" ref="view_custody_custody_filter"/>
+
+
+	        </record>
+
+            <record id="action_custody_custody_form_view" model="ir.actions.act_window.view">
+                <!--field eval="2" name="sequence"/-->
+                <field name="view_mode">form</field>
+                <field name="view_id" ref="custody_custody_form_id"/>
+                <field name="act_window_id" ref="action_custody_custody_form"/>
+                <field name="search_view_id" ref="view_custody_custody_filter"/>
+
+            </record>
+
+
+            <record id="action_custody_custody_tree_view" model="ir.actions.act_window.view">
+                <!--field eval="2" name="sequence"/-->
+                <field name="view_mode">tree</field>
+                <field name="view_id" ref="custody_custody_custom_tree"/>
+                <field name="act_window_id" ref="action_custody_custody_form"/>
+                <field name="search_view_id" ref="view_custody_custody_filter"/>
+
+            </record>
+
+           
+                      
+                  
+
+                <menuitem id="menu_pact_custody_form" 
+                             parent="menu_pact_configration_child"
+                             name="Custody" 
+                             action="action_custody_custody_form" 
+                             sequence="1" />
+    
+
+
+
+
+
+
+                
+
+
+
+
+		  
+
+
+
+
+
+
+
+
+
+        <record model="ir.ui.view" id="account_asset_logs_form_id">
+		<field name="name">account.asset.logs.form</field>
+		<field name="model">asset.logs</field>
+		<field name="arch" type="xml">
+                <form string="Custody Log">
+                     <field name="department_id" />
+                     <field name="action_date" />
+                     <field name="employee_id" />
+                     <field name="action_type" />
+                </form>
+              </field>
+         </record>
+
+        <record model="ir.ui.view" id="account_asset_logs_tree_id">
+		<field name="name">account.asset.logs.tree</field>
+		<field name="model">asset.logs</field>
+		<field name="arch" type="xml">
+                <tree string="Custody Log">
+                     <field name="department_id" />
+                     <field name="action_date" />
+                     <field name="employee_id" />
+                     <field name="action_type" />
+                </tree>
+              </field>
+         </record>
+
+  
+
+	          
+
+
+
+<!-- Form , Tree , Menu and Action For custody Category -->
+
+          <record model="ir.ui.view" id="account_asset_pact_category_custom_form">
+		<field name="name">account.asset.category.form.inherit</field>
+		<field name="model">account.asset.category</field>
+                <field name="type">form</field>
+		<field name="arch" type="xml">
+                  <form string="custody category" version="7.0">
+                   <sheet>
+                       <field name="image" widget='image' class="oe_left oe_avatar"/>
+                        <div class="oe_title">
+                            <label for="Name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" required="1"  />
+                            </h1>
+                       </div>
+
+
+                           <group>
+	                           <group>
+	                             <field name="product_category_id"  />
+	                           </group>
+	                           <group>
+	                           </group>
+
+                           </group>
+
+                           <notebook >
+		                         <page string="Versions" colspan="4">
+                                       <field name="model_ids"/>
+                                 </page> 
+                                 <page string="Products" colspan="4">
+                                       <field name="products_ids"  />
+                                 </page> 
+                          </notebook>
+                 </sheet>
+               </form>
+               </field>
+            </record>
+
+<record model="ir.ui.view" id="account_asset_pact_category_custom_tree">
+		<field name="name">custody.category.tree</field>
+		<field name="model">account.asset.category</field>
+
+		<field name="arch" type="xml">
+		        <tree string="Custody category" version="7.0">
+
+		                   <field name="name" />
+
+		       </tree>
+               </field>
+</record>
+
+
+
+
+     <record model="ir.ui.view" id="custody_category_kanban">
+		<field name="name">Custody Category Kanban</field>
+		<field name="model">account.asset.category</field>
+		<field name="priority">10</field>
+		<field name="arch" type="xml">
+                <kanban version="7.0" class="oe_background_grey">
+		        <field name="name"/>
+		        <templates>
+		            <t t-name="kanban-box">
+		                <div class="oe_company_vignette">
+		                    <div class="oe_company_name">
+		                        <a type="open"><img t-att-src="kanban_image('account.asset.category', 'image', record.id.value)" class="oe_company_picture"/></a>
+		                    </div>
+		                    <div class="oe_category_details">
+		                        <h4>
+		                            <a type="open"><field name="name"/></a>
+		                        </h4>
+		                        <ul>
+		                            
+		                            <li t-if="record.product_ids.raw_value"><b> Products: </b><field name="products_ids"/></li>
+		                            <li t-if="record.model_ids.raw_value"><b> Models: </b><field name="model_ids"/></li>
+
+
+		                        </ul>
+		                    </div>
+		                </div>
+		                		            </t>
+		        </templates>
+		    </kanban>
+
+		</field>
+	    </record>
+
+   <record model="ir.actions.act_window" id="action_pact_category_form">
+        <field name="name">Custody Category Action</field>
+        <field name="res_model">account.asset.category</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+
+            <record id="action_custody_category_tree_view" model="ir.actions.act_window.view">
+                <!--field eval="1" name="sequence"/-->
+                <field name="view_mode">tree</field>
+                <field name="view_id" ref="account_asset_pact_category_custom_tree"/>
+                <field name="act_window_id" ref="action_pact_category_form"/>
+            </record>
+
+            <record id="action_custody_category_form_view" model="ir.actions.act_window.view">
+                <!--field eval="2" name="sequence"/-->
+                <field name="view_mode">form</field>
+                <field name="view_id" ref="account_asset_pact_category_custom_form"/>
+                <field name="act_window_id" ref="action_pact_category_form"/>
+            </record>
+                  
+                  <menuitem id="menu_pact_category_form" 
+                             parent="menu_pact_configration_child"
+                             name="Custody Categories" 
+                             action="action_pact_category_form" 
+                             sequence="1" />
+
+
+
+<!-- Form , Tree  For custody Category Models-->
+
+<record model="ir.ui.view" id="account_asset_pact_category_custom_Models_form">
+		<field name="name">custody.category.Models.form</field>
+		<field name="model">custody.category.models</field>
+		<field name="arch" type="xml">
+                <form string="custody Category Models" version="7.0">
+
+                           <field name="name" required="1" colspan="4"/>
+
+               </form>
+               </field>
+</record>
+
+<record model="ir.ui.view" id="account_asset_pact_category_custom_Models_tree">
+		<field name="name">custody.category.Models.tree</field>
+		<field name="model">custody.category.models</field>
+		<field name="arch" type="xml">
+                <tree string="Custody Category Models" version="7.0">
+
+                           <field name="name" />
+
+               </tree>
+               </field>
+</record>
+
+
+
+<!-- Form , Tree  For custody Company -->
+
+<record model="ir.ui.view" id="custody_company_form">
+		<field name="name">custody.company.form</field>
+		<field name="model">custody.company</field>
+		<field name="arch" type="xml">
+                <form string="Custody Company" version="7.0">
+                   <sheet>
+                       <field name="logo" widget='image' class="oe_left oe_avatar"/>
+                        <div class="oe_title">
+                            <label for="Name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" required="1"  />
+                            </h1>
+                       </div>
+                   <group col="2">
+                      
+                      <group colspan="2">
+
+                           <field name="web_site" widget='url'/>
+                      </group>
+                      <group colspan="2">
+
+                           <field name="category_ids" widget="many2many_tags"/>
+                      </group>
+                  </group>
+
+                  </sheet>
+               </form>
+               </field>
+</record>
+
+
+
+
+<record model="ir.ui.view" id="custody_company_tree">
+		<field name="name">custody.company.tree</field>
+		<field name="model">custody.company</field>
+		<field name="arch" type="xml">
+                <tree string="Custody Company" version="7.0">
+
+                           <field name="name" />
+                           <field name="web_site" />
+
+               </tree>
+               </field>
+</record>
+
+
+
+
+   <record model="ir.ui.view" id="custody_company_kanban">
+		<field name="name">Custody Company Kanban</field>
+		<field name="model">custody.company</field>
+		<field name="priority">10</field>
+		<field name="arch" type="xml">
+                <kanban version="7.0" class="oe_background_grey">
+		        <field name="name"/>
+		        <templates>
+		            <t t-name="kanban-box">
+		                <div class="oe_company_vignette">
+		                    <div class="oe_company_name">
+		                        <a type="open"><img t-att-src="kanban_image('custody.company', 'logo', record.id.value)" class="oe_company_picture"/></a>
+		                    </div>
+		                    <div class="oe_company_details">
+		                        <h4>
+		                            <a type="open"><field name="name"/></a>
+		                        </h4>
+		                        <ul>
+		                            
+		                            
+		                            <li t-if="record.web_site.raw_value"><b>Website: </b><field name="web_site"/></li>
+		                            <li t-if="record.category_ids.raw_value"><b>Categories: </b><field name="category_ids"/></li>
+
+		                        </ul>
+		                    </div>
+		                </div>
+		                		            </t>
+		        </templates>
+		    </kanban>
+
+		</field>
+	    </record>
+
+   <record model="ir.actions.act_window" id="action_custody_company_id">
+        <field name="name">Custody Company Action</field>
+        <field name="res_model">custody.company</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+                  <menuitem id="id_menu_custody_company" 
+                             action="action_custody_company_id" 
+                             name="Custody Companies" 
+                             parent="menu_pact_configration_child"
+                             />
+
+
+
+
+
+
+<!-- Inherit Asset Location Form -->
+
+
+       <record model="ir.ui.view" id="view_account_asset_location_inherit">
+		<field name="name">account.asset.location.inherit</field>
+		<field name="model">account.asset.location</field>
+		<field name="type">form</field>
+		<field name="inherit_id" ref="account_asset_custom.account_asset_location_form"/>
+		<field name="arch" type="xml">
+			<field name="company_id" position="after">
+
+		                     <field name="property_customer_location" colspan="2"/> 
+
+		        </field>
+		</field>
+	 </record>
+
+
+
+
+
+<!-- Inherit Asset Tree View -->
+
+
+       <record id="view_account_asset_asset_tree_inherit" model="ir.ui.view">
+            <field name="name">account.asset.asset.tree</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_asset_tree"/>
+            <field name="arch" type="xml">
+
+                
+    
+                <xpath expr="//tree/field[@name='category_id']" position="after">
+                       <field name="product_id"/>
+                </xpath>
+                
+                
+            </field>
+        </record>
+
+
+ 
+
+
+
+
+</data>
+</openerp>

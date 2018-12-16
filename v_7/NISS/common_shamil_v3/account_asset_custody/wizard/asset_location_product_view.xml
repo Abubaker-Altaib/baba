@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<record id="view_asset_location_product" model="ir.ui.view">
+            <field name="name">Products by Location</field>
+            <field name="model">asset.location.product2</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Products Moves" version="7.0">
+	            <group col="4" colspan="4">                      
+			 <field name="location_id" />
+ 		         <field name="recursive"/>
+       			  <newline/> 
+		         <field name="category_id"  on_change="onchange_category_id(category_id)"  />
+                         <field name="move"/>
+                         <field name="type"/>
+                         <field name="department_id"/>
+                         <newline/>
+	            </group>                      
+                    <separator string="Dates" colspan="4" />
+                   <label string="(Keep empty to open the current situation. Adjust HH:MM:SS to 00:00:00 to filter all resources of the day for the 'From' date and 23:59:59 for the 'To' date)" align="0.0" colspan="3"/>
+	            <group col="4" colspan="4">                      
+       			   <field name="from_date" colspan="2"/>
+       			   <field name="to_date" colspan="2"/>
+	            </group>                      
+                   <separator string="Products" colspan="4" />
+		       <label string=""/>
+       			   <label string="(Keep empty to get  all products)" align="0.0" colspan="3"/>
+                                <field colspan="4" name="product_ids" nolabel="1"/>
+   		   <footer>
+         	        <button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+         		         or
+         	        <button string="Cancel" class="oe_link" special="cancel"/>
+      		   </footer>
+    		</form>
+            </field>
+		</record>
+
+        <record id="action_view_asset_location_product" model="ir.actions.act_window">
+            <field name="name">Custodies  Moves</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">asset.location.product2</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_asset_location_product"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Custodies  Moves"
+                parent="menu_asset_custody_report_parent"
+                action="action_view_asset_location_product"
+                id="menu_view_asset_location_product"
+               />
+		
+    </data>
+</openerp>

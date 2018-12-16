@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Car Maintenance Activity-->
+
+        <record id="wkf_car_maintenance_request" model="workflow">
+            <field name="name">wkf.car.maintenance.request</field>
+            <field name="osv">car.maintenance.request</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_car_maintenance_request_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+        <record id="wkf_car_maintenance_request_confirmed_d" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">confirmed_d</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_d()</field>  
+        </record>
+        
+        <record id="wkf_car_maintenance_request_confirmed_gd" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">confirmed_gd</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_gd()</field>  
+        </record>
+        <record id="wkf_car_maintenance_request_approved_of" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">approved_of</field>
+            <field name="kind">function</field>
+            <field name="action">approved_of()</field>  
+        </record>
+        <!--record id="wkf_car_maintenance_request_approved_of2" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">approved_of2</field>
+            <field name="kind">function</field>
+            <field name="action">approved_of2()</field>  
+        </record-->
+
+        <record id="wkf_car_maintenance_request_officer_of" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">officer_of</field>
+            <field name="kind">function</field>
+            <field name="action">officer_of()</field>  
+        </record>
+        <record id="wkf_car_maintenance_request_confirmed_gm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">confirmed_gm</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_gm()</field>  
+        </record>
+
+        <record id="wkf_car_maintenance_request_approved" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">approved</field>
+            <field name="kind">function</field>
+            <field name="action">approved()</field>  
+        </record>
+
+        <record id="wkf_car_maintenance_request_execute" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">execute</field>
+            <field name="kind">function</field>
+            <field name="action">execute()</field>  
+        </record>
+
+        <record id="wkf_car_maintenance_request_check" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">check</field>
+            <field name="kind">function</field>
+            <field name="action">check()</field>  
+        </record>        
+
+        <record id="wkf_car_maintenance_request_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>  
+            <field name="flow_stop">True</field>          
+        </record>
+        <record id="wkf_car_maintenance_request_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_maintenance_request"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+        </record>
+
+<!-- Car Maintenance Transition-->
+
+        <record id="wkf_car_maintenance_request_darft_confirmed_d" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_draft"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_confirmed_d"/>
+            <field name="signal">confirmed_d</field>
+        </record>
+
+		<record id="wkf_car_maintenance_request_confirmed_d_to_approved_of2" model="workflow.transition" >
+			<field name="act_from" ref="wkf_car_maintenance_request_confirmed_d" />
+			<field name="act_to" ref="wkf_car_maintenance_request_approved_of" />
+			<field name="signal">confirmed_gd</field>
+			<field name="condition">not is_emergency()</field>
+		</record>
+
+		<record id="wkf_car_maintenance_request_confirmed_d_to_confirmed_gd" model="workflow.transition" >
+			<field name="act_from" ref="wkf_car_maintenance_request_confirmed_d" />
+			<field name="act_to" ref="wkf_car_maintenance_request_confirmed_gd" />
+			<field name="signal">confirmed_gd</field>
+			<field name="condition">is_emergency()</field>
+		</record>
+				
+		
+        <record id="wkf_car_maintenance_request_confirmed_gd_to_approve_of" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_confirmed_gd"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_approved_of"/>
+            <field name="signal">approved_of</field>
+        </record>
+        
+        <record id="wkf_car_maintenance_request_approved_of_to_officer" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_approved_of"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_officer_of"/>
+            <field name="signal">officer_of</field>
+	    <field name="condition">not is_regular()</field>
+        </record>
+
+        <record id="wkf_car_maintenance_request_approved_of_to_execute" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_approved_of"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_execute"/>
+            <field name="signal">officer_of</field>
+	   <field name="condition">is_regular()</field>
+        </record>
+
+
+        <!--record id="wkf_car_maintenance_request_approved_of2_to_officer" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_approved_of2"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_officer_of"/>
+            <field name="signal">approved_of2</field>
+	   <field name="condition">not is_regular()</field>
+        </record->
+
+        <record id="wkf_car_maintenance_request_approved_of2_to_execute" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_approved_of2"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_execute"/>
+            <field name="signal">approved_of2</field>
+	   <field name="condition">is_regular()</field>
+        </record-->
+
+
+        <record id="wkf_car_maintenance_request_officer_of_to_gm" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_officer_of"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_confirmed_gm"/>
+            <field name="signal">approved</field>
+	   <field name="condition">not is_roof()</field>
+        </record>
+
+        <record id="wkf_car_maintenance_request_officer_to_admin_affaris" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_officer_of"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_approved"/>
+            <field name="signal">approved</field>
+	    <field name="condition">is_roof()</field>
+        </record>
+
+        <!--record id="wkf_car_maintenance_request_approved_of_to_execute" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_approved_of"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_execute"/>
+            <field name="signal">execute</field>
+        </record-->
+
+        <record id="wkf_car_maintenance_request_approved_to_execute" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_approved"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_execute"/>
+            <field name="signal">execute</field>
+        </record>
+
+        <record id="wkf_car_maintenance_request_gm_of_to_execute" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_confirmed_gm"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_execute"/>
+            <field name="signal">execute</field>
+        </record>
+        
+        <record id="wkf_car_maintenance_request_approved_of_to_check" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_execute"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_check"/>
+            <field name="signal">check</field>
+        </record>
+  
+              
+        <record id="wkf_car_maintenance_request_execute_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_check"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_done"/>
+            <field name="signal">done</field>
+        </record>
+
+        <record id="wkf_car_maintenance_request_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_draft"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_car_maintenance_request_confirmed_d_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_confirmed_d"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_car_maintenance_request_confirmed_gd_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_confirmed_gd"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_car_maintenance_request_confirmed_gm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_confirmed_gm"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+	<record id="wkf_car_maintenance_request_approved_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_approved"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        
+  	<record id="wkf_car_maintenance_request_approved_of_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_approved_of"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+  	<record id="wkf_car_maintenance_request_officer_of_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_officer_of"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        
+   <record id="wkf_car_maintenance_request_execute_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_execute"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        
+    <record id="wkf_car_maintenance_request_check_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_check"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+    <record id="wkf_car_maintenance_request_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_maintenance_request_cancel"/>
+            <field name="act_to" ref="wkf_car_maintenance_request_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>
+

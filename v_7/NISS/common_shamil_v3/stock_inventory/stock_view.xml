@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_inventory_filter_inherit" model="ir.ui.view">
+            <field name="name">stock.inventory.filter.inherit</field>
+            <field name="model">stock.inventory</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="stock.view_inventory_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="/search/field[@name='name']" position="before">
+                   <field name="sequence"/>
+                </xpath>
+                <xpath expr="/search/field[@name='name']" position="after">
+                   <field name="location_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_inventory_tree_inherit" model="ir.ui.view">
+            <field name="name">stock.inventory.tree.inherit</field>
+            <field name="model">stock.inventory</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="stock.view_inventory_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree/field[@name='name']" position="before">
+                   <field name="sequence"/>
+                </xpath>
+                <xpath expr="/tree/field[@name='name']" position="after">
+                   <field name="location_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_inventory_form_inherit" model="ir.ui.view">
+            <field name="name">stock.inventory.form.inherit</field>
+            <field name="model">stock.inventory</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+            <xpath expr='//button[@name="action_confirm" ]' position="attributes">
+                        <attribute name="groups">stock_inventory.group_inventory_user</attribute>
+            </xpath>
+            <xpath expr='//button[@name="action_done" ]' position="attributes">
+                        <attribute name="groups">stock_inventory.group_inventory_manager</attribute>
+            </xpath>
+            <xpath expr='//button[@name="action_cancel_inventory"]' position="attributes">
+                    <attribute name="states">draft,confirm</attribute>
+            </xpath>
+            <xpath expr='//button[@name="action_cancel_inventory" ]' position="attributes">
+            <attribute name="groups">stock_inventory.group_inventory_user,stock_inventory.group_inventory_manager</attribute>
+            </xpath>
+            <xpath expr='///button[@string="Fill Inventory" ]' position="replace">
+                <button name="%(stock.action_view_stock_fill_inventory)d" string="Fill Inventory" states="draft" type="action" />
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page/field[@name='inventory_line_id']" position="attributes">
+                   <attribute name="attrs">{'readonly':[('state','!=', 'draft')]} </attribute>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page/field[@name='move_ids']" position="attributes">
+		   <attribute name="readonly">True</attribute>
+            </xpath>
+            <xpath expr="/form/sheet/group/group/field[@name='name']" position="before">
+                   <field name="sequence"/>
+            </xpath>
+            <xpath expr="/form/sheet/group/group/field[@name='name']" position="after">
+                   <field name="location_id" domain="[('usage','=','internal')]"/>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page/field/tree/button[@string='Split inventory lines']" position="replace">
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='location_id']" position="attributes">
+		   <attribute name="invisible">True</attribute>
+            </xpath>
+            <page position="after" string="Posted Inventory">
+                    <page string="Additional information" >
+                        <group colspan="4" col="4">
+                        <field name="user_id"/>
+                        <field name="creation_date"/>
+                        <separator string="Account information" colspan="4"/>
+                        <field name="amount"/>
+                        <field name="move_id"/>
+                        <button name="get_amount_difference" states="confirm" string="Refresh Amount difference" type="object" colspan="2"/>
+                        <newline/>
+                        </group>
+                        <separator string="Notes" colspan="4"/>
+                        <newline/>
+                        <field name="note" nolabel ="1" colspan="4"/>
+                    </page>
+            </page>
+            </field>
+        </record>
+
+ </data>
+</openerp>

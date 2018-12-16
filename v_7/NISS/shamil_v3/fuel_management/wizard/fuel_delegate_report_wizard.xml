@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<!-- Fuel Delegate report wizard -->
+
+
+	<record id="fuel_delegate_report_wizard_form" model="ir.ui.view">
+            <field name="name">fuel.delegate.report.wizard</field>
+            <field name="model">fuel.delegate.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Fuel Delegate report" version="7.0">
+                	
+                    <group>
+                        <field name='type' attrs="{'required':True}"/>
+                    </group>
+                    <group col="5" colspan="2" attrs="{'invisible':[('type','!=','fuel_type')]}">
+                        <field name="fuel_type" attrs="{'required':[('type','=','fuel_type')]}"/>
+                        <field name="fuel_type_ids" attrs="{'required':[('type','=','fuel_type')]}" widget="many2many_tags" domain="[('fuel_ok','=',True),('fuel_type','=',fuel_type)]"/>
+                    </group>
+                    <group attrs="{'invisible':[('type','!=','delegate')]}">
+                        <field name='delegate_ids' attrs="{'required':[('type','=','delegate')]}" domain="[('state','=','confirm')]"/>
+                    </group>
+                    <group attrs="{'invisible':[('type','!=','location')]}">
+                        <field name='location_ids' attrs="{'required':[('type','=','location')]}" domain="[('fuel_ok','=',True)]"/>
+                    </group>
+              
+              <footer>
+
+                    <button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+                         or
+                <button special="cancel" string="Cancel" class="oe_link"/>
+              </footer>
+          </form>
+            </field>
+      </record>
+
+        <record id="action_fuel_delegate_report_wizard" model="ir.actions.act_window">
+            <field name="name">Fuel Delegate Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fuel.delegate.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fuel_delegate_report_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+      
+        <menuitem sequence="30"
+                name="Fuel Delegate Report"
+                action="action_fuel_delegate_report_wizard"
+                id="fuel_delegate_report_menu"
+                parent="fuel_report_menu"
+                />
+
+    </data>
+</openerp>

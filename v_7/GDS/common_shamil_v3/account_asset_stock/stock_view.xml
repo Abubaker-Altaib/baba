@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="product_normal_form_view_custody" model="ir.ui.view">
+            <field name="name">product.normal.form</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account_asset_custody.custody_product_product_form_view"/>  
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='custody']" position="after">
+                    <field name="is_serializable" colspan="2" attrs="{'invisible':[('custody','=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="product_normal_form_view_inherit" model="ir.ui.view">
+            <field name="name">product.product.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+		        <label for="sale_ok" position="replace"/>
+                <field name="sale_ok" position="replace">
+                	<field name="sale_ok" />
+                	<label for="sale_ok" />
+                	<field name="asset" />
+                	<label for="asset" />
+                	<group>
+                        	<field name="asset_category_id" />
+                        	<field name="asset_location_id" />
+                   	</group>
+
+                </field>
+                <xpath expr="//page[@string='Sales']" position="after">
+                                <page string="Asset" attrs="{'invisible':[('asset','!=',True)]}">
+                                    <field name="Asset_id" />
+                                </page>
+                </xpath>
+                
+            </field>
+        </record>   
+
+        <record id="product_category_form_view_inherit" model="ir.ui.view">
+            <field name="name">product.category.form</field>
+            <field name="model">product.category</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="is_serializable" colspan="2" attrs="{'invisible':[('custody','=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_location_form_inherit" model="ir.ui.view">
+            <field name="name">stock.location.form</field>
+            <field name="model">stock.location</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='active']" position="after">
+                    <field name="is_serializable" colspan="2"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_picking_out_form" model="ir.ui.view">
+            <field name="name">stock.picking.out.form.inherit</field>
+            <field name="model">stock.picking.out</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_out_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[1]" position="after" readonly="1">
+                    <page string="Assets" attrs="{'invisible':[('type','!=','out'),('state','not in',['assigned','done'])], 'readonly':[('state','!=','done')]}">
+			            <field name="picking_out_assets">
+                            <tree name="Assets"  editable="top"> 
+                            	<field name="product_id" readonly="1"/>
+                                <field name="is_serializable" invisible="1"/>
+                                <field name="asset_id" on_change="onchange_asset(asset_id, product_id)" 
+                                       domain="[('product_id','=',product_id),('asset_type','=','custody')]"
+                                />
+                                <field name="serial" attrs="{'readonly': [('is_serializable','!=',True)]}" 
+                                       on_change="onchange_serial(serial, product_id)"/>
+                                <field name="office_id" required="1"/>
+                                <field name="picking_id" invisible="1"/>
+                            </tree>  
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>

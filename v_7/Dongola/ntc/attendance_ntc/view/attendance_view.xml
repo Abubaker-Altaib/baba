@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--report   auto="False" menu="False" id="attendance_approved_report" model="suggested.attendance" 
+       name="attendance_approved_report.report" rml="addons/attendance_ntc/report/attendance_approved_report.rml" 
+       string="Approved Attendance Report" /-->
+
+       <report
+            auto="False"
+            menu="False" 
+            id="attendance_approved_report"
+            model="suggested.attendance"
+            name="attendance_approved_report.report"
+            file="attendance_ntc/report/attendance_approved_report.mako"
+            string="Attendance aApproved Landscape" 
+            report_type="webkit"  header="True" />
+        
+        <record id="hr_attendance_departments_form" model="ir.ui.view">
+            <field name="name">hr.attendance.departments</field>
+            <field name="model">hr.attendance.departments</field>
+            <field name="arch" type="xml">
+                <form string="Attendance Department" version="7.0">
+                    <group>
+                        <field name="department_id"/>
+                        <field name="checked"/>
+                    </group>
+                    <notebook>
+                        <page string="Departments">
+                            <field name="lines_ids">
+                                <tree>
+                                    <field name="department_id" />
+                                    <field name="checked" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="suggested_attendance_form" model="ir.ui.view">
+            <field name="name">Suggested Attendance</field>
+            <field name="model">suggested.attendance</field>
+            <field name="arch" type="xml">
+                <form string="Suggested Attendance" version="7.0" create="false">
+                    <header>
+                        <button name="d_manager" context="{'lines_ids':lines_ids}" string="Department Manager" type="object"
+                        attrs="{'invisible':[('checkeddm','=',True)]}" groups="attendance_ntc.group_attendace_direct_manager,base_custom.group_account_general_manager"/>
+
+                        <button name="gd_manager" string="General Department Manager"  
+                        context="{'lines_ids':lines_ids}"  type="object"
+                        attrs="{'invisible':[('checkedgdm','=',True)]}"
+                        groups="base_custom.group_general_department_manager,base_custom.group_account_general_manager,attendance_ntc.group_attendace_report"/>
+
+                        <button name="done" string ="Done"  type="object"
+                        attrs="{'invisible':[('done','=',True)]}"
+                        groups="attendance_ntc.group_attendace_report"/>
+
+                        <button name="attendance" string ="Attendance" type="object" groups="base.group_no_one"/>
+
+                        <button name="mail" string ="Send Email" type="object" 
+                        groups="attendance_ntc.group_attendace_report"/>
+                        <field name='state' widget="statusbar" invisible="1"/>
+                    </header>
+                    <group>
+                    <field name="checkeddm"/>
+                    <field name="checkedgdm"/>
+                    <field name="done"/>
+                    <field name="start_date" readonly="1"/>
+                    <field name="end_date" readonly="1"/>
+                    <field name="direct" groups="attendance_ntc.group_attendace_report"/>
+                    <button name="%(attendance_approved_report)d" colspan="2" string="Print" type="action" icon="gtk-print" />
+								
+                    </group>
+                    <notebook>
+                        <page string="Lines">
+                            <field name="lines_ids" attrs="{'readonly':[('state','!=','draft')]}">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="abacense_days" />
+                                    <field name="late_hours" />
+                                    <field name="forget_finger_print" />
+                                    <field name="added_percent" />
+                                    <field name="state" invisible="1"/>
+                                    <button name="d_manager" string="Department Manager" type="object" icon="gtk-convert"
+                                    states="draft" groups="attendance_ntc.group_attendace_report,base_custom.group_general_department_manager,base_custom.group_account_general_manager" />
+                                    <button name="gd_manager" string="General Department Manager" type="object" icon="gtk-convert"
+                                    states="confirmed" groups="attendance_ntc.group_attendace_report,base_custom.group_account_general_manager" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Departments" groups="attendance_ntc.group_attendace_report">
+                            <field name="department_ids">
+                                <tree>
+                                    <field name="department_id" />
+                                    <field name="checked" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        <record id="suggested_attendance_tree" model="ir.ui.view">
+            <field name="name">Suggested Attendance</field>
+            <field name="model">suggested.attendance</field>
+            <field name="arch" type="xml">
+                <tree string="Suggested Attendance" delete="false" create="false">
+                    <field name="start_date" />
+                    <field name="end_date" />
+                </tree>
+            </field>
+        </record>
+        <record id="suggested_attendance_report" model="ir.actions.act_window">
+            <field name="name">Suggested Attendance</field>
+            <field name="res_model">suggested.attendance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+        <menuitem name="Suggested Attendance" 
+        action="suggested_attendance_report" 
+        id="suggested_attendance_report_menu" 
+        parent="hr_attendance_original.menu_hr_attendance"/>
+
+        <record id="view_allowance_deduction_form" model="ir.ui.view">
+            <field name="name">hr.allowance.deduction.attendance</field>
+            <field name="model">hr.allowance.deduction</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_allowance_deduction_form"/>
+            <field name="arch" type="xml">
+            <field name="maximum" position="after">
+                <field name="related_attendance"/>
+            </field>
+            </field>
+        </record>
+
+        <record id="res_company_form_cusotm" model="ir.ui.view">
+            <field name="name">res.company</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+            <field name="company_registry" position="after">
+                <field name="last_attendance_date"/>
+            </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

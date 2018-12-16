@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+       <!-- Inherit Purchase Custom Action Add Domain in Tree View -->
+        <record id="purchase_custom.ireq_m_form_action" model="ir.actions.act_window">
+            <field name="name">Request for approval of a purchase</field>
+            <field name="res_model">ireq.m</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('state' , 'not in' , ['cancel','in_progress_fin_request','completed_fin_request','closed_fin_request','done']),('spare_order','!=',True)]</field>
+            <field name="context">{'default_spare_order':False}</field>
+            <field name="view_id" ref="purchase_custom.ireq_m_tree"/>
+            <field name="help" type="html">
+            </field>
+        </record>
+
+        <!-- Emergency Spare Purchase Form-->
+
+        <record id="vehicles_maintenance_purchase_form" model="ir.ui.view">
+            <field name="name">ireq.m.form</field>
+            <field name="model">ireq.m</field>
+            <field eval="50" name="priority" />
+            <field name="arch" type="xml">
+                <form string="Request for approval of a purchase Form" version="7.0">
+                <header>
+                    <button name="to_wait_invoice" states="draft" string="Confirm" confirm="Are you sure you want to confirm this request?" groups="vehicles_maintenance.group_maintenance_purchase_officer"/>
+                    <button name="invoice_complete" states="wait_invoice" string="Invoice Confirm Done" />
+                    <!--
+                    <button name="ireq_cancel" states="confirmed_s,confirmed_d" string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to delete this request?" />
+
+                    <button name="cancel" states="confirmed" string="Cancel Request" icon="gtk-cancel" type="object" confirm="Are you sure you want to delete this request?" />
+
+                    <button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" />
+
+                    <button name="ireq_cancel" states="checked,approve1,approve2,wait_confirmed" string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to delete this request?"/>
+                    -->
+
+                    <button name="spare_cancel"  string="Cancel" icon="gtk-cancel"  confirm="Are you sure you want to Cancel this order?" attrs="{'invisible':['|',('hq','=',True),('state','!=','wait_accountant')]}" groups="vehicles_maintenance.group_maintenance_financial"/>
+
+                    <button name="spare_cancel"  string="Cancel" icon="gtk-cancel"  confirm="Are you sure you want to Cancel this order?" attrs="{'invisible':['|',('hq','=',False),('state','!=','wait_workshop')]}" groups="vehicles_maintenance.maintenance_manager"/>
+
+
+                    <button name="spare_cancel_temp" string="Cancel" icon="gtk-cancel"  confirm="Are you sure you want to Cancel this order?" attrs="{'invisible':['|',('hq','=',False),('state','!=','wait_accountant')]}" groups="vehicles_maintenance.group_maintenance_financial"/>
+
+                    <button colspan="4" name="workshop_approve" string="Approve"
+                    confirm="Are you sure you want to create purchase Order?" states="wait_workshop" groups="vehicles_maintenance.maintenance_manager"/>
+
+                    <button colspan="4" name="to_purchase" string="Purchase and Supply"
+                    confirm="Are you sure you want to create purchase Order?" attrs="{'invisible':['|',('hq','=',True),('state','!=','wait_accountant')]}" groups="vehicles_maintenance.group_maintenance_financial"/>
+
+                    <button colspan="4" name="purchase_done" string="Received and Done" states="purchase_officer" groups="vehicles_maintenance.group_maintenance_purchase_officer"/>
+
+
+                    <!--button colspan="1" name="done" states="approve2,checked" string="Make Purchase Order" confirm="Are you sure you want to create purchase Order?"/--> 
+
+
+                    <field name="state" widget="statusbar" readonly="1" statusbar_visible="draft,wait_accountant"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <label string="Request for Quotation " attrs="{'invisible': [('state','not in',('draft'))]}"/>
+                        </h1>
+                    </div>
+                    <group>
+                     <group>
+                        <field name="executing_agency" invisible="1"/>
+                        <field name="department_id" attrs="{'readonly':[('state','not in',['draft'])],'required':True}"/>  
+                        <field name="location_id" attrs="{'readonly':[('state','not in',['draft'])],'required':True}" domain="[('is_maintenance_location','=',True)]"/> 
+                        <field name="hq" invisible="True"/>
+                         <field name="picking_id" attrs="{'invisible': ['|',('hq','!=',True),('picking_id','=',False)],'readonly':True}"/>
+                        <field name="purchase_id" attrs="{'invisible': ['|',('hq','=',True),('purchase_id','=',False)],'readonly':True}"/>
+                        <!--field name="exchane_order_id" attrs="{'readonly':[('state','not in',['draft'])]}"/--> 
+                        <field name="company_id" colspan="2" groups="base.group_multi_company"/>
+                     </group>
+                     <group>
+                        <field name="name" colspan="2"/>
+                        <field name="spare_order" invisible="True"/>
+                        <field name="ir_date" colspan="2"/>
+                        <field name="ir_ref" colspan="2" />
+                        <field name="user" colspan="2" />
+                     </group>
+                    </group>
+                  <notebook colspan="4">
+                    <page string="Spare Items">
+                        <field name="pro_ids">
+                                <tree editable="bottom" string="Spare Items Lines">
+                                    <field name="product_id" on_change="onchange_product_id(product_id)" domain="[('spare_ok','=',True)]" context="{'default_spare_ok':True,'form_view_ref':'vehicles_maintenance.spare_normal_form_view'}"/>
+                                    <field name="name" invisible="True"/>
+                                    <field name="product_uom" string="Spare uom"/>
+                                    <field name="product_qty"/>
+                                    <field name="state" invisible="True"/>
+                                </tree>
+                        </field>
+                    </page>
+                    <page string="Quotations">
+                       <group colspan="4">
+                            <button name="create_quote" states="wait_invoice" string="Create a Quotation" type="object"/>
+                            <label colspan="3"  string="" /> 
+                       </group>
+                        <field name="q_ids" nolabel="1" colspan="4">
+                            <tree string="Purchase Quotes" create="false">
+                                <field name="name" colspan="2" />
+                                <field name="q_no" readonly="0"/>
+                                <field name="supplier_id"/>
+                                <field name="amount_total"/>
+                                <field name="state"/>
+                            </tree>
+                            <form string="Purchase Quote" version="7.0">
+                                <header>
+                                    <button name="button_dummy" states="draft" colspan="2" string="Compute" type="object" icon="gtk-execute"/>
+                                    <button name="quote_confirm" states="draft" colspan="2" string="Confirm Quote" icon="gtk-execute" groups="vehicles_maintenance.group_maintenance_purchase_officer"/>
+                                    <button name="quote_approved" colspan="2" states="confirmed" string="Approved to Purchase" icon="gtk-go-forward" groups="vehicles_maintenance.group_maintenance_financial"/>
+                                    <button name="spare_set_draft" states="cancel" colspan="2" string="Set to Draft" type="object" icon="gtk-convert" groups="vehicles_maintenance.group_maintenance_set_to_draft"/>
+                                    <button name="quote_cancel" states="draft,confirmed" colspan="2" string="Cancel Quote" icon="gtk-cancel" groups="vehicles_maintenance.group_maintenance_financial"/>
+                                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done" statusbar_colors='{"confirmed":"red","done":"red","draft":"blue"}' readonly="1"/>
+                                </header>
+                    <sheet>
+                       <group>
+                        <group>
+                        <field name="name" colspan="2"/>
+                        <field name="q_no" required="1" attrs="{'readonly':[('state','not in',['draft'])]}"/>
+                        <field name="pq_date" readonly="0"/>
+                        <field name="supplier_id" domain="[('supplier','=',1)]" colspan="2" on_change="on_change_supplier(supplier_id)" required="1"  attrs="{'readonly':[('state','not in',['draft'])]}"/>
+                        </group>
+                       </group> 
+                    <notebook>
+                       <page string="Initial invoice">
+                        <group> 
+                        <field colspan="4" name="pq_pro_ids" nolabel="1">
+                                <tree editable="bottom" string="Spare Purchase Quote Lines" create="false" >
+                                    <field name="name"/>
+                                    <field name="product_id"/>
+                                    <field name="product_qty" on_change="subtotal(price_unit,product_qty)"/>
+                                    <field name="price_unit" on_change="subtotal(price_unit,product_qty)" required="1"/>
+                                    <field name="price_subtotal"/>
+                                    <field name="chosen" colspan="2" />
+                                </tree>
+                        </field>
+                        </group>
+                       <group>
+                       </group> 
+                            <group col="14" colspan="4">
+                                <field name="amount_total" sum="Total amount" colspan="2"/>
+                           </group>
+                          </page>
+                        </notebook>
+                     </sheet>
+                </form>
+                        </field>
+                       
+                    </page>
+                    <page string="Notes">
+                        <field name="notes" colspan="4" nolabel="1"/>
+                    </page>
+                </notebook>
+                </sheet>
+                </form>
+            </field>
+          </record>
+
+
+        <!-- Emergency Spare Purchase Tree-->
+
+        <record id="vehicles_maintenance_purchase_tree" model="ir.ui.view">
+            <field name="name">ireq.m.tree</field>
+            <field name="model">ireq.m</field>
+            <field name="arch" type="xml">
+                <tree colors="grey:state=='cancel';blue:state=='confirmed'" string="Request for approval of a purchase">
+                        <field name="name"/>
+                        <field name="department_id"/>
+                        <field name="ir_ref"/>
+                        <field name="user"/>
+                        <field name="state"/>
+                </tree>
+            </field>
+          </record>
+
+
+        <!-- Emergency Spare Purchase actions-->
+        <record id="vehicles_maintenance_purchase_action" model="ir.actions.act_window">
+            <field name="name">Emergency Spare Purchase</field>
+            <field name="view_id" ref="vehicles_maintenance_purchase_tree"/>
+            <field name="res_model">ireq.m</field>
+            <field name="domain">[('spare_order','=',True)]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_spare_order':True}</field>
+        </record>
+
+        <record id="action_vehicles_maintenance_purchase_form" model="ir.actions.act_window.view">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vehicles_maintenance_purchase_form"/>
+            <field name="act_window_id" ref="vehicles_maintenance_purchase_action"/>
+        </record>
+
+        <record id="action_vehicles_maintenance_purchase_tree" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="vehicles_maintenance_purchase_tree"/>
+            <field name="act_window_id" ref="vehicles_maintenance_purchase_action"/>
+        </record>
+
+        <menuitem id="menu_vehicles_maintenance" name="Vehicles Maintenance"
+            parent="fleet.menu_root" sequence="2" groups="vehicles_maintenance.maintenance_manager,vehicles_maintenance.maintenance_user,vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc,vehicles_maintenance.group_maintenance_set_to_draft,admin_affairs.group_fleet_employee"/>
+
+        <menuitem action="vehicles_maintenance_purchase_action" id="vehicles_maintenance_purchase_menu" name="Emergency Spare Purchase" parent="menu_vehicles_maintenance" sequence="100" groups="vehicles_maintenance.group_maintenance_purchase_officer,vehicles_maintenance.group_maintenance_financial,vehicles_maintenance.maintenance_manager,vehicles_maintenance.group_maintenance_set_to_draft"/>
+    </data>
+</openerp>

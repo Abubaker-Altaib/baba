@@ -1,0 +1,314 @@
+<?xml version="1.0"?>
+<document filename="Purchase Order.pdf">
+   <template pageSize="(600.0,842.0)" title="Purchase Order" author="NCTR" allowSplitting="20">
+   <pageTemplate>
+        <frame id="first" x1="1cm" y1="1cm" width="600" height="900" />
+        <pageGraphics>
+            <setFont name="DejaVu Sans" size="8"/>
+            <fill color="black"/>
+            <stroke color="black"/>
+        </pageGraphics>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+
+    <blockTableStyle id="Table2">
+      <blockTopPadding length="0" />
+      <blockBottomPadding length="10" />
+      <blockAlignment value="RIGHT" />
+      <alignment>RIGHT</alignment>
+    </blockTableStyle>
+
+    <blockTableStyle id="Table1">
+      <lineStyle kind="GRID" colorName="#0E0C0C" />
+      <blockBackground colorName="#e6e6e6" start="0,0"
+          stop="-1,0" />
+      <blockTopPadding length="0" />
+      <blockBottomPadding length="10" />
+      <blockAlignment value="RIGHT" />
+    </blockTableStyle>
+
+    <initialize>
+      <paraStyle name="all" alignment="justify" />
+    </initialize>
+    <paraStyle name="P5" rightIndent="0.0" leftIndent="0.0"  rightpadding="0" fontName="Helvetica-Bold" fontSize="7.0"
+            leading="10" alignment='RIGHT' spaceBefore="0.0" spaceAfter="20"/>
+
+    <paraStyle name="P6" rightIndent="0.0" leftIndent="0.0" rightpadding="0" fontName="Helvetica-Bold" fontSize="7.0"
+            alignment="RIGHT" leading="5" spaceBefore="15" spaceAfter="5"/>
+
+    <paraStyle name="P7" rightIndent="5.0" leftIndent="0.0" rightpadding="0"  fontName="Helvetica-Bold" fontSize="7.0"
+            alignment="RIGHT" spaceBefore="0" spaceAfter="1"/>
+
+    <paraStyle name="P8" rightIndent="0.0" leftIndent="0.0" rightpadding="0" fontName="Helvetica-Bold" fontSize="5.0"
+            alignment="RIGHT" spaceBefore="0" spaceAfter="1"/>
+
+    <paraStyle name="P9" rightIndent="4" leftIndent="0.0" rightpadding="0" fontName="Helvetica-Bold" fontSize="7.0"
+            alignment="RIGHT" leading="5" spaceBefore="15" spaceAfter="0"/>
+
+    <paraStyle name="P10" fontName="Helvetica" fontSize="7.0"
+            leading="5" alignment="CENTER" spaceBefore="0.0" spaceAfter="20" />
+
+    <paraStyle name="header" fontName="Helvetica-Bold" fontSize="7.0"
+    leading="5" alignment="CENTER" spaceBefore="0.0" spaceAfter="20" />
+
+    <paraStyle name="P11" fontName="Helvetica-Bold" fontSize="7.0"
+            leading="3" alignment="RIGHT" spaceBefore="0.0" spaceAfter="20"/>
+
+    <paraStyle name="P12" fontName="Helvetica-Bold" fontSize="7.0"
+    leading="5" alignment="CENTER" spaceBefore="0.0" spaceAfter="20" />
+
+    <paraStyle name="content" rightIndent="5.0" leftIndent="0.0" rightpadding="0"  fontName="Helvetica" fontSize="7.0"
+            alignment="RIGHT" spaceBefore="0" spaceAfter="1"/>
+    <images/>
+  </stylesheet>
+  <story>
+    <para>[[ repeatIn(objects,'order') ]]</para>
+    
+    <para style="P12" >[[ company.name ]]</para>
+   
+    <para style="P12" leftIndent="20" >لجنة المشتريات</para>
+  
+    <para style="P12" leftIndent="15" >إستلام وارد</para>
+    <para style="P6"></para>
+        
+
+    <blockTable colWidths="392.0,50.0,58.0" style="Table2" alignment="RIGHT">
+      <tr>
+        <td>
+        </td>
+        <td>
+          <para style="content" > [[ order.date_order ]]</para>
+        </td>
+        <td>
+          <para style="P7" > التاريخ : </para>
+        </td>
+      </tr>
+    </blockTable>
+
+
+    <blockTable colWidths="125.0,125.0,125.0,125.0" style="Table2" alignment="RIGHT">
+      <tr>
+        <td>
+          <para style="content" > [[ order.name ]]</para>
+        </td>
+        <td>
+          <para style="P7" > رقم المناقصة : </para>
+        </td>
+        <td>
+          <para style="content" rightIndent="3">[[ order.department_id.name ]]</para>
+        </td>
+        <td>
+          <para style="P7" rightIndent="7">الجهة الطالبة :</para>
+        </td>
+      </tr>
+
+    </blockTable>
+
+    <blockTable colWidths="400.0,100.0" style="Table2" alignment="RIGHT">
+      <tr>
+        <td>
+          <para style="content" > [[ order.category_id.name ]]</para>
+        </td>
+        <td>
+          <para style="P7" > الصنف المطلوب : </para>
+        </td>
+      </tr>
+    </blockTable>
+
+    <blockTable colWidths="500" style="Table2" alignment="RIGHT">
+      <tr>
+        <td>
+          <para style="P7" rightIndent="12.2">المواصفات</para>
+        </td>
+      </tr>
+
+    </blockTable>
+
+     
+     <section>
+      
+
+      
+      <blockTable colWidths="60,60,83.3,50,83.3,163.2"  style="Table1" alignment="CENTER">
+        <tr>
+          <td>
+            <para style="header">السعر</para>
+          </td>
+          <td>
+            <para style="header">سعر الوحدة</para>
+          </td>
+          <td>
+            <para style="header">وحدة القياس</para>
+          </td>
+          <td>
+            <para style="header">الكمية</para>
+          </td>
+          <td>
+            <para style="header">المواصفات</para>
+          </td>
+          <td>
+            <para style="header">الصنف</para>
+          </td>
+        </tr>
+
+        <tr>
+          <para>[[ repeatIn(order.order_line,'line') ]]</para>
+          <td>
+            <para style="P10">[[ line.price_subtotal ]]</para>
+          </td>
+          <td>
+            <para style="P10">[[ line.price_unit.name ]] </para>
+          </td>
+          <td>
+            <para style="P10">[[ line.product_uom.name ]] </para>
+          </td>
+          <td>
+            <para style="P10">[[ line.product_qty ]]</para>
+          </td>
+          <td>
+            <para style="P10">[[ line.name ]]</para>
+          </td>
+          <td>
+            <para style="P10">[[ line.product_id.name ]]</para>
+          </td>
+        </tr>
+      </blockTable>
+    </section>
+
+    <blockTable colWidths="60,439.9" style="Table1" alignment="CENTER">
+      <tr>
+        <td>
+          <para style="P10">[[ order.amount_untaxed ]]</para>
+        </td>
+        <td>
+          <para style="P11" rightIndent="-22">الجمالي قبل الضريبة</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P10">[[ order.amount_tax ]]</para>
+        </td>
+        <td>
+          <para style="P11" rightIndent="-10">الضريبة</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P10">[[ order.amount_total ]]</para>
+        </td>
+        <td>
+          <para style="P11" >اﻹجمالي</para>
+        </td>
+      </tr>
+      </blockTable>
+
+    <para style="P6"></para>
+
+    <blockTable colWidths="125.0,125.0,125.0,125.0" style="Table2" alignment="RIGHT">
+      <tr>
+        <td>
+          <para style="content" > [[ order.minimum_planned_date ]]</para>
+        </td>
+        <td>
+          <para style="P7" > تاريخ التوريد : </para>
+        </td>
+        <td>
+          <para style="content" rightIndent="3">[[ order.partner_id.name ]]</para>
+        </td>
+        <td>
+          <para style="P7" rightIndent="9">الشركة الموردة :</para>
+        </td>
+      </tr>
+
+    </blockTable>
+
+
+
+    <para  style="P6" rightIndent="-29">تعليق الجهة الطالبة(مطابقة المواصفات)</para>
+    <blockTable colWidths="500.0" style="Table2">
+      <tr>
+        <td>
+          <para style="content" > [[ order.notes ]]</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P5">_____________________________________________________________________________________________________________________</para>
+        </td>
+      </tr>
+    </blockTable>
+
+    <blockTable colWidths="250.0,250.0" style="Table2">
+      <tr>
+        <td>
+          <para style="P5" >التوقيع : _________________________________</para>
+        </td>
+        <td>
+          <para style="P5" >اﻹسم : _____________________________________</para>
+        </td>
+      </tr>
+    </blockTable>
+    
+
+    <para style="P6" rightIndent="-12">إعتماد لجنة المشتريات</para>
+    <blockTable colWidths="500.0" style="Table2">
+      <tr>
+        <td>
+          <para style="P5">_____________________________________________________________________________________________________________________</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P5">_____________________________________________________________________________________________________________________</para>
+        </td>
+      </tr>
+    </blockTable>
+
+    <blockTable colWidths="250.0,250.0" style="Table2">
+      <tr>
+        <td>
+          <para style="P5" >التوقيع : _________________________________</para>
+        </td>
+        <td>
+          <para style="P5" >اﻹسم : _____________________________________</para>
+        </td>
+      </tr>
+    </blockTable>
+
+    <para style="P6">إستلام المخزن</para>
+    <blockTable colWidths="500.0" style="Table2">
+      <tr>
+        <td>
+          <para style="P5">_____________________________________________________________________________________________________________________</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P5">_____________________________________________________________________________________________________________________</para>
+        </td>
+      </tr>
+    </blockTable>
+
+    <blockTable colWidths="250.0,250.0" style="Table2">
+      <tr>
+        <td>
+          <para style="P5" >التوقيع : _________________________________</para>
+        </td>
+        <td>
+          <para style="P5" >اﻹسم : _____________________________________</para>
+        </td>
+      </tr>
+    </blockTable>
+    <para style="P5">________________________________________________________________________________________________________________________________________________</para>
+    <para style="P6" rightIndent="7"></para>
+
+    <para style="P7" rightIndent="7">صورة إلى : </para>
+    <para style="P8" rightIndent="15">*  الجهة الطالبة</para>
+    <para style="P8" rightIndent="17">*  اﻹدارة المالية</para>
+    <para style="P8" rightIndent="22">*  المخزن</para>
+
+
+
+  </story>
+</document>

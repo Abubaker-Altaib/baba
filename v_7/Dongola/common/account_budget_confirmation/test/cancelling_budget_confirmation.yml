@@ -1,0 +1,121 @@
+- 
+  Creating a account.budget.confirmation record 
+- 
+  !record {model: account.budget.confirmation, id: account_budget_confirmation_1}:
+    amount: 400.0
+    analytic_account_id: account.analytic_administratif
+    budget_residual: 0.0
+    date: '2013-01-08'
+    general_account_id: account.xfa
+    name: 2013/001
+    note: 'Purchase Approval: 2013/PR-0002 \nDepartment: Research & Development \nPurposes:
+      direct.\nDate: 2013-01-08  \nProducts: Kit Keyboard + Mouse\n '
+    partner_id: base.res_partner_desertic_hispafuentes
+    period_id: account.period_1
+    ref: 2013/PR-0002
+    state: draft
+    type: purchase
+-
+  I check that the budget state is now "draft"
+-
+  !assert {model: account.budget.confirmation, id: account_budget_confirmation_1}:
+    - state == 'draft'
+-
+  I complete the budget confirmation 
+-
+  !workflow {model: account.budget.confirmation, action: complete, ref: account_budget_confirmation_1}
+
+-
+  I check that the budget state is now "complete"
+-
+  !assert {model: account.budget.confirmation, id: account_budget_confirmation_1}:
+    - state == 'complete'
+-
+  Now I am able to cancel account.budget.confirmation.
+-
+  !workflow {model: account.budget.confirmation, action: cancel, ref: account_budget_confirmation_1}
+
+-
+  I check that the budget state is now "cancel"
+-
+  !assert {model: account.budget.confirmation, id: account_budget_confirmation_1}:
+    - state == 'cancel'
+-
+  I set the budget confirmation to draft
+-
+  !python {model: account.budget.confirmation}: |
+    self.action_cancel_draft(cr, uid, [ref("account_budget_confirmation_1")])
+-
+  I check that the budget state is now "draft"
+-
+  !assert {model: account.budget.confirmation, id: account_budget_confirmation_1}:
+    - state == 'draft'
+-
+  I complete the budget confirmation 
+-
+  !workflow {model: account.budget.confirmation, action: complete, ref: account_budget_confirmation_1}
+-
+  I check the budget confirmation 
+-
+  !workflow {model: account.budget.confirmation, action: check, ref: account_budget_confirmation_1}
+-
+  I check that the budget state is now "valid"
+-
+  !assert {model: account.budget.confirmation, id: account_budget_confirmation_1}:
+    - state == 'valid','the satae is unvalid'
+-
+  Now I am able to cancel account.budget.confirmation.
+-
+  !workflow {model: account.budget.confirmation, action: cancel, ref: account_budget_confirmation_1}
+-
+  I check that the budget state is now "cancel"
+-
+  !assert {model: account.budget.confirmation, id: account_budget_confirmation_1}:
+    - state == 'cancel'
+-
+  I set the budget confirmation to draft
+-
+  !python {model: account.budget.confirmation}: |
+    self.action_cancel_draft(cr, uid, [ref("account_budget_confirmation_1")])
+-
+  I check that the budget state is now "draft"
+-
+  !assert {model: account.budget.confirmation, id: account_budget_confirmation_1}:
+    - state == 'draft'
+-
+  Now I modify the value of the amount .
+-
+  !python {model: account.budget.confirmation}: |
+    self.write(cr, uid, [ref("account_budget_confirmation_1")],{'amount': 4000000000.0})
+-
+  I complete the budget confirmation 
+-
+  !workflow {model: account.budget.confirmation, action: complete, ref: account_budget_confirmation_1}
+-
+  I check the budget confirmation 
+-
+  !workflow {model: account.budget.confirmation, action: check, ref: account_budget_confirmation_1}
+-
+  I check that the budget state is now "unvalid"
+-
+  !assert {model: account.budget.confirmation, id: account_budget_confirmation_1}:
+    - state == 'unvalid','the satae is valid'
+-
+  Now I am able to cancel account.budget.confirmation.
+-
+  !workflow {model: account.budget.confirmation, action: cancel, ref: account_budget_confirmation_1}
+-
+  I check that the budget state is now "cancel"
+-
+  !assert {model: account.budget.confirmation, id: account_budget_confirmation_1}:
+    - state == 'cancel'
+-
+  I set the budget confirmation to draft
+-
+  !python {model: account.budget.confirmation}: |
+    self.action_cancel_draft(cr, uid, [ref("account_budget_confirmation_1")])
+-
+  I check that the budget state is now "draft"
+-
+  !assert {model: account.budget.confirmation, id: account_budget_confirmation_1}:
+    - state == 'draft' 

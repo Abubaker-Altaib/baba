@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+		<!-- car maintenance request Record Form,Tree View & Action -->
+
+		<record id="view_car_maintenance_request_view_form" model="ir.ui.view">
+			<field name="name">car.maintenance.request.form</field>
+			<field name="model">car.maintenance.request</field>
+			<field name="arch" type="xml">
+			<form string="car maintenance request"  version="7.0">
+		        <header>
+				<button name="confirmed_d" states="draft" string="confirmation" />
+				<button name="confirmed_gd" states="confirmed_d" string="Department confirmation" 
+					confirm="Are you sure you want to confirm this request" icon="gtk-applyl"
+					groups="base.group_general_department_manager,base.group_department_managers"/>
+				 <button name="approved_of" states="confirmed_gd" string=" Department manger confirmation"
+						confirm="Are you sure you want to approve this request" icon="gtk-apply"
+						 groups="base.group_general_department_manager" />
+
+				<button name="officer_of" states="approved_of" string="Service manger confirmation"
+						confirm="Are you sure you want to approve this request" icon="gtk-apply"
+						 groups="base.group_general_department_manager" />
+				<button name="approved" states="officer_of" string="affairs service officer"
+						confirm="Are you sure you want to approve this request" icon="gtk-apply"
+						 groups="base.group_admin_affairs_general_manager" />
+				<button name="execute" states="approved" string=" Admin  Affairs Manager approval"
+						confirm="Are you sure you want to approve this request" icon="gtk-apply"
+						 groups="base.group_admin_affairs_manager"/>							
+				<button name="execute" states="confirmed_gm" string="GM Approve"
+						confirm="Are you sure you want to approve this request?" icon="gtk-apply" 		
+						groups="base.group_service_section_manager"/>
+				<button name="check" states="execute" string="Maintenance engineer"
+						confirm="Are you sure you want to approve this request?" 
+						groups="base.group_car_maintenace_id"/>									
+				<button name="done" states="check" string="officer Approved"
+						confirm="Are you sure you want to approve this request?" />
+									
+				<button name="cancel" states="draft,confirmed_d,confirmed_gd,officer_of,approved_of,approved,confirmed_gm,execute,check"
+						 string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to Cancel this request?"
+						 groups="base.group_car_maintenace_id"/>	
+									
+				<button name="ir_action_cancel_draft" states="cancel"
+						string="Set to Draft" type="object" icon="gtk-convert" />
+				<button name="modify_maintenance_request" states="done" string="Modify" type="object" icon="gtk-convert"/>
+						<field name="state" readonly="1"  widget="statusbar" statusbar_visible="draft,cancel,done"/>
+		        </header>
+                        <sheet>
+			<group col="4" colspan="4">
+				<field name="name"  />				
+				<field name="date" />
+				<field name="department_id" required = "1"/>
+				<field name="maintenance_type"/>
+				<field name="partner_id" 
+					attrs="{'invisible':[('state','!=','execute')], 'required':[('state','==','execute')]}" />
+				<field name="total_amount"/>
+                   		<field name="payment_selection" colspan="2" 
+                                       attrs="{'invisible':[('state','not in',('check','done'))],'required':[('state','=','check')]}"/>
+                   		<field name="enrich_category" colspan="2" 
+                                            attrs="{'invisible':['!',('state','not in',('check','done')),
+                                            ('payment_selection','!=','enrich')],'required':[('state','=','check'),
+                                            ('payment_selection','==','enrich')]}" domain="[('state','=','confirmed'),
+                                            ('company_id','=',company_id)]"/>
+				<field name="company_id" colspan="2" />
+                        	<field name="allowance_computed" colspan="2" readonly = "1"/>
+						
+						
+				<group col="4" colspan="4">
+			        <separator colspan="4" string="Car Information"/>
+						
+						<field name="car_id" domain="[('ownership', '=','owned')]" />
+						<!--field name="category_id" attrs="{'invisible':[('state','!=','execute')], 'required':[('state','==','execute')]}"  /-->						
+						<field name="car_number"/>				
+						<field name="driver"/>
+
+						<field name="maintenance_date"/>					
+						<field name="base_mileage"/>
+						<field name="next_mileage"/>
+						<field name="next_maintenance_date"/>	
+						<field name="start_maintenance_date" attrs="{'invisible':[('state','not in',('execute','check','done'))], 'required':[('state','==','execute')]}"/>	
+						<field name="end_maintenance_date" attrs="{'invisible':[('state','not in',('execute','check','done'))], 'required':[('state','==','execute')]}"/>		
+						<field name="voucher_no" attrs="{'invisible':[('state','!=','done')]}" />							
+				</group>			
+			</group>
+								
+			<notebook colspan="4">
+				<page string="Car Faults">
+					<field colspan="4" name="faults" nolabel="1" required="1" >
+						<tree editable="bottom" string="Car Faults">
+							<field name="product_id" on_change="product_id_change(product_id)" 
+								domain="[('spare_type', '=',parent.maintenance_type)]"/>
+							<field name="name" invisible="True"/>
+							<field name="product_qty" />
+							<field name="product_uom" />
+						        <field name="price_unit" attrs="{'required':[('state','in',['check','done'])]}"/>
+				     	            	<field name="price_subtotal"/>
+							<field name="state" invisible="1"/>	
+						</tree>
+					</field>
+				</page>
+
+				<page string="Notes">
+					<field name="notes" colspan="4" nolabel="1" />
+				</page>
+			</notebook>					
+                                    </sheet>
+				</form>
+			</field>
+		</record>
+
+		<!-- car faults Form and Tree -->
+		<record id="id_car_faults_form" model="ir.ui.view">
+			<field name="name">car.faults.form</field>
+			<field name="model">car.faults</field>
+			<field name="arch" type="xml">
+				<form string="Car Faults"  version="7.0">
+                                    <sheet>
+					<group col="4" colspan="4">		
+					<field name="product_id" colspan="4"
+					on_change="product_id_change(product_id)" domain="[('spare_type', '=',parent.maintenance_type)]" />
+					<field name="name" colspan="4" invisible="True" />
+					<field name="product_qty" colspan="2" />
+					<field name="product_uom" colspan="2" />
+					<field name="price_unit" attrs="{'required':[('state','in',['check','done'])]}"/>
+					<field name="added_by_supplier" 
+						attrs="{'invisible':[('state','not in',['check','done'])]}"/>											    
+					<field name="price_subtotal"/>	
+					<field name="state" invisible="1"/>
+					</group>
+                                    </sheet>
+				</form>
+			</field>
+		</record>
+		<record id="car_faults_tree" model="ir.ui.view">
+			<field name="name">car.faults.tree</field>
+			<field name="model">car.faults</field>
+			<field name="arch" type="xml">
+				<tree string="Faults">
+					<field name="product_id" on_change="product_id_change(product_id)" domain="[('spare_type', '=',parent.maintenance_type)]"/>
+					<field name="name" invisible="True" />
+					<field name="product_uom" />
+					<field name="product_qty" />
+				   <field name="price_unit" attrs="{'required':[('state','in',['check','done'])]}"/>
+    				<field name="price_subtotal"/>
+    				<field name="state" invisible="1"/>
+		    													    
+    						
+    							
+				</tree>
+			</field>
+		</record>
+		
+
+
+
+		<record id="view_car_maintenance_request_tree" model="ir.ui.view">
+			<field name="name">car.maintenance.request.tree</field>
+			<field name="model">car.maintenance.request</field>
+			<field name="arch" type="xml">
+				<tree string="car maintenance request">
+						<field name="name" colspan="2" />				
+						<field name="date" colspan="2" />
+						<field name="department_id" colspan="2"  />						
+						<field name="partner_id" colspan="2" />
+						<field name="car_id" colspan="2" />						
+						<field name="driver" colspan="2"  />
+						<field name="maintenance_type"/>
+						<field name="state"/>
+																					
+				</tree>
+			</field>
+		</record>
+
+		<!-- car maintenance request Search Filter -->
+
+		<record id="view_car_maintenance_request_filter" model="ir.ui.view">
+			<field name="name">car.maintenance.request.list.select</field>
+			<field name="model">car.maintenance.request</field>
+			<field name="arch" type="xml">
+				<search string="Search for Press Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="date" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="car_id" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="department_id" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="partner_id" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="maintenance_type" colspan="1"/>	
+					<separator orientation="vertical" />
+					<field name="state" colspan="1"/>																
+					<newline />
+
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Department" icon="terp-personal"
+							domain="[]" context="{'group_by':'department_id'}" />
+						<filter string="Partner" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'partner_id'}" />
+						<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					    <separator orientation="vertical"/>
+					    <filter string="Car" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'car_id'}" />
+					    <separator orientation="vertical"/>
+					    <filter string="Maintenance Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'maintenance_type'}" />
+					    <separator orientation="vertical"/>
+					    <filter string="state" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />														
+					</group>
+
+				</search>
+			</field>
+		</record>
+
+
+	<!-- car maintenance Cofigruation Form & Tree & search >
+
+		<record id="id_car_maintenance_roof_form" model="ir.ui.view">
+			<field name="name">car.maintenance.roof.form</field>
+			<field name="model">car.maintenance.roof</field>
+			<field name="arch" type="xml">
+				<form string="Car Maintenace Roof" version="7.0">
+                                    <sheet>
+                                       <group col="4" colspan="2">
+					<field name="name" colspan="4"/>
+					<field name="cost_from" colspan="2"/>
+					<field name="cost_to" colspan="2"/>
+                                       </group>
+                                    </sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="car_maintenance_roof_tree" model="ir.ui.view">
+			<field name="name">car.maintenance.roof.tree</field>
+			<field name="model">car.maintenance.roof</field>
+			<field name="arch" type="xml">
+				<tree string="Car Maintenace Roof">
+					<field name="name"/>
+					<field name="cost_from"/>
+					<field name="cost_to"/>
+				</tree>
+			</field>
+		</record>
+		<record id="car_maintenance_roof_filter" model="ir.ui.view">
+			<field name="name">car.maintenance.roof.list.select</field>
+			<field name="model">car.maintenance.roof</field>
+			<field name="arch" type="xml">
+				<search string="Search for Car Maintenance Roof Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="cost_from"/>
+					<separator orientation="vertical" />
+					<field name="cost_to"/>
+				</search>
+			</field>
+		</record>
+
+
+		<record id="car_maintenance_roof_action" model="ir.actions.act_window">
+			<field name="res_model">car.maintenance.roof</field>
+			<field name="domain">[]</field>
+		</record-->
+		
+		
+
+		<!-- Menu -->
+
+		<record id="car_maintenance_request_action" model="ir.actions.act_window">
+			<field name="res_model">car.maintenance.request</field>		
+			<field name="domain">[]</field>
+		</record>
+
+       <menuitem id="car_maintenance_menu" name="Cars Maintenance"
+			parent="admin_affairs.menu_admin_affairs_operations" sequence="1"/>
+
+       <menuitem id="car_maintenance_request_menu" name="Car Maintenance Request"
+			parent="car_maintenance_menu" action="car_maintenance_request_action" />
+
+       <!--menuitem id="car_maintenance_roof_menu" name="Car Maintenance Roof"
+			parent="car_maintenance_menu" action="car_maintenance_roof_action" /-->
+
+
+       <menuitem id="fleet_reports_menu" name="Car Maintenance Reports"
+			parent="admin_affairs.main_menu_report" />
+
+
+
+	</data>
+</openerp>

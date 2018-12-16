@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+       <record id="view_create_partial_picking" model="ir.ui.view">
+            <field name="name">create partial picking</field>
+            <field name="model">create.partial.picking</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                   <form string="Partial Picking Creation" version="7.0">
+              	         <field name="current_date" />
+              	         <field name="order_id"/>
+                         <separator string=" Please chose the amount of items you wont to create Picking for" colspan="4"/>
+                         <newline />
+			      <field colspan="12" name="products_ids" nolabel="1" mode="tree">
+				     <tree editable="bottom" string="Items Lines">
+				          <field name="product_id" readonly="1"/>
+				          <field name="product_qty"  readonly="1"/>
+				          <field name="price_unit"  readonly="1"/>
+				          <field name="price_unit_total"  readonly="1"/>
+				          <field name="picking_qty" readonly="1"/>
+                                          <field name="remain_qty" readonly="1" />
+				          <field name="desired_qty" />								
+				     </tree>
+			      </field>
+                              <footer>
+				  <button string="Create Picking" name="create_partial_picking"  type="object" default_focus="1" class="oe_highlight" />
+                                        or	
+                                  <button string="Cancel" special="cancel" icon="gtk-cancel" class="oe_link" />
+                             </footer>
+                   </form>
+            </field>
+       </record>
+
+
+
+               <record id="action_create_partial_picking" model="ir.actions.act_window">
+                       <field name="name">action create partial picking</field>
+                       <field name="res_model">create.partial.picking</field>
+                       <field name="view_type">form</field>
+                       <field name="view_mode">form</field>
+                       <field name="view_id" ref="view_create_partial_picking"/>
+                       <field name="target">new</field>
+                </record>
+       
+		<record id="partial_create_partial_move_form" model="ir.ui.view">
+			<field name="name">Create Partial Move Form</field>
+			<field name="model">create.partial.move</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Partial Purchase Order Products" version="7.0">
+				      <field name="product_id" readonly="1"/>
+				      <field name="product_qty" readonly="1" />
+                                      <field name="price_unit"  readonly="1"/>
+				      <field name="price_unit_total"  readonly="1"/>
+				      <field name="remain_qty" readonly="1" />
+				      <field name="picking_qty" readonly="1"/>
+				      <field name="desired_qty" />								
+				</form>
+			</field>
+		</record>
+
+    </data>
+</openerp>

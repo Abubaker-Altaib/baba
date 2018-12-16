@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<document filename="exit_permit.pdf">
+  <template pageSize="(595.0,842.0)" title="Exit Permit" author="NCTR" allowSplitting="20">
+    <pageTemplate id="first">
+      <frame id="first" x1="0.0" y1="57.0" width="538" height="728"/>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+    <blockTableStyle id="Standard_Outline">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table1">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+      <lineStyle kind="GRID" colorName="#000000"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table2">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+      <lineStyle kind="GRID" colorName="#c0c0c0"/>
+    </blockTableStyle>
+   
+    <initialize>
+      <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="P1" fontName="Helvetica" alignment="CENTER"/>
+    <paraStyle name="P2" fontName="Helvetica" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P3" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P4" fontName="Helvetica" fontSize="8.0" leading="10" alignment="RIGHT" spaceBefore="6.0" spaceAfter="0.0"/>
+    <paraStyle name="P5" fontName="Helvetica" fontSize="8.0" leading="10" alignment="RIGHT"/>
+    <paraStyle name="P55" fontName="Helvetica" fontSize="8.0" leading="10" alignment="RIGHT"/>
+    <paraStyle name="P6" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT"/>
+    <paraStyle name="P7" fontName="Helvetica" fontSize="9.0" leading="11" alignment="RIGHT"/>
+    <paraStyle name="P8" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P9" fontName="Helvetica" fontSize="8.0" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P10" fontName="Helvetica" fontSize="8.0" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P11" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P15" fontName="Helvetica" fontSize="8.0" leading="10" alignment="RIGHT"/>
+    <paraStyle name="Standard" fontName="Helvetica"/>
+    <paraStyle name="terp_default_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_Bold_9" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_2" fontName="Helvetica" fontSize="2.0" leading="3" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <images/>
+  </stylesheet>
+  <story>
+    <para style="terp_default_8">[[repeatIn(objects,'picking')]] </para>
+    <para style="P9"/>
+    <para style="P9">المخازن</para>
+    <para style="P9">
+      <font color="white"> </font>
+    </para>
+    <blockTable colWidths="80.0" style="Table2">
+      <tr>
+        <td><para style="P10">إذن خروج</para></td>
+      </tr>
+    </blockTable>
+    <para style="P9"><font color="white"> </font></para>
+    <para style="P11"><font color="white"> </font></para>
+    <blockTable colWidths="269.0,269.0" style="Table2">
+      <tr>
+        <td><para style="P5">GP </para></td>
+        <td><para style="P5">رقم </para></td>
+      </tr>
+    </blockTable>
+    <blockTable colWidths="269.0,269.0" style="Table2">
+      <tr>
+        <td><para style="P5">[[time.strftime('%Y/%m/%d')]]   التاريخ</para></td>
+        <td><para style="P5">القسم</para></td>
+      </tr>
+    </blockTable>
+    <blockTable colWidths="269.0,269.0" style="Table2">
+      <tr>
+        <td><para style="P5">التابعة لقسم</para> </td>
+        <td> <para style="P5">بموجب هذا يسمح للعربة رقم</para></td>
+      </tr>
+    </blockTable>
+    <para style="P4"><font color="white"> </font></para>
+    <blockTable colWidths="55.0,384.0,55.0,44.0" repeatRows="1" style="Table2">
+      <tr>
+        <td><para style="P8">الكمية</para></td>
+        <td><para style="P8">الصنف</para></td>
+        <td><para style="P8">الفوكاب</para></td>
+        <td><para style="P8">الرقم</para></td>
+      </tr>
+    </blockTable>
+    <section>
+      <para style="terp_default_2">[[ repeatIn([line for line in picking.move_lines if (line.state == 'confirmed' or line.state=='done' or line.state=='assigned')],'move_lines') ]]</para>
+      <para style="terp_default_2">[[ (picking.move_lines!=[] and removeParentNode('para')) or removeParentNode('section')]]</para>
+      <blockTable colWidths="55.0,384.0,55.0,44.0" style="Table2">
+        <tr>
+          <td><para style="P5"> [[ move_lines.product_qty or '']] </para></td>
+          <td><para style="P5">[[ move_lines.product_id.name ]] </para> </td>
+          <td><para style="P5">[[ move_lines.product_id.default_code ]]</para></td>
+          <td>
+            <para style="P15" leftIndent="15" bulletIndent="0">
+              <bullet><seq id="L1"/></bullet>
+            </para>
+          </td>
+        </tr>
+      </blockTable>
+    </section>
+    <para style="terp_default_Bold_9">[[ ([line for line in picking.move_lines if (line.state == 'draft' or line.state=='waiting' )]) and 'Non Assigned Products' or removeParentNode('para') ]]</para>
+    <para style="terp_default_2"/>
+    <section>
+      <para style="terp_default_2"><font color="white"> </font></para>
+      <para style="terp_default_2"><font color="white"> </font></para>
+    </section>
+    <para style="terp_default_2"><font color="white"> </font></para>
+    <para style="terp_default_2"><font color="white"> </font></para>
+    <para style="terp_default_2"><font color="white"> </font></para>
+    <para style="terp_default_2"><font color="white"> </font></para>
+    <para style="terp_default_2"><font color="white"> </font></para>
+    <para style="terp_default_2"><font color="white"> </font></para>
+    <para style="terp_default_2"><font color="white"> </font></para>
+    <para style="terp_default_2"><font color="white"> </font></para>
+    <para style="terp_default_2"><font color="white"> </font></para>
+ 
+    <blockTable colWidths="269.0,269.0" style="Table2">
+      <tr>
+        <td><para style="P5">[[ picking.exchange_id.date_order]]التاريخ</para></td>
+        <td><para style="P5">[[ picking.exchange_id.name]]وذلك بموجب اذن الصرف رقم</para></td>
+      </tr>
+    </blockTable>
+    <blockTable colWidths="269.0,269.0" style="Table2">
+      <tr>
+        <td><para style="P5"><font color="white"> </font></para></td>
+        <td><para style="P5">توقيع المستلم </para></td>
+      </tr>
+    </blockTable>
+    <blockTable colWidths="269.0,269.0" style="Table2">
+      <tr>
+        <td><para style="P5">ع.\مدير المخازن</para></td>
+        <td><para style="P7">اسم المستلم</para></td>
+      </tr>
+    </blockTable>
+    <blockTable colWidths="180.0,180.0,179.0" style="Table2">
+      <tr>
+        <td><para style="P5">STO -01F04</para></td>
+        <td><para style="P5">[[time.strftime('%Y/%m/%d')]]تاريخ الاصدار</para></td>
+        <td><para style="P5">1Yearمدة الاحتفاظ</para></td>
+      </tr>
+    </blockTable>
+    <para style="P1">
+      <font face="Helvetica" size="9.0"/>
+    </para>
+<para>
+      <seqReset id="L1"/>
+    </para>
+  </story>
+</document>

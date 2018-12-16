@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+        <!-- media service category Form,Tree View & Action -->
+	<record id="view_media_service_category_form" model="ir.ui.view">
+		<field name="name">media.service.category.form</field>
+		<field name="model">media.service.category</field>
+		<field name="arch" type="xml">
+			<form string="Media service category"  version="7.0">
+                        	<sheet>
+                                	<group  col="4" colspan="2">                        
+						<field name="name" select="1"/>
+						<field name="company_id" select="1"/>
+						<field name="department_id" select="1"/>
+                       			</group>                        
+					<notebook colspan="4">
+						<page string="Account Configuration">
+                                			<group  col="4" colspan="2">                        
+								<field name="templet_id" select="1"/>
+								<field name="name_type" select="1"/>
+                       					</group>                        
+					 	</page>
+					</notebook>
+                        	</sheet>
+			</form>
+		</field>
+	</record>
+
+	<record id="view_media_service_category_tree" model="ir.ui.view">
+		<field name="name">media.service.category</field>
+		<field name="model">media.service.category</field>
+		<field name="arch" type="xml">
+			<tree string="Media dervice category">
+				<field name="name"/>
+				<field name="company_id" select="1"/>
+			</tree>
+		</field>
+	</record>
+		
+	<record id="media_service_category_form_action" model="ir.actions.act_window">
+            <field name="name">Media service category</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">media.service.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help">Create media service category you want to be used in your system.</field>
+        </record>
+        		   
+       <!-- media service type Form,Tree View & Action -->
+	<record id="view_media_service_type_form" model="ir.ui.view">
+		<field name="name">media.service.type.form</field>
+		<field name="model">media.service.type</field>
+		<field name="arch" type="xml" >
+			<form string="Media service type" version="7.0">
+                        	<sheet>
+                                	<group  col="4" colspan="2">                        
+						<field name="name" select="1"/>
+						<field name="company_id" select="1"/>
+						<field name="category_id" domain="[('company_id','=',company_id)]"/>
+						<field name="active"/>
+                                	</group >                        
+                               </sheet>
+			</form>
+		</field>
+	</record>
+
+	<record id="view_media_service_type_tree" model="ir.ui.view">
+		<field name="name">media.service.type</field>
+		<field name="model">media.service.type</field>
+		<field name="arch" type="xml">
+			<tree string="Media service type">
+				<field name="name"/>
+  				<field name="category_id" select="1"/>
+				<field name="company_id" select="1"/>
+			</tree>
+		</field>
+	</record>
+		
+        <record id="media_service_type_form_action" model="ir.actions.act_window">
+            <field name="name">Media service type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">media.service.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help">Create media service type you want to be used in your system.</field>
+        </record>
+       	   
+	<!-- media service order Form,Tree View & Action -->
+	<record id="view_media_order_form" model="ir.ui.view">
+		<field name="name">media.order.form</field>
+		<field name="model">media.order</field>
+		<field name="arch" type="xml">
+			<form string="Media service order" version="7.0">
+				<header>
+			        	<button name="confirmed" states="draft" string="section manager Confirm"
+						 class="oe_highlight"  confirm="Are you sure you want to confirm this Record?" groups="base.group_Section_manager"/>
+					<button name="confirmed1" states="confirmed" string="Department manager confirm"
+						class="oe_highlight"   confirm="Are you sure you want to confirm this Record?"       groups="base.group_department_managers"/>
+					<button name="confirmed2" states="confirmed1" string="General department manager confirm"
+						class="oe_highlight"  confirm="Are you sure you want to confirm this Record?" groups="base.group_general_department_manager"/>						 
+					<button name="approve" states="confirmed2" string="GM Approval"
+						 class="oe_highlight" confirm="Are you sure you want to confirm this Record?" groups="base.group_admin_affairs_general_manager"/>
+					<button name="approve1" states="approve" string="PRM Section Manager"
+				class="oe_highlight" confirm="Are you sure you want to confirm this Record?" groups="base.group_admin_affairs_manager"/>
+					<button name="done" states="approve1" string="PRM Office / Financial and administrative "
+						 class="oe_highlight"  confirm="Are you sure you want to execute this Record?"/>
+					<button name="media_cancel" states="draft,confirmed,confirmed1,confirmed2,approve,approve1"
+						class="oe_highlight"  string="Cancel"  confirm="Are you sure you want to cancel this order?"/>
+					<button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" groups="base.group_media_section_officer"/>
+					<field name="state" widget="statusbar" statusbar_visible="draft,done,cancel"/>					     
+			 	</header>
+ 				<sheet>
+                        		<group col="4" colspan="4">
+						<field name="name" />
+						<field name="date" />
+						<field name="company_id"/>
+						<field name="category_id" domain="[('company_id','in',(company_id,16))]"/>
+						<field name="department_id"/>
+						<field name="create_date"/>
+						<field name="execution_type" attrs="{'required':[('state','=','approve1')],
+						  'invisible':[('state','not in',('approve1','done'))],
+						  'readonly':[('state','=','done')]}" />
+						<field name="partner_id" attrs="{'required':[('execution_type','!=','internal')],'invisible':[('execution_type','!=','external')]}"/>
+						<field name="total_cost" attrs="{'required':[('execution_type','!=','internal')],'invisible':[('execution_type','!=','external')]}"/>
+						<field name="voucher_no" attrs="{'invisible':[('execution_type','!=','external')]}"/>
+			    	 	</group>
+					<notebook colspan="4">
+						<page string="Service types">
+							<field colspan="4" name="order_lines" nolabel="1">
+								<tree editable="bottom" string="Media service types">
+						                	<field name="type_id" domain="[('category_id', '=',parent.category_id)]"/>
+									<field name="name" />
+								</tree>
+							</field>
+						</page>
+					        <page string="Other information">	
+	                    				<group col="4" colspan="4">
+  								<field name="user_id" colspan="2"/>
+  					  		</group>
+	                    				<group string="Notes" col="4" colspan="4" >
+								<field name="notes" colspan="4" nolabel="1"/>
+  					  		</group>
+						</page>
+					</notebook>
+ 				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<record id="view_media_order_tree" model="ir.ui.view">
+		<field name="name">media.order.tree</field>
+		<field name="model">media.order</field>
+		<field name="arch" type="xml">
+			<tree string="Media dervice order">
+				<field name="name"/>
+				<field name="date"/>
+				<field name="department_id"/>
+				<field name="category_id"/>
+				<field name="execution_type"/>
+				<field name="create_date" />
+				<field name="company_id" groups="base.group_multi_company"/>
+				<field name="state"/>
+			</tree>
+		</field>
+	</record>
+	
+	<!-- Media service lines Form and Tree>
+	<record id="view_media_order_line_form" model="ir.ui.view">
+		<field name="name">media.order.line.form</field>
+		<field name="model">media.order.line</field>
+		<field name="arch" type="xml">
+			<form string="Service types" version="7.0">
+                        	<sheet>				    
+					<group col="4" colspan="2">
+						<field name="type_id" domain="[('category_id', '=',parent.category_id)]" colspan="2"/>
+						<field name="name" />
+					</group>
+                        	</sheet>				    
+			</form>
+		</field>
+	</record>
+
+	<record id="view_media_order_line_tree" model="ir.ui.view">
+		<field name="name">media.order.line.tree</field>
+		<field name="model">media.order.line</field>
+		<field name="arch" type="xml">
+			<tree string="Service types">
+				<field name="type_id" domain="[('category_id', '=',parent.category_id)]"/>
+				<field name="name" />
+			</tree>
+		</field>
+	</record -->
+
+	<!-- Media service order Search Filter -->		
+	<record id="view_media_order_filter" model="ir.ui.view">
+		<field name="name">media.order.list.select</field>
+		<field name="model">media.order</field>
+		<field name="arch" type="xml">
+			<search string="Search for media order Record">
+				<field name="name" select="1" />
+				<separator orientation="vertical" />
+				<field name="category_id" widget="selection"/>
+				<field name="type_id"/>
+				<separator orientation="vertical" />
+				<field name="date" select="1" />
+				<newline />
+				<group expand="0" string="Extended Filters..." colspan="4" col="20" >
+                    			<field name="department_id" widget="selection" />
+					<field name="state" />
+			        	<field name="execution_type" />
+			        	<field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                    		</group>
+                   		<newline/>
+				<group expand="0" string="Group By..." colspan="4" col="10">
+					<filter string="Department" icon="terp-personal"
+							domain="[]" context="{'group_by':'department_id'}" />
+					<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+					<filter string="Service date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					<separator orientation="vertical"/>
+					<filter string="Service category" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'category_id'}" />
+					<filter string="Execution type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'execution_type'}" />
+					<filter string="Company" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+				</group>
+			</search>
+		</field>
+	</record>
+
+	<!-- Menus -->
+        <record id="media_order_form_action" model="ir.actions.act_window">
+                <field name="name">Media Order</field>
+		<field name="res_model">media.order</field>
+                <field name="type">ir.actions.act_window</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">tree,form</field>
+		<field name="domain">[]</field>
+	</record>
+
+	<menuitem id="menu_media_order" name="Media service order" parent="menu_media" action="media_order_form_action" />
+        <menuitem action="media_service_category_form_action" id="menu_media_service_category_form_action" parent="menu_media_configuration" />
+        <menuitem action="media_service_type_form_action" id="menu_media_service_type_form_action" parent="menu_media_configuration" />	
+        <!--menuitem id="menu_media_order" name="Media service order" parent="media.id_media_menu" action="media_order_form_action" />
+        <menuitem action="media_service_category_form_action" id="menu_media_service_category_form_action" parent="menu_media_configuration" />
+        <menuitem action="media_service_type_form_action" id="menu_media_service_type_form_action" parent="menu_media_configuration" sequence="1"/-->
+    </data>
+</openerp>

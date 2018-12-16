@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Out site Contract Wizard View-->
+
+    	<record id="view_outsie_contract_wiz" model="ir.ui.view">
+            <field name="name">outsite contract wiz</field>
+            <field name="model">out.attent.over.wiz</field>
+            <field name="arch" type="xml">
+               <form string="Outsite Contract Status Report" version="7.0">
+        	    <separator string="Outsite Contract Status Report" />
+       	            <group>
+			    <field name="month" />
+			    <field name="year" />
+		       	    <field name="partner_id" />
+			    <field name="select_type" />                              
+			    <field name="all_company"  attrs="{'invisible':[('select_type','!=','all_ratfi')]}"/>
+			    <field name="ref" attrs="{'invisible':[('select_type','==','all_ratfi')],'required':[('select_type','!=','all_ratfi')]}"/>
+		       	    <field name="amount_print"  attrs="{'invisible':[('select_type','==','all_ratfi')]}"/>
+        	   </group>
+       		  <footer>
+           	    	<button name="print_report" string="Print" type="object" class="oe_highlight"/>
+                                        or
+			<button special="cancel" string="_Cancel"  class="oe_link" />
+       		 </footer>
+    		</form>
+            </field>
+		</record>
+<!-- OutSite Contract  Wizard Action-->
+        <record id="action_wizard_outsite_contract" model="ir.actions.act_window">
+            <field name="name">Out Site Contract Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">out.attent.over.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_outsie_contract_wiz"/>
+            <field name="target">new</field>
+        </record>
+
+
+<!-- Rented Cars Wizard Menu-->
+      
+ 
+        <!--menuitem
+                icon="STOCK_PRINT"
+                name="تقرير المواظبة للعاملين من خارج الشركة"
+                parent="menu_service_report"
+                action="action_wizard_outsite_contract"
+                id="menu_out_site_report"
+                /--><!--cars_maintenance.fleet_reports_menu-->
+
+    </data>
+</openerp>

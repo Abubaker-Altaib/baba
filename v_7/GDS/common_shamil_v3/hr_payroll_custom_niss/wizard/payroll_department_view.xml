@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data><record id="view_payroll_department" model="ir.ui.view">
+            <field name="name">Payroll department</field>
+            <field name="model">payroll.department</field>
+            <field name="arch" type="xml">
+                <form string="Payroll department" version="7.0">
+                    <group>
+				        <field name="month"/>
+				        <field name="year"/>
+
+				        <field name="department_ids"/> 
+                   </group>
+                    <footer>
+		               	<button name="print_report" string="Print" type="object" />
+		              	or
+		              	<button string="Cancel" class="oe_link" special="cancel"/>
+                     </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="payroll_department_action" model="ir.actions.act_window">
+            <field name="name">Payroll department</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">payroll.department</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+	<menuitem name="تقرير إجمالي المرتبات " 
+              parent="hr_payroll_custom.menu_hr_payroll_reporting"
+		      action="payroll_department_action"
+		      id="menu_payroll_department"/>
+
+    <report auto="False" 
+            id="payroll_department_rep_id" 
+            model="hr.employee.salary.addendum" 
+            name="payroll_department" 
+            file="hr_payroll_custom_niss/report/hr_payroll_department.mako" 
+            string="Payroll Totals Report"  
+            report_type="webkit"
+            header="True"
+            menu="False" />
+
+</data>
+</openerp>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- maintenance Request Activity-->
+        <record id="wkf_maintenance_request" model="workflow">
+            <field name="name">wkf.maintenance.request</field>
+            <field name="osv">maintenance.request</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_maintenance_request_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_request"/>
+            <field name="name">draft</field>
+            <field name="kind">function</field>
+            <field name="flow_start">True</field>
+            <field name="action">draft()</field>
+        </record>
+        <record id="wkf_maintenance_request_request" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_request"/>
+            <field name="name">requested</field>
+            <field name="kind">function</field>
+            <field name="action">requested()</field>
+        </record>
+        <record id="wkf_maintenance_request_in_reciption" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_request"/>
+            <field name="name">in_reciption</field>
+            <field name="kind">function</field>
+            <field name="action">in_reciption()</field>
+        </record>
+        <record id="wkf_maintenance_request_process" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_request"/>
+            <field name="name">process</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'process'})</field>
+        </record>
+        <record id="wkf_maintenance_request_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_request"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="flow_stop">True</field>
+            <field name="action">done()</field>
+        </record>
+
+        <record id="wkf_maintenance_request_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_request"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel()</field>
+        </record>
+        
+
+        <!-- maintenance Request Transition-->
+
+        <record id="wkf_maintenance_request_darft_request" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_request_draft"/>
+            <field name="act_to" ref="wkf_maintenance_request_request"/>
+            <field name="signal">request</field>
+        </record>
+
+        <record id="wkf_maintenance_request_darft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_request_draft"/>
+            <field name="act_to" ref="wkf_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_maintenance_request_request_process" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_request_request"/>
+            <field name="act_to" ref="wkf_maintenance_request_in_reciption"/>
+            <field name="signal">in_reciption</field>
+        </record>
+
+        <record id="wkf_maintenance_request_request_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_request_request"/>
+            <field name="act_to" ref="wkf_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_maintenance_request_in_reciption_process" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_request_in_reciption"/>
+            <field name="act_to" ref="wkf_maintenance_request_process"/>
+            <field name="signal">process</field>
+        </record>
+
+        <record id="wkf_maintenance_request_in_reciption_request" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_request_in_reciption"/>
+            <field name="act_to" ref="wkf_maintenance_request_request"/>
+            <field name="signal">ret_request</field>
+        </record>
+
+        <record id="wkf_maintenance_request_in_reciption_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_request_in_reciption"/>
+            <field name="act_to" ref="wkf_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+
+        <record id="wkf_maintenance_request_process_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_request_process"/>
+            <field name="act_to" ref="wkf_maintenance_request_done"/>
+            <field name="signal">done</field>
+        </record>
+
+        <record id="wkf_maintenance_request_process_request" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_request_process"/>
+            <field name="act_to" ref="wkf_maintenance_request_request"/>
+            <field name="signal">ret_request</field>
+        </record>
+
+        <record id="wkf_maintenance_request_process_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_request_process"/>
+            <field name="act_to" ref="wkf_maintenance_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_maintenance_request_cancel_darft" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_request_cancel"/>
+            <field name="act_to" ref="wkf_maintenance_request_draft"/>
+            <field name="signal">draft</field>
+        </record>
+
+    </data>
+</openerp>

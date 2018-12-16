@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	<record id="view_allow_deduct_exception_form" model="ir.ui.view">
+            <field name="name">Allowance Deduction Exception</field>
+            <field name="model">hr.allow.deduct.exception</field>
+            <field name="arch" type="xml">
+                <form string="Allowance Deduction Exception" version="7.0">
+                    <group >
+                        <group >
+                            <field name="action" on_change="onchange_action_type(action,types)"/>
+			                <field name="types" on_change="onchange_action_type(action,types)"/>
+                            <field name="allow_deduct_id"  domain= "[('name_type','=',types),('allowance_type','!=','in_cycle')]"/>
+                            <field name="amount" attrs="{'invisible':[('action','=','exclusion')]}"/>
+                        </group>
+                        <group >
+                            <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                            <field name="start_date" col="2"/>
+		            <field name="end_date" col="2"/> 
+</group>
+                    </group>
+                    <notebook colspan="4">
+                    	<page string="Employees" > 
+                        	<field name="employee_ids" nolabel="1"
+                                       domain= "[('state','=','approved'),('company_id','=',company_id)] " /> 
+                        </page>
+                    </notebook> 
+                    <footer>
+                        <button name="create_exception" string="Create" type="object" default_focus="1" class="oe_highlight"/>
+                  	or
+                  	<button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>                    
+                    
+               
+                </form>
+            </field>
+        </record>
+
+        <record id="action_allow_deduct_exception" model="ir.actions.act_window">
+            <field name="name">Allowance Deduction Exception Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.allow.deduct.exception</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+		
+	<menuitem
+            action="action_allow_deduct_exception"
+            id="wiz_allow_deduct_exception"
+            parent="menu_hr_payroll_exception"
+            name="Allowances/Deductions Exception Wizard" />
+
+
+
+    </data>
+</openerp>

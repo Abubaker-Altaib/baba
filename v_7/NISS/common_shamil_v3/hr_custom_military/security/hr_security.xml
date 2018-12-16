@@ -1,0 +1,820 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="hr_military_category" model="ir.module.category">
+            <field name="name">HR Military</field>
+        </record>
+        <record id="hr_emp_base_military" model="res.groups">
+            <field name="name">HR Employee Base Military</field>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+
+        <record id="hr_emp_officer_military" model="res.groups">
+            <field name="name">HR Employee officer Military</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        <record id="hr_emp_soldier_military" model="res.groups">
+            <field name="name">HR Employee soldier Military</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+
+        <record id="hr_emp_data_entery" model="res.groups">
+            <field name="name">HR Employee Data Entery</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        <record id="hr_emp_process_user" model="res.groups">
+            <field name="name">HR Employee Process User</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        <record id="hr_emp_mission_user" model="res.groups">
+            <field name="name">HR Missions User</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        <record id="hr_emp_punish_user" model="res.groups">
+            <field name="name">HR Punishment User</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        <record id="hr_emp_injury_user" model="res.groups">
+            <field name="name">HR Employee Injury User</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        <record id="hr_emp_leave_user" model="res.groups">
+            <field name="name">HR Leaves User </field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        <record id="hr_emp_salary_user" model="res.groups">
+            <field name="name">HR Salary User </field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+
+        <record id="hr_emp_salary_manager" model="res.groups">
+            <field name="name">HR Salary manager </field>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+    </data>
+    <data noupdate="1">
+<!--Basic info and additional allow Rule-->
+        <record id="hr_additional_service_multi_company_rule" model="ir.rule">
+            <field name="name">hr additional service multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_additional_service"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_additional_service_officer" model="ir.rule">
+            <field name="name">hr additional service officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_additional_service"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_additional_service_soldier" model="ir.rule">
+            <field name="name">hr additional service soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_additional_service"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_employee_seniority_multi_company_rule" model="ir.rule">
+            <field name="name">hr employee seniority multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_seniority"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employee_seniority_officer" model="ir.rule">
+            <field name="name">hr employee seniority officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_seniority"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_employee_seniority_soldier" model="ir.rule">
+            <field name="name">hr employee seniority soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_seniority"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_employee_qualification_multi_company_rule" model="ir.rule">
+            <field name="name">hr employee qualification multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_qualification"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employee_qualification_officer" model="ir.rule">
+            <field name="name">hr employee qualification officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_qualification"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_employee_qualification_soldier" model="ir.rule">
+            <field name="name">hr employee qualification soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_qualification"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+        <record id="hr_qualification_multi_company_rule" model="ir.rule">
+            <field name="name">hr qualification multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_qualification"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_specifications_multi_company_rule" model="ir.rule">
+            <field name="name">hr specifications multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_specifications"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_qualification_org_multi_company_rule" model="ir.rule">
+            <field name="name">hr qualification org multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_qualification_org"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <record id="hr_family_relation_multi_company_rule" model="ir.rule">
+            <field name="name">hr family relation multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_family_relation"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employee_family_multi_company_rule" model="ir.rule">
+            <field name="name">hr employee family multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_family"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employee_family_officer" model="ir.rule">
+            <field name="name">hr employee family officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_family"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_employee_family_soldier" model="ir.rule">
+            <field name="name">hr employee family soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_family"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_military_training_multi_company_rule" model="ir.rule">
+            <field name="name">hr military training multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_military_training"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_military_training_officer" model="ir.rule">
+            <field name="name">hr military training officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_military_training"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_military_training_soldier" model="ir.rule">
+            <field name="name">hr military training soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_military_training"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_additional_allowance_multi_company_rule" model="ir.rule">
+            <field name="name">hr additional allowance multi company rule</field>
+            <field model="ir.model" name="model_id" ref="hr_additional_allowance.model_hr_additional_allowance"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_additional_allowance_line_multi_company_rule" model="ir.rule">
+            <field name="name">hr additional allowance line multi company rule</field>
+            <field model="ir.model" name="model_id" ref="hr_additional_allowance.model_hr_additional_allowance_line"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_additional_allowance_line_officer" model="ir.rule">
+            <field name="name">hr additional allowance line officer</field>
+            <field model="ir.model" name="model_id" ref="hr_additional_allowance.model_hr_additional_allowance_line"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_additional_allowance_line_soldier" model="ir.rule">
+            <field name="name">hr additional allowance line soldier</field>
+            <field model="ir.model" name="model_id" ref="hr_additional_allowance.model_hr_additional_allowance_line"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+
+<!--Leave and unlock Rule-->
+        <record id="leave_multi_company_rule" model="ir.rule">
+            <field name="name">leave multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_holidays"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_leave_officer" model="ir.rule">
+            <field name="name">hr leave officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_holidays"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_leave_soldier" model="ir.rule">
+            <field name="name">hr leave soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_holidays"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+        <!--record id="rule_leave_user" model="ir.rule">
+            <field name="name">Leave User</field>
+            <field model="ir.model" name="model_id" ref="model_hr_holidays"/>
+            <field name="domain_force">['|',('employee_id.company_id','child_of',[user.company_id.id]),('employee_id.company_id','=',False)]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_leave_user'))]"/>
+        </record-->
+        <record id="hr_holidays_status_multi_company_rule" model="ir.rule">
+            <field name="name">holidays status multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_holidays_status"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="absence_multi_company_rule" model="ir.rule">
+            <field name="name">absence multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_holidays_absence"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_absence_officer" model="ir.rule">
+            <field name="name">hr absence officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_holidays_absence"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_absence_soldier" model="ir.rule">
+            <field name="name">hr absence soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_holidays_absence"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_unlock_reason_multi_company_rule" model="ir.rule">
+            <field name="name">hr unlock reason multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_unlock_reason"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_unlock_multi_company_rule" model="ir.rule">
+            <field name="name">hr unlock multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_unlock"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_unlock_officer" model="ir.rule">
+            <field name="name">hr unlock officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_unlock"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_unlock_soldier" model="ir.rule">
+            <field name="name">hr unlock soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_unlock"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+        
+        <!--record id="rule_hr_emp_data_entery_employee" model="ir.rule">
+            <field name="name">HR Employee Base Military on Employee</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field eval="0" name="global"/>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_base_military'))]"/>
+            <field eval="0" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="0" name="perm_create"/>
+        </record-->
+
+<!-- hr2.basic.salary.suspend.archive -->
+
+        <record id="hr_salary_suspend_archive_multi_company_rule" model="ir.rule">
+            <field name="name">hr basic salary suspend archive multi company rule</field>
+            <field model="ir.model" name="model_id" ref="hr_payroll_custom_niss.model_hr2_basic_salary_suspend_archive"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_salary_suspend_archive_officer" model="ir.rule">
+            <field name="name">hr basic salary suspend archive officer</field>
+            <field model="ir.model" name="model_id" ref="hr_payroll_custom_niss.model_hr2_basic_salary_suspend_archive"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_salary_suspend_archive_soldier" model="ir.rule">
+            <field name="name">hr basic salary suspend archive soldier</field>
+            <field model="ir.model" name="model_id" ref="hr_payroll_custom_niss.model_hr2_basic_salary_suspend_archive"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+<!-- HR Process -->
+        <record id="hr_movements_department_multi_company_rule" model="ir.rule">
+            <field name="name">hr movements department multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_department"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_movements_department_officer" model="ir.rule">
+            <field name="name">hr movements department officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_department"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_movements_department_soldier" model="ir.rule">
+            <field name="name">hr movements department soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_department"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_movements_job_multi_company_rule" model="ir.rule">
+            <field name="name">hr movements job multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_job"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_movements_job_officer" model="ir.rule">
+            <field name="name">hr movements job officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_job"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_movements_job_soldier" model="ir.rule">
+            <field name="name">hr movements job soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_job"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_movements_degree_multi_company_rule" model="ir.rule">
+            <field name="name">hr movements degree multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_degree"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_movements_degree_officer" model="ir.rule">
+            <field name="name">hr movements degree officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_degree"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_movements_degree_soldier" model="ir.rule">
+            <field name="name">hr movements degree soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_degree"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_movements_bonus_multi_company_rule" model="ir.rule">
+            <field name="name">hr movements bonus multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_bonus"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_movements_bonus_officer" model="ir.rule">
+            <field name="name">hr movements bonus officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_bonus"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_movements_bonus_soldier" model="ir.rule">
+            <field name="name">hr movements bonus soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_movements_bonus"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_employee_substitution_multi_company_rule" model="ir.rule">
+            <field name="name">hr.employee.substitution multi company rule</field>
+            <field model="ir.model" name="model_id" ref="hr_payroll_custom.model_hr_employee_substitution"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employee_substitution_officer" model="ir.rule">
+            <field name="name">hr.employee.substitution officer</field>
+            <field model="ir.model" name="model_id" ref="hr_payroll_custom.model_hr_employee_substitution"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_employee_substitution_soldier" model="ir.rule">
+            <field name="name">hr.employee.substitution soldier</field>
+            <field model="ir.model" name="model_id" ref="hr_payroll_custom.model_hr_employee_substitution"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        
+        <record id="hr_employee_delegation_multi_company_rule" model="ir.rule">
+            <field name="name">hr employee delegation multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_delegation"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employee_delegation_officer" model="ir.rule">
+            <field name="name">hr employee delegation officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_delegation"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_employee_delegation_soldier" model="ir.rule">
+            <field name="name">hr employee delegation soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_delegation"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_move_order_multi_company_rule" model="ir.rule">
+            <field name="name">hr move order multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_move_order"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <record id="hr_move_order_line_multi_company_rule" model="ir.rule">
+            <field name="name">hr move order line multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_move_order_line"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_move_order_line_officer" model="ir.rule">
+            <field name="name">hr move order line officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_move_order_line"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_move_order_line_soldier" model="ir.rule">
+            <field name="name">hr move order line soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_move_order_line"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_append_multi_company_rule" model="ir.rule">
+            <field name="name">hr append multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_append"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_append_officer" model="ir.rule">
+            <field name="name">hr append officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_append"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_append_soldier" model="ir.rule">
+            <field name="name">hr append soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_append"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_employment_termination_multi_company_rule" model="ir.rule">
+            <field name="name">employment termination multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employment_termination"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employment_termination_officer" model="ir.rule">
+            <field name="name">employment termination officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employment_termination"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_employment_termination_soldier" model="ir.rule">
+            <field name="name">employment termination soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employment_termination"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_employee_reemployment_multi_company_rule" model="ir.rule">
+            <field name="name">hr employee reemployment multi company rule</field>
+            <field model="ir.model" name="model_id" ref="hr_custom.model_hr_employee_reemployment"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employee_reemployment_officer" model="ir.rule">
+            <field name="name">hr employee reemployment officer</field>
+            <field model="ir.model" name="model_id" ref="hr_custom.model_hr_employee_reemployment"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_employee_reemployment_soldier" model="ir.rule">
+            <field name="name">hr employee reemployment soldier</field>
+            <field model="ir.model" name="model_id" ref="hr_custom.model_hr_employee_reemployment"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_service_end_reason_multi_company_rule" model="ir.rule">
+            <field name="name">hr service end reason multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_service_end_reason"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <record id="hr_service_end_multi_company_rule" model="ir.rule">
+            <field name="name">hr service end multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_service_end"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_service_end_officer" model="ir.rule">
+            <field name="name">hr service end officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_service_end"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_service_end_soldier" model="ir.rule">
+            <field name="name">hr service end soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_service_end"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+<!-- Missions -->
+
+        <record id="hr_mission_category_multi_company_rule" model="ir.rule">
+            <field name="name">hr mission category multi company rule</field>
+            <field model="ir.model" name="model_id" ref="hr_mission.model_hr_mission_category"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_mission_multi_company_rule" model="ir.rule">
+            <field name="name">hr mission multi company rule</field>
+            <field model="ir.model" name="model_id" ref="hr_mission.model_hr_employee_mission"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <record id="hr_employee_mission_line_multi_company_rule" model="ir.rule">
+            <field name="name">hr employee mission line multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_mission_line"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employee_mission_line_officer" model="ir.rule">
+            <field name="name">hr employee mission line officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_mission_line"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_employee_mission_line_soldier" model="ir.rule">
+            <field name="name">hr employee mission line soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_mission_line"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+<!-- medal and long service -->
+
+        <record id="hr_medal_multi_company_rule" model="ir.rule">
+            <field name="name">hr medal multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_medal"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_gift_multi_company_rule" model="ir.rule">
+            <field name="name">hr gift multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_gift"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <record id="hr_employee_medal_multi_company_rule" model="ir.rule">
+            <field name="name">hr employee medal multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_medal"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employee_medal_officer" model="ir.rule">
+            <field name="name">hr employee medal officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_medal"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_employee_medal_soldier" model="ir.rule">
+            <field name="name">hr employee mission line soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_medal"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_long_service_multi_company_rule" model="ir.rule">
+            <field name="name">hr long service multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_long_service"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_long_service_officer" model="ir.rule">
+            <field name="name">hr long service officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_long_service"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_long_service_soldier" model="ir.rule">
+            <field name="name">hr long service soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_long_service"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <record id="hr_punishment_multi_company_rule" model="ir.rule">
+            <field name="name">hr punishment multi company rule</field>
+            <field model="ir.model" name="model_id" ref="hr_violation_punishment.model_hr_punishment"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_violation_multi_company_rule" model="ir.rule">
+            <field name="name">hr violation multi company rule</field>
+            <field model="ir.model" name="model_id" ref="hr_violation_punishment.model_hr_violation"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_violation_punishment_multi_company_rule" model="ir.rule">
+            <field name="name">hr violation punishment multi company rule</field>
+            <field model="ir.model" name="model_id" ref="hr_violation_punishment.model_hr_violation_punishment"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employee_violation_multi_company_rule" model="ir.rule">
+            <field name="name">hr employee violation multi company rule</field>
+            <field model="ir.model" name="model_id" ref="hr_violation_punishment.model_hr_employee_violation"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        <record id="hr_employee_violation_officer" model="ir.rule">
+            <field name="name">hr employee violation officer</field>
+            <field model="ir.model" name="model_id" ref="hr_violation_punishment.model_hr_employee_violation"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        <record id="hr_employee_violation_soldier" model="ir.rule">
+            <field name="name">hr employee violation soldier</field>
+            <field model="ir.model" name="model_id" ref="hr_violation_punishment.model_hr_employee_violation"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+
+
+    </data>
+
+    <data noupdate="1">
+		<record id="ir_rule_hr_emp_mission_user_mission" model="ir.rule">
+			<field name="model_id" ref="hr_mission.model_hr_employee_mission"/>
+			<field name="domain_force">[(1,'=',1)]</field>
+			<field name="name">HR Missions User on Employee Mission</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('hr_custom_military.hr_emp_mission_user')])]" name="groups"/>
+		</record>
+	</data>
+
+    <data noupdate="1">
+		<record id="ir_rule_hr_emp_mission_user_mission_line" model="ir.rule">
+			<field name="model_id" ref="hr_mission.model_hr_employee_mission_line"/>
+			<field name="domain_force">[(1,'=',1)]</field>
+			<field name="name">HR Missions User on Employee Mission Line </field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('hr_custom_military.hr_emp_mission_user')])]" name="groups"/>
+		</record>
+	</data>
+    <data noupdate="1">
+        <record id="hr_emp_base_setting_military" model="res.groups">
+            <field name="name">HR Employee Base Setting Military</field>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+
+        <record id="hr_emp_general_setting" model="res.groups">
+            <field name="name">HR Employee General Setting</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_setting_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+
+        <record id="hr_emp_absence_setting" model="res.groups">
+            <field name="name">HR Employee Absence Setting</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_setting_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        <record id="hr_emp_punish_setting" model="res.groups">
+            <field name="name">HR Employee Punish Setting</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_setting_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        <record id="hr_emp_mission_setting" model="res.groups">
+            <field name="name">HR Employee Mission Setting</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_setting_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        <record id="hr_emp_injury_setting" model="res.groups">
+            <field name="name">HR Employee Injury Setting</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_setting_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        <record id="hr_emp_salary_setting" model="res.groups">
+            <field name="name">HR Employee Salary Setting</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_setting_military'))]"/>
+            <field name="category_id" ref="hr_military_category"/>
+        </record>
+        
+    </data>
+
+    <data noupdate="1">
+        <!--  employee multi company rule -->
+        <record id="hr_employee_multi_company_rule" model="ir.rule">
+            <field name="name">hr employee multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <record id="rule_hr_emp_base_officer" model="ir.rule">
+            <field name="name">HR Employee officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee"/>
+            <field name="domain_force">[('military_type','=','officer')]</field>
+            <field eval="0" name="global"/>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+
+        <record id="rule_hr_emp_base_soldier" model="ir.rule">
+            <field name="name">HR Employee soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee"/>
+            <field name="domain_force">[('military_type','=','soldier')]</field>
+            <field eval="0" name="global"/>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+
+<!-- injury,commision,illness-->
+        <!-- hr_injury -->
+        <record id="hr_injury_user" model="ir.rule">
+            <field name="name">hr injury rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_injury"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <record id="hr_injury_officer" model="ir.rule">
+            <field name="name">hr injury officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_injury"/>
+            <field name="domain_force">[('name.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+
+        <record id="hr_injury_soldier" model="ir.rule">
+            <field name="name">hr injury soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_injury"/>
+            <field name="domain_force">[('name.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+
+        <!-- hr_commision -->
+        <record id="hr_commision_user" model="ir.rule">
+            <field name="name">hr commision rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_commision"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <record id="hr_commision_officer" model="ir.rule">
+            <field name="name">hr commision officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_commision"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        
+        <record id="hr_commision_soldier" model="ir.rule">
+            <field name="name">hr commision soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_commision"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <!-- hr_employee_illness -->
+        <record id="hr_employee_illness_user" model="ir.rule">
+            <field name="name">hr employee illness rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_illness"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <record id="hr_employee_illness_officer" model="ir.rule">
+            <field name="name">hr employee illness officer</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_illness"/>
+            <field name="domain_force">[('employee_id.military_type','=','officer')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_officer_military'))]"/>
+        </record>
+        
+        <record id="hr_employee_illness_soldier" model="ir.rule">
+            <field name="name">hr employee illness soldier</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee_illness"/>
+            <field name="domain_force">[('employee_id.military_type','=','soldier')]</field>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_soldier_military'))]"/>
+        </record>
+
+        <!-- patient_state -->
+        <record id="patient_state_user" model="ir.rule">
+            <field name="name">patient state rule</field>
+            <field model="ir.model" name="model_id" ref="model_patient_state"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <!-- hr_inability_type -->
+        <record id="hr_inability_type_user" model="ir.rule">
+            <field name="name">hr inability type rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_inability_type"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <!-- hr_injury_type -->
+        <record id="hr_injury_type_user" model="ir.rule">
+            <field name="name">hr injury type rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_injury_type"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <!--record id="rule_hr_emp_base_setting_employee" model="ir.rule">
+            <field name="name">HR Employee Base Setting Military on Employee</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employee"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field eval="0" name="global"/>
+            <field name="groups" eval="[(4,ref('hr_custom_military.hr_emp_base_setting_military'))]"/>
+            <field eval="0" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="0" name="perm_create"/>
+        </record-->
+    </data>
+</openerp>

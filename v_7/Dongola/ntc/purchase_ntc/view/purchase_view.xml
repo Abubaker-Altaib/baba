@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<report auto="False" menu="True" id="report_purchase_order_report2" model="purchase.requisition" 
+               name="purchase.order.report2" rml="addons/purchase_ntc/report/purchase_requisition.rml" 
+               string="Purchase Requisition"/>
+
+        <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+			<field name="domain">[('state','in',('approved','done','except_picking','except_invoice','confirmed','create_pickin'))]</field>
+		</record>
+
+		<record id="purchase.purchase_rfq" model="ir.actions.act_window">
+			<field name="domain">[('state','not in',('approved','done','except_picking','except_invoice','confirmed','create_pickin'))]</field>
+		</record>
+
+
+       
+
+        <record id="view_purchase_requisition_filter_inherit" model="ir.ui.view">
+            <field name="name">purchase.requisition.list.select</field>
+            <field name="model">purchase.requisition</field>
+            <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_filter"/>
+            <field name="arch" type="xml">
+             <xpath expr="//search[@string='Search Purchase Requisition']" position="replace">
+                <search string="Search Purchase Requisition">
+                    <field name="name" string="Purchase Requisition"/>
+                    <field name="exclusive" />
+                    <filter icon="terp-document-new" name="draft" string="New" domain="[('state','=','draft')]" help="New Purchase Requisition"/>
+                    <filter icon="terp-camera_test" string="Sent to Suppliers" domain="[('state','=','in_progress')]" help="Purchase Requisition in negociation"/>
+                    <filter icon="terp-dialog-close" string="Purchase Done" domain="[('state','=','done')]" help="Current Purchase Requisition"/>
+                    <separator/>
+                    <filter icon="terp-personal-" string="Unassigned"  domain="[('user_id','=', False)]" help="Unassigned  Requisition"/>
+                    <!--field name="user_id" /-->
+                    <group expand="0" string="Group By...">
+                        <filter string="Responsible" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter string="Source" icon="terp-gtk-jump-to-rtl" domain="[]" context="{'group_by':'origin'}"/>
+                        <filter string="Status" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Start Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_start'}"/>
+                        <filter string="End Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_end'}"/>
+                    </group>
+                </search>
+              </xpath>
+            </field>
+        </record>
+
+
+
+
+
+
+
+        <record model="ir.ui.view" id="view_purchase_requisition_form">
+			<field name="name">purchase.requisition.form</field>
+			<field name="model">purchase.requisition</field>
+			<field name="inherit_id" ref="purchase_wafi.view_purchase_requisition_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//header" position="replace">
+	            <header>
+	                <!--button name="tender_in_progress" states="GM_approve1" string="General Manager " type="workflow" groups="base_custom.group_general_manager" icon="terp-gtk-go-back-rtl"/-->
+                   
+	                <button name="tender_approve2" states="GM_approve2" string="General Manager " groups="base_custom.group_account_general_manager"  type="workflow" icon="terp-gtk-go-back-rtl"/>
+	                <button name="tender_in_progress" states="commite_confirm" string="Committe Purchases Manager" 
+                        groups="purchase_ntc.group_commite_members_manager"
+						icon="terp-gtk-go-back-rtl"/>
+
+					<button name="tender_confirm" states="draft" string="Section Manager "
+						type="workflow" icon="terp-gtk-go-back-rtl" groups="base_custom.group_section_manager"/>
+
+					<button name="tender_confirm_dept" states="confirm"
+						string="Department Manager " type="workflow"
+						icon="terp-gtk-go-back-rtl" groups="base_custom.group_department_manager"/>
+
+					<button name="tender_HRM_approve1" states="approve"
+						string="General Department Manager" type="workflow"
+						icon="terp-gtk-go-back-rtl" groups="base_custom.group_general_department_manager"/>
+					
+					<button name="tender_HRM_approve" states="HRM_approve1"
+						string="HRM Approve" type="object"
+						icon="terp-gtk-go-back-rtl" groups="base_custom.group_general_hr_manager"/>
+
+					<button name="tender_reset" states="cancel" string="Reset to Draft" type="workflow" icon="gtk-undo"/>
+
+	                <button name="tender_cancel" states="draft,confirm,approve,GM_approve,HRM_approve1,GM_approve2" string="Cancel Requisition" type="workflow" icon="gtk-cancel"/>
+
+					<button name="purchase_order" states="in_progress" string="Internal Auditor" 
+					 type="workflow"   groups="purchase_ntc.group_internal_auditor"/>
+
+                    <button name="back_to_quatations_entry" states="in_progress" string="Back To Quotations Entry"  
+					 type="object"   groups="purchase_ntc.group_internal_auditor"/>
+
+	                <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,done" statusbar_colors='{"in_progress":"blue"}'/>
+	            </header>
+				</xpath>
+
+				<xpath expr="//field[@name='company_id']" position="attributes">
+					<attribute name="attrs">
+						{'readonly':1}
+					</attribute>
+				</xpath>
+
+                
+               <xpath expr="//field[@name='exclusive']" position="attributes">
+					<attribute name="attrs">
+						{'required':[('state','=','in_progress')], 'readonly':[('state','not in',('in_progress'))], 'invisible':[('state','in',('draft','commite_confirm','confirm','approve','HRM_approve1','GM_approve1'))]}
+					</attribute>
+				</xpath>
+
+				<xpath expr="//separator[@string='Quotations']" position="attributes">
+					<attribute name="attrs">
+						{'invisible':[('state','in',('draft','confirm','approve','HRM_approve1','GM_approve1'))]}
+					</attribute>
+				</xpath>
+				
+				<xpath expr="//field[@name='purchase_ids']" position="replace">
+					<field name="purchase_ids" attrs="{'invisible':[('state','in',('draft','confirm','approve','HRM_approve1','GM_approve1'))],'readonly':[('state','not in',('in_progress'))]}">
+	                            <tree string="Purchase Order" create="false" delete="false">
+	                                <field name="name" string="Reference"/>
+	                                <field name="date_order" string="Order Date"/>
+	                                <field name="partner_id" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+	                                <field name="amount_total"/>
+	                                <field name="state"/>
+	                                <button name="purchase_cancel" states="draft,wait_auth" string="Cancel Purchase Order" icon="gtk-cancel"/>
+	                                <button name="purchase_confirm" states="draft" string="Confirm Purchase Order" icon="gtk-apply"/>
+	                            </tree>
+	                </field>
+				</xpath>
+
+				<xpath expr="//page[@string='Suppliers']" position="attributes">
+					<attribute name="attrs">
+						{'required':[('state','=','in_progress')], 'readonly':[('state','!=','in_progress')], 'invisible':[('state','in',('draft','confirm','approve','HRM_approve1','GM_approve1','commite_confirm'))]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='supplier_ids']" position="attributes">
+					<attribute name="attrs">
+						{'readonly':[('state','!=','in_progress')]}
+					</attribute>
+				</xpath>
+
+				<xpath expr="//button[@string='Request a Quotation']" position="attributes">
+					<attribute name="attrs">
+						{'invisible': ['|',('line_ids','=',False),('state','not in',('in_progress'))]}
+					</attribute>
+				</xpath>
+		
+				<xpath expr="//page[@string='Users']" position="attributes">
+					<attribute name="attrs">
+						{'required':[('state','=','commite_confirm')], 'readonly':[('state','not in',('commite_confirm'))], 'invisible':[('state','in',('draft','confirm','approve','HRM_approve1','GM_approve1'))]}
+					</attribute>
+				</xpath>
+
+                <xpath expr="//page[@string='Users']" position="replace">       
+                          <page string="Users" >
+
+
+				               <field name="user_ids" attrs="{'invisible':[('state','in',('draft','confirm','approve','HRM_approve1','GM_approve1'))]  ,'readonly':[('state','=','done')],'required':[('state','=','in_progress')]}">
+                                        <tree editable="bottom" string="Tender Members" create="false">
+			                                    <field name="user_id" options="{'limit': 10, 'create': false,
+'create_edit': false}"/>
+			                                    <field name="opinion"/>
+			                                    <field name="comment" attrs="{ 'readonly' : [('opinion' , '=' , 'agree')], 'required' : [('opinion' , '=' , 'disagree')]}"/>
+                                         </tree>
+                               </field>
+                          </page>
+				</xpath>
+
+
+				<!--xpath expr="//field[@name='user_ids']" position="attributes">
+					<attribute name="attrs">
+						{'required':[('state','=','commite_confirm')], 'readonly':[('state','not in',('commite_confirm'))], 'invisible':[('state','in',('draft','confirm','approve','HRM_approve1','GM_approve1'))]}
+					</attribute>
+				</xpath-->
+                
+				<xpath expr="//field[@name='line_ids']" position="attributes">
+					<attribute name="attrs">
+						{'readonly':['|',('state','not in',('draft','confirm','approve','HRM_approve1','GM_approve1','commite_confirm')),('category_id','=',False)]}
+					</attribute>
+				</xpath>
+
+				<xpath expr="//page[@string='Products']" position="attributes">
+					<attribute name="attrs">
+						{'readonly':['|',('state','not in',('draft','confirm','approve','HRM_approve1','GM_approve1','commite_confirm')),('category_id','=',False)]}
+					</attribute>
+				</xpath>
+				
+			</field>
+		</record>
+
+
+
+
+
+
+
+
+
+
+
+     
+		<record model="ir.ui.view" id="purchase_order_form_inherit">
+			<field name="name">purchase.order.form</field>
+			<field name="model">purchase.order</field>
+			<field name="inherit_id" ref="purchase.purchase_order_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//form/header" position="inside">
+					<!--button name="create_picking_in" states="budget_approved" string="General Manager Approve" 
+						icon="terp-gtk-go-back-rtl" class="oe_highlight"/-->
+
+					<button name="purchase_order" states="create_pickin" string="Create Picking Order" 
+						icon="terp-gtk-go-back-rtl" class="oe_highlight"/>
+				</xpath>
+
+                    <button name="action_cancel_draft" position="replace">
+
+                          <button name="action_cancel_draft" states="sent" string="Set to Draft" type="object" />
+
+
+                    </button>
+
+				<field name="location_id" position="replace"> 
+				            <field name="location_id" options="{'limit': 10, 'create': false,
+'create_edit': false}" domain="[('usage' , '=' , 'internal' )]" attrs="{'required':[('state','=','create_pickin')]}" groups="stock.group_locations"/>
+                                </field>
+				
+			</field>
+		</record>
+
+
+
+
+
+                     
+	</data>
+</openerp>

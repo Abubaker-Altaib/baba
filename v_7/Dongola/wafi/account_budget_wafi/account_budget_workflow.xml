@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<openerp>
+	<data>
+		<!-- account.budget Workflow definition -->
+		<delete model="workflow.transition" id="account_budget_custom.budget_t2" />
+		<delete model="workflow.transition" id="account_budget_custom.budget_t3" />
+		<delete model="workflow.activity" id="account_budget_custom.act_budget_confirm" />
+
+		<record model="workflow.transition" id="account_budget_custom.budget_t1">
+			<field name="act_from" ref="account_budget_custom.act_budget_draft" />
+			<field name="act_to" ref="account_budget_custom.act_budget_validate" />
+			<field name="signal">validate</field>
+			<field name="group_id" ref="account_budget_custom.group_budget_manager" />
+		</record>
+
+		<!-- account.fiscalyear.budget Workflow definition -->
+		<record model="workflow.activity" id="act_fiscalyear_budget_complete">
+			<field name="wkf_id"
+				ref="account_budget_custom.wkf_account_fiscalyear_budget" />
+			<field name="name">complete</field>
+			<field name="kind">function</field>
+			<field name="action">budget_complete()</field>
+		</record>
+
+		<record model="workflow.activity" id="act_fiscalyear_budget_approve">
+			<field name="wkf_id"
+				ref="account_budget_custom.wkf_account_fiscalyear_budget" />
+			<field name="name">approve</field>
+			<field name="kind">function</field>
+			<field name="action">budget_approve()</field>
+		</record>
+
+		<record model="workflow.transition" id="account_budget_custom.fiscalyear_budget_t0">
+			<field name="act_from" ref="account_budget_custom.act_fiscalyear_budget_draft" />
+			<field name="act_to" ref="act_fiscalyear_budget_complete" />
+			<field name="signal">complete</field>
+			<field name="group_id" ref="account_budget_custom.group_budget_manager" />
+		</record>
+
+		<record model="workflow.transition" id="account_budget_custom.fiscalyear_budget_t1">
+			<field name="act_from" ref="act_fiscalyear_budget_complete" />
+			<field name="act_to"
+				ref="account_budget_custom.act_fiscalyear_budget_confirm" />
+			<field name="signal">confirm</field>
+			<field name="group_id" ref="account_budget_custom.group_budget_manager" />
+		</record>
+
+		<record model="workflow.transition" id="account_budget_custom.fiscalyear_budget_t5">
+			<field name="act_from"
+				ref="account_budget_custom.act_fiscalyear_budget_confirm" />
+			<field name="act_to" ref="act_fiscalyear_budget_approve" />
+			<field name="signal">approve</field>
+			<field name="group_id" ref="account_budget_custom.group_budget_manager" />
+		</record>
+
+		<record model="workflow.transition" id="fiscalyear_budget_t6">
+			<field name="act_from" ref="act_fiscalyear_budget_approve" />
+			<field name="act_to"
+				ref="account_budget_custom.act_fiscalyear_budget_validate" />
+			<field name="signal">validate</field>
+			<field name="group_id" ref="account_budget_custom.group_budget_manager" />
+		</record>
+
+		<record model="workflow.transition" id="fiscalyear_budget_t5">
+			<field name="act_from" ref="act_fiscalyear_budget_complete" />
+			<field name="act_to"
+				ref="account_budget_custom.act_fiscalyear_budget_cancel" />
+			<field name="signal">cancel</field>
+			<field name="group_id" ref="account_budget_custom.group_budget_manager" />
+		</record>
+
+	</data>
+</openerp>

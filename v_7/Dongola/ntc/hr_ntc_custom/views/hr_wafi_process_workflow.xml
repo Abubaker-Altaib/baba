@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		
+		<!-- Activities -->
+		<record id="hr_custom.act_process_draft" model="workflow.activity">
+            <field name="wkf_id" ref="hr_custom.wkf_3"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+            <field name="kind">function</field>
+			<field name="action">write({'state':'draft'})</field>
+        </record>
+
+		<record id="act_promotion_draft1" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">draft1</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'draft1'})</field>
+		</record>
+		<record id="act_promotion_hr_manager" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">hr_manager</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'hr_manager'})</field>
+		</record>
+		<record id="act_promotion_implement" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">implement</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'implement'})</field>
+		</record>
+
+		<record id="act_promotion_hr_finance" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">hr_finance</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'hr_finance'})</field>
+		</record>
+		<record id="act_promotion_general_manag" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">general_manag</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'general_manag'})</field>
+		</record>
+
+		<record id="act_promotion_cancel" model="workflow.activity">
+			<field name="wkf_id" ref="hr_custom.wkf_3" />
+			<field name="name">cancel</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'cancel'})</field>
+		</record>
+
+		<!-- Transitions -->
+
+		<record id="wkf_ntc_tr1" model="workflow.transition">
+			<field name="act_from" ref="hr_custom.act_process_draft" />
+			<field name="act_to" ref="act_promotion_draft1" />
+			<field name="condition">check_promotion_type()</field>
+			<field name="signal">hr_recomm</field>
+		</record>
+
+		<!--record id="wkf_ntc_tr11" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_draft1" />
+			<field name="act_to" ref="hr_custom.act_process_draft" />
+			<field name="condition">not check_promotion_type()</field>
+		</record-->
+
+		<!--record id="wkf_ntc_tr2" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_draft1" />
+			<field name="act_to" ref="act_promotion_implement" />
+			<field name="signal">hr_mang_approve</field>
+		</record-->
+		<record id="wkf_ntc_tr2" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_draft1" />
+			<field name="act_to" ref="hr_custom.act_process_approve" />
+			<field name="signal">hr_mang_approve</field>
+		</record>
+
+		<record id="wkf_ntc_tr3" model="workflow.transition">
+			<field name="act_from" ref="hr_custom.act_process_draft" />
+			<field name="act_to" ref="hr_wafi.act_promotion_hr_manager" />
+			<field name="condition">not check_promotion_type()</field>
+			<field name="signal">hr_recomm</field>
+		</record>
+
+		<!--record id="wkf_ntc_tr4" model="workflow.transition">
+			<field name="act_from" ref="hr_wafi.act_promotion_hr_manager" />
+			<field name="act_to" ref="act_promotion_hr_finance" />
+			<field name="signal">hr_finance_recomm</field>
+		</record-->
+		<record id="wkf_ntc_tr4" model="workflow.transition">
+			<field name="act_from" ref="hr_wafi.act_promotion_hr_manager" />
+			<field name="act_to" ref="hr_custom.act_process_approve" />
+			<field name="condition">not check_promotion_type_two()</field>
+			<field name="signal">hr_finance_recomm</field>
+		</record>
+
+		<!--record id="wkf_ntc_tr5" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_hr_finance" />
+			<field name="act_to" ref="act_promotion_implement" />
+			<field name="condition">not check_promotion_type_two()</field>
+			<field name="signal">reviewer_app</field>
+		</record-->
+		<record id="wkf_ntc_tr5" model="workflow.transition">
+			<field name="act_from" ref="hr_wafi.act_promotion_hr_manager" />
+			<field name="act_to" ref="act_promotion_general_manag" />
+			<field name="condition">check_promotion_type_two()</field>
+			<field name="signal">hr_finance_recomm</field>
+		</record>
+
+		<!--record id="wkf_ntc_tr6" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_hr_finance" />
+			<field name="act_to" ref="act_promotion_general_manag" />
+			<field name="condition">check_promotion_type_two()</field>
+			<field name="signal">reviewer_app</field>
+		</record-->
+
+		<!--record id="wkf_ntc_tr7" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_general_manag" />
+			<field name="act_to" ref="act_promotion_implement" />
+			<field name="signal">general_mang</field>
+		</record-->
+		<record id="wkf_ntc_tr7" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_general_manag" />
+			<field name="act_to" ref="hr_custom.act_process_approve" />
+			<field name="signal">general_mang</field>
+		</record>
+
+		<!--record id="wkf_ntc_tr8" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_implement" />
+			<field name="act_to" ref="hr_custom.act_process_approve" />
+			<field name="signal">hr_implement</field>
+		</record-->
+
+		<!--record id="wkf_ntc_tr9" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_hr_finance" />
+			<field name="act_to" ref="act_promotion_cancel" />
+			<field name="signal">cancel</field>
+		</record-->
+
+		<record id="wkf_ntc_tr10" model="workflow.transition">
+			<field name="act_from" ref="act_promotion_general_manag" />
+			<field name="act_to" ref="act_promotion_cancel" />
+			<field name="signal">cancel</field>
+		</record>
+
+		<record id="wkf_ntc_tr12" model="workflow.transition">
+			<field name="act_from" ref="hr_wafi.act_promotion_hr_manager" />
+			<field name="act_to" ref="act_promotion_cancel" />
+			<field name="signal">cancel</field>
+		</record>
+
+
+
+		
+	</data>
+</openerp>

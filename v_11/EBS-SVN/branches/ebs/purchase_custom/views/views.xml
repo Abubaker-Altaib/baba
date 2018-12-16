@@ -1,0 +1,325 @@
+<odoo>
+  <data>
+
+<!-- purchase.order-->
+    <record id="purchase_order_form_inherit_purchase_custom" model="ir.ui.view">
+      <field name="name">purchase.order.form</field>
+      <field name="model">purchase.order</field>
+      <field name="inherit_id" ref="purchase.purchase_order_form" />
+      <field name="arch" type="xml">
+
+
+        <xpath expr="//field[@name='partner_id']" position="attributes">
+          <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+        </xpath>
+
+        <xpath expr="//field[@name='currency_id']" position="before">
+          <field name="purchase_type" attrs="{'readonly':[('state','!=','draft')]}" required="1" />
+          <field name="order_type" attrs="{'readonly':[('state','!=','draft')]}" required="1" />
+        </xpath>
+
+        <xpath expr="//notebook/page[2]/group/group[2]/field[@name='payment_term_id']" position="attributes">
+          <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+        </xpath>
+      
+        <xpath expr="//field[@name='date_order']" position="after">
+          <!-- <field name="department_id" required="1" readonly='1'/> -->
+          <field name="analytic_account_id" required="1" readonly='1' />
+        </xpath>
+
+        <xpath expr="//field[@name='order_line']" position="attributes">
+          <attribute name="context">{'default_account_analytic_id':analytic_account_id} 
+                                   </attribute>
+          <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+        </xpath>
+
+        <xpath expr="//field[@name='origin']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+
+        <xpath expr="//field[@name='partner_ref']" position="attributes">
+          <!-- <attribute name="readonly">1</attribute> -->
+          <attribute name="invisible">1</attribute>
+        </xpath>
+
+        <xpath expr="//field[@name='requisition_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+
+        <xpath expr="//field[@name='date_order']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+
+        <!-- <xpath expr="//field[@name='department_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath> -->
+
+        <xpath expr="//field[@name='company_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+
+        <xpath expr="//notebook/page[2]/group/group/div/field[@name='date_planned']" 
+          position="attributes">
+        <attribute name="required">0</attribute> 
+        <attribute name="invisible">1</attribute>  
+        </xpath>
+
+        <xpath expr="//notebook/page[2]/group/group" position="attributes">
+         <attribute name="invisible">1</attribute>
+        </xpath>
+
+        <xpath expr="//notebook/page[2]/group/group[2]/field[@name='date_approve']"  position="attributes">
+         <attribute name="invisible">1</attribute>
+        </xpath>
+
+        <xpath expr="//notebook/page[2]/group/group[2]/field[@name='invoice_status']"  position="attributes">
+         <attribute name="invisible">1</attribute>
+        </xpath>
+
+        <xpath expr="//notebook/page[2]/group/group[2]/field[@name='fiscal_position_id']" position="attributes">
+         <attribute name="invisible">1</attribute>
+        </xpath>
+
+        <xpath expr="//notebook/page[1]/field/tree/field[@name='account_analytic_id']" position="after">
+          <field name="account_id" required="1" readonly="1" />
+        </xpath>
+
+        <xpath expr="//notebook/page[1]/field/tree/field[@name='account_analytic_id']" position="attributes">
+          <attribute name="required">1</attribute>
+          <attribute name="domain" >[('id','=',parent.analytic_account_id)]</attribute>
+          <attribute name="readonly">1</attribute>
+        </xpath>
+ 
+        <xpath expr="//notebook/page[1]/field/tree/field[@name='product_id']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+
+        <xpath expr="//notebook/page[1]/field/tree/field[@name='name']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+
+        <xpath expr="//notebook/page[1]/field/tree/field[@name='date_planned']" position="attributes">
+          <!-- <attribute name="readonly">1</attribute> -->
+          <attribute name="invisible">1</attribute>
+        </xpath>
+
+        <xpath expr="//notebook/page[1]/field/tree/field[@name='company_id']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
+
+        <xpath expr="//notebook/page[1]/field/tree/field[@name='analytic_tag_ids']" position="attributes">
+          <attribute name="readonly">1</attribute>
+          <attribute name="invisible">1</attribute>
+        </xpath>
+<!-- 
+        <xpath expr="//notebook/page[1]/field/tree/field[@name='product_qty']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+ -->
+        <xpath expr="//notebook/page[1]/field/tree/field[@name='product_uom']" position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        
+        <xpath expr="//field[@name='currency_id']" position="attributes">
+          <attribute name="attrs">{'invisible':[('purchase_type','=','local')]}</attribute>
+          <attribute name="readonly">1</attribute>
+        </xpath>
+        
+        <xpath expr="//notebook" position="inside">
+          <page name="reason_selecting_vendor" string="Reason for selecting the Vendor" >
+            <!-- <label  string="Reason for selecting the Vendor" /> -->
+            <group>
+              <group>
+                <field name="quality" attrs="{'readonly':[('state','not in',['draft','request_management'])]}" />
+              </group>
+              <group>
+                <field name="price" attrs="{'readonly':[('state','not in',['draft','request_management'])]}" />
+              </group>
+              <group>
+                <field name="delivery" attrs="{'readonly':[('state','not in',['draft','request_management'])]}" />
+              </group>
+              <group>
+                <field name="after_sales_services" attrs="{'readonly':[('state','not in',['draft','request_management'])]}" />
+              </group>
+            </group>
+          </page>
+          <page string="Description">
+            <field name="comment" nolabel="1" attrs="{'required':[('state','in',['request_management','infrastructure'])]}" />
+          </page>
+        </xpath>
+
+      </field>
+    </record>
+
+    
+ <!-- purchase.requisition-->
+    <record model="ir.ui.view" id="purchase_requisition.form">
+      <field name="name">purchase_requisition form</field>
+      <field name="model">purchase.requisition</field>
+      <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form" />
+      <field name="arch" type="xml">
+
+
+        <!-- <xpath expr='//field[@name="vendor_id"]' position="after">
+          <field name="department_id" required="1" 
+            attrs="{'readonly':[('state','!=','draft'),('state','!=','in_progress')]}"/>
+        </xpath>   --> 
+        <!-- new code -->
+        <xpath expr='//field[@name="vendor_id"]' position="after">
+          <field name="department_id" required="1"  readonly="1" />  
+        </xpath>    
+
+        <xpath expr='//field[@name="user_id"]' position="attributes">
+          <attribute name='attrs'>{'readonly':[('state','!=','draft'),('state','!=','in_progress')]} 
+          </attribute>
+        </xpath>
+
+        <xpath expr='//field[@name="type_id"]' position="attributes">
+          <attribute name='attrs'>{'readonly':[('state','!=','draft'),('state','!=','in_progress')]} 
+          </attribute>
+        </xpath>
+
+        <xpath expr='//field[@name="vendor_id"]' position="attributes">
+          <attribute name='attrs'>{'readonly':[('state','!=','draft'),('state','!=','in_progress')]} </attribute>
+        </xpath>
+
+        <!-- <xpath expr='//field[@name="account_analytic_id"]' position="attributes">
+          <attribute name='attrs'>{'readonly':[('state','!=','draft'),('state','!=','in_progress')]} </attribute>
+          <attribute name='required'>1</attribute>
+        </xpath> -->
+        <!-- new code -->
+        <xpath expr='//field[@name="account_analytic_id"]' position="attributes">
+          <attribute name='readonly'>1</attribute>
+          <attribute name='required'>1</attribute>
+        </xpath>
+
+        <xpath expr='//field[@name="company_id"]' position="attributes">
+          <attribute name='attrs'>{'readonly':[('state','!=','draft'),('state','!=','in_progress')]} </attribute>
+        </xpath>
+         
+        <xpath expr='//field[@name="date_end"]' position="attributes">
+          <attribute name='attrs'>{'readonly':[('state','!=','draft'),('state','!=','in_progress')]} </attribute>
+        </xpath>
+
+        <xpath expr='//field[@name="ordering_date"]' position="attributes">
+          <attribute name='attrs'>{'readonly':[('state','!=','draft'),('state','!=','in_progress')]} </attribute>
+          <attribute name="required">1</attribute>
+        </xpath>
+
+        <xpath expr='//field[@name="schedule_date"]' position="attributes">
+          <attribute name='attrs'>{'readonly':[('state','!=','draft'),('state','!=','in_progress')]} </attribute>
+        </xpath>
+
+         <xpath expr='//field[@name="origin"]' position="attributes">
+          <attribute name='attrs'>{'readonly':[('state','!=','draft'),('state','!=','in_progress')]} </attribute>
+        </xpath>
+
+        <xpath expr='//field[@name="picking_type_id"]' position="attributes">
+          <attribute name='attrs'>{'readonly':[('state','!=','draft'),('state','!=','in_progress')]} </attribute>
+        </xpath>
+
+        <xpath expr='//field[@name="line_ids"]' position="attributes">
+           <attribute name="context">
+            {'default_account_analytic_id': account_analytic_id}
+           </attribute>
+           <attribute name='attrs'>{'readonly':[('state','!=','draft'),('state','!=','in_progress')]} </attribute>
+        </xpath>
+        
+        <xpath expr="//notebook/page/field/tree/field[@name='account_analytic_id']" position="attributes">
+          <attribute name="domain">
+            [('id','=',parent.account_analytic_id)]
+          </attribute>
+          <!-- new code -->
+          <attribute name='readonly'>1</attribute>
+        </xpath> 
+        <!-- new code -->
+        <xpath expr="//notebook/page/field/tree/field[@name='schedule_date']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath> 
+
+        <xpath expr="//notebook/page/field/tree/field[@name='product_uom_id']" position="attributes">
+          <attribute name="domain">[('id','=',product_uom_id)]</attribute>
+          <attribute name="required">1</attribute> 
+        </xpath>
+
+        <xpath expr="//notebook/page/field/tree/field[@name='product_id']" position="after">
+        
+          <field name="product_uom_id" invisible="1"/>
+        </xpath>
+
+        <xpath expr='//field[@name="price_unit"]' position="attributes">
+          <attribute name="readonly">1</attribute>
+        </xpath>
+
+        <xpath expr="//notebook/page/field/tree" position="inside">
+          <field name="account_id" readonly="1" />
+        </xpath>
+      </field>
+    </record>
+
+         <!-- inhrit menu Purchases to add groups(security) -->
+        <menuitem name="Purchases"
+            id="purchase.menu_purchase_root"
+            groups="purchase.group_purchase_manager,purchase.group_purchase_user,purchase_custom.group_purchase_user,purchase_custom.group_purchase_department_manager,purchase_custom.group_purchase_general_manager,purchase_custom.group_purchase_responsible,purchase_custom.group_service_manager"
+            web_icon="purchase,static/description/icon.png"
+            sequence="25"/>
+
+         <!-- inhrit menu Purchase to add groups(security) -->
+        <menuitem 
+          id="purchase.menu_procurement_management" 
+          name="Purchase"
+          parent="purchase.menu_purchase_root" 
+          sequence="1" 
+          groups="purchase.group_purchase_manager,purchase.group_purchase_user,purchase_custom.group_purchase_user,purchase_custom.group_purchase_department_manager,purchase_custom.group_purchase_general_manager,purchase_custom.group_purchase_responsible"/>
+
+        <!-- inhrit menu Agreement to add groups(security) && change sequence-->
+        <menuitem
+        id="purchase_requisition.menu_purchase_requisition_pro_mgt"
+        sequence="0"
+        parent="purchase.menu_procurement_management"
+        action="purchase_requisition.action_purchase_requisition"
+        groups="purchase.group_purchase_manager,purchase.group_purchase_user,purchase_custom.group_purchase_user,purchase_custom.group_purchase_department_manager,purchase_custom.group_purchase_general_manager,purchase_custom.group_purchase_responsible"/>
+        
+
+        <menuitem action="purchase.purchase_rfq" id="purchase.menu_purchase_rfq"
+            parent="purchase.menu_procurement_management"
+            sequence="1"/>
+
+
+        <!-- add menu  new item -->
+        <menuitem
+          id="menu_reporting_purchase"
+          parent="purchase.menu_purchase_root"
+          name="Reporting"
+
+          />
+
+        <menuitem id="purchase.purchase_report"
+          name="Reporting"  
+          parent="menu_reporting_purchase" 
+          sequence="99"
+          groups="purchase.group_purchase_manager" 
+          action="purchase.action_purchase_order_report_all"/>
+
+
+       <record id="res_config_settings_view_form_purchase_inherit" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.purchase</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="70"/>
+            <field name="inherit_id" ref="purchase.res_config_settings_view_form_purchase"/>
+            <field name="arch" type="xml">
+
+              <xpath expr="//div[hasclass('settings')]/div[@data-key='purchase']/div[@class='row mt16 o_settings_container']/div[@class='col-xs-12 col-md-6 o_setting_box'][2]" position="attributes">  
+
+                  <attribute name='invisible'>1</attribute>
+
+              </xpath>
+
+            </field>
+        </record>    
+
+
+
+
+  </data>
+</odoo>

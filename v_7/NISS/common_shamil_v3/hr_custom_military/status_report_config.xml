@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="status_report_line_tree">
+			<field name="name">status_report_line.tree</field>
+			<field name="model">status_report_line</field>
+			<field name="arch" type="xml">
+				<tree string="Lines" editable="top">
+					<field name="name" required="1"/>
+					<field name="model_id" required="1" domain="[('osv_memory','=',False)]" />
+                    <field name="tabel" required="1"/>
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+        
+        <record id="action_status_report_line" model="ir.actions.act_window">
+            <field name="name">Status Report Line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">status_report_line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <menuitem id="status_report_menu" name="Status Report"/>
+
+        <menuitem id="status_report_config_menu" name="settings" parent="status_report_menu"/>
+        <menuitem id="status_report_line_menu" name="Status Report Line" action="action_status_report_line" parent="status_report_config_menu"/>
+        
+
+
+
+        <record id="view_status_report" model="ir.ui.view">
+            <field name="name">status_report.form</field>
+            <field name="model">status_report</field>
+            <field name="arch" type="xml">
+                <form string="Status Report" version="7.0">
+                    <header>
+                    <button name="print_report" string="Print" type="object"/>
+                    </header>
+                    <sheet>
+                        <label for="name" class="oe_edit_only" string="Name" />
+                        <h1>
+                            <field name="name" class="oe_inline" placeholder="Name" style="width: 6em" required="1"/>
+                        </h1>
+                        <group>
+                            <field name="start_date" colspan="2"/>
+                            <field name="end_date" colspan="2" />
+                            <field name="lines_ids"  required="1">
+                                <tree string="Lines">
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_status_report" model="ir.actions.act_window">
+            <field name="name">Status Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">status_report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="status_report_form_menu" name="Status Report" parent="status_report_menu"/>
+        <menuitem id="status_report_print_menu" name="Status Report" action="action_status_report" parent="status_report_form_menu"/>
+        <report menu="False" auto="False" id="status_report_id" model="status_report" name="sys_status.report" file="hr_custom_military/report/status_report.mako" string="Status Report" report_type="webkit" header="True"/>
+
+    </data>
+</openerp>

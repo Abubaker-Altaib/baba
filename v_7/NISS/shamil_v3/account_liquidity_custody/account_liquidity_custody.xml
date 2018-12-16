@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+	<openerp>
+		<data>
+			<!--Account Liquidity Custody menu-->
+			<menuitem id="menu_account_liquidity_custody" 
+			name="Account Liquidity Custody"
+			sequence="10"/> 
+			<menuitem id="menu_account_liquidity_custody_parent" 
+			name="Account Liquidity Custody" 
+			parent="menu_account_liquidity_custody" sequence="10"/>
+			<!--Account Liquidity Custody form-->
+			<record model="ir.ui.view" id="view_account_liquidity_custody_form">
+				<field name="name">account.liquidity.custody.form</field>
+				<field name="model">account.liquidity.custody</field>
+				<field name="arch" type="xml">
+					<form string="Account Liquidity" version="7.0" create="false">
+						<header>
+							<!--Workflow Buttons-->
+	 						<button name="confirm" states="draft" string="Confirm" class="oe_highlight"/>
+							<button name="reset" states="confirmed" string="Cancel" class="oe_highlight"/>
+							<button name="release" states="confirmed" string="Release" class="oe_highlight"/>
+							 
+							<field name="state" widget="statusbar" statusbar_visible="draft,confirmed,released"/>
+							
+						</header> 
+						<sheet>
+							<group col="4" colspan="4">
+								<field name="name" colspan="2"/>
+								<field name="voucher_id" colspan="2"/>
+								<field name="partner_id" colspan="2"/>
+								<field name="amount" colspan="2"/>
+							</group>
+							<notebook>
+								<page string="Notes">
+									<field name="description" colspan="4" nolabel="1" />
+								</page>
+							</notebook >
+						</sheet>
+					</form>
+				</field>
+			</record>
+			<!--Account Liquidity Custody tree-->
+			<record model="ir.ui.view" id="view_account_liquidity_custody_tree">
+				<field name="name">account.liquidity.custody.tree</field>
+				<field name="model">account.liquidity.custody</field>
+				<field name="arch" type="xml">
+					<tree string="Assets" create="false" colors="blue:(state == 'draft');grey:(state == 'close')">
+						<field name="name" />
+						<field name="voucher_id"/>
+						<field name="partner_id"/>
+						<field name="amount" sum="Total Amount"/>
+						<field name="state"/>
+					</tree>
+				</field>
+			</record>
+			<!--Account Liquidity Custody filter-->
+			<record id="view_account_liquidity_custody_filter" model="ir.ui.view">
+				<field name="name">account.liquidity.custody.select</field>
+				<field name="model">account.liquidity.custody</field>
+				<field name="arch" type="xml">
+					<search string="Search for Account Liquidity">
+						<field name="name" select="1" />
+						<field name="voucher_id" select="1"/>
+						<field name="partner_id" select="1"/>
+						<field name="state" select="1" />
+						<group expand="0" string="Group By...">
+							<filter string="Partner" icon="terp-partner" domain="[]" context="{'group_by':'partner_id'}"/>
+						</group>
+					</search>
+				</field>
+			</record>
+			<!--Account Liquidity Custody action-->
+			<record model="ir.actions.act_window" id="action_account_liquidity_custody">
+				<field name="name">Account Liquidity</field>
+				<field name="res_model">account.liquidity.custody</field>
+				<field name="view_type">form</field>
+				<field name="view_mode">tree,form</field>
+			</record>
+			<record id="action_account_liquidity_custody_tree" model="ir.actions.act_window.view">
+				<field eval="1" name="sequence"/>
+				<field name="view_mode">tree</field>
+				<field name="view_id" ref="view_account_liquidity_custody_tree"/>
+				<field name="act_window_id" ref="action_account_liquidity_custody"/>
+			</record>
+			<record id="action_account_liquidity_custody_form" model="ir.actions.act_window.view">
+				<field eval="2" name="sequence"/>
+				<field name="view_mode">form</field>
+				<field name="view_id" ref="view_account_liquidity_custody_form"/>
+				<field name="act_window_id" ref="action_account_liquidity_custody"/>
+			</record>
+			<!--Account Liquidity Custody menu-->
+			<menuitem id="menu_account_liquidity_custody_child" parent="menu_account_liquidity_custody_parent" sequence="10" action="action_account_liquidity_custody"/>
+
+			<!-- Account Voucher, View inherit -->
+			<record model="ir.ui.view" id="view_purchase_receipt_form_inherit">
+		        <field name="name">account.voucher.purchase.form.inherit</field>
+		        <field name="model">account.voucher</field>
+		        <field name="inherit_id" ref="account_voucher.view_purchase_receipt_form"/>
+		        <field name="arch" type="xml">
+					<xpath expr="/form/header/button[@name='proforma_voucher']" position="before">
+		              <button name="%(account_liquidity_custody.action_account_liquidity_custody_add_vouher_wizard)d"
+                                                     string="Create Custody" type="action" states="posted"/>
+		        	</xpath>
+		        </field>  
+		    </record>
+		</data>
+	</openerp>
+

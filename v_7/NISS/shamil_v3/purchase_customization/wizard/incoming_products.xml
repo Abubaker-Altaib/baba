@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="id_purchase_incoming_products_report_view" model="ir.ui.view">
+            <field name="name">Incoming Products Report Wizard Form</field>
+            <field name="model">incoming.products</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Incoming Products Report Wizard" version="7.0">
+        			<separator string="Incoming Products Report" colspan="4"/>
+            			<group>
+
+            			<group col="4" colspan="2">
+            				<field name="from_date"/>
+            				<field name="to_date" />
+            			</group>
+            			<group col="4" colspan="2">
+            				<field name="category_id" domain="[('executing_agency' , '=' , executing_agency)]" />
+            				<field name="product_id" />
+            			</group>
+            			<group col="4" colspan="2">
+            				<field name="location_id"  domain="[('usage' , '=' , 'internal' )]" />
+            				<field name="department_id"/>
+            			</group>
+            			<group col="4" colspan="2" >
+                                      <field name="supplier_id"/>
+
+	    				<field name="report_type"/>
+            			</group>
+                                <group col="4" colspan="2">
+                                      <field name="company_id" invisible="1"/>
+                                      <field name="with_childern"/>
+                                      <field name="executing_agency"/>  
+            			</group>
+            			</group>
+	    			<footer>
+          	    	<button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight" colspan="2"/>
+                        or
+			<button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link" colspan="2"/>
+                        	</footer>
+               </form>
+            </field>
+	    </record>
+
+        <record id="action_incoming_products_report_wizard" model="ir.actions.act_window">
+            <field name="name">Action Incoming Products Report Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">incoming.products</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="id_purchase_incoming_products_report_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Incoming Products Report"
+                parent="purchase_report.menu_purchase_advance_reports"
+                action="action_incoming_products_report_wizard"
+                id="menu_incoming_products_report_wizard"
+                />
+
+    </data>
+</openerp>

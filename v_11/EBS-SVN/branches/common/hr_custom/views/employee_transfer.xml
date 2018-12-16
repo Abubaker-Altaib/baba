@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="employee_transfer" model="ir.ui.view">
+        <field name="name">Employee Transfer</field>
+        <field name="model">hr.employee.transfer</field>
+        <field name="arch" type="xml">
+            <form string="Employee Transfer">
+                <header>
+                    <button name="transfer" string="Transfer" class="oe_highlight" type="object" states="draft"/>
+                    <button name="receive_employee" string="Receive" type="object" class="oe_highlight" states="transfer" />
+                    <button name="cancel" string="Cancel" type="object" states="receive"/>
+                    <button name="set_draft" string="Set To Draft" class="oe_highlight" type="object" states="transfer"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,transfer,done" />
+                </header>
+                <sheet>
+                    <div>
+                        <h2>
+                            <field name="name" class="oe_inline" placeholder="Name"/>
+                        </h2>
+                    </div>
+                    <group colspan ="2">
+                        <group>
+                            <field name="employee_id" />
+                            <field name="current_job" required="1"  />
+                            <field name="current_department" required="1" />
+                            <field name="date"/>
+
+                        </group>
+                        <group>
+                            <field name="deparment" required="1" />
+                            <field name="type_tranfer" widget="radio" />
+                            <field name="new_job" attrs="{'invisible' : [('type_tranfer', '!=', 'without')],'required' : [('type_tranfer', '=', 'without')] }" />
+                            <field name="tranfer_number" required="1" />
+                        </group>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Internal Notes" >
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="employee_transfer_tree" model="ir.ui.view">
+        <field name="name">Employee Transfer Tree</field>
+        <field name="model">hr.employee.transfer</field>
+        <field name="arch" type="xml">
+            <tree string="Employee Transfer" decoration-info="state == 'draft'" decoration-success="state =='receive'" decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="employee_id"/>
+                <field name="current_department"/>
+                <field name="deparment"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_employee_transfer" model="ir.actions.act_window">
+        <field name="name">Employee Transfer</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.employee.transfer</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type','=','deparment')]</field>
+        <field name="context"> {"default_type" : 'deparment' }</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to create a new Transfer.
+            </p><p>
+                Use this menu to browse previous transfer. To record new
+                transfer, you may use the create button.
+            </p>
+        </field>
+    </record>
+    
+    
+    <record id="act_employee_transfer_view_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="employee_transfer" />
+            <field name="act_window_id" ref="action_employee_transfer" />
+    </record>
+    <record id="act_employee_transfer_view_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="employee_transfer_tree" />
+            <field name="act_window_id" ref="action_employee_transfer" />
+    </record>
+    
+    <menuitem id="menu_employee_transfer" name="Employee Transfer" parent="hr_custom.menu_hr_management" sequence="3"
+              action="action_employee_transfer" />
+              
+              
+       <record id="employee_job_change_form" model="ir.ui.view">
+        <field name="name">Employee Transfer</field>
+        <field name="model">hr.employee.transfer</field>
+        <field name="arch" type="xml">
+            <form string="Job Change">
+                <header>
+                    <button name="change_job" string="Change" class="oe_highlight" type="object" states="draft"/>                 
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done" />
+                </header>
+                <sheet>
+                    <div>
+                        <h2>
+                            <field name="name" class="oe_inline" placeholder="Name"/>
+                        </h2>
+                    </div>
+                    <group colspan ="2">
+                        <group>
+                            <field name="employee_id"  />
+                            <field name="current_job"  required="1" />
+                            <field name="current_department" required="1"/>
+                        </group>
+                        <group>
+                            <field name="new_job" required="1" />
+                            <field name="date"/>
+                        </group>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Internal Notes" >
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+        <record id="employee_job_change_tree" model="ir.ui.view">
+        <field name="name">Employee Transfer Tree</field>
+        <field name="model">hr.employee.transfer</field>
+        <field name="arch" type="xml">
+            <tree string="Job Change" decoration-info="state == 'draft'" decoration-success="state =='receive'" decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="employee_id"/>
+                <field name="current_job"/>
+                <field name="new_job"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_employee_job_change" model="ir.actions.act_window">
+        <field name="name">Job Change</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.employee.transfer</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type','=','job')]</field>
+        <field name="context"> {"default_type" : 'job' }</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to create a new Job Change.
+            </p><p>
+                Use this menu to browse previous Job Change. To record new
+                Change, you may use the create button.
+            </p>
+        </field>
+    </record>
+    
+    
+    <record id="act_employee_job_change_view_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="employee_job_change_form" />
+            <field name="act_window_id" ref="action_employee_job_change" />
+    </record>
+    <record id="act_employee_job_change_view_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="employee_job_change_tree" />
+            <field name="act_window_id" ref="action_employee_job_change" />
+    </record>
+    
+    <menuitem id="menu_employee_job_change" name="Job Change" parent="hr_custom.menu_hr_management" sequence="4"
+              action="action_employee_job_change" />
+</odoo>

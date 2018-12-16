@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="analytic_account_inherites_form" model="ir.ui.view">
+            <field name="name">account.analytic.account.form.inherits</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
+            <field name="arch" type="xml">
+            <xpath expr="//sheet/group/group/field[@name='company_id']" position="after">
+                <field name="project"/>
+            </xpath>
+            </field>
+        </record>
+        <record id="view_account_analytic_account_form_project" model="ir.ui.view">
+            <field name="name">analytic.analytic.account.form.project</field>
+            <field name="model">account.analytic.account</field>
+            <field name="arch" type="xml">
+                <form string="Project">
+                    <header>
+                        <button string="Open" name="set_open" class="oe_highlight" states="draft" 
+                            type="object"/>
+                        <button string="Done" name="set_done" class="oe_highlight" states="open,suspend" 
+                            type="object"/>                         
+                        <button string="Suspend" name="set_suspend" states="open" type="object" class="oe_highlight"/>
+                        <button string="Reset to Draft" name="set_draft"
+                            states="open" type="object"/> 
+                        <field name="state" widget="statusbar" statusbar_visible="draft,open,done"/>  
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" class="oe_inline" placeholder="e.g. Project XYZ"/>
+                            </h1>
+                        </div>
+                        <div name="project"/>
+                        <group name="main">
+                            <group>
+                                <field name="code"/>
+                                <field name="partner_id"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                            </group>
+                            <group>
+                                <field name="tag_ids" widget="many2many_tags"/>
+                                <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                                <field name="currency_id" options="{'no_create': True}" groups="base.group_multi_currency"/>
+                                <field name="amount"/>
+                                <field name="project_id"/>
+                                <field name="linked_to_kpi"/>
+                            </group>
+                        </group>
+                        <notebook  groups="account.group_account_user">
+                        <page string="definition">
+                                <sheet>
+                                    <form string="definition">
+                                        <group>
+                                            <group>
+                                                 <field name="missions_ids" widget='many2many_tags'/>
+                                                 <field name="visions_ids"  widget='many2many_tags'/>
+                                            </group>
+                                            <group>
+                                                <field name="values_ids"  widget='many2many_tags'/>
+                                                <field name="policy_ids"  widget='many2many_tags'/>
+                                            </group>
+                                        </group>
+                                    </form>
+                                </sheet>
+                        </page>
+                        <page string="Budget Items">
+                                <field name="crossovered_budget_line" widget="one2many_list" colspan="4" nolabel="1" mode="tree">
+                                    <tree string="Budget Items" editable="top">
+                                        <field name="crossovered_budget_id"/>
+                                        <field name="general_budget_id"/>
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                        <field name="paid_date"/>
+                                        <field name="planned_amount" widget="monetary"/>
+                                        <field name="practical_amount" sum="Practical Amount" widget="monetary"/>
+        
+                                        <field name="percentage"/>
+                                    </tree>
+                                    <form string="Budget Items">
+                                        <field name="crossovered_budget_id"/>
+                                        <field name="general_budget_id"/>
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                        <field name="paid_date"/>
+                                        <field name="planned_amount" widget="monetary"/>
+                                    </form>
+                                </field>
+                        </page>
+                        <page string="Budget Settings">
+                        <group name="budget">
+                            <group>
+                                <field name="reserve"/>
+                                <field name="stop"/>
+                                <field name="transferable"/>
+                            </group>
+                        </group>
+                        </page>
+                    </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_account_list" model="ir.ui.view">
+            <field name="name">account.analytic.account.list</field>
+            <field name="model">account.analytic.account</field>
+            <field eval="8" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Strategic Project">
+                    <field name="display_name"/>
+                    <field name="code"/>
+                    <field name="partner_id"/>
+                    <field name="active" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="balance"/>
+                    <field name="amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_account_search" model="ir.ui.view">
+            <field name="name">account.analytic.account.search</field>
+            <field name="model">account.analytic.account</field>
+            <field name="arch" type="xml">
+                <search string="Strategic Project">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Analytic Account"/>
+                    <field name="tag_ids"/>
+                    <field name="partner_id"/>
+                    <field name="missions_ids"/>
+                    <field name="visions_ids"/>
+                    <field name="values_ids"/>
+                    <field name="policy_ids"/>
+                    <filter string="Archived" domain="[('active', '=', False)]" name="inactive"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Associated Partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="account_budget_operation_inherites_form" model="ir.ui.view">
+            <field name="name">account.budget.operation.form.inherits</field>
+            <field name="model">account.budget.operation</field>
+            <field name="inherit_id" ref="account_budget_custom.account_budget_operation_view"/>
+            <field name="arch" type="xml">
+            <xpath expr="//sheet/group/group/field[@name='voucher_id']" position="after">
+                <field name="transfer_to" invisible="True"/>
+            </xpath>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_strategic_project_view">
+            <field name="name">Strategic Project</field>
+            <field name="res_model">account.analytic.account</field>
+            <field name="domain"> 
+            [('project', '=', True)]</field>
+            <field name="context" eval="{'default_project': 'True' }"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_analytic_account_list"/>
+       </record>
+        <record id="act_strategic_project_view_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_analytic_account_form_project" />
+            <field name="act_window_id" ref="act_strategic_project_view" />
+        </record>
+        <record id="act_strategic_project_view_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_analytic_account_list" />
+            <field name="act_window_id" ref="act_strategic_project_view" />
+        </record>
+        <record id="account_budget_custom.action_account_budget_operation_menu" model="ir.actions.act_window">
+            <field name="name">Budget Operations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.budget.operation</field>
+            <field name="context">
+            {
+                "default_transfer_to":'analytic',
+            }
+            </field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_custom.account_budget_operation_view_tree" />
+        </record>
+
+        <record id="action_account_project_operation_menu" model="ir.actions.act_window">
+            <field name="name">project Operations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.budget.operation</field>
+            <field name="context">
+            {
+                "default_transfer_to":'project',
+            }
+            </field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_budget_custom.account_budget_operation_view_tree" />
+        </record>
+         <menuitem parent="menu_strategic_configuration_view"
+                  id="menu_strategic_project_view1"
+                  name="Project"/>
+
+        <menuitem
+            name="Project Transfer/Increase" parent="menu_strategic_project_view1"
+            action="action_account_project_operation_menu" sequence="2" id="menu_project_operation" />
+
+        <menuitem parent="menu_strategic_project_view1"
+                  id="menu_strategic_project_view"
+                  name="Strategic Project"
+                  action="act_strategic_project_view"/>
+    </data>
+</odoo>

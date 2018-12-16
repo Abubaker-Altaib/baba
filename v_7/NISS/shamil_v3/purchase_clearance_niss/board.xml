@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+               
+
+        <record id="action_purchase_clearance_draft" model="ir.actions.act_window">
+            <field name="name">action.purchase.clearance.draft</field>
+            <field name="res_model">purchase.clearance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state','=','draft')]</field>  
+        </record>
+         
+       
+        <record id="action_purchase_clearance_approved" model="ir.actions.act_window">
+            <field name="name">action.purchase.clearance.approved</field>
+            <field name="res_model">purchase.clearance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+              <field name="domain">[('state','=','approved')]</field>  
+        </record>
+        
+         
+        
+        <record id="board_purchase_clearance_view" model="ir.ui.view">
+            <field name="name">purchase.clearance.view</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Clearance Dashboard">
+                    <board style="1-2">
+                        <column>
+                            <action name="%(action_purchase_clearance_draft)d" string="Draft"/>
+                        </column>
+                        <column>
+                            <action name="%(action_purchase_clearance_approved)d" string="Done"/>
+                        </column>
+                    </board>
+                   
+                </form>
+            </field>
+        </record>
+        
+        
+        <record id="action_purchase_clearance_board" model="ir.actions.act_window">
+            <field name="name">Booking Dashboard</field>
+            <field name="res_model">board.board</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="board_purchase_clearance_view"/>
+        </record>
+        
+        
+        <menuitem id="menu_board_purchase_clearance_view" action="action_purchase_clearance_board" parent="purchase_clearance.id_purchase_clearance_menu1"/>
+        
+    </data>
+</openerp>

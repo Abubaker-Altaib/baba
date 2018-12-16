@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Service Wizard View-->
+
+    	<record id="view_service_report_wizard" model="ir.ui.view">
+            <field name="name">Services Reports</field>
+            <field name="model">service.wiz</field>
+            <field name="arch" type="xml">
+            	<form string="Services Reports" version="7.0">
+        		<separator string="Services Reports" colspan="4"/>
+			<group col="4" colspan="6">           			
+			           			
+           			<field name="date_from" colspan="2"/>
+            		
+            		<field name="date_to"   colspan="2"/>
+            		
+            		<field name="category" on_change="onchange_cato(category)" colspan="2" />
+            		
+            		<field name="service_type" colspan="2"  domain="[('category','!=','service')]"/>
+            		
+            		<field name="department" colspan="2"/>       		
+	    			
+	    			<field name="partner_id" colspan="2" />				  
+	    			
+	    			<field name="state" colspan="2"/>
+	    			
+	    			<field name="company_id" colspan="2" groups="base.group_multi_company" widget="selection"/>
+
+			</group>
+			<footer>
+           	    		<button name="print_report" string="Print" type="object"  default_focus="1" class="oe_highlight" />
+                             or   
+                  		<button string="Cancel" class="oe_link" special="cancel"/>
+			</footer>
+    		</form>
+            </field>
+	</record>
+	
+<!-- Service Report Wiz  -->	
+	<record id="action_service_report" model="ir.actions.act_window">
+            <field name="name">Services Reports</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">service.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_service_report_wizard"/>
+            <field name="target">new</field>
+   </record>
+
+       <menuitem id="service_report_menu" name="Services Reports" parent="admin_affairs.main_menu_report" action="action_service_report"/>
+
+    </data>
+</openerp>

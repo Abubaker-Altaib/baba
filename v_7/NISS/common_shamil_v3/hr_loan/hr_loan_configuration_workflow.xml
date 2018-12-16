@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+<!--activity-->
+         
+     
+        <record id="wkf_hr_loan" model="workflow">
+            <field name="name">hr.loan</field>
+            <field name="osv">hr.loan</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="act_loan_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hr_loan"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+        </record>
+       
+       <record id="act_loan_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hr_loan"/>
+            <field name="name">confirmed</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'confirmed'})</field>
+        </record>
+       
+        <record id="act_loan_approve" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hr_loan"/>
+            <field name="name">approved</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'approved'})</field>
+        </record>
+
+        <record id="act_loan_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_hr_loan"/>
+            <field name="name">cancel</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'cancel'})</field>
+	        <field name="flow_stop">True</field>
+        </record>
+      
+       <!--transtions-->
+       
+       <record id="tran_draft_confirm" model="workflow.transition">
+            <field name="act_from" ref="act_loan_draft"/>
+            <field name="act_to" ref="act_loan_confirm"/>
+	        <field name="signal">confirmed</field>
+
+        </record> 
+     
+        <record id="tran_confirm_approve" model="workflow.transition">
+            <field name="act_from" ref="act_loan_confirm"/>
+            <field name="act_to" ref="act_loan_approve"/>
+	        <field name="signal">approved</field>
+        </record>
+
+        <record id="tran_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_loan_draft"/>
+            <field name="act_to" ref="act_loan_cancel"/>
+	        <field name="signal">cancel</field>
+        </record>
+
+        <record id="tran_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_loan_confirm"/>
+            <field name="act_to" ref="act_loan_cancel"/>
+	        <field name="signal">cancel</field>
+        </record>
+
+        <record id="tran_approve_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_loan_approve"/>
+            <field name="act_to" ref="act_loan_cancel"/>
+	        <field name="signal">cancel</field>
+        </record>
+        
+        
+      </data>
+   </openerp>

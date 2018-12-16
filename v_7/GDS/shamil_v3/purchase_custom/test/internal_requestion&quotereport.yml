@@ -1,0 +1,19 @@
+-
+  I print Internal Requistion Order report
+-
+  !python {model: ireq.m}: |
+    import netsvc, tools, os
+    (data, format) = netsvc.LocalService('report.ireq_m_request_purchase').create(cr, uid, [ref('ireq_m_pr0')], {}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'custom_purchase-report_ireq_m_request_purchase'+format), 'wb+').write(data)
+
+-
+  I print quote Order report
+-
+  !python {model: ireq.m}: |
+    import netsvc, tools, os
+    (data, format) = netsvc.LocalService('report.purchase_quote').create(cr, uid, [ref('ireq_m_pr0')], {}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'custom_purchase-report_purchase_quote'+format), 'wb+').write(data)
+
+

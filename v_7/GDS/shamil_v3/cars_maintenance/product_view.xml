@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+	<record id="fuel_search_form_view" model="ir.ui.view">
+            <field name="name">fuel.search.form</field>
+            <field name="model">product.product</field>
+	    <field name="inherit_id" ref="admin_affairs.fuel_search_form_view" />
+            <field name="arch" type="xml"> 
+		    <xpath expr="//field[@name='location_id']" position="after">
+		        <field name="spare_ok" string = "Vehicle spare"/>
+		   	<field name="spare_type"/>
+		    </xpath>
+            </field>
+        </record>
+        <record id="fuel_product_tree_view" model="ir.ui.view">
+            <field name="name">fuel.product.tree</field>
+            <field name="model">product.product</field>
+	    <field name="inherit_id" ref="admin_affairs.fuel_product_tree_view" />
+            <field eval="7" name="priority"/>
+            <field name="arch" type="xml">
+		    <xpath expr="//field[@name='name']" position="after">
+		        <field name="spare_ok" string = "Vehicle spare"/>
+		   	<field name="spare_type"/>
+		    </xpath>
+            </field>
+        </record>
+
+
+        <record id="fuel_normal_form_view" model="ir.ui.view">
+            <field name="name">fuel.normal.form</field>
+            <field name="model">product.product</field>
+	    <field name="inherit_id" ref="admin_affairs.fuel_normal_form_view" />
+            <field eval="7" name="priority"/>
+            <field name="arch" type="xml">
+		    <xpath expr="//field[@name='default_code']" position="after">
+		                <field name="default_code" string="Product no"/>
+		                <separator string = "Spare information" colspan="2"/>
+		                <field name="spare_ok" string = "Vehicle spare"/>
+		                <field name="spare_type" colspan="2" />
+		    </xpath>
+            </field>
+        </record>
+
+              <!-- Product Action View -->
+		<record id="admin_affairs.fuel_normal_action" model="ir.actions.act_window">
+        		<field name="domain">['|',('fuel_ok','=',True),('spare_ok','=',True)]</field>
+ 			<field name="context">{'spare_ok':True}</field>
+        	</record>
+
+
+
+
+
+    </data>
+</openerp>

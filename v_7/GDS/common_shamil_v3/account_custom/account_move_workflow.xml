@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="wkf_move" model="workflow">
+			<field name="name">account.move.basic</field>
+			<field name="osv">account.move</field>
+			<field name="on_create">True</field>
+		</record>
+
+		<!-- Activities -->
+		<record id="act_draft" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_move" />
+			<field name="flow_start">True</field>
+			<field name="name">draft</field>
+			<field name="action">write({'state':'draft'})</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_complete" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_move" />
+			<field name="name">completed</field>
+			<field name="action">completed()</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_close" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_move" />
+			<field name="name">closed</field>
+			<field name="action">write({'state':'closed'})</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_check_completed" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_move" />
+			<field name="name">check_completed</field>
+			<field name="action">write({'state':'to_review_closer'})</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_check_closed" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_move" />
+			<field name="name">check_closed</field>
+			<field name="action">write({'state':'to_rev_manager'})</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_post" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_move" />
+			<field name="name">posted</field>
+			<field name="action">post()</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_reverse" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_move" />
+			<field name="name">reverse</field>
+			<field name="action">reverse() write({'state':'reversed'})</field>
+			<field name="kind">function</field>
+		</record>
+
+		<!-- Transitions -->
+		<record id="t1" model="workflow.transition">
+			<field name="act_from" ref="act_draft" />
+			<field name="act_to" ref="act_complete" />
+			<field name="signal">completed</field>
+		</record>
+		<record id="t2" model="workflow.transition">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_close" />
+			<field name="signal">closed</field>
+		</record>
+		<record id="t3" model="workflow.transition">
+			<field name="act_from" ref="act_close" />
+			<field name="act_to" ref="act_post" />
+			<field name="signal">post</field>
+		</record>
+		<record id="t4" model="workflow.transition">
+			<field name="act_from" ref="act_post" />
+			<field name="act_to" ref="act_reverse" />
+			<field name="signal">reverse</field>
+		</record>
+		<record id="t5" model="workflow.transition">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_check_completed" />
+			<field name="signal">check_completed</field>
+		</record>
+		<record id="t6" model="workflow.transition">
+			<field name="act_from" ref="act_close" />
+			<field name="act_to" ref="act_check_closed" />
+			<field name="signal">check_closed</field>
+		</record>
+	</data>
+</openerp>

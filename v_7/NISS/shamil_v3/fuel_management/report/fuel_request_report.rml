@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+	
+
+	<template pageSize="(842.0,595.0)" title="Fuel Request" allowSplitting="20">
+    <pageTemplate id="first">
+      <!--frame id="first" x1="1cm" y1="0.7cm" width="28cm" height="19.5cm" showBoundary="0"/-->
+      <!--frame id="first"  x1="1.2cm" y1="2.7cm" width="18.5cm" height="23.5cm" showBoundary="0"/-->
+      <frame id="first"  x1="1.2cm" y1="1.7cm" width="27.5cm" height="16.5cm" showBoundary="0"/>
+      <!--header-->
+        <pageGraphics>
+            <!--image x="1.3cm" y="29.7cm" height="40.0" >[[ company.logo or removeParentNode('image') ]]</image-->
+            <image x="2cm" y="18.7cm" height="40.0" >[[ company.logo or removeParentNode('image') ]]</image>
+            <setFont name="DejaVu Sans" size="11"/>
+            <drawString x="13.1cm" y="19.7cm"  fontSize="14.0">[[ company.partner_id.name ]]</drawString>
+            <drawString x="13.3cm" y="18.9cm"  fontSize="14.0">نظام إدارة المؤسسة</drawString>
+            <setFont name="DejaVu Sans" size="8"/>
+            <fill color="black"/>
+            <stroke color="black"/>
+
+            <!-- page header -->
+            <lines>2cm 18.5cm 27.5cm 18.5cm</lines>
+            <lines>2cm 18.4cm 27.5cm 18.4cm</lines>
+            <lines>1.2cm 1.65cm 27.5cm 1.65cm</lines>
+
+            <drawString x="9.0cm" y="1.12cm" style="P13"> <pageCount/> </drawString>
+            <!--place x="1.3cm" y="0cm" height="2.55cm" width="27.7cm"-->
+            <place x="3.3cm" y="0cm" height="1.55cm" width="27.7cm">
+                <blockTable colWidths="10cm,10cm,7cm" >
+                    <tr>
+                        <td>
+                          <para leading="11" alignment="CENTER"> Page <pageNumber/> of <getName x="6cm" y="0cm" id="lastPage"/></para>
+                          
+                        </td>
+                        <td>
+                            <para leading="11" alignment="CENTER">المستخدم: [[ user.name ]] </para>
+                        </td>
+                        <td>
+                            <para></para>
+                        </td>
+                    </tr>
+                </blockTable>
+            </place>
+        </pageGraphics>
+      <!--/header-->
+    </pageTemplate>
+  </template>
+	<stylesheet>
+		<blockTableStyle id="Content_Table">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#e6e6e6" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#2F4F4F" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Content_Table2">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#ffffff" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#2F4F4F" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+
+		<paraStyle name="P5" fontName="Helvetica-Bold" fontSize="16.0"
+			leading="20" alignment="CENTER" spaceBefore="10" spaceAfter="10" />
+
+		<paraStyle name="P8" fontName="Helvetica" fontSize="10.0"
+			leading="16" alignment="CENTER" />
+		<paraStyle name="P9" fontName="Helvetica-Bold" fontSize="10.0"
+			leading="16" alignment="CENTER" />
+
+		<paraStyle name="col_Center_small_bold" fontName="Helvetica-Bold"
+			fontSize="10.0" leading="16" alignment="CENTER" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="col_Center_small" fontName="Helvetica"
+			fontSize="10.0" leading="16" alignment="CENTER" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="space_after_title" fontName="Helvetica"
+			fontSize="7.0" leading="18" alignment="CENTER" spaceBefore="4"
+			spaceAfter="4" />
+
+		<images />
+	</stylesheet>
+	<story>
+		<para style="P5">إدارة الشئون الادارية</para>
+		<para style="P5">قسم الخدمات</para>
+		<para style="P5">تقرير طلبات الوقود </para>
+
+		<blockTable colWidths="120,120,120,215,120,90"  style="Content_Table">
+			<tr>
+				<td>
+					<para style="col_Center_small_bold">الحالة</para>
+				</td>
+				<td>
+					<para style="col_Center_small_bold">نوع الخطة</para>
+				</td>
+				<td>
+					<para style="col_Center_small_bold">الغرض</para>
+				</td>
+				<td>
+					<para style="col_Center_small_bold">الفترة</para>
+				</td>
+				<td>
+					<para style="col_Center_small_bold">العربة</para>
+				</td>
+				<td>
+					<para style="col_Center_small_bold">الإدارة</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="120,120,120,105,110,120,90" style="Content_Table2">
+			<tr>
+				<td>
+					<para style="col_Center_small">
+					[[ data['form']['state']=='done' and 'تمت' or data['form']['state']=='all' and 'كل الحالات' or 'كل الحالات' ]]
+					</para>
+				</td>
+				<td>
+					<para style="col_Center_small">
+					[[ data['form']['plan_type']=='fixed_fuel' and 'وقود ثابت' or data['form']['plan_type']=='extra_fuel' and 'وقود إضافى' or 'كل الخطط' ]]
+					</para>
+				</td>
+				<td>
+					<para style="col_Center_small">
+					[[ data['form']['purpose']=='emergency' and 'طارئ' or data['form']['purpose']=='mission' and 'مأمورية' or data['form']['purpose']=='generator' and 'مولد' or 'كل الإغراض' ]]
+					</para>
+				</td>
+				<td>
+					<para style="col_Center_small"> [[ data['form']['Date_to'] ]]</para>
+				</td>
+				<td>
+					<para style="col_Center_small">[[ data['form']['Date_from'] ]]</para>
+				</td>
+				<td>
+					<para style="col_Center_small">
+					[[ data['form']['car_id'] and data['form']['car_id'][1] or 'كل العربات' ]]
+					</para>
+				</td>
+				<td>
+					<para style="col_Center_small">
+						[[ data['form']['department'] and data['form']['department'][1] or 'كل الإدارات' ]]
+					</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="P5"></para>
+		<blockTable colWidths="110.0,110.0,105.0,105.0,105.0,100,110,40" style="Content_Table">
+			<tr>
+				<td>
+					<para style="P9">الكمية</para>
+				</td>
+				<td>
+					<para style="P9">الحالة</para>
+				</td>
+				<td>
+					<para style="P9">الجهة الطالبة</para>
+				</td>
+				<td>
+					<para style="P9">الغرض</para>
+				</td>
+				<td>
+					<para style="P9">العربة</para>
+				</td>
+				<td>
+					<para style="P9">تاريخ الطلب</para>
+				</td>
+				<td>
+					<para style="P9">رقم الطلب</para>
+				</td>
+				<td>
+					<para style="P9">الرقم</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="P8">
+					[[repeatIn(line(data),'st')]][[ formatLang(st.liter) ]] [[ st.product_uom.name]]
+					</para>
+				</td>
+				<td>
+					<para style="P8">
+					[[ st.state=='draft' and 'فى البداية' or st.state=='done' and 'تمت' or st.state=='requested' and 'مطلوبة' or st.state=='confirmed' and 'فى انتظار التاكيد' or st.state=='approved' and 'فى انتظار الموافقة' or '/' ]]
+					</para>
+				</td>
+				<td>
+					<para style="P8">[[ st.department_id.name or '/' ]]</para>
+				</td>
+				<td>
+					<para style="P8">
+					[[ st.purpose=='mission' and 'مأمورية' or st.purpose=='emergency' and 'طارئ' or st.purpose=='generator' and 'مولد' or '/' ]]
+					</para>
+				</td>
+				<td>
+					<para style="P8">[[ st.vehicle_id.name or '/' ]] </para>
+				</td>
+				<td>
+					<para style="P8">[[ st.date or '/']]</para>
+				</td>
+				<td>
+					<para style="P8">[[ st.name or '/' ]]</para>
+				</td>
+				<td>
+					<para style="P8">
+						<seq id="L1" />
+					</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="110,675" style="Content_Table">
+            <tr>[[repeatIn(sums(data),'sum')]]
+                <td>
+                    <para style="P8">[[formatLang(sum['total'])]] [[ sum['unit']  ]]  
+                    </para>
+                </td>
+               
+                <td>
+                    <para style="P8"> اﻹجمالي </para>
+                </td>
+            </tr>
+        </blockTable>
+		<para>
+			<seqReset id="L1" />
+		</para>
+	</story>
+</document>
+

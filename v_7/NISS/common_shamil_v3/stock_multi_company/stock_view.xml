@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+       <record id="view_location_tree22" model="ir.ui.view">
+            <field name="name">stock.location.tree2</field>
+            <field name="model">stock.location</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Stock Location" colors="blue:usage=='view';darkred:usage=='internal'">
+                    <field name="complete_name"/>
+                    <field name="usage"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_location_form" model="ir.ui.view">
+            <field name="name">stock.location.form</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                <group string="Localization" position="replace">
+                 	<separator string="Location Managers" colspan="2"/>
+                        <newline/>
+                        <field name="user_id" nolabel="1" colspan="2"/>
+                </group>
+            </field>
+        </record>
+
+        <record id="view_warehouse" model="ir.ui.view">
+            <field name="name">stock.warehouse.inherit</field>
+            <field name="model">stock.warehouse</field>
+            <field name="inherit_id" ref="stock.view_warehouse"/>
+            <field name="arch" type="xml">
+                <field name="lot_output_id" position="after">
+                    <newline/>
+                   <separator string="Warehouse Managers" colspan="2"/>
+                        <newline/>
+                        <field name="user_id" nolabel="1" colspan="2"/>
+                </field>
+            </field>
+        </record>
+       
+        <record id="vpicktree" model="ir.ui.view">
+            <field name="name">stock.picking.tree</field>
+            <field name="model">stock.picking</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <field name="backorder_id" position="replace">
+                    <field name="backorder_id" />
+                </field>
+            </field>
+        </record>
+
+        
+        <record id="view_picking_form" model="ir.ui.view">
+            <field name="name">stock.picking.form.inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field eval="12" name="priority"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='origin']" position="attributes">
+			<attribute name="readonly">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='backorder_id']" position="after">
+                	<field name="location_id" readonly="1" />
+            	</xpath>
+                <xpath expr='//field[@name="partner_id" ]' position="attributes">
+                        <attribute name="invisible">1</attribute>
+            	 </xpath>
+                <xpath expr='//field[@name="stock_journal_id" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="move_type" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="company_id" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="date_done" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="auto_picking" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                <xpath expr="//field[@name='min_date']" position="after">
+                	<field name="location_dest_id" readonly="1" />
+            	</xpath>
+                <xpath expr="//field[@name='date_done']" position="after">
+                	<field name="user_id" readonly="1" />
+            	</xpath>
+	        <xpath expr="//field[@name='location_id']" position="replace">
+   			  <field name="location_id" domain="[('usage','in',['internal','transit','supplier'])]" />
+                </xpath>
+		<xpath expr="//field[@name='location_dest_id']" position="replace">
+                     <field name="location_dest_id" domain="[('usage','in',['internal','transit'])]" />
+                </xpath>
+                <xpath expr='//button[@name="%(stock.action_stock_invoice_onshipping)d" ]' position="attributes">
+                    <attribute name="groups">purchase_custom.group_stock_invoice</attribute>
+            	</xpath>
+		<xpath expr='//button[@name="button_cancel" ]' position="attributes">
+                    <attribute name="confirm">Are you sure you want to cancel this order</attribute>
+            	</xpath>
+                <xpath expr="//field[@name='move_lines']" position="replace">
+                    <field name="move_lines" context="{'address_in_id': partner_id, 'form_view_ref':'stock.view_move_picking_form', 'tree_view_ref':'stock.view_move_picking_tree', 'picking_type': 'internal'}" options='{"reload_on_button": true}'/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_picking_out_tree" model="ir.ui.view">
+            <field name="name">stock.picking.out.tree</field>
+            <field name="model">stock.picking.out</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="stock.view_picking_out_tree"/>
+            <field name="arch" type="xml">
+                <field name="backorder_id" position="replace">
+                    <field name="backorder_id" />
+                </field>
+		        <field name="stock_journal_id" position="replace">
+                    <field name="stock_journal_id" />
+                </field>
+            </field>
+        </record>
+
+        <record id="view_picking_out_form" model="ir.ui.view">
+            <field name="name">stock.picking.out.form.inherit</field>
+            <field name="model">stock.picking.out</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_out_form"/>
+            <field name="arch" type="xml">
+  	          <xpath expr="//field[@name='origin']" position="attributes">
+			<attribute name="readonly">True</attribute>
+               </xpath>
+               <xpath expr="//field[@name='backorder_id']" position="after">
+                	<field name="location_id" readonly="1" />
+            	</xpath>
+                <xpath expr='//field[@name="partner_id" ]' position="replace">
+                	<field name="partner_id"/>
+            	 </xpath>
+                 <xpath expr='//field[@name="date" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                <xpath expr='//field[@name="stock_journal_id" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr="//field[@name='stock_journal_id']" position="attributes">
+			<attribute name="attrs">{'required':[('state','=','draft')]}</attribute>
+                 </xpath>
+                <xpath expr="//field[@name='stock_journal_id']" position="after">
+                	<field name="location_dest_id" readonly="1" />
+            	</xpath>
+                <xpath expr="//field[@name='date_done']" position="after">
+                	<field name="user_id" readonly="1" />
+            	</xpath>
+                <xpath expr="//field[@name='move_lines']" position="attributes">
+			<attribute name="readonly">True</attribute>
+                </xpath>
+                <xpath expr='//field[@name="move_type" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="company_id" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="date_done" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="auto_picking" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                <xpath expr='//button[@name="draft_validate" ]' position="attributes">
+                    <attribute name="groups">stock.group_stock_user</attribute>
+            	</xpath>
+                <xpath expr='//button[@name="action_process" ]' position="attributes">
+                    <attribute name="groups">stock.group_stock_user</attribute>
+            	</xpath>
+                <xpath expr='//button[@name="%(stock.act_stock_return_picking)d" ]' position="attributes">
+                    <attribute name="groups">stock.group_stock_user</attribute>
+            	</xpath>
+                <xpath expr='//button[@name="%(stock.action_stock_invoice_onshipping)d" ]' position="attributes">
+                    <attribute name="groups">stock_multi_company.group_stock_invoice</attribute>
+            	</xpath>
+		<xpath expr='//button[@name="button_cancel" ]' position="attributes">
+                    <attribute name="confirm">Are you sure you want to cancel this order</attribute>
+            	</xpath>
+            </field>
+        </record>
+
+        <record id="view_picking_out_search" model="ir.ui.view">
+            <field name="name">stock.picking.out.search.inherit</field>
+            <field name="model">stock.picking.out</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="stock.view_picking_out_search"/>
+            <field name="arch" type="xml">
+            	<xpath expr='//field[@name="company_id"]' position="replace">
+                    <field name="company_id" groups="base.group_multi_company">
+                    <filter icon="terp-personal+" domain="[('company_id','=',context.get('company_id',False))]" string="My Company Picking"/>
+                    </field>
+            	</xpath>
+            </field>
+        </record>
+
+        <record id="stock.action_picking_tree" model="ir.actions.act_window">
+            <field name="name">Delivery Orders</field>
+            <field name="res_model">stock.picking.out</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="domain">[('type','=','out')]</field>
+            <field name="context">{"company_id": 'company_id','default_type': 'out', 'contact_display': 'partner_address', 'search_default_confirmed': 1, 'search_default_available': 1}</field>
+            <field name="search_view_id" ref="view_picking_out_search"/>
+            <field name="help">This is the list of all delivery orders that have to be prepared, according to your different sales orders and your logistics rules.</field>
+        </record>
+
+        <record id="view_picking_in_tree" model="ir.ui.view">
+            <field name="name">stock.picking.in.tree.inherit</field>
+            <field name="model">stock.picking.in</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="stock.view_picking_in_tree"/>
+            <field name="arch" type="xml">
+                <field name="backorder_id" position="replace">
+                    <field name="backorder_id"/>  
+                </field>
+            </field>
+        </record>
+
+        <record id="view_picking_in_form" model="ir.ui.view">
+            <field name="name">stock.picking.in.form</field>
+            <field name="model">stock.picking.in</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_picking_in_form"/>
+            <field name="arch" type="xml">
+	      	 <xpath expr="//field[@name='origin']" position="attributes">
+			<attribute name="readonly">True</attribute>
+                 </xpath>
+                 <xpath expr="//field[@name='origin']" position="after">
+                	<field name="location_id" readonly="1" />
+            	 </xpath>
+                 <xpath expr='//field[@name="partner_id" ]' position="attributes">
+                        <attribute name="readonly">1</attribute>
+            	 </xpath>
+                 <xpath expr="//field[@name='partner_id']" position="attributes">
+			<attribute name="attrs">{'required':[('state','=','draft')]}</attribute>
+                 </xpath>
+                 <xpath expr='//field[@name="date" ]' position="attributes">
+                        <attribute name="readonly">1</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="stock_journal_id" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="move_type" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="company_id" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="date_done" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr='//field[@name="auto_picking" ]' position="attributes">
+                        <attribute name="readonly">True</attribute>
+            	 </xpath>
+                 <xpath expr="//field[@name='stock_journal_id']" position="after">
+                	<field name="location_dest_id" readonly="1" />
+            	 </xpath>
+                 <xpath expr="//field[@name='date_done']" position="after">
+                	<field name="user_id" readonly="1" />
+            	 </xpath>
+        	 <xpath expr="//field[@name='move_lines']" position="attributes">
+			<attribute name="readonly">True</attribute>
+                 </xpath>
+                 <xpath expr='//button[@name="draft_validate" ]' position="attributes">
+                        <attribute name="groups">stock.group_stock_user,stock_quality.group_stock_hq</attribute>
+            	 </xpath>
+                 <xpath expr='//button[@name="action_process" ]' position="attributes">
+                        <attribute name="groups">stock.group_stock_user,stock_quality.group_stock_hq</attribute>
+            	 </xpath>
+                 <xpath expr='//button[@name="%(stock.act_stock_return_picking)d" ]' position="attributes">
+                        <attribute name="groups">stock.group_stock_user,stock_quality.group_stock_hq</attribute>
+            	 </xpath>
+                 <xpath expr='//button[@name="%(stock.action_stock_invoice_onshipping)d" ]' position="attributes">
+                        <attribute name="groups">stock_multi_company.group_stock_invoice</attribute>
+                        <attribute name="attrs">{'invisible':['|',('state','!=','done'),('invoice_state','in',['invoiced','none'])]}</attribute>
+            	</xpath>
+	        <xpath expr='//button[@name="button_cancel" ]' position="attributes">
+                        <attribute name="confirm">Are you sure you want to cancel this order</attribute>
+            	</xpath>
+            </field>
+        </record>
+
+        <record id="view_picking_in_search1" model="ir.ui.view">
+            <field name="name">stock.picking.in.search.inherit</field>
+            <field name="model">stock.picking.in</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="stock.view_picking_in_search"/>
+            <field name="arch" type="xml">
+		<xpath expr='//field[@name="name"]' position="after">
+             		<field name="company_id"  groups="base.group_multi_company" >
+                    <filter icon="terp-personal+" domain="[('company_id','=',context.get('company_id',False))]" string="My Company Picking"/>
+                    <filter icon="terp-dialog-close" domain="[('purchase_id','=','None')]" string="Purchase"/>
+                    <filter icon="terp-dialog-close" domain="[('purchase_id','!=','None')]" string="Return"/>
+                    </field>
+            	</xpath>
+            </field>
+        </record>
+
+        <record id="stock.action_picking_tree4" model="ir.actions.act_window">
+            <field name="name">Incoming Shipments</field>
+            <field name="res_model">stock.picking.in</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="domain">[('type','=','in')]</field>
+            <field name="context">{'company_id': 'company_id','default_type': 'in','contact_display': 'partner_address',"search_default_available":1}</field>
+            <field name="search_view_id" ref="view_picking_in_search1"/>
+            <field name="help">The Incoming Shipments is the list of all orders you will receive from your suppliers. An incoming shipment contains a list of products to be received according to the original purchase order. You can validate the shipment totally or partially.</field>
+        </record>
+      
+        <record id="stock.action_location_tree" model="ir.actions.act_window">
+            <field name="name">Location Structure</field>
+            <field name="res_model">stock.location</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="domain">[('location_id','=',False)]</field>
+            <field name="context">{}</field>
+            <field name="view_type">tree</field>
+            <field name="help">This is the structure of your company's warehouses and locations. You can click on a location to get the list of the products and their stock level in this particular location and all its children.</field>
+        </record>
+
+       <record id="view_move_form" model="ir.ui.view">
+            <field name="name">stock.move.form</field>
+            <field name="model">stock.move</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_move_form"/>
+            <field eval="4" name="priority"/>
+            <field name="arch" type="xml">
+                 <!--xpath expr="/form/sheet/group/group/div/field[@name='tracking_id']"  position="before">
+                    <field name="exchange_line_id" colspan="2"/>
+                 </xpath-->
+        	     <xpath expr="//field[@name='product_id']" position="attributes">
+ 				<attribute name="readonly">True</attribute>
+
+                 </xpath>
+        	     <xpath expr="//field[@name='product_qty']" position="attributes">
+					<attribute name="readonly">True</attribute>
+                 </xpath>
+                 <xpath expr="//field[@name='product_uom']" position="attributes">
+					<attribute name="readonly">True</attribute>
+                 </xpath>
+                 <xpath expr="//field[@name='location_id']" position="attributes">
+					<attribute name="readonly">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="attributes">
+					<attribute name="readonly">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='picking_id']" position="attributes">
+					<attribute name="readonly">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+       <record id="view_move_form_reception_picking" model="ir.ui.view">
+            <field name="name">stock.move.form2</field>
+            <field name="model">stock.move</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_move_picking_form"/>
+            <field eval="6" name="priority"/>
+            <field name="arch" type="xml">
+            	 <xpath expr="//field[@name='product_id']" position="attributes">
+					<attribute name="attrs">{'readonly':[('type','!=','internal')]}</attribute>
+                 </xpath>
+        	     <xpath expr="//field[@name='product_qty']" position="attributes">
+					<attribute name="attrs">{'readonly':[('type','!=','internal')]}</attribute>
+                 </xpath>
+                 <xpath expr="//field[@name='product_uom']" position="attributes">
+					<attribute name="attrs">{'readonly':[('type','!=','internal')]}</attribute>
+                 </xpath>
+                 <xpath expr="//field[@name='location_id']" position="attributes">
+					<attribute name="attrs">{'readonly':[('type','!=','internal')]}</attribute>
+					<attribute name="domain">"[('usage','in', ('internal','supplier','transit'))]"</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="attributes">
+					<attribute name="attrs">{'readonly':[('type','!=','internal')]}</attribute>
+					<attribute name="domain">"[('usage','in', ('internal','transit'))]"</attribute>
+                </xpath>
+                <!--xpath expr="//field[@name='picking_id']" position="attributes">
+					<attribute name="readonly">True</attribute>
+                </xpath-->
+            </field>
+        </record>       
+    </data>
+</openerp>

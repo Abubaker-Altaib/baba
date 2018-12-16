@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <!-- federal treatment request form view -->
+        <record id="federal_treatment_request_form" model="ir.ui.view">
+            <field name="name">Federal Treatment Request Form</field>
+            <field name="model">zakat.federaltreatment.request</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_draft" string="Set To Draft" states="cancel" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_done" states="draft" string="Apply" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_cancel" string="Cancel" states="draft" type="object"
+                                class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="code" readonly="1"/>
+                        </h1>
+                        <group string="Treatment Type">
+                            <field name="type" required="1" attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                        </group>
+                        <group col="4" colspan="2" string="General Information">
+                            <field name="partner_id"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"
+                                   context="{'form_view_ref': 'zakat_base.zakat_res_partner_form_view', 'default_zakat_partner': 1, 'default_Fageer': 1,}"
+                                   domain="[('zakat_partner','=',True)]" required="1"/>
+                            <field name="national_number" readonly="1" required="1"/>
+                            <field name="name" required="1" readonly="1"/>
+                            <field name="phone" required="1" readonly="1"/>
+                            <label for="age" string="Age"/>
+                            <div>
+                                <field name="birth_date" readonly="1" required="1" style="width:45%; margin-right:2%;"/>
+                                <field name="age" style="width:15%; margin-right:2%;"/>Years
+                            </div>
+                            <field name="gender" readonly="1" widget="radio" options="{'horizontal': true}"/>
+                            <field name="state_id" readonly="1" required="1"
+                                   options="{'no_quick_create': True, 'no_create_edit': True}"/>
+                            <field name="local_state_id" readonly="1"
+                                   options="{'no_quick_create': True, 'no_create_edit': True}"
+                                   domain="[('state_id','=',state_id)]"
+                                   attrs="{'invisible':[('type', 'in', ['at',False])], 'required':[('type', '=', 'it')]}"/>
+                        </group>
+                        <group col="4" colspan="2" string="Treatment Follow Up Information">
+                            <field name="treatment_amount" required="1"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                            <field name="follow_up_ref" readonly="1"/>
+                            <!--<field name="treatment_id" readonly="1" attrs="{'invisible':[('state','!=','done')] }"/>-->
+                        </group>
+                        <notebook>
+                            <page string="Notes">
+                                <field name="note" placeholder="Description" required="1"/>
+                            </page>
+                            <page string="Document">
+                                <group col="4" colspan="2">
+                                    <field name="bill"
+                                           attrs="{'invisible':[('type', 'in', ['at',False])] ,'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="medical"
+                                           attrs="{'invisible':[('type', 'in', ['drugs','at',False])], 'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="payment"
+                                           attrs="{'invisible':[('type', 'in', ['drugs','at',False])], 'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="study"
+                                           attrs="{'invisible':[('type', 'in', ['drugs','at',False])], 'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                </group>
+                                <group col="4" colspan="2" attrs="{'invisible':[('type', 'in', ['it','drugs',False])]}">
+                                    <field name="commission" style="width:190%; margin-right:2%;"/>
+                                    <field name="abroad_cost"
+                                           attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="passport_co"
+                                           attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="tickets" attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+
+                                    <field name="visa" attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="conversion_replacement"
+                                           attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="conversion"
+                                           attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                </group>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--treatment request tree view -->
+        <record id="federal_treatment_request_view_tree" model="ir.ui.view">
+            <field name="name">Federal Treatment Request</field>
+            <field name="model">zakat.federaltreatment.request</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="national_number"/>
+                    <field name="phone"/>
+                    <field name="treatment_amount"/>
+                    <field name="follow_up_ref"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- federal treatment request Search -->
+        <record id="federal_treatment_request_search" model="ir.ui.view">
+            <field name="name">Federal Treatment Search</field>
+            <field name="model">zakat.federaltreatment.request</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="national_number"/>
+                    <field name="name"/>
+                    <group expand="0" string="Group By">
+                        <filter string="State" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!--  treatment request action -->
+        <record id="federal_treatment_request_action" model="ir.actions.act_window">
+            <field name="name">Federal Treatment Request Action</field>
+            <field name="res_model">zakat.federaltreatment.request</field>
+            <field name="view_id" ref="federal_treatment_request_view_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+        <!-- treatment request menu item -->
+        <menuitem id="federal_treatment_request_menu"
+                  name="Treatment Support Request"
+                  parent="dzc1_federal_treatment"
+                  action="federal_treatment_request_action"
+                  sequence="1"/>
+
+
+        <!-- federal treatment form view -->
+        <record id="federal_treatment_view_form" model="ir.ui.view">
+            <field name="name">Federal Treatment Form</field>
+            <field name="model">zkate.federaltreatment</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <!-- <button name="action_draft" string="Set To Draft" states="cancel,w_unit" type="object"
+                                class="oe_highlight"/> -->
+                        <button name="check_amount_ceiling" string="Approve"
+                                attrs="{'invisible':[('state','!=','draft')]}" type="object"
+                                class="oe_highlight" context="{'approve' : 'True'}"/>
+                        <button name="check_amount_ceiling" string="Exception" states="draft" type="object"
+                                class="oe_highlight" context="{'exception' : 'True'}"/>
+                        <button name="w_unit_approval" string="Unit Manger Approval" states="w_unit" type="object"
+                                class="oe_highlight"/>
+                        <button name="auditor_approval" states="auditor" string="Auditor Approval" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_return" string="Return To Previous State" states="auditor" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_cancel" string="Cancel" states="draft,w_unit,auditor,w_approval"
+                                type="object"
+                                class="oe_highlight"/>
+                        <button name="action_done" states="w_approval" string="Done" type="object"
+                                class="oe_highlight"/>
+                        <field name="state" statusbar_visible="draft,auditor,w_approval,done" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group col="4" colspan="2">
+                            <field name="code" readonly="1"/>
+
+                            <div class="oe_button_box" style="margin-right:20%;" name="button_box">
+                                <button name="action_get_attachment_view"
+                                        class="oe_stat_button"
+                                        icon="fa-book"
+                                        type="object">
+                                    <field name="attachment_number" widget="statinfo" string="Documents"/>
+                                </button>
+                                <button attrs="{'invisible':[('type','=','at')]}" name="print_report"
+                                        string="Guarantee Letter" type="object" class="oe_stat_button" icon="fa-file"/>
+                                <button attrs="{'invisible':[('type','!=','it')]}" name="print_sergury_fees_report"
+                                        string="Sergury Fees" type="object" class="oe_stat_button" icon="fa-bed"/>
+
+                                <button attrs="{'invisible':[('type','!=','at')]}" name="print_english_letter"
+                                        string="Guarantee Letter" type="object" class="oe_stat_button" icon="fa-file"/>
+                                <button name="print_follow_form" attrs="{'invisible':[('type', '=', 'drugs')]}"
+                                        string="Follow up Form" type="object" class="oe_stat_button" icon="fa-edit"/>
+                                <button name="abroad_treatment" attrs="{'invisible':[('type', '!=', 'at')]}"
+                                        style="width:90%;" string="Treatment Controls" type="object"
+                                        class="oe_stat_button" icon="fa-legal"/>
+                            </div>
+
+                        </group>
+                        <group col="4" colspan="2">
+                            <field name="ratification_id" required="1"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"
+                                   domain="[('type', '=', type), ('state', '=', 'approve')]"
+                                   options="{'no_quick_create': True, 'no_create_edit': True}"/>
+                            <field name="date" readonly="1" required="1"/>
+                            <field name="claim" readonly="1" style="width:20%; margin-right:2%;"/>
+                            <field name="type" attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"
+                                   invisible="1"/>
+                        </group>
+                        <group col="4" string="General Information">
+                            <h2>
+                                <field name="e_first_name" placeholder="English First Name"
+                                       style="width:20%; margin-right:2%;"
+                                       attrs="{'invisible':[('type' , '!=' , 'at')],'readonly':[('state' , 'in' , ('done' , 'cancel'))],'required':[('type' , '=' , 'at')]}"/>
+                                <field name="e_second_name" placeholder="English Second Name"
+                                       style="width:20%; margin-right:2%;"
+                                       attrs="{'invisible':[('type' , '!=' , 'at')],'readonly':[('state' , 'in' , ('done' , 'cancel'))],'required':[('type' , '=' , 'at')]}"/>
+                                <field name="e_third_name" placeholder="English Third Name"
+                                       style="width:20%; margin-right:2%;"
+                                       attrs="{'invisible':[('type' , '!=' , 'at')],'readonly':[('state' , 'in' , ('done' , 'cancel'))],'required':[('type' , '=' , 'at')]}"/>
+                                <field name="e_forth_name" placeholder="English Forth Name"
+                                       style="width:20%; margin-right:2%;"
+                                       attrs="{'invisible':[('type' , '!=' , 'at')],'readonly':[('state' , 'in' , ('done' , 'cancel'))],'required':[('type' , '=' , 'at')]}"/>
+                            </h2>
+                        </group>
+                        <group col="4" colspan="2">
+                            <field name="partner_id"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"
+                                   context="{'form_view_ref': 'zakat_base.zakat_res_partner_form_view', 'default_zakat_partner': 1, 'default_Fageer': 1,}"
+                                   domain="[('zakat_partner','=',True)]" required="1"/>
+                            <field name="national_number" readonly="1" required="1"/>
+                            <field name="name" required="1" readonly="1"/>
+                            <field name="phone" required="1" readonly="1"/>
+                            <label for="age" string="Age"/>
+                            <div>
+                                <field name="birth_date" readonly="1" required="1" style="width:45%; margin-right:2%;"/>
+                                <field name="age" style="width:15%; margin-right:2%;"/>Years
+                            </div>
+                            <field name="gender" readonly="1" widget="radio" options="{'horizontal': true}"/>
+                            <field name="state_id" readonly="1" required="1"
+                                   options="{'no_quick_create': True, 'no_create_edit': True}"/>
+                            <field name="local_state_id" readonly="1"
+                                   options="{'no_quick_create': True, 'no_create_edit': True}"
+                                   domain="[('state_id','=',state_id)]"
+                                   attrs="{'invisible':[('type', 'in', ['at',False])], 'required':[('type', '=', 'it')]}"/>
+
+                        </group>
+
+                        <group col="4" colspan="2" string="Medical Information">
+                            <field name="illness_sector_id" options="{'no_quick_create': True, 'no_create_edit': True}"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}" required="1"/>
+                            <field name="illness_id"
+                                   options="{'no_quick_create': True, 'no_create_edit': True}"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"
+                                   required="1" domain="[('sector_id', '=', illness_sector_id)]"/>
+                            <field name="hospital_contract"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}" required="1"/>
+                            <field name="hospital_id"
+                                   options="{'no_quick_create': True, 'no_create_edit': True}"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}" required="1"/>
+                            <field name="surgery_date"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])] ,'invisible':['|',('type', '!=', 'it')]}"/>
+                        </group>
+
+                        <group col="4" colspan="2" string="Travel Information"
+                               attrs="{'readonly':[('state', 'in', ['done', 'cancel'])], 'invisible':[('type', 'in', ['drugs','it',False])]}">
+                            <field name="country"
+                                   options="{'no_quick_create': True, 'no_create_edit': True}"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])] ,'invisible':[('type', 'in', ['it',False])], 'required':[('type', '=', 'at')]}"
+                            />
+                            <field name="passport_no"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])] ,'invisible':[('type', 'in', ['it',False])], 'required':[('type', '=', 'at')]}"/>
+                            <field name="transport_type"
+                                   attrs="{'readonly':[('state', 'in', ['done', 'cancel'])] ,'invisible':[('type', 'in', ['it',False])], 'required':[('type', '=', 'at')]}"/>
+                        </group>
+                        <field name="ncms_integration" invisible="1"/>
+                        <field name="health_ins_integration" invisible="1"/>
+
+                        <notebook>
+                            <page string="Zakat &amp; Financial Support">
+                                <group>
+                                    <field name="total_cost" attrs="{'readonly':[('state', '!=','draft')]}"
+                                           required="1"/>
+                                </group>
+                                <group col="4" colspan="2">
+                                    <field name="other_support" attrs="{'readonly':[('state', '!=','draft')]}"/>
+                                    <field name="insurance_support" attrs="{'readonly':[('state', '!=','draft')]}"/>
+                                    <field name="zakat_support"
+                                           attrs="{'readonly':[('state', 'in', ['auditor','done', 'w_approval', 'cancel'])]}"/>
+                                    <field name="financial_support"
+                                           attrs="{'readonly':[('state', 'in', ['auditor','done', 'w_approval', 'cancel'])] , 'invisible':[('type','=','drugs')]}"/>
+                                    <field name="zakat_approval" readonly="1"/>
+                                    <field name="financial_approval" readonly="1"
+                                           attrs="{'invisible':[('type','=','drugs')]}"/>
+                                </group>
+                                <group>
+                                    <div>
+                                        <center>
+                                            <button name="check_amount_ceiling"
+                                                    attrs="{'invisible':[('state', 'in', ['done', 'cancel'])]}"
+                                                    string="Compute" type="object" class="oe_highlight" icon="fa-gears"
+                                                    context="{'compute': 'True'}"/>
+                                        </center>
+                                    </div>
+                                </group>
+                            </page>
+                            <page string="Document Status">
+                                <group col="4" colspan="2">
+                                    <field name="bill"
+                                           attrs="{'invisible':[('type', 'in', ['at',False])] ,'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="medical"
+                                           attrs="{'invisible':[('type', 'in', ['drugs','at',False])], 'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="payment"
+                                           attrs="{'invisible':[('type', 'in', ['drugs','at',False])], 'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="study"
+                                           attrs="{'invisible':[('type', 'in', ['at',False])], 'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                </group>
+                                <group col="4" colspan="2" attrs="{'invisible':[('type', 'in', ['it','drugs',False])]}">
+                                    <field name="commission" style="width:190%; margin-right:2%;"/>
+                                    <field name="abroad_cost"
+                                           attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="passport_co"
+                                           attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="tickets" attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+
+                                    <field name="visa" attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="conversion_replacement"
+                                           attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                    <field name="study"
+                                           attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"/>
+                                </group>
+                            </page>
+                            <page string="Medical Commission"
+                                  attrs="{'invisible':['|',('type','!=','at'),('ncms_integration','=',False)]}">
+                                <group col="3" colspan="2">
+                                    <field name="ncms_follow_id"
+                                           attrs="{'readonly':[('state', 'in', ['done', 'cancel'])],'required':['&amp;',('type','=','at'),('ncms_integration','=',True)]}"
+                                           placeholder="Follow Number"/>
+                                    <div class="oe_button_box" name="button_box">
+                                        <center>
+                                            <button name="action_call_ncms" string="Verify" type="object"
+                                                    class="oe_stat_button" icon="fa-eye"/>
+                                        </center>
+                                    </div>
+                                </group>
+                                <group string="Patient Information" col="4" colspan="2">
+                                    <field name="follow_id" readonly="1"/>
+                                    <field name="patient_name" readonly="1"/>
+                                    <field name="follow_status" readonly="1"/>
+                                    <!--<field name="application_date" readonly="1"/>-->
+                                    <field name="classification_type" readonly="1"/>
+                                </group>
+
+                            </page>
+
+                            <!-- Health insurance integration -->
+
+                            <page string="Health insurance"
+                                  attrs="{'invisible':['|',('type','=','at'),('health_ins_integration','=',False)]}">
+                                <group col="3" colspan="2">
+                                    <field name="beneficiary_health_num"
+                                           attrs="{'readonly':[('state', 'in', ['done', 'cancel'])]}"
+                                           placeholder="Beneficairy Number"/>
+
+                                    <div class="oe_button_box" name="button_box">
+                                        <center>
+                                            <button name="health_insurance_call" string="Verify" type="object"
+                                                    class="oe_stat_button" icon="fa-eye"/>
+
+                                            <field name="valid_bnf" readonly="1"/>
+
+                                        </center>
+                                    </div>
+                                </group>
+
+                                <group string="Patient Information" col="4" colspan="2">
+
+                                    <field name="bnf_id" readonly="1"/>
+
+                                    <field name="bnf_name" readonly="1"/>
+                                    <field name="cst_name" readonly="1"/>
+                                    <field name="sts" readonly="1"/>
+
+                                    <!--                                     <field name="bnf_phone" readonly="1"/>
+                                     -->
+                                </group>
+
+                            </page>
+
+
+                            <page string="Notes">
+                                <field name="note" placeholder="Notes....."/>
+                            </page>
+                            <page string="Voucher" attrs="{'invisible':[('type','!=','at')]}">
+                                <group>
+                                    <field name="voucher_id" readonly="1"/>
+                                </group>
+                            </page>
+
+                        </notebook>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+
+        </record>
+        <!-- internal treatment tree view -->
+        <record id="federal_treatment_view_tree" model="ir.ui.view">
+            <field name="name">Federal Treatment</field>
+            <field name="model">zkate.federaltreatment</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="national_number"/>
+                    <field name="phone"/>
+                    <field name="date"/>
+                    <field name="ratification_id"/>
+                    <field name="zakat_support"/>
+                    <field name="financial_support"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Drugs treatment tree view -->
+        <record id="federal_drugs_treatment_view_tree" model="ir.ui.view">
+            <field name="name">Federal Treatment</field>
+            <field name="model">zkate.federaltreatment</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="national_number"/>
+                    <field name="phone"/>
+                    <field name="date"/>
+                    <field name="ratification_id"/>
+                    <field name="zakat_support"/>
+                    <field name="financial_support"/>
+                    <field name="illness_sector_id"/>
+                    <field name="state"/>
+                    <!--TODO: add sector field -->
+                </tree>
+            </field>
+        </record>
+
+        <!-- abroad treatment tree view -->
+        <record id="federal_abroad_treatment_view_tree" model="ir.ui.view">
+            <field name="name">Federal Treatment</field>
+            <field name="model">zkate.federaltreatment</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="national_number"/>
+                    <field name="phone"/>
+                    <field name="date"/>
+                    <field name="ratification_id"/>
+                    <field name="zakat_support"/>
+                    <field name="financial_support"/>
+                    <field name="illness_sector_id"/>
+                    <field name="state"/>
+                    <!--TODO: add sector field -->
+                </tree>
+            </field>
+        </record>
+
+        <!-- Internal treatment action -->
+        <record id="federal_treatment_action" model="ir.actions.act_window">
+            <field name="name">Federal Treatment Action</field>
+            <field name="res_model">zkate.federaltreatment</field>
+            <field name="domain">[('type', '=', 'it')]</field>
+            <field name="context">{'default_type': 'it'}</field>
+            <field name="view_id" ref="federal_treatment_view_tree"/>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+        <!-- Abroad treatment action -->
+        <record id="federal_abroad_treatment_action" model="ir.actions.act_window">
+            <field name="name">Federal Treatment Action</field>
+            <field name="res_model">zkate.federaltreatment</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('type', '=', 'at')]</field>
+            <field name="context">{'default_type': 'at'}</field>
+            <field name="view_id" ref="federal_abroad_treatment_view_tree"/>
+        </record>
+
+        <!-- Drugs treatment action -->
+        <record id="federal_drugs_treatment_action" model="ir.actions.act_window">
+            <field name="name">Federal Treatment Action</field>
+            <field name="res_model">zkate.federaltreatment</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('type', '=', 'drugs')]</field>
+            <field name="context">{'default_type': 'drugs'}</field>
+            <field name="view_id" ref="federal_drugs_treatment_view_tree"/>
+        </record>
+
+
+        <!-- federal treatment Search -->
+        <record id="federal_treatment_search" model="ir.ui.view">
+            <field name="name">Federal Treatment Search</field>
+            <field name="model">zkate.federaltreatment</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="code"/>
+                    <field name="national_number"/>
+                    <field name="name"/>
+                    <group expand="0" string="Group By">
+                        <!--TODO: add new filter to group by sector and state-->
+                        <filter string="State" context="{'group_by': 'state'}"/>
+                        <filter string="Date" context="{'group_by': 'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <!-- Internal treatment menu item -->
+        <menuitem id="federal_treatment_menu"
+                  name="Internal Treatment"
+                  parent="dzc1_federal_treatment"
+                  action="federal_treatment_action"
+                  sequence="2"/>
+
+        <!-- abroad treatment menu item -->
+        <menuitem id="federal_abroad_treatment_menu"
+                  name="Abroad Treatment"
+                  parent="dzc1_federal_treatment"
+                  action="federal_abroad_treatment_action"
+                  sequence="3"/>
+
+        <!-- abroad treatment menu item -->
+        <menuitem id="federal_drugs_treatment_menu"
+                  name="Drugs, Treatments And Tests"
+                  parent="dzc1_federal_treatment"
+                  action="federal_drugs_treatment_action"
+                  sequence="4"/>
+
+        <!-- Treatment Payment Form View -->
+        <record id="treatment_payment_form" model="ir.ui.view">
+            <field name="name">Federal Treatment Payment</field>
+            <field name="model">zakat.treatmentpayment</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_confirm" string="Confirm" states="draft" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_review" string="Review" states="confirm" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_approve" string="Approve" states="review" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_done" string="Done" states="approve" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_cancel" string="Cancel" states="draft,confirm,review,approve" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_draft" string="Set To Draft" states="cancel" type="object"
+                                class="oe_highlight"/>
+                        <field name="state" statusbar_visible="draft,confirm,review,approve,done" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <field name="vouchers_ids" invisible="1"/>
+                        <button type="object"
+                                name="action_view_vouchers"
+                                class="oe_stat_button"
+                                icon="fa-money"
+                                attrs="{'invisible': [('vouchers_count', '=', 0)]}">
+                            <field name="vouchers_count" widget="statinfo" string="Vouchers"/>
+                        </button>
+
+                        <group>
+                            <h1>
+                                <field name="code" readonly="1"/>
+                            </h1>
+                        </group>
+                        <group col="4" colspan="2">
+                            <field name="order_date" readonly="1" required="1"/>
+                            <field name="hospital_id" attrs="{'readonly':[('state', 'not in', ('draft', 'confirm'))]}"
+                                   required="1"/>
+                        </group>
+                        <group string="Zakat &amp; Financial Support" col="4" colspan="2">
+                            <field name="zakat_support" readonly="1"/>
+                            <field name="financial_support" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Treatment">
+                                <group>
+                                    <div>
+                                        <field name="federalTreatment_ids"
+                                               attrs="{'readonly':[('state', 'not in', ('draft', 'confirm'))]}"
+                                               domain="['&amp;','&amp;','&amp;',('hospital_id','=',hospital_id),('type','in',['it','drugs']),('claim','=', False), ('state','=','done')]"
+                                               required="1"/>
+                                    </div>
+                                </group>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- treatment Payment tree view -->
+        <record id="treatment_payment_tree" model="ir.ui.view">
+            <field name="name">Federal Treatment</field>
+            <field name="model">zakat.treatmentpayment</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="order_date"/>
+                    <field name="hospital_id"/>
+                    <field name="zakat_support"/>
+                    <field name="financial_support"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- treatment Payment Search -->
+        <record id="treatment_payment_search" model="ir.ui.view">
+            <field name="name">Treatment Payment Search</field>
+            <field name="model">zakat.treatmentpayment</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="code"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Hospital" context="{'group_by': 'hospital_id'}"/>
+                        <filter string="Date" context="{'group_by': 'order_date'}"/>
+                        <filter string="Status" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <!-- Treatment Payment action -->
+        <record id="treatment_payment_view_action" model="ir.actions.act_window">
+            <field name="name">Treatment Payment Action</field>
+            <field name="res_model">zakat.treatmentpayment</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+
+        <!-- treatment Payment menu item -->
+        <menuitem id="treatment_payment_menu"
+                  name="Federal Treatment Payment"
+                  parent="dzc1_federal_treatment"
+                  action="treatment_payment_view_action"
+                  sequence="5"/>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+                    <!-- account   asset  location     -->
+
+        <record id="account_asset_location_form" model="ir.ui.view">
+            <field name="name">account.asset.location.form</field>
+            <field name="model">account.asset.location</field>      
+            <field name="arch" type="xml">
+                <form string="Stock Location" version="7.0">
+                    <sheet>
+                        <group col="4" colspan="2">
+                            <field name="name"/>
+                            <field name="asset_usage"/>
+                            <field name="code" select="1"/>
+                            <field name="asset_location_id" domain="[('asset_usage','=','view')]  " />
+                            <field name="company_id" />
+                            <field name="complete_name" attrs="{'required':[('asset_location_id','=','complete_name')]}"/> 
+                        </group>
+                        <div>
+                            <field colspan="4" name="comment" nolabel="1"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_account_asset_location_form">
+            <field name="name">Asset Location</field>
+            <field name="res_model">account.asset.location</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem 
+                parent="menu_finance_assets_configration"
+                id="menu_action_account_asset_location_form"
+                action="action_account_asset_location_form" sequence="42"/>
+
+        <record id="asset_location_tree_view" model="ir.ui.view">
+            <field name="name">account.asset.location.list</field>
+            <field name="model">account.asset.location</field>
+            <field name="field_parent">child_idss</field>
+            <field name="arch" type="xml">
+                <tree string="assets Location" colors="blue:asset_usage=='view';darkred:asset_usage=='internal';green:asset_usage=='office'">
+                    <field name="code"/>
+                    <field name="complete_name" attrs="{'required':[('asset_location_id','=','complete_name')]}"/> 
+                    <field name="asset_usage"/>
+                    <field name="asset_location_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="asset_location_search_view" model="ir.ui.view">
+            <field name="name">account.asset.location.search</field>
+            <field name="model">account.asset.location</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Analytic Account">
+                    <field name="code"/>
+                    <field name="complete_name" attrs="{'required':[('asset_location_id','=','complete_name')]}"/> 
+                    <field name="asset_usage"/>
+                    <group expand="0" string="Group By...">
+                        <separator orientation="vertical"/>
+                            <filter string="Parent" icon="terp-folder-orange" domain="[]" context="{'group_by':'asset_location_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="asset_asset_location_action">
+            <field name="name">Asset Location Structure</field>
+            <field name="type">ir.actions.act_window</field>        
+            <field name="res_model">account.asset.location</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="domain">[('asset_location_id','=',False)]</field>        
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="asset_location_tree_view"/>
+        </record>
+
+        <menuitem action="asset_asset_location_action" id="menu_asset_location_action" 
+                  parent="menu_finance_assets_configration" sequence="21"/>
+
+    </data>
+</openerp>

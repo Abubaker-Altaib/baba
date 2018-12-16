@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_trialbalance_custom">
+    <t t-call="report.html_container">
+        <t t-call="report.internal_layout">
+            <div class="page">
+		<style>
+		#table_layout {
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 18px;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+
+		#table_layout td, #table_layout th {
+		    border: 1px solid #ddd;
+                    text-align: right;
+		    padding: 8px;
+		}
+
+		#table_layout tr:nth-child(even){background-color: #f2f2f2;}
+
+		#table_layout tr:hover {background-color: #ddd;}
+
+		#table_layout th {
+		    padding-top: 12px;
+		    padding-bottom: 12px;
+		    text-align: right;
+		    background-color: #008080;
+		    color: white;
+		}
+              
+
+		#final_calculations {
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 18px;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+		#final_calculations tr:hover {background-color: #ddd;}
+
+		#final_calculations tr:nth-child(even){background-color: #f2f2f2;}
+
+		#final_calculations td {
+		    border: 1px solid #ddd;
+		    padding: 8px;
+		    padding-top: 12px;
+		    padding-bottom: 12px;
+		    text-align: right;
+                    font-weight: bold;
+
+		}
+		
+		.filters {
+
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 16px;
+		    border-collapse: collapse;
+		    width: 100%;
+		} 
+		
+		.title {
+
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 24px;
+                    color: #008080;
+                    font-weight: bold;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+
+		</style>
+
+                <center>
+                <h2 class= "title">Trial Balance</h2>
+                </center>
+                    <br/>
+                    <br/>
+                     <br/>
+                    <br/>
+                <div class="filters">
+                    <div class="col-xs-4">
+                        <strong>Display Account:</strong>
+                        <p>
+                            <span t-if="data['display_account'] == 'all'">All accounts</span>
+                            <span t-if="data['display_account'] == 'movement'">With movements</span>
+                            <span t-if="data['display_account'] == 'not_zero'">With balance not equal to zero</span>
+                        </p>
+                    </div>
+                    <div class="col-xs-4">
+                        <p>
+                            <t t-if="data['date_from']"><strong>Date from :</strong> <span t-esc="data['date_from']"/><br/></t>
+                            <t t-if="data['date_to']"><strong>Date to :</strong> <span t-esc="data['date_to']"/></t>
+                        </p>
+                    </div>
+                    <div class="col-xs-4">
+                        <strong>Target Moves:</strong>
+                        <p>
+                            <span t-if="data['target_move'] == 'all'">All Entries</span>
+                            <span t-if="data['target_move'] == 'posted'">All Posted Entries</span>
+                        </p>
+                    </div>
+                </div>
+                     <br/>
+                    <br/>
+                     <br/>
+                    <br/>
+
+                <table id="table_layout" class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Account</th>
+                            <th class="text-right">Debit</th>
+                            <th class="text-right">Credit</th>
+                            <!--th class="text-right">Balance</th-->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="Accounts" t-as="account">
+                            <td>
+                                <span t-att-style="style" t-esc="account['code']"/>
+                            </td>
+                            <td>
+                                <span style="color: white;" t-esc="'..'"/>
+                                <span t-att-style="style" t-esc="account['name']"/>
+                            </td>
+                            <td class="text-right">
+                                 <span t-att-style="style" t-esc="account['debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                            </td>
+                            <td class="text-right">
+                                <span t-att-style="style" t-esc="account['credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                            </td>
+                            <!--d class="text-right">
+                                <span t-att-style="style" t-esc="account['balance']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                            </td-->
+                        </tr>
+<!-- total-->
+                              <tr>
+                                  <th><span t-att-style="style"/></th>
+                                  <th><strong>Total</strong><span t-att-style="style"/></th>
+
+                            <th><t  t-esc="sum(l['debit'] for l in Accounts )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+
+                            <th> <t  t-esc="sum(l['credit'] for l in Accounts )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> </th>
+
+                            <!--th> <t  t-esc="sum(l['balance'] for l in Accounts )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> </th-->
+                              </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </t>
+</template>
+</odoo>

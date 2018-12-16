@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="account_exchange_print_wizard_view" model="ir.ui.view">
+			<field name="name">Print Checks</field>
+			<field name="model">account.exchange.print.wizard</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Exchange Print" version="7.0">
+					<group col="9" colspan="9" width="800" height="150">
+						<field name="msg" colspan="9" nolabel="1" readonly="1"
+							height="70" />
+						<field name="new_no" colspan="3"
+							attrs="{'invisible':[('state','not in',['draft'])]}" />
+						<!--<field name="status" colspan="9"
+							attrs="{'invisible':[('state','not in',['reprint_new'])],'required':[('state','in',['reprint_new'])]}" />
+						<field name="payment_id" invisible="1" />-->
+						<field name="state" invisible="1" />
+					</group>
+					<footer>
+							<button name="exchange_payment" string="Add" states="draft"
+								type="object" class="oe_highlight"/>
+								
+							<button special="cancel" string="Cancel" colspan="2" class="oe_link"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<act_window id="action_account_exchange_print" key2="client_action_multi"
+			name="Exchange" res_model="account.exchange.print.wizard" src_model="account.move"
+			view_id="account_exchange_print_wizard_view"
+			view_mode="form" target="new" view_type="form" />
+	</data>
+</openerp>

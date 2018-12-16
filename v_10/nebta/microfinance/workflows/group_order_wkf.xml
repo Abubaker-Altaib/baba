@@ -1,0 +1,33 @@
+<odoo>
+  <data>
+<record id="group_order_workflow" model="workflow">
+    <field name="name">group.order.workflow</field>
+    <field name="osv">finance.group.order</field>
+    <field name="on_create">True</field>
+</record>
+
+<record id="g_o_draft" model="workflow.activity">
+    <field name="wkf_id" ref="group_order_workflow"/>
+    <field name="flow_start">True</field>
+    <field name="name">draft</field>
+    <field name="kind">function</field>
+    <field name="action">write({'state':'draft'})</field>
+    <!--field name="action">draft()</field-->
+</record>
+<record id="g_o_waiting_approval" model="workflow.activity">
+    <field name="wkf_id" ref="group_order_workflow"/>
+    <field name="flow_stop">True</field>
+    <field name="name">waiting approval</field>
+    <field name="kind">function</field>
+    <field name="action">write({'state':'waiting_approval'})</field>
+    <!--field name="action">waiting_approval()</field-->
+</record>
+
+<!--record id="trans_a_b" model="workflow.transition">
+    <field name="act_from" ref="g_o_draft"/>
+    <field name="act_to" ref="g_o_waiting_approval"/>
+    <field name="signal">draft</field>
+
+</record-->
+</data>
+</odoo>

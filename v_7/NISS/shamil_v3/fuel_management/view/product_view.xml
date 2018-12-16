@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="fuel_search_form_view" model="ir.ui.view">
+			<field name="name">fuel.search.form</field>
+			<field name="model">product.product</field>
+			<field eval="50" name="priority" />
+			<field name="arch" type="xml">
+				<search string="Fuel">
+					<field name="name"
+						filter_domain="['|', ('name','ilike',self),('default_code','ilike',self)]" />
+					<field name="categ_id" widget="selection" operator="child_of" />
+					<field name="fuel_ok" invisible="1" />
+					<field name="fuel_type" attrs="{'required':[('fuel_ok','=',True)]}"/>
+					<newline />
+					<group expand='0' string='Group by...'>
+						<filter string='Category' icon="terp-stock_symbol-selection"
+							domain="[]" context="{'group_by' : 'categ_id'}" />
+						<separator orientation="vertical" groups="base.group_multi_company" />
+						<filter string='Company' icon="terp-go-home" domain="[]"
+							context="{'group_by' : 'company_id'}" groups="base.group_multi_company" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="fuel_product_tree_view" model="ir.ui.view">
+			<field name="name">fuel.product.tree</field>
+			<field name="model">product.product</field>
+			<field eval="50" name="priority" />
+			<field name="arch" type="xml">
+				<tree string="Fuel">
+					<field name="default_code" string="Product No" />
+					<field name="name" />
+					<field name="categ_id" />
+					<field name="uom_id" string="UoM" />
+					<field name="qty_available" />
+					<field name="standard_price" />
+					<field name="company_id" invisible="1" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="fuel_normal_form_view" model="ir.ui.view">
+			<field name="name">fuel.normal.form</field>
+			<field name="model">product.product</field>
+			<field eval="50" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Fuel" version="7.0">
+					<sheet>
+						<button name="fuel_move_amount_scheduler" string="Update" type="object" />
+						<group colspan="4" col="8">
+							<separator colspan="8" />
+							<group colspan="2" col="2">
+								<field name="name" colspan="2" />
+							</group>
+							<group colspan="2" col="2">
+							<field name="standard_price"/>
+							</group>
+							<newline />
+							<group colspan="4" col="2">
+								<field name="fuel_ok" colspan="2" invisible="1" />
+								<field name="type" invisible="1"/>
+								<field name="fuel_type" colspan="2"
+									attrs="{'invisible':[('fuel_ok','!=',True)],'required':[('fuel_ok','=',True)]}" />
+								<field name="location" colspan="2" options="{'limit': 10, 'web_m2x_options.create': false, 'web_m2x_options.create_edit': false, 'web_m2x_options.search_more':True, 'm2o_dialog': True}"
+									attrs="{'invisible':[('fuel_ok','!=',True)],'required':[('fuel_ok','=',True)]}" />
+							</group>
+						</group>
+						<notebook colspan="4">
+							<page string="Information">
+								<group colspan="2" col="2">									
+									<field name="categ_id" />
+									
+								</group>
+								<group colspan="2" col="2" name="uom">
+									<field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)" />
+									<field name="uom_po_id" invisible="1" />
+								</group>
+								<group colspan="2" col="2" name="misc">
+									<field name="company_id" groups="base.group_multi_company"
+										widget="selection" />
+										<field name="active" />
+								</group>
+								<div class="oe_view_nocontent_create">
+                   					<field  mode="tree" name="fuel_lines_ids" colspan="4">
+				                        <tree string="Rates" editable="bottom">
+				                           <field name="date"/>
+				                           <field name="amount"/>
+				                        </tree>
+                   					</field>
+                   				</div>
+								<newline/>
+								<separator string="Description" />
+								<field colspan="4" name="description" nolabel="1" />
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<!-- Product Action View -->
+		<record id="fuel_normal_action" model="ir.actions.act_window">
+			<field name="name">Fuel Type</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">product.product</field>
+			<field name="view_type">form</field>
+			<field name="search_view_id" ref="fuel_search_form_view" />
+			<field name="view_id" ref="fuel_normal_form_view" />
+			<field name="help">You Must Define Product For Every Fuel Type You Buy Or Sell.</field>
+			<field name="domain">[('fuel_ok','=',True)]</field>
+			<field name="context">{'default_fuel_ok': True,'default_type':'product','default_cost_method':'standard'}</field>
+		</record>
+
+		<record id="action_fuel_tree_view" model="ir.actions.act_window.view">
+			<field eval="1" name="sequence" />
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="fuel_product_tree_view" />
+			<field name="act_window_id" ref="fuel_normal_action" />
+		</record>
+
+		<record id="action_fuel_form_view" model="ir.actions.act_window.view">
+			<field eval="2" name="sequence" />
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="fuel_normal_form_view" />
+			<field name="act_window_id" ref="fuel_normal_action" />
+		</record>
+
+		<menuitem name="Fuel" parent="fleet.fleet_configuration" 
+			id="fuel_config_menu" sequence="2" groups="group_fuel_config"/>
+
+		<menuitem name="Fuel Type" id="menu_fuel_form"
+			action="fuel_normal_action" parent="fuel_config_menu" sequence="1" groups="group_fuel_config"/>
+
+	</data>
+</openerp>

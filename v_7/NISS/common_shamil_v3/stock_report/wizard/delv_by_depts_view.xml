@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="view_stock_delv_depts" model="ir.ui.view">
+            <field name="name">Delivery by Departments  </field>
+            <field name="model">delv.by.depts</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Products Moves" version="7.0">
+	            <group col="4" colspan="4">                      
+			 <field name="location_id" />
+ 		         
+		         <field name="category_id"  on_change="onchange_category_id(category_id)"  />
+                         <newline/>
+	            </group>                      
+                     
+	            <group col="4" colspan="4">                      
+       			   <field name="from_date" colspan="2"/>
+       			   <field name="to_date" colspan="2"/>
+	            </group>                      
+                   <separator string="Products" colspan="4" />
+		       <label string=""/>
+       			   <label string="(Keep empty to get  all products)" align="0.0" colspan="3"/>
+                                <field colspan="4" name="product_ids" nolabel="1"/>
+   		   <footer>
+         	        <button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+         		         or
+         	        <button string="Cancel" class="oe_link" special="cancel"/>
+      		   </footer>
+    		</form>
+            </field>
+		</record>
+
+        <record id="action_view_delv_by_depts" model="ir.actions.act_window">
+            <field name="name">Delievery by departments</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">delv.by.depts</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_stock_delv_depts"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Deliver by Departments"
+                parent="menu_stock_Report"
+                action="action_view_delv_by_depts"
+                id="menu_view_stock_del_depts"
+               />
+		
+    </data>
+</openerp>

@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<!-- Activities -->
+		<record id="done" model="workflow.activity">
+			<field name="wkf_id" ref="hr_violation_punishment.wkf_vaiolation" />
+			<field name="name">done</field>
+			<field name="kind">function</field>
+			<field name="action">done()</field>
+		</record>
+		<record id="act_confirm1" model="workflow.activity">
+			<field name="wkf_id" ref="hr_violation_punishment.wkf_vaiolation" />
+			<field name="name">confirm</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'confirm'})</field>
+		</record>
+		<record id="act_approve_id1" model="workflow.activity">
+			<field name="wkf_id" ref="hr_violation_punishment.wkf_vaiolation" />
+			<field name="name">approve</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'approve'})</field>
+		</record>
+		<record id="act_confirm2_id1" model="workflow.activity">
+			<field name="wkf_id" ref="hr_violation_punishment.wkf_vaiolation" />
+			<field name="name">confirm2</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'confirm2'})</field>
+		</record>
+		<record id="act_cancel_id1" model="workflow.activity">
+			<field name="wkf_id" ref="hr_violation_punishment.wkf_vaiolation" />
+			<field name="name">cancel</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'cancel'})</field>
+		</record>
+		<record id="act_validate_cond" model="workflow.activity">
+			<field name="wkf_id" ref="hr_violation_punishment.wkf_vaiolation" />
+			<field name="name">validate</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'validate'})</field>
+		</record>
+		<record id="act_resumption" model="workflow.activity">
+			<field name="wkf_id" ref="hr_violation_punishment.wkf_vaiolation" />
+			<field name="name">resumption</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'resumption'})</field>
+		</record>
+
+		<!-- Transitions -->
+		<record id="trns_procedural_suspend" model="workflow.transition">
+			<field name="act_from" ref="hr_violation_punishment.act_complete" />
+			<field name="act_to" ref="hr_violation_punishment.act_implement" />
+			<field name="signal">implement</field>
+		</record>
+		<record id="trns_procedural_resume" model="workflow.transition">
+			<field name="act_from" ref="hr_violation_punishment.act_implement" />
+			<field name="act_to" ref="done" />
+			<field name="signal">done</field>
+		</record>
+		<record id="t11" model="workflow.transition">
+			<field name="act_from" ref="hr_violation_punishment.act_complete" />
+			<field name="act_to" ref="act_confirm1" />
+			<field name="signal">complete_confirm</field>
+			<field name="condition">operation_type != 'remove'</field>
+		</record>
+		<record id="t22" model="workflow.transition">
+			<field name="act_from" ref="act_confirm1" />
+			<field name="act_to" ref="act_approve_id1" />
+			<field name="signal">confirm_approve</field>
+			<field name="condition">operation_type != 'remove'</field>
+		</record>
+		<record id="t33" model="workflow.transition">
+			<field name="act_from" ref="act_approve_id1" />
+			<field name="act_to" ref="act_confirm2_id1" />
+			<field name="signal">approve_confirm2</field>
+			<field name="condition">operation_type != 'remove'</field>
+		</record>
+		<record id="t44" model="workflow.transition">
+			<field name="act_from" ref="act_confirm2_id1" />
+			<field name="act_to" ref="hr_violation_punishment.act_implement" />
+			<field name="signal">implement</field>
+			<field name="condition">operation_type != 'remove'</field>
+		</record>
+		<record id="t55" model="workflow.transition">
+			<field name="act_from" ref="act_confirm2_id1" />
+			<field name="act_to" ref="act_cancel_id1" />
+			<field name="signal">confirm2_cancel</field>
+			<field name="condition">operation_type != 'remove'</field>
+		</record>
+		<record id="t1_cond" model="workflow.transition">
+			<field name="act_from" ref="hr_violation_punishment.act_implement" />
+			<field name="act_to" ref="act_validate_cond" />
+			<field name="signal">remove_button</field>
+		</record>
+		<record id="t2_cond11" model="workflow.transition">
+			<field name="act_from" ref="act_validate_cond" />
+			<field name="act_to" ref="act_approve_id1" />
+			<field name="signal">validate_approve_cond</field>
+			<field name="condition">operation_type == 'remove'</field>
+		</record>
+		<record id="t3_cond" model="workflow.transition">
+			<field name="act_from" ref="act_approve_id1" />
+			<field name="act_to" ref="act_confirm1" />
+			<field name="signal">approve_confirm_cond</field>
+			<field name="condition">operation_type == 'remove'</field>
+		</record>
+		<record id="t4_cond" model="workflow.transition">
+			<field name="act_from" ref="act_confirm1" />
+			<field name="act_to" ref="done" />
+			<field name="signal">done</field>
+			<field name="condition">operation_type == 'remove'</field>
+		</record>
+		<record id="t5_cond" model="workflow.transition">
+			<field name="act_from" ref="act_confirm1" />
+			<field name="act_to" ref="act_cancel_id1" />
+			<field name="signal">confirm1_cancel</field>
+			<field name="condition">operation_type == 'remove'</field>
+		</record>
+		<record id="t1_cond_app" model="workflow.transition">
+			<field name="act_from" ref="hr_violation_punishment.act_implement" />
+			<field name="act_to" ref="act_resumption" />
+			<field name="signal">to_appeal</field>
+		</record>
+		<record id="t2_cond_app" model="workflow.transition">
+			<field name="act_from" ref="act_resumption" />
+			<field name="act_to" ref="act_confirm1" />
+			<field name="signal">appeal_punishment</field>
+			<field name="condition">resumption_type == 'accounting_board'</field>
+		</record>
+		<record id="t4_cond_app" model="workflow.transition">
+			<field name="act_from" ref="act_resumption" />
+			<field name="act_to" ref="act_confirm2_id1" />
+			<field name="signal">appeal_punishment</field>
+			<field name="condition">resumption_type == 'punishment'</field>
+		</record>
+	</data>
+</openerp>

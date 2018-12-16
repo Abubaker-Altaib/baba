@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <openerp>
+
+       <data>
+
+
+       <record id="id_view_picking_in_form_inherit" model="ir.ui.view">
+            <field name="name">Custodies Internl picking Inherited</field>
+            <field name="model">stock.picking.in</field>
+            <field name="inherit_id" ref="stock.view_picking_in_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Additional Info']"  position="after">
+
+
+                    <page string="Custodies Related Info">
+
+                            <group>
+                                 <field name="release_order_id" readonly="1" />
+                            </group>
+
+                                 <field name="custodies_ids" readonly="1" />
+
+
+                            
+                             
+                    </page>
+
+                </xpath>
+
+            </field>
+        </record>
+
+
+     <!-- Inherit Location Form Add Asset Category -->
+
+     <record id="id_view_location_form_custody_inherit_1" model="ir.ui.view"   >
+            <field name="name">Custodies.location.form.Inherited</field>
+            <field name="model">stock.location</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                  <field name="active" position="after">
+
+                          <field name="custody" invisible="1" />
+
+                   </field> 
+
+              
+
+
+            </field>
+      </record>
+
+
+     <!-- Inherit Category Form Add Asset Category -->
+
+
+     <record id="id_product_category_form_view_inherit_1" model="ir.ui.view"   >
+            <field name="name">product.category.form.Inherited</field>
+            <field name="model">product.category</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                  <field name="type" position="after">
+                          <field name="custody" />
+                          <field name="asset_categ_ids"  invisible="1"/>
+                                 
+                   </field> 
+                      
+              
+
+
+            </field>
+      </record>
+      
+
+     <!-- Inherit Product Form Add Asset Category -->
+
+        
+        
+
+
+        <record model="ir.actions.act_window" id="action_product_open_custodies">
+            <field name="context">{}</field>
+            <field name="name">Custodies Details</field>
+            <field name="res_model">account.asset.asset</field>
+            <field name="domain">[('product_id' , '=' , active_id),('state' , 'in' , ['draft','released'])]</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="custody_custody_custom_tree"/>
+        </record>
+
+         <!--record id="product_open_custodies" model="ir.actions.act_window" >
+            <field name="name">Custodies Details</field>
+            <field name="res_model">account.asset.asset</field>
+            <field name="context">{'search_default_product_id': [active_id], 'default_product_id': active_id}</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="custody_custody_custom_tree"/>
+          </record-->
+
+        <record id="product_template_form_view_inherit" model="ir.ui.view">
+        <field name="name">product.normal.form.inherit</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+		<field name="arch" type="xml">
+           <xpath expr="//div[@name='buttons']" position="inside">
+
+              <button string="Custodies Related" name="%(action_product_open_custodies)d" type="action"  attrs="{'invisible' : ['|','|',('type' , '=' , 'service'),('custody' ,'=' , False),('qty_available' ,'=' , 0)]}"/>    
+ 
+           </xpath>
+
+
+           <xpath expr="//field[@name='categ_id']" position="after">
+                 <label for="custody" class="oe_edit_only" groups="asset_custody_management.group_custody_manager"/>
+					<field name="custody" groups="asset_custody_management.group_custody_manager"/>       
+		   </xpath>
+
+           <xpath expr="//field[@name='categ_id']" position="replace">
+                            <h2><field name="categ_id"    on_change="onchange_categ_id(categ_id,custody)"/></h2>       
+		   </xpath>
+
+
+           <field name="type" position="after"> 
+                 <field name="asset_categ_id"  attrs="{'invisible' : [('custody' ,'=' , False)], 'required' : [('custody' ,'=' , True)] }"/>
+           </field>
+
+          <field name="ean13" position="after"> 
+                 <field name="last_counter"  attrs="{'invisible' : [('custody' ,'=' , False)], 'required' : [('custody' ,'=' , True)] }"  groups="asset_custody_management.group_custody_manager"/>
+           </field>
+
+
+
+        </field>
+        </record>
+
+
+
+
+       
+
+
+
+
+       </data>
+
+   </openerp>
+
+
+
+

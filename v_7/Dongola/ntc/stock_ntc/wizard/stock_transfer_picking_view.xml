@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+         <act_window name="Transfer Shipment"
+            res_model="stock.transfer.picking"
+            src_model="stock.picking"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"
+            multi="True"
+            id="act_stock_transfer_picking"/>
+         <act_window name="Transfer Shipment"
+            res_model="stock.transfer.picking"
+            src_model="stock.picking.in"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"
+            multi="True"
+            id="act_stock_transfer_picking_in"/>
+         <act_window name="Transfer Shipment"
+            res_model="stock.transfer.picking"
+            src_model="stock.picking.out"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"
+            multi="True"
+            id="act_stock_transfer_picking_out"/>
+
+        <record id="stock_transfer_memory_tree_in" model="ir.ui.view">
+            <field name="name">stock.transfer.picking.memory.tree</field>
+            <field name="model">stock.transfer.picking.memory</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" string="Product Moves">
+                    <field name="product_id" />
+                    <field name="prodlot_id" groups="stock.group_production_lot"/>
+                    <field name="quantity" />
+                </tree>
+            </field>
+        </record>
+        
+        <record id="stock_transfer_memory_form_in" model="ir.ui.view">
+            <field name="name">stock.transfer.picking.memory.from</field>
+            <field name="model">stock.transfer.picking.memory</field>
+            <field name="arch" type="xml">
+                <form string="Transfer Picking Memory" version="7.0">
+                    <group col="4">
+                        <field name="product_id" />
+                        <field name="prodlot_id" groups="stock.group_production_lot"/>
+                        <field name="quantity" />
+                    </group>
+                 </form>
+            </field>
+        </record>   
+
+        <record id="view_stock_transfer_picking_form" model="ir.ui.view">
+            <field name="name">Transfer lines</field>
+            <field name="model">stock.transfer.picking</field>
+            <field name="arch" type="xml">
+                <form string="Transfer lines" version="7.0">
+                    <label string="Provide the quantities of the transfered products."/>
+                    <group>
+                        <field name="product_transfer_moves"/>
+                        <field name="location_id" />
+                    </group>
+                    <footer>
+                        <button name="create_transfers" string="Transfer" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,122 @@
+<?xml version="1.0" ?>
+<openerp>
+	<data>
+		
+		<!-- Activities -->
+		<record model="workflow.activity" id="act_general_dep">
+			<field name="wkf_id" ref="hr_payroll_wafi.wkf_substitution" />
+			<field name="name">general_dep</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'general_dep'})</field>
+		</record>
+
+		<record model="workflow.activity" id="act_hr_finance">
+			<field name="wkf_id" ref="hr_payroll_wafi.wkf_substitution" />
+			<field name="name">hr_finance</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'hr_finance'})</field>
+		</record>
+
+		<record model="workflow.activity" id="act_sub_review">
+			<field name="wkf_id" ref="hr_payroll_wafi.wkf_substitution" />
+			<field name="name">review</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'review'})</field>
+		</record>
+		<record model="workflow.activity" id="act_sub_implement">
+			<field name="wkf_id" ref="hr_payroll_wafi.wkf_substitution" />
+			<field name="name">implement</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'implement'})</field>
+		</record>
+
+		<!-- Transitions -->
+		<record model="workflow.transition" id="t1_draft_complete">
+			<field name="act_from" ref="hr_payroll_wafi.act_draft" />
+			<field name="act_to" ref="hr_payroll_wafi.act_complete" />
+			<field name="condition">not check_dep_manager()</field>
+			<field name="signal">complete</field>
+		</record>
+		<record model="workflow.transition" id="t2_draft_complete">
+			<field name="act_from" ref="hr_payroll_wafi.act_draft" />
+			<field name="act_to" ref="hr_payroll_wafi.act_confirm" />
+			<field name="condition">check_dep_manager() and not check_general_manager()</field>
+			<field name="signal">complete</field>
+		</record>
+
+		<record model="workflow.transition" id="t3_draft_implement">
+			<field name="act_from" ref="hr_payroll_wafi.act_draft" />
+			<field name="act_to" ref="act_sub_implement" />
+			<field name="condition">check_general_manager()</field>
+			<field name="signal">complete</field>
+		</record>
+
+		<record id="hr_payroll_wafi.t2" model="workflow.transition">
+            <field name="act_from" ref="hr_payroll_wafi.act_complete"/>
+            <field name="act_to" ref="hr_payroll_wafi.act_confirm"/>
+            <field name="signal">confirm</field>
+            <field name="condition">manager()</field>
+        </record>
+
+        <record model="workflow.transition" id="hr_payroll_wafi.t21">
+			<field name="act_from" ref="hr_payroll_wafi.act_complete" />
+			<field name="act_to" ref="hr_payroll_wafi.act_confirm" />
+			<field name="condition">manger()</field>
+			<field name="signal">confirm</field>
+		</record>
+
+        <!--record model="workflow.transition" id="ntc_complete_2_hr_finance">
+            <field name="act_from" ref="hr_payroll_wafi.act_complete" />
+            <field name="act_to" ref="act_hr_finance" />
+            <field name="condition">check_general_dep_manager()</field>
+        </record-->
+
+		<record model="workflow.transition" id="ntc1">
+			<field name="act_from" ref="hr_payroll_wafi.act_confirm" />
+			<field name="act_to" ref="act_general_dep" />
+			<field name="signal">general_dep</field>
+			<field name="condition">manager()</field>
+		</record>
+
+		<record model="workflow.transition" id="ntc2">
+			<field name="act_from" ref="act_general_dep" />
+			<field name="act_to" ref="act_hr_finance" />
+			<field name="signal">hr_finance_mg</field>
+		</record>
+
+		<!--record model="workflow.transition" id="ntc_finance_review">
+			<field name="act_from" ref="act_hr_finance" />
+			<field name="act_to" ref="act_sub_review" />
+			<field name="signal">review_ap</field>
+		</record>
+		<record model="workflow.transition" id="ntc_finance_review_cancel">
+			<field name="act_from" ref="act_hr_finance" />
+			<field name="act_to" ref="hr_payroll_wafi.act_cancel" />
+			<field name="signal">review_cancel</field>
+		</record-->
+
+		<record model="workflow.transition" id="ntc3">
+			<field name="act_from" ref="act_hr_finance" /> 
+			<field name="act_to" ref="act_sub_implement" />
+			<field name="signal">general_sub_app</field>
+		</record>
+		<record model="workflow.transition" id="ntc3_implement">
+			<field name="act_from" ref="act_sub_implement" /> 
+			<field name="act_to" ref="hr_payroll_wafi.act_approve" />
+			<field name="signal">approve</field>
+		</record>
+
+		<record model="workflow.transition" id="ntc4">
+			<field name="act_from" ref="act_hr_finance" />
+			<field name="act_to" ref="hr_payroll_wafi.act_cancel" />
+			<field name="signal">cancel</field>
+		</record>
+
+		<record model="workflow.transition" id="ntc5">
+			<field name="act_from" ref="act_general_dep" />
+			<field name="act_to" ref="hr_payroll_wafi.act_cancel" />
+			<field name="signal">hr_general_mg_cancel</field>
+		</record>
+
+	</data>
+</openerp>

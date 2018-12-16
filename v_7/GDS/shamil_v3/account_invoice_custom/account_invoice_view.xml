@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+     <data>
+	<record id="invoice_supplier_form1" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+	    	<field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_due']" position="replace">
+                    <field name="date_due" attrs="{'readonly':[('state','!=','draft')]}"/>
+
+                </xpath>
+                <xpath expr="//field[@name='fiscal_position']" position="replace">
+                            <field name="fiscal_position" invisible="1"/>
+               </xpath>
+                <xpath expr="//field[@name='reference_type']" position="replace"></xpath>
+                <xpath expr="//field[@name='date_due']" position="replace"></xpath>
+                <xpath expr="//field[@name='reference']" position="replace"></xpath>
+                <xpath expr="//tree[@string='Invoice lines']" position="replace">
+                   <tree string="Invoice lines" editable="bottom">
+                                    <field name="sequence" widget="handle" />
+                                    <field name="product_id"
+                                        on_change="product_id_change(product_id, uos_id, quantity, name, parent.type, parent.partner_id, parent.fiscal_position, price_unit, parent.currency_id, context, parent.company_id)"/>
+                                    <field name="name"/>
+                                    <field name="company_id" invisible="1"/>
+                                    <field name="account_id" groups="account.group_account_user"
+                                        domain="[('company_id', '=', parent.company_id), ('journal_id', '=', parent.journal_id), ('type', '=', 'other')]"
+                                        on_change="onchange_account_id(product_id, parent.partner_id, parent.type, parent.fiscal_position,account_id)"/>
+                                    <field name="account_analytic_id" groups="analytic.group_analytic_accounting"
+                                        domain="[('type','!=','view'), ('company_id', '=', parent.company_id)]" required="1"/>
+                                    <field name="quantity"/>
+                                    <field name="uos_id" groups="product.group_uom"
+                                        on_change="uos_id_change(product_id, uos_id, quantity, name, parent.type, parent.partner_id, parent.fiscal_position, price_unit, parent.currency_id, context, parent.company_id)" invisible="1"/>
+                                    <field name="price_unit"/>
+                                    <field name="discount" groups="sale.group_discount_per_so_line"/>
+                                    <field name="invoice_line_tax_id" widget="many2many_tags" context="{'type':parent.type}"
+                                        domain="[('parent_id','=',False),('company_id', '=', parent.company_id)]"/>
+                                    <field name="price_subtotal"/>
+                                </tree>
+                </xpath>
+                <xpath expr="//field[@name='tax_line']" position="replace">
+                      <field name="tax_line" readonly="1">
+                                    <tree editable="bottom" string="Taxes">
+                                        <field name="name"/>
+                                        <field name="account_id" groups="account.group_account_invoice"/>
+                                        <field name="account_analytic_id" domain="[('type','&lt;&gt;','view'), ('company_id', '=', parent.company_id)]" groups="analytic.group_analytic_accounting"/>
+                                        <field name="base" on_change="base_change(base,parent.currency_id,parent.company_id,parent.date_invoice)" readonly="1"/>
+                                        <field name="amount" on_change="amount_change(amount,parent.currency_id,parent.company_id,parent.date_invoice)"/>
+
+                                        <field invisible="True" name="base_amount"/>
+                                        <field invisible="True" name="tax_amount"/>
+                                        <field name="factor_base" invisible="True"/>
+                                        <field name="factor_tax" invisible="True"/>
+                                    </tree>
+                                </field></xpath>
+		<xpath expr="//field[@name='check_total']" position="replace">
+                       <field name="check_total" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+				</xpath>
+                <xpath expr="//field[@name='journal_id']" position="replace">
+                     <field name="journal_id" groups="account.group_account_user"
+                                domain="[('special','=',0),]" 
+                                on_change="onchange_journal_id(journal_id, context)" widget="selection"/>
+                </xpath>
+                <xpath expr="//field[@name='date_invoice']" position="replace">
+                     <field name="date_invoice" required="1" on_change="onchange_date(date_invoice)"/>
+                </xpath>
+
+
+            	<!--field name="date_due" position="replace">
+                </field>
+                <button colspan="2" name="button_reset_taxes" states="draft" string="Compute Taxes" type="object" icon="terp-stock_format-scientific" position="replace">
+                	<button colspan="2" name="button_reset_taxes" string="Compute Taxes" type="object" icon="terp-stock_format-scientific"/>
+				</button>
+                <group col="6" colspan="4" position="replace">
+				    <group col="8" colspan="4">
+						<button name="invoice_cancel" states="draft,completed,closed,sale,open" string="Cancel" icon="gtk-cancel"/>
+						<button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="terp-stock_effects-object-colorize"/>
+						<button name="%(account.action_account_invoice_refund)d" type='action' string='Refund' states='open,paid' icon="gtk-execute"/>
+						<button name="%(account.action_account_state_open)d" type='action' string='Re-Open' states='paid' icon="gtk-convert" groups="base.group_no_one"/>
+						<button name="invoice_complete" states="draft" string="Complete" icon="terp-camera_test"/>
+						<button name="invoice_close" states="completed" string="Close" icon="terp-camera_test"/>
+						<button name="invoice_open" states="closed" string="Approve" icon="terp-camera_test"/>
+                    </group>
+                </group-->
+                        
+            </field>
+        </record>
+
+
+        <!--record id="invoice_form1" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+	    	<field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+				<field name="journal_id" position="replace">
+				     <field name="journal_id" domain="[('special','=',0),]" groups="base.group_user" on_change="onchange_journal_id(journal_id, context)" widget="selection"/>
+				</field>
+				<field name="date_invoice" position="replace">
+				     <field name="date_invoice" required="1" on_change="onchange_date(date)"/>
+				</field>
+				<field name="period_id" widget="selection" position="replace">
+				     <field name="period_id" widget="selection" required="1"/>
+				</field>
+                <group col="8" colspan="4" groups="base.group_user" position="replace">
+				    <group col="8" colspan="4" groups="base.group_user">
+						<button name="invoice_cancel" states="draft,completed,closed,sale,open" string="Cancel" icon="gtk-cancel"/>
+						<button name="action_cancel_draft" states="cancel" string="Reset to Draft" type="object" icon="terp-stock_effects-object-colorize"/>
+			
+						<button name="%(account.action_account_invoice_refund)d" type='action' string='Refund' states='open,paid' icon="gtk-execute"/>
+						<button name='%(account.action_account_state_open)d' type='action' string='Re-Open' states='paid' icon="gtk-convert" groups="base.group_no_one"/>
+						<button name="invoice_complete" states="draft" string="Complete" icon="terp-camera_test"/>
+						<button name="invoice_close" states="completed" string="Close" icon="terp-camera_test"/>
+						<button name="invoice_open" states="closed" string="Validate" icon="gtk-go-forward"/>
+						<button name="%(account.account_invoices)d" string="Print Invoice" type="action" icon="gtk-print" states="open,paid,completed,sale,proforma2"/>
+				    </group>
+                </group>
+            </field>
+        </record>
+
+           
+		<record id="invoice_tree1" model="ir.ui.view">
+            <field name="name">account.invoice.tree</field>
+            <field name="model">account.invoice</field>
+	    	<field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+                 <button name="invoice_open" states="draft,proforma2" string="Approve" position= "replace">
+                 	<button name="invoice_complete" states="draft" string="Complete" icon="terp-camera_test"/>
+                </button>
+            </field>
+		</record-->
+   
+   
+        <record id="view_account_invoice_custom_dialog" model="ir.ui.view">
+            <field name="name">account.invoice.select</field>
+            <field name="model">account.invoice</field>
+	    	<field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='period_id']" position="after">
+                        <field name="number"/>
+                        <field name="origin"/>
+                        <field name="amount_total"/>
+                </xpath>
+            </field>
+        </record> 
+        <record model="ir.ui.view" id="view_vendor_receipt_dialog_form">
+            <field name="name">account.voucher.receipt.dialog.form</field>
+            <field name="model">account.voucher</field>
+            <field name="priority">30</field>
+	    <field name="inherit_id" ref="account_voucher.view_vendor_receipt_dialog_form" />
+            <field name="arch" type="xml"> 
+                   <xpath expr="//field[@name='journal_id']" position="replace">
+                       <field name="journal_id" on_change="onchange_partner_id(partner_id, journal_id, amount, currency_id, type, date)"  string="Payment Method" required="1"/>      
+                  </xpath>
+             </field>
+        </record>
+	</data>
+</openerp>
+

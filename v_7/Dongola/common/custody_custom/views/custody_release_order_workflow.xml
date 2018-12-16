@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <openerp>
+
+       <data>
+<!--Work Flow Activities For Updating -->
+
+             <record id="id_wkf_release_order_approve" model="workflow.activity">
+                <field name="wkf_id" ref="asset_custody_management.id_release_order_workflow"/>
+                <field name="name">approve</field>
+                <field name="kind">function</field>
+                <field name="action">approve()</field>
+              </record>
+             <record id="id_wkf_release_order_approve_ghrm" model="workflow.activity">
+                <field name="wkf_id" ref="asset_custody_management.id_release_order_workflow"/>
+                <field name="name">approve_ghrm</field>
+                <field name="kind">function</field>
+                <field name="action">approve_ghrm()</field>
+              </record>
+ 
+<!--Work Flow Transitions For Updating -->
+  <record id="id_wkf_release_order_confirm_approve" model="workflow.transition">
+     <field name="act_from" ref="asset_custody_management.id_wkf_release_order_confirm" />
+     <field name="act_to" ref="id_wkf_release_order_approve" />
+     <field name="signal">approve</field>
+  </record>
+  <record id="id_wkf_release_order_approve_approve_ghrm" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_release_order_approve" />
+     <field name="act_to" ref="id_wkf_release_order_approve_ghrm" />
+     <field name="signal">approve_ghrm</field>
+  </record>
+<record id="id_wkf_release_order_approve_ghrm_verify" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_release_order_approve_ghrm" />
+     <field name="act_to" ref="asset_custody_management.id_wkf_release_order_verify" />
+     <field name="signal">verify</field>
+  </record>
+
+
+       </data>
+  </openerp>

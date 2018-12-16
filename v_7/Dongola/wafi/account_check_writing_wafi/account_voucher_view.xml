@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<delete model="ir.ui.menu" id="account_check_writing_custom.menu_cancel_check" />
+		<record model="ir.ui.view" id="view_purchase_receipt_form">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id"
+				ref="account_check_writing_custom.view_purchase_receipt_form" />
+			<field name="arch" type="xml">
+				<button
+					name="%(account_check_writing_custom.action_account_check_print)d"
+					position="attributes">
+					<attribute name="attrs">{'invisible':['|','|',
+						('state','not in',['receive']),('amount','=',0.0),('pay_type','!=','chk')]}
+					</attribute>
+				</button>
+				<button name="%(account_check_writing_custom.wizard_bank_letter)d"
+					position="attributes">
+					<attribute name="attrs">{'invisible':['|','|',
+						('state','not in',['receive']),('amount','=',0.0),('pay_type','!=','letter')]}
+					</attribute>
+				</button>
+				<field name="pay_type" position="attributes">
+					<attribute name="attrs">
+					{'invisible':['|',('state','not in',['posted','pay','receive','done']),('pay_now','!=','pay_now')],
+					'readonly':[('state','not in',['pay'])]}
+					</attribute>
+				</field>
+				<field name="chk_seq" position="attributes">
+					<attribute name="string">Payment Ref #</attribute>
+				</field>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_bank_and_cash_form">
+			<field name="name">account.voucher.bank_and_cash.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id"
+				ref="account_check_writing_custom.view_bank_and_cash_form" />
+			<field name="arch" type="xml">
+				<button
+					name="%(account_check_writing_custom.action_account_check_print)d"
+					position="attributes">
+					<attribute name="attrs">{'invisible':['|','|','|',('allow_check','=',False),('state','not in',['receive']),('amount','=',0.0),('pay_type','!=','chk')]}
+					</attribute>
+				</button>
+				<button name="%(account_check_writing_custom.wizard_bank_letter)d"
+					position="attributes">
+					<attribute name="attrs">{'invisible':['|','|','|',('allow_check','=',False),('state','not in',['receive']),('amount','=',0.0),('pay_type','!=','letter')]}
+					</attribute>
+				</button>
+			</field>
+		</record>
+
+	</data>
+</openerp>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_allowance_deduction_custom_report_form" model="ir.ui.view">
+            <field name="name">hr.allowance.deduction.custom.report.form</field>
+            <field name="model">hr.allowance.deduction.custom.report</field>
+            <field name="arch" type="xml">
+                <form string="Allowances/Deductions Report" version="7.0">
+                    <group col="4">
+                        <field name="type" on_change="on_change_company_id(company_id,type)" required="1"/>
+                        <field name="company_id" on_change="on_change_company_id(company_id,type)"/>
+                        <field name="month"  />
+                        <field name="year"  />
+                    </group> 
+                    <notebook>
+                          <page string="Locations" attrs="{'invisible':[('type','!=','location'),('type','!=','department'),('type','!=','sector')]}">
+                            <group>
+                              <field name="department_ids" context="{'type' : 'location'}" nolabel="1"/>
+                            </group>
+                          </page>
+                          <page string="Companies" attrs="{'invisible':[('type','!=','company'),('type','!=','state')]}">
+                            <group>
+                              <field name="company_ids" domain="[('type','=','location')]" nolabel="1"/>
+                            </group>
+                          </page>
+                          
+                        </notebook>
+                    <footer>
+                   	<button name="print_report" string="Print" type="object" />
+                  	or
+                  	<button string="Cancel" class="oe_link" special="cancel"/>
+                     </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_allowance_deduction_custom_report" model="ir.actions.act_window">
+            <field name="name">Allowances/Deductions Report By companies or Locations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.allowance.deduction.custom.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+	<menuitem
+            action="action_allowance_deduction_custom_report"
+            id="menu_allowance_deduction_custom_report"
+            parent="menu_hr_payroll_reporting"
+            name="Allowances/Deductions By companies/Locations" />
+
+
+ 
+    </data>
+</openerp>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record id="location_view" model="ir.ui.view">
+			<field name="name">location.wizard.form</field>
+			<field name="model">fill.location</field>
+			<field name="arch" type="xml">
+				<form string="Import Inventory" version="7.0">
+                  <separator string="Import the current inventory"/>
+                  <group>
+                      <field name="location_id" groups="stock.group_locations"/>
+                      <field name="recursive" groups="stock.group_locations"/>
+                  </group>
+                  <footer>
+                      <button name="fill_inventory" string="Fill Inventory" type="object" class="oe_highlight"/>
+                      or
+                      <button string="Cancel" class="oe_link" special="cancel" />
+                  </footer>
+              </form>
+			</field>
+		</record>
+
+        <act_window
+            context="{'service': active_id}"
+            id="act_location_open"
+            name="Location"
+            res_model="fill.location"
+            src_model="fleet.vehicle.log.contract"
+            target='new'
+            view_type = 'form'
+            view_mode='form'
+            view_id='location_view'/>
+
+	</data>
+</openerp>

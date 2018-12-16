@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>   
+    <record model="ir.ui.view" id="loan_form_view">
+        <field name="name">hr.loan.form</field>
+        <field name="model">hr.loan</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+        <form string="Loans" version="7.0">
+            <header>
+                <button type='object' string="Confirm" name="confirmed" states="draft" class="oe_highlight" />
+                <button type='object'  string="Approve" name="approved" states="confirmed" class="oe_highlight" />
+                <button type='object'  string="Cancel" name="cancel" states="draft,confirmed,approved" class="oe_highlight" />
+                <button string="Set to Draft" name="set_to_draft" states="cancel" type="object"/>
+                <field name="state" widget="statusbar" statusbar_colors='{"cancel":"red"}'
+                           statusbar_visible="draft,confirmed,approved,cancel"/>
+            </header>
+                <sheet>
+                    <group col="4">                      
+                        <field name="name" />
+                        <field name="code" />
+                        <field name="active"/>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Loan Definition" >
+                            <group string="Allowed Companies" groups="base.group_multi_company">
+                                <field name="company_ids" nolabel="1" widget="many2many_tags"/>
+                            </group>
+                            <newline/>
+                            <group >
+                                <group string="Loan Computation">
+                                    <field name="installment_type"/>
+                                    <field name="amount" attrs="{'required':[('installment_type','=','fixed')],'invisible':[('installment_type','!=','fixed')]}"/> 
+                                    <field name="installment_no" required="1"/>
+                                    <field name="loan_limit" />
+                                    <field name="year_employment"/>
+                                    <field name="allow_interference" attrs="{'invisible':[('loan_limit','=','one')]}"/>
+                                </group>
+                                <group string="Misc">
+                                    <field name="after_payment_time" attrs="{'invisible':['|',('loan_limit','!=','unlimit'),('allow_interference','=',True)]}"/>
+                                    <field name="change_defult"/>
+                                    <field name="change_installment_no"/>
+                                    <field name="stop_loan"/>
+                                </group>
+                            </group>
+                        </page>
+                      
+                        <page string="Based on Salary" attrs="{'invisible':[('installment_type','=','fixed')]}">
+                            <group>
+                                <field cospan="4" name='salary_rule_id' attrs="{'required':[('installment_type','=','salary')]}"/>
+                                <field name="factor" attrs="{'required':[('installment_type','=','salary')]}"/>
+                            </group>
+                        </page>
+               
+                        <page string="Job Positions">
+                            <field name="job_ids" nolabel="1"/>
+                        </page>
+                        <page string="Accounts Configration">
+                            <group>
+                                <field name="loan_account_id" />
+                                <field name="loan_journal_payment_id" />
+                                <field name="loan_journal_id" />
+                            </group>
+                        </page>
+                        <page string="Comments" >
+                            <field colspan="4" name="comments" nolabel="1"/>
+                        </page>
+                        <page name="loan suspend" string="Loan Suspend" attrs="{'invisible':[('stop_loan','=',False)]}">
+                            <group>
+                                <field name="times_stop_loan"/>
+                                <field name="months_stop_loan"/>
+                            </group>
+                        </page>
+                  </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="loan_tree_view">
+            <field name="name">hr.loan.tree</field>
+            <field name="model">hr.loan</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Loans">
+                <field name="code" />
+                    <field name="name"/>
+                <field name="state" />
+                </tree>
+            </field>
+        </record>   
+
+        <record id="loan_tree" model="ir.actions.act_window">
+            <field name="name">Loans</field>
+            <field name="res_model">hr.loan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="loan_tree_view"/>
+        </record>   
+
+
+        <menuitem id="loan_menu" name="Loans" parent="hr.menu_human_resources_configuration" />
+        <menuitem id="hr_loan_configration" name="Configration" parent="menu_root"  />
+        <menuitem id="loan_names_tree_menu" name="Loans" parent="hr_loan_configration" 
+            action="loan_tree" groups="base.group_loan_manager"/> 
+
+        <record id="open_loan_modules" model="ir.actions.act_window">
+            <field name="name">HR Loan</field>
+            <field name="res_model">ir.module.module</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context" eval="{'search_default_category_id': ref('base.module_category_localization'), 'search_default_name': 'HR Loan'}"/>
+            <field name="search_view_id" ref="base.view_module_filter"/>
+        </record>
+
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.hr.loan</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="50"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('settings')]" position="inside">
+                    <div class="app_settings_block" data-string="HR Loan" string="HR Loan" data-key="hr_loan" >
+
+                    <h2 > Loan </h2>
+                    <div class="row mt16 o_settings_container" id="hr_loan_localization" >
+                        <div class="col-md-6 col-xs-12 o_setting_box">
+                            
+                            <group>
+                                <field name="max_employee" />
+                                <field name="max_department" />
+                                <field name="allowed_number" />
+                                <field name="salary_rule_id"/>
+                                <!-- <field name="group_tax" /> -->
+                                <field name="restrict_reject" />
+                            </group>
+                      </div>
+                    </div>
+                </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_hr_loan_configuration" model="ir.actions.act_window">
+            <field name="name">Settings</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module' : 'hr_loan'}</field>
+        </record>
+
+        <menuitem id="menu_hr_loan_global_settings" name="Settings"
+        parent="hr_loan.hr_loan_configration" sequence="0" action="action_hr_loan_configuration" groups="base.group_loan_manager"/>
+
+
+
+
+
+
+</data>
+</odoo>

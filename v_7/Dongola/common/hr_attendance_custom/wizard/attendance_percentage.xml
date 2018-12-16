@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+      <record id="resource_calendar_form" model="ir.ui.view">
+            <field name="name">resource.calendar.form</field>
+            <field name="model">resource.calendar</field>
+            <field name="inherit_id" ref="resource.resource_calendar_form" />
+            <field name="arch" type="xml">
+              <xpath expr="//form" position="replace">
+                <form string="Working Time" version="7.0">
+                  <sheet>
+                    <group>
+                      <group>
+                            <field name="name"/>
+                            <field name="manager"/>
+                      </group>
+                      <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                      </group>
+                      <group>
+                           <field name="min_hours" />
+                           <field name="max_hours" />
+                      </group>
+                      <group>
+                           <field name="factor"/>
+                           <field name="working_hours"/>
+                      </group>
+                    </group>
+                    <notebook>
+                      <page string="Attendances">
+                        <field name="attendance_ids">
+                          <tree string="Working Time" editable="top">
+                            <field name="name"/>
+                            <field name="dayofweek"/>
+                            <field name="hour_from" widget="float_time"/>
+                            <field name="hour_to" widget="float_time"/>
+                            <field name="date_from" required="1"/>
+                          </tree>
+                        </field>
+                      </page>
+                      <page string="Employees">
+                        <field name="employees_ids" />
+                      </page>
+                    </notebook>
+                  </sheet>
+                </form>
+              </xpath>
+            </field>
+      </record>
+
+
+      <record id="hr_attendance_percentage_form" model="ir.ui.view">
+            <field name="name">Attendance Percentage</field>
+            <field name="model">hr.attendance.percentage</field>
+            <field name="arch" type="xml">
+                <form string="Attendance Percentage Report" version="7.0">
+              <group>
+                     <field name="start_date" />
+                     <field name="end_date" />
+                     <field name="w_prob" />
+                     <field name="department_ids"/>
+              </group>
+              <footer>
+                    <button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+                         or
+                <button special="cancel" string="Cancel"   class="oe_link"/>
+              </footer>
+          </form>
+            </field>
+      </record>
+
+        <record id="action_hr_attendance_percentage" model="ir.actions.act_window">
+            <field name="name">Attendance Percentage Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.attendance.percentage</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_attendance_percentage_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+      
+        <menuitem
+                name="Attendance Percentage Report"
+                action="action_hr_attendance_percentage"
+                id="action_hr_attendance_percentage_menu"
+                parent="hr_custom.menu_hr_employees_reports"
+                />
+        
+
+        <record id="attendance_details_report_all" model="ir.ui.view">
+            <field name="name">Employees Attendance Report</field>
+            <field name="model">hr.attendance.percentage</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Employee Attendance Report" version="7.0">
+                    <group>
+                        <field name="start_date"/>
+                        <field name="end_date"/> 
+                        <field name="department_ids"/>
+                    </group>
+                    
+                    <footer>
+                        <button name="print_report_emp_details_all" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="emp_att_det_re_action_all" model="ir.actions.act_window">
+            <field name="name">Attendance Details</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.attendance.percentage</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="attendance_details_report_all" />
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                name="Attendance Wrong Report"
+                action="emp_att_det_re_action_all"
+                id="action_hr_attendance_details_menu"
+                parent="hr_custom.menu_hr_employees_reports"
+                />
+
+    </data>
+</openerp>

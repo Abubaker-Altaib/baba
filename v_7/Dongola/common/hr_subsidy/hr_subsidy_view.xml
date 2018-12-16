@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>            
+             
+             <record model="ir.ui.view" id="hr_subsidy_form_view">
+                <field name="name">hr.subsidy.form</field>
+                <field name="model">hr.subsidy</field>
+                <field name="arch" type="xml">
+                    <form string="Employees Subsidy" version="7.0">
+<header>
+           <button name="transfer_subsidy" string="Transfer" attrs="{'invisible':['|',('transfer','!=',False)]}"
+									type="object" class="oe_highlight"/>                 
+</header>
+		 <sheet string="HR Subsidy">
+                      <group >
+                        <group>
+                        <field name="emp_code" colspan='2'/>
+                        <field name="employee_id" colspan='2' />
+                        <field name="allowance" colspan='2'/>
+				<field name="transfer" invisible="True"/>
+                        </group>
+                      <group >
+			<field name="date"/>
+                        <field name="amount"/>
+			<field name="acc_number"/>
+
+                      </group>
+                     </group>
+                    </sheet>
+                     </form>
+	     </field>
+             </record>
+
+             <record model="ir.ui.view" id="hr_subsidy_tree_view">
+                <field name="name">hr.subsidy.tree</field>
+                <field name="model">hr.subsidy</field>
+                <field name="arch" type="xml">
+                    <tree string="Employees Subsidy">
+                       <field name="emp_code"/>
+                       <field name="employee_id"/>
+                       <field name="allowance"/>
+                        <field name="amount"/>
+			<field name="date"/>
+			<field name="acc_number"/>
+                        <field name="transfer"/>
+
+                    </tree>
+                  </field>
+                </record>
+
+                <record id="hr_subsidy_tree" model="ir.actions.act_window">
+				<field name="name">subsidy</field>
+				<field name="res_model">hr.subsidy</field>
+				<field name="view_type">form</field>
+				<field name="view_mode">tree,form</field>
+				<field name="view_id" ref="hr_subsidy_tree_view"/>
+	        </record>
+                <record id="view_subsidy_filter1" model="ir.ui.view">
+                  <field name="name">employees_subsidy</field>
+                  <field name="model">hr.subsidy</field>
+                  <field name="type">search</field>
+                  <field name="arch" type="xml">
+                 <search string="subsidy">
+                    <group col='8' colspan='4'>
+			 <field name="allowance" domain="[('name_type','=','allow')]" widget="selection">	
+			</field>	
+                          <field name="emp_code">		
+			</field>
+			 <field name="employee_id" widget="selection">
+                        </field>
+                        
+                    </group>
+		</search>
+             </field>
+         </record>
+
+<menuitem id="subsidy_menu" name="Subsidies" parent="hr.menu_hr_root" sequence="31" groups="hr_payroll_custom.group_payroll_user,base.group_hr_overview"/>              
+   <menuitem id="hr_subsidy_menu" name="Employees Subsidy" parent="subsidy_menu" sequence="31" action="hr_subsidy_tree"/>
+
+
+</data> 
+</openerp>

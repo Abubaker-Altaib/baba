@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <odoo>
+    <data>
+    
+    
+        <!--   Appointment Terms -->
+        
+        <record id="hr_appointment_term_form" model="ir.ui.view">
+            <field name="name">Appointment Terms</field>
+            <field name="model">hr.appointment.term</field>
+            <field name="arch" type="xml">
+                <form string="Appointment Terms">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                   </sheet>
+               </form>
+           </field>
+       </record>
+
+       <record id="hr_appointment_term_view_tree" model="ir.ui.view">
+           <field name="name">Appointment Term</field>
+           <field name="model">hr.appointment.term</field>
+           <field name="arch" type="xml">
+               <tree string="Appointment Terms">
+                   <field name="name"/>
+               </tree>
+           </field>
+       </record>
+        <record id="hr_appointment_term_action" model="ir.actions.act_window">
+            <field name="name">Appointment Terms</field>
+            <field name="res_model">hr.appointment.term</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        
+        
+
+      
+      <!-- Inherited form view of hr contract type -->
+      <record model="ir.ui.view" id="hr_contract_type_form">
+          <field name="name">hr contract type inherit</field>
+          <field name="model">hr.contract.type</field>
+          <field name="inherit_id" ref="hr_contract.hr_contract_type_view_form" />
+          <field name="arch" type="xml">
+               <xpath expr="//group" position="before">
+                   <header>
+                        <field name="state" widget="statusbar" clickable="1"/>
+                   </header>
+               </xpath>
+              <xpath expr="//group" position="after">
+                  <notebook>
+                      <page string="Terms" name="terms">
+                          <field name ="term_ids" nolabel="1">
+                              <tree string="Terms" editable="top">
+                                  <field name="term_no"/>
+                                  <field name="name"/>
+                                  <field name="type"/>
+                                  <field name="description"/>
+                               </tree>
+                          </field>
+                      </page>
+                      <page string="Appointment Terms" >
+                        <field name ="app_term_ids"  nolabel="1"/>
+                      </page>
+                  </notebook>
+                  <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+              </xpath>
+              
+              <xpath expr="//group[1]" position="after">
+                  <group>
+                      <group>
+                          <field name ="tag_id"/>
+                          <field name ="resource_calendar_id"/>
+                          <field name="type"/>
+                          <label for="temporary_period" invisible="[('type','!=','temporary')]"/>
+                          <div class="o_row" name="temporary_period">
+                            <field name="temporary_period" attrs="{'invisible':[('type','!=','temporary')],'required':[('type','=','temporary')]}" nolabel="1"/>
+                            <span invisible="[('type','!=','temporary')]">/ month</span>
+                          </div>
+                      </group>
+                      <group>
+                          <field name ="trial_period"/>
+                          <field name ="trial_period_times"/>
+                          <field name ="number_dependents" required='True'/>
+                      </group>
+                </group>
+              </xpath>
+              <xpath expr="//field[@name='name']" position="replace">
+                  <div class="oe_title">
+                      <label for="name" class="oe_edit_only"/>
+                      <h1>
+                          <field name="name" placeholder="Conract's Type" required="True"/>
+                      </h1>
+                  </div>
+              </xpath>
+          </field>
+      </record>
+      
+      <!-- Inherited form view of hr contract -->
+      <record model="ir.ui.view" id="hr_contract_form">
+          <field name="name">hr contract inherit</field>
+          <field name="model">hr.contract</field>
+          <field name="inherit_id" ref="hr_contract.hr_contract_view_form" />
+          <field name="arch" type="xml">
+               <xpath expr="//sheet/notebook/page[2]" position="after">
+                   <page string="Appointment Terms" name="terms">
+                       <group>
+                           <group colspan="4">
+                               <field name ="app_term_ids" widget="many2many_checkboxes" nolabel="1"/>
+                           </group>
+                       </group>
+                   </page>
+               </xpath>
+                <xpath expr="//field[@name='type_id']" position="after">
+                  <field name="type" invisible='True'/>
+               </xpath>
+               <xpath expr="//field[@name='employee_id']" position="replace">
+                  <field name="employee_id" required='True'/>
+               </xpath>
+               <xpath expr="//field[@name='department_id']" position="replace">
+                   <field name="department_id" required='True'/>
+               </xpath>
+               <xpath expr="//field[@name='job_id']" position="replace">
+                  <field name="job_id" required='True'/>
+               </xpath>
+              <xpath expr="//field[@name='type_id']" position="replace">
+                  <field name="type_id" domain="[('type','=',type)]"/>
+               </xpath>
+              <xpath expr="//field[@name='date_end']" position="replace">
+                 <field name="date_end" nolabel="1"  attrs="{'required': [('type','=','temporary')]}"/>
+               </xpath>
+              <xpath expr="//label[@for='wage']" position="before">
+                  <field name ="number_dependents" required='True'/>
+              </xpath>                
+           </field>
+       </record>
+
+       <record id="hr_contract.action_hr_contract" model="ir.actions.act_window">
+            <field name="name">Contracts</field>
+            <field name="res_model">hr.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('employee_id', '!=', False),('type', '=', 'temporary')]</field>
+            <field name="context">{'search_default_current':1, 'search_default_group_by_state': 1,
+            'default_type':'temporary'}</field>
+            <field name="search_view_id" ref="hr_contract.hr_contract_view_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create new contracts.
+              </p>
+            </field>
+        </record>
+
+        <record id="action_hr_contract_custom" model="ir.actions.act_window">
+            <field name="name">Contracts</field>
+            <field name="res_model">hr.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('employee_id', '!=', False),('type', '=','permanent')]</field>
+            <field name="context">{'search_default_current':1, 'search_default_group_by_state': 1,
+            'default_type':'permanent'}</field>
+            <field name="search_view_id" ref="hr_contract.hr_contract_view_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click here to create new contracts.
+              </p>
+            </field>
+        </record>
+        <menuitem
+            id="hr_menu_contract_custom"
+            name="Permanent Job Offers"
+            action="action_hr_contract_custom"
+            parent="hr.menu_hr_root"
+            sequence="3"/>
+       
+       <menuitem
+           name="Contracts Configurations"
+           id="menu_configuration_root_contract"
+           parent="hr.menu_human_resources_configuration"
+           sequence="7"/>
+       <menuitem
+           name="Appointment Terms"
+           id="menu_appointment_term"
+           action="hr_appointment_term_action"
+           parent="menu_configuration_root_contract"
+           sequence="7"/>
+        <menuitem
+            name ="Contract Types"
+            id="hr_contract.hr_menu_contract_type"
+            parent="menu_configuration_root_contract"
+            sequence="6"/>
+
+
+        <menuitem
+            id="hr_contract.hr_menu_contract"
+            name="Contracts"
+            action="hr_contract.action_hr_contract"
+            parent="hr.menu_hr_root"
+            sequence="4"/>
+       </data>
+   </odoo>

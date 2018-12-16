@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- fuel request Activity-->
+
+        <record id="wkf_fuel_request" model="workflow">
+            <field name="name">wkf.fuel.request</field>
+            <field name="osv">fuel.request</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_fuel_request_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_fuel_request"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>       
+        <record id="wkf_fuel_request_confirmed_s" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_fuel_request"/>
+            <field name="name">confirmed_s</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_s()</field>  
+        </record>
+        <record id="wkf_fuel_request_confirmed_d" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_fuel_request"/>
+            <field name="name">confirmed_d</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_d()</field>  
+        </record>
+        
+        <record id="wkf_fuel_request_approved" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_fuel_request"/>
+            <field name="name">approved</field>
+            <field name="kind">function</field>
+            <field name="action">approved()</field>  
+        </record>
+
+        <record id="wkf_fuel_request_execute" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_fuel_request"/>
+            <field name="name">execute</field>
+            <field name="kind">function</field>
+            <field name="action">execute()</field>  
+        </record>
+
+		<record id="wkf_fuel_request_picking" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_fuel_request"/>
+            <field name="name">picking</field>
+            <field name="kind">function</field>
+            <field name="action">action_create_picking()</field>
+        </record>
+
+        <record id="wkf_fuel_request_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_fuel_request"/>
+            <field name="name">done</field>
+            <field name="action">write({'state':'done'})</field>
+            <field name="kind">function</field>
+            <field name="flow_stop">True</field>
+        </record>
+
+        <record id="wkf_fuel_request_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_fuel_request"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+        </record>
+
+<!-- fuel request Transition-->
+
+        <record id="wkf_fuel_request_darft_confirmed_s" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_draft"/>
+            <field name="act_to" ref="wkf_fuel_request_confirmed_s"/>
+            <field name="signal">confirmed_s</field>
+        </record>
+
+        <record id="wkf_fuel_request_confirmed_s_to_confirmed_d" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_confirmed_s"/>
+            <field name="act_to" ref="wkf_fuel_request_confirmed_d"/>
+            <field name="signal">confirmed_d</field>
+        </record>
+        
+        <record id="wkf_fuel_request_confirmed_d_to_approved" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_confirmed_d"/>
+            <field name="act_to" ref="wkf_fuel_request_approved"/>
+            <field name="signal">approved</field>
+        </record>
+
+        <record id="wkf_fuel_request_approved_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_approved"/>
+            <field name="act_to" ref="wkf_fuel_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_fuel_request_execute_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_execute"/>
+            <field name="act_to" ref="wkf_fuel_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_fuel_request_confirmed_s_to_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_confirmed_s"/>
+            <field name="act_to" ref="wkf_fuel_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_fuel_request_confirmed_d_to_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_confirmed_d"/>
+            <field name="act_to" ref="wkf_fuel_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_fuel_request_draft_to_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_draft"/>
+            <field name="act_to" ref="wkf_fuel_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_fuel_request_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_cancel"/>
+            <field name="act_to" ref="wkf_fuel_request_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+
+		<record id="wkf_fuel_request_execute_to_picking" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_execute"/>
+            <field name="act_to" ref="wkf_fuel_request_picking"/>
+            <field name="signal">done</field>
+        </record>
+
+		<record id="wkf_fuel_request_approve_to_execute" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_approved"/>
+            <field name="act_to" ref="wkf_fuel_request_execute"/>
+            <field name="signal">execute</field>
+        </record>
+
+        <!--record id="wkf_fuel_request_execute_to_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_execute"/>
+            <field name="act_to" ref="wkf_fuel_request_done"/>
+            <field name="signal">done</field>
+        </record-->
+        
+		<!--record id="trans_act_picking" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed1"/>
+            <field name="act_to" ref="act_picking"/>
+
+
+            
+        </record-->
+      
+  		<record id="trans_picking_except_picking" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_picking"/>
+            <field name="act_to" ref="wkf_fuel_request_cancel"/>
+            <field name="trigger_model">stock.move</field>
+            <field name="trigger_expr_id">move_lines_get()</field>
+            <field name="condition">test_state('canceled')</field>
+        </record>
+        
+
+       <record id="trans_picking_done_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_fuel_request_picking"/>
+            <field name="act_to" ref="wkf_fuel_request_done"/>
+            <field name="trigger_model">stock.move</field>
+            <field name="trigger_expr_id">move_lines_get()</field>
+            <field name="condition">test_state('finished')</field>
+        </record>
+
+
+    </data>
+</openerp>
+

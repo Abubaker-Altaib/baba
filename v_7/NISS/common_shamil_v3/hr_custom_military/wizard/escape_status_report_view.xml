@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_escape_status_report" model="ir.ui.view">
+            <field name="name">escape_status_report.form</field>
+            <field name="model">escape_status_report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Escape Status Report" version="7.0">
+                    <button name="print_report" string="Print" type="object"/>
+                    <group>
+                        <group>
+                            <field name="date_from" />
+                            <field name="date_to" />
+                        </group>
+                        <group>
+                            <field name="service_end" />
+                            <field name="courted" />
+                        </group>
+                        <group>
+                            <field name="job_id" />
+                            <field name="degree_id" />
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="department_id"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="action_escape_status_report" model="ir.actions.act_window">
+            <field name="name">Escape Status Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">escape_status_report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_escape_status_report"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="escape_status_report_menu" name="Escape Status Report" action="action_escape_status_report" parent="hr_custom.menu_hr_process_report"/>
+        <report menu="False" auto="False" id="escape_status_report_id" model="hr.holidays.absence" name="hr.escape_status.report" file="hr_custom_military/report/escape_status_report.mako" string="Escape Status Report" report_type="webkit" header="True"/>
+    </data>
+</openerp>

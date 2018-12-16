@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+ <!--inherit add to holiday.status check default-->
+
+    <record id="view_edit_holiday_status_form" model="ir.ui.view">
+        <field name="name">hr.holidays.status.form.inherit</field>
+        <field name="model">hr.holidays.status</field>
+        <field name="inherit_id" ref="hr_holidays.edit_holiday_status_form"/>
+        <field name="arch" type="xml">
+		<xpath expr="//group[@col='4']" position="after">
+                    <group col="4" colspan="4">
+		        	<field name="payroll_type"  />
+		        	<field name="leave_expenses" />
+                    </group>
+                </xpath>
+		<xpath expr="//page[@string='Details']" position="after">
+                    <page string="Degrees">     
+                    	<field colspan="4" name="degree_ids" nolabel="1"/>
+                    </page>
+                    <page string="Expenses Settings" attrs="{'invisible':[('leave_expenses','=','without')]}"> 
+                    	<group col="4" colspan="2">
+                       	    <field name="pay_expenses" attrs="{'required':[('leave_expenses','=','with')]}" colspan="2"/>
+			    <newline />
+                            <field name="expense_allowance_id" attrs="{'required':[('leave_expenses','=','with')]}" colspan="2" />
+                        </group>
+                    </page>
+                    <page string="Customized Payroll" attrs="{'invisible':[('payroll_type','!=','customized')]}">
+                        <group>
+                            <field name="include_basic" /> 
+                        </group>
+                        <group string="Allowances And  Deductions" > 
+                            <field colspan="4" name="allow_deduct_ids" nolabel="1"/>
+                        </group>
+                        <group string="Bonuses And Deductions" > 
+                            <field colspan="4" name="bonus_deduct_ids" nolabel="1"/>
+                        </group>
+                    </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="hr_holidays.open_ask_holidays">
+            <field name="name">Leave Requests</field>
+            <field name="res_model">hr.holidays</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_holidays.edit_holiday_new"/>
+            <field name="context">{'default_type': 'remove', 'search_default_my_leaves':0}</field>
+            <field name="domain">[('type','=','remove')]</field>
+            <field name="search_view_id" ref="hr_holidays.view_hr_holidays_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new lea'search_default_my_leaves':1ve request.
+              </p><p>
+                Once you have recorded your leave request, it will be sent
+                to a manager for validation. Be sure to set the right leave
+                type (recuperation, legal holidays, sickness) and the exact
+                number of open days related to your leave.
+              </p>
+            </field>
+        </record>
+
+    </data>
+</openerp>

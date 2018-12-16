@@ -1,0 +1,44 @@
+<odoo>
+	<data>
+
+		<record id="purchase_order_wizard_view" model="ir.ui.view">
+			<field name="name">purchase order report</field>
+			<field name="model">purchase.order.wizard</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Print Purchase Order" version="7.0">
+					<group col="4" colspan="4">
+						<field name="date_from"/>
+						<field name="date_to"/>
+						<field name="vendor_id"/>
+						<field name="dept_id"/>
+						<field name="product_id"/>
+						<field name="state" invisible="0"/>
+					</group>
+					<footer>
+						<button name="print_report" string="Print" type="object"
+							class="oe_highlight" />
+						or
+						<button special="cancel" string="Cancel" class="oe_link" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+	
+		<record id="action_purchase_order_wizard" model="ir.actions.act_window">
+			<field name="name">Purchase Order Report </field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">purchase.order.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="purchase_order_wizard_view" />
+			<field name="target">new</field>
+		</record>
+
+		
+		<menuitem name="Purchase Order Report" parent="purchase.menu_procurement_management"
+			action="action_purchase_order_wizard" id="menu_purchase_order_wizard" />
+
+	</data>
+</odoo>

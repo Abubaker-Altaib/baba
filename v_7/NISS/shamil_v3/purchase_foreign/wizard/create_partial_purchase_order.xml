@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+       <record id="view_create_purchase_order" model="ir.ui.view">
+            <field name="name">Create Purchase Order</field>
+            <field name="model">create.partial.purchase.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                   <form string="Purchase Partial creation" version="7.0">
+              	         <field name="current_date" />
+                         <separator string=" Please chose the amount of items you wont to create Purchase Order for" colspan="4"/>
+                         <newline />
+			      <field colspan="12" name="products_ids" nolabel="1" mode="tree">
+				     <tree editable="bottom" string="Items Lines">
+				          <field name="product_id" readonly="1"/>
+				          <field name="product_qty"  readonly="1"/>
+				          <field name="purchased_qty" readonly="1"/>
+                                          <field name="left_qty" readonly="1" />
+				          <field name="desired_qty" />								
+				     </tree>
+			      </field>
+                              <footer>
+				  <button string="Make Purchase Order" name="create_partial_purchase_order"  type="object" />
+                                        or	
+                                  <button string="Cancel" special="cancel" icon="gtk-cancel"/>
+                             </footer>
+                   </form>
+            </field>
+       </record>
+
+
+
+               <record id="action_create_purchase_partial_order" model="ir.actions.act_window">
+                       <field name="name">creating Purchase Order</field>
+                       <field name="res_model">create.partial.purchase.order</field>
+                       <field name="view_type">form</field>
+                       <field name="view_mode">form</field>
+                       <field name="view_id" ref="view_create_purchase_order"/>
+                       <field name="target">new</field>
+                </record>
+       
+		<record id="partial_purchase_order_products_form" model="ir.ui.view">
+			<field name="name">Partial Purchase Order Products Form</field>
+			<field name="model">create.partial.purchase.order.products</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Partial Purchase Order Products" version="7.0">
+				      <field name="product_id" readonly="1"/>
+				      <field name="product_qty" readonly="1" />
+				      <field name="left_qty" readonly="1" />
+				      <field name="purchased_qty" readonly="1"/>
+				      <field name="desired_qty" />								
+				</form>
+			</field>
+		</record>
+
+    </data>
+</openerp>

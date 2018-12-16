@@ -1,0 +1,460 @@
+<?xml version="1.0"?>
+<document filename="أعاده تقييم الاصول.pdf">
+  <template pageSize="(595.0,842.0)" title="سجل عمليات الاصول" author="NCTR"  allowSplitting="20">
+    <pageTemplate>
+     <frame id="first" x1="28.0" y1="28.0" width="539" height="786"/>
+    </pageTemplate>
+
+  </template>
+  <stylesheet>
+    
+    <blockTableStyle id="Table1">
+      <blockAlignment value="CENTER"/>
+      <blockValign value="CENTER"/>
+      <blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+      <lineStyle kind="GRID" colorName="#e6e6e6"/>
+      <blockTopPadding length="8"/>
+      <blockBottomPadding length="4"/>
+    </blockTableStyle>
+
+    <blockTableStyle id="Table3">
+      <blockValign value="CENTER" />
+      <blockAlignment value="CENTER" />
+      <blockTopPadding length="8" />
+      <blockBottomPadding length="4" />
+    </blockTableStyle>
+
+    <blockTableStyle id="Table2">
+      <blockValign value="RIGHT" />
+      <blockAlignment value="RIGHT" />
+      <blockTopPadding length="8" />
+      <blockBottomPadding length="4" />
+    </blockTableStyle>
+
+    <blockTableStyle id="Table_Total">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+        <blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+       <lineStyle kind="GRID" colorName="#e6e6e6"/>
+       <lineStyle kind="LINEBELOW" colorName="#000000" start="0,0" stop="-1,0"/>
+       <lineStyle kind="LINEBELOW" colorName="#000000" start="0,1" stop="-1,1"/>
+       <lineStyle kind="LINEBELOW" colorName="#e6e6e6" start="0,2" stop="-1,-1"/>
+       <lineStyle kind="LINEBELOW" colorName="#000000" start="0,0" stop="-1,0"/>
+       <lineStyle kind="LINEBELOW" colorName="#000000" start="0,1" stop="-1,1"/>
+    </blockTableStyle>
+
+    <initialize>
+      <paraStyle name="all" alignment="justify" />
+    </initialize>
+    <paraStyle name="terp_default_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="2.0"/>
+    <paraStyle name="terp_header_Centre" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="CENTER" spaceBefore="0.0" spaceAfter="15.0"/>
+    <paraStyle name="terp_default_Right_9" fontName="Helvetica" fontSize="10.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_Right_9_Bold" fontName="Helvetica-Bold" fontSize="10.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="1.0"/>
+    <paraStyle name="terp_default_Right" fontName="Helvetica" fontSize="10.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="1.0"/>
+    <paraStyle name="terp_default_Centre_9" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <images />
+  </stylesheet>
+  <images/>
+
+  <story>
+    
+    
+  	<para style="terp_header_Centre">[[ company.name]]</para>
+    <para style="terp_header_Centre" rightIndent="30">الإدارة المالية</para>
+   <para style="terp_header_Centre">[[data['form']['asset_lists'] == 'asset_record' and 'سجل الأصول الثابتة' or removeParentNode('para') ]]</para>
+   <para style="terp_header_Centre">[[data['form']['asset_lists'] == 'before_revalue' and 'الاصول التى يجب أعادة تقييمها' or removeParentNode('para') ]]</para>
+    <para style="terp_header_Centre">[[data['form']['asset_lists'] == 'after_revalue' and 'الاصول التى تم أعادة تقييمها' or removeParentNode('para') ]]</para>
+    <para style="terp_header_Centre">[[data['form']['asset_lists'] == 'before_rehab' and 'الاصول التى يراد أعاده تاهيلها' or removeParentNode('para') ]]</para>
+    <para style="terp_header_Centre">[[data['form']['asset_lists'] == 'after_rehab' and ' قائمه الاصول بعد التاهيل' or removeParentNode('para') ]]</para>
+    <para style="terp_default_8">
+      <font color="white"> </font>
+    </para>
+   
+   
+     <para style="terp_default_Right">[[ repeatIn(lines_record(data),'line') ]]</para>      
+    <blockTable colWidths="120.0,90.0,120.0,70.0,120.0,70.0" style="Table3">
+      [[data['form']['asset_lists'] == 'asset_record' or removeParentNode('blockTable') ]]
+      <tr>
+        <td>
+          <para style="terp_default_Right">[[ line['specif'] ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Right_9_Bold" >المواصفات : </para>
+        </td>
+        <td>
+          <para style="terp_default_Right">[[ line['model'] ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Right_9_Bold"> الموديل : </para>
+        </td>
+        <td>
+          <para style="terp_default_Right">[[ line['type'] ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Right_9_Bold">النوع : </para>
+        </td>
+      </tr>
+    
+      <tr>
+        <td>
+          <para style="terp_default_Right">[[ line['purchase_date'] ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Right_9_Bold">تاريخ الشراء : </para>
+        </td>
+        <td>
+          <para style="terp_default_Right">[[ line['purchase_value'] or '0.0' ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Right_9_Bold">القيمة عند الشراء : </para>
+        </td>
+        <td>
+          <para style="terp_default_Right">[[ line['country'] ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Right_9_Bold">بلد المنشأ : </para>
+        </td>
+      </tr>
+    </blockTable> 
+    
+    <blockTable colWidths="330.0,70.0,120.0,70.0" style="Table3">
+      [[data['form']['asset_lists'] == 'asset_record' or removeParentNode('blockTable') ]]
+      <tr>
+        <td>
+          <para style="terp_default_Right">[[ line['other'] ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Right_9_Bold">أخري : </para>
+        </td>
+        <td>
+          <para style="terp_default_Right">[[ line['depr_amount'] or '0.0' ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Right_9_Bold">معدل الإهلاك : </para>
+        </td>
+      </tr>
+    </blockTable>
+
+    <para style="terp_default_8">
+      <font color="white"> </font>
+    </para>
+        <section>
+          [[data['form']['asset_lists'] == 'asset_record' or removeParentNode('blockTable') ]]
+        <blockTable  colWidths="155.0,100.0,100.0,100.0,100.0" style="Table1" >
+          [[data['form']['asset_lists'] == 'asset_record' or removeParentNode('blockTable') ]]
+          <para>[[  line['operation'] or  'لا يوجد عمليات على هذا الأصل' and removeParentNode('blockTable')  ]]</para>
+          
+         <tr>
+          
+          <td>
+              <para style="terp_default_Centre_9">البيان</para>
+           </td>
+	         <td>
+              <para style="terp_default_Centre_9">التاريخ</para>
+           </td>
+           <td>
+              <para style="terp_default_Centre_9">الرصيد</para>
+           </td>
+           <td>
+              <para style="terp_default_Centre_9">له</para>
+           </td>
+           <td>
+              <para style="terp_default_Centre_9">منه</para>
+           </td>
+         </tr>
+
+         <tr> <para>[[ repeatIn(line['operation'],'o') ]]</para>
+             <td>
+               <para style="terp_default_Right_9">
+                [[ o['statement']=='initial' and ' قيــــمة الشراء'  or o['statement']=='reval' and 'إعادة تقييم الأصل' or o['statement']=='abandon' and ' إتلاف الإصل' or o['statement']=='sale' and ' بيع الاصل' or o['statement']=='rehabilitation' and ' إعادة تأهيل الأصل' or  o['statement'] ]]
+              </para> 
+             </td>             
+             <td>
+              <para style="terp_default_Right_9">[[ o['hist_date'] ]]</para> 
+             </td>
+		         <td>
+               <para style="terp_default_Right_9">[[ o['balance'] or '0.0' ]]</para>
+             </td>             
+             <td>
+               <para style="terp_default_Right_9">[[ o['cr'] or '0.0' ]]</para>   
+             </td>
+		         <td>
+               <para style="terp_default_Right_9">[[ o['dr'] or '0.0' ]]</para>
+             </td>
+         </tr>
+	</blockTable>
+  <para style="terp_default_8">
+      <font color="white"> </font>
+    </para>
+ <blockTable colWidths="100.0,200.0" style="Table2">
+    [[data['form']['asset_lists'] == 'asset_record' or removeParentNode('blockTable') ]]
+      <tr>
+        <td>
+          <para style="terp_default_Right" rightIndent="-250">[[ line['proft'] or '0.0' ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Right_9_Bold" rightIndent="-400">أرباح بيع : </para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="terp_default_Right" rightIndent="-250">[[ line['los'] or '0.0' ]]</para>
+        </td>
+        <td>
+          <para style="terp_default_Right_9_Bold" rightIndent="-400">خسائر بيع :</para>
+        </td>
+      </tr>
+    </blockTable>
+  
+</section>
+
+    <para style="terp_default_8">
+      <font color="white"> </font>
+    </para>
+        <blockTable  colWidths="100.0,100.0,100.0,60.0,100.0,80.0" style="Table1">[[data['form']['asset_lists'] == 'before_revalue' or removeParentNode('blockTable') ]]
+         <tr>
+           <!--td>
+             <para style="terp_default_Bold_9">ملاحظات</para>
+           </td-->         
+           <td>
+             <para style="terp_default_Bold_9">القيمه الدفتريه الحاليه</para>
+           </td>
+         <td>
+              <para style="terp_default_Bold_9"> العمر الافتراضي </para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">تاريخ الشراء</para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">الرمز</para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">الاصل</para>
+           </td>
+         <td>
+             <para style="terp_default_Bold_9">متسلسل</para>
+           </td>
+         </tr>
+
+           <tr> [[repeatIn(lines(data),'line')]]
+             <!--td>
+              <para style="terp_default_Right_9"> [[ line['note'] ]]</para> 
+             </td-->
+             <td>
+              <para style="terp_default_Right_9">[[ line['value_residual'] or '0.0' ]]</para> 
+             </td>
+             <td>
+               <para style="terp_default_Right_9">[[ line['history_date'] or '0.0']]</para> 
+             </td>             
+             <td>
+              <para style="terp_default_Right_9">[[ line['purchase_date'] or '0.0' ]]</para> 
+             </td>
+         <td>
+               <para style="terp_default_Right_9">[[ line['code'] ]]</para>
+             </td>             
+             <td>
+               <para style="terp_default_Right_9">[[ line['name'] ]]</para>   
+             </td>
+         <td>
+               <para style="terp_default_Right_9">[[ line['serial_no'] ]]</para>
+             </td>
+           </tr>
+  </blockTable>
+  
+  <blockTable  colWidths="100.0,100.0,100.0,60.0,100.0,80.0" style="Table_Total">[[data['form']['asset_lists'] == 'before_revalue' or removeParentNode('blockTable') ]]
+          <tr> 
+       <!--td> <para style="terp_default_Right_9"> </para> </td-->
+             <td> <para style="terp_default_Right_9"> [[ formatLang(sum_residual(data)) or 0.0]]</para>  </td>
+       <td> <para style="terp_default_Right_9"> </para> </td>
+       <td> <para style="terp_default_Right_9"> </para> </td>      
+       <td> <para style="terp_default_Right_9"> </para> </td>
+       <td> <para style="terp_default_Right_9"> </para> </td>
+       <td> <para style="terp_default_Right_9">المجمــــــــــوع </para> </td>
+           </tr>
+        </blockTable>
+
+
+
+
+        <blockTable  colWidths="100.0,100.0,100.0,130.0,100.0" style="Table1">[[data['form']['asset_lists'] == 'after_revalue' or removeParentNode('blockTable') ]]
+         <tr>
+           <!--td>
+             <para style="terp_default_Bold_9">ملاحظات</para>
+           </td--> 
+        <td>
+          <para style="terp_default_Bold_9">القيمه بعد التقييم</para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">القيمه قبل  التقييم</para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">الرمز</para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">الاصل</para>
+           </td>
+         <td>
+             <para style="terp_default_Bold_9">متسلسل</para>
+           </td>
+         </tr>
+
+           <tr> [[repeatIn(lines(data),'line')]]
+           <!--td>
+              <para style="terp_default_Right_9">[[ line['note'] ]]</para> 
+             </td-->
+             <td>
+               <para style="terp_default_Right_9">[[ line['value_residual'] or '0.0']]</para> 
+             </td>
+             <td>
+              <para style="terp_default_Right_9">[[ line['amount_before'] or '0.0' ]]</para> 
+             </td>
+           <td>
+               <para style="terp_default_Right_9">[[ line['code'] ]]</para>
+             </td>           
+             <td>
+               <para style="terp_default_Right_9">[[ line['name'] ]]</para>   
+             </td>
+         <td>
+               <para style="terp_default_Right_9">[[ line['serial_no'] ]]</para>
+             </td>
+           </tr>
+        </blockTable>
+  
+  <blockTable  colWidths="100.0,100.0,100.0,130.0,100.0" style="Table_Total">[[data['form']['asset_lists'] == 'after_revalue' or removeParentNode('blockTable') ]]
+          <tr> 
+       <!--td> <para style="terp_default_Right_9"> </para> </td-->
+             <td> <para style="terp_default_Right_9">[[ formatLang(sum_residual(data)) or 0.0]]</para>  </td>
+             <td> <para style="terp_default_Right_9"> [[ formatLang(sum_amount_before(data)) or 0.0]]</para>  </td>
+       <td> <para style="terp_default_Right_9"> </para> </td>
+       <td> <para style="terp_default_Right_9"> </para> </td>
+       <td> <para style="terp_default_Right_9">المجمــــــــــوع </para> </td>
+           </tr>
+        </blockTable>       
+<!-- Before Rehabitation -->
+       <blockTable  colWidths="100.0,100.0,100.0,130.0,100.0" style="Table1">[[data['form']['asset_lists'] == 'before_rehab' or removeParentNode('blockTable') ]]
+         <tr>
+           <!--td>
+             <para style="terp_default_Bold_9">ملاحظات</para>
+           </td--> 
+        <td>
+          <para style="terp_default_Bold_9">مستوى أعاده التأهيل</para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">القيمة الدفترية</para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">الرمز</para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">الاصل</para>
+           </td>
+         <td>
+             <para style="terp_default_Bold_9">متسلسل</para>
+           </td>
+         </tr>
+
+           <tr> [[repeatIn(lines(data),'line')]]
+           <!--td>
+              <para style="terp_default_Right_9">[[ line['note'] ]]</para> 
+             </td-->
+             <td>
+               <para style="terp_default_Right_9">[[strip_name((line['rehab'] == 'part_rehab' and 'تأهيل جزئ')
+                or (line['rehab'] == 'total_rehab' and 'تأهيل كلى'))]]
+        </para> 
+             </td>
+             <td>
+              <para style="terp_default_Right_9">[[ line['value_residual'] or '0.0' ]]</para> 
+             </td>
+           <td>
+               <para style="terp_default_Right_9">[[ line['code'] ]]</para>
+             </td>           
+             <td>
+               <para style="terp_default_Right_9">[[ line['name'] ]]</para>   
+             </td>
+         <td>
+               <para style="terp_default_Right_9">[[ line['serial_no'] ]]</para>
+             </td>
+           </tr>
+        </blockTable>
+  <blockTable  colWidths="100.0,100.0,100.0,130.0,100.0" style="Table_Total">[[data['form']['asset_lists'] == 'before_rehab' or removeParentNode('blockTable') ]]
+          <tr> 
+       <!--td> <para style="terp_default_Right_9"> </para> </td-->
+       <td> <para style="terp_default_Right_9"> </para> </td>
+         <td> <para style="terp_default_Right_9"> [[ formatLang(sum_residual(data)) or 0.0]]</para>  </td>       
+       <td> <para style="terp_default_Right_9"> </para> </td>
+       <td> <para style="terp_default_Right_9"> </para> </td>
+       <td> <para style="terp_default_Right_9">المجمــــــــــوع </para> </td>
+           </tr>
+        </blockTable>
+        
+<!-- After Rehabitation -->
+        <blockTable  colWidths=" 100.0,80.0,80.0,80.0,60.0,80.0" style="Table1">[[data['form']['asset_lists'] == 'after_rehab' or removeParentNode('blockTable') ]]
+         <tr>
+           <!--td>
+             <para style="terp_default_Bold_9">ملاحظات</para>
+           </td-->           
+           <!--<td>
+             <para style="terp_default_Bold_9">معدل الاهلاكات</para>
+           </td>-->         
+           <td>
+             <para style="terp_default_Bold_9">القيمه بعد التأهيل</para>
+           </td>
+         <td>
+              <para style="terp_default_Bold_9">قيمة التأهيل</para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">القيمه قبل التأهيل</para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">الرمز</para>
+           </td>
+           <td>
+              <para style="terp_default_Bold_9">الاصل</para>
+           </td>
+         <td>
+             <para style="terp_default_Bold_9">متسلسل</para>
+           </td>
+         </tr>
+
+           <tr> [[repeatIn(lines(data),'line')]]
+           <!--td>
+              <para style="terp_default_Right_9"> [[ line['note'] ]]</para> 
+             </td-->
+             <!--<td>
+              <para style="terp_default_Right_9">[[ line['depr_amount'] or '0.0' ]]</para> 
+             </td>-->             
+             <td>
+              <para style="terp_default_Right_9">[[ line['value_residual'] or '0.0' ]]</para> 
+             </td>
+             <td>
+               <para style="terp_default_Right_9">[[ line['amount'] or '0.0']]</para> 
+             </td>             
+             <td>
+              <para style="terp_default_Right_9">[[ line['amount_before'] or '0.0' ]]</para> 
+             </td>
+         <td>
+               <para style="terp_default_Right_9">[[ line['code'] ]]</para>
+             </td>             
+             <td>
+               <para style="terp_default_Right_9">[[ line['name'] ]]</para>   
+             </td>
+         <td>
+               <para style="terp_default_Right_9">[[ line['serial_no'] ]]</para>
+             </td>
+           </tr>
+  </blockTable>
+  <blockTable  colWidths="100.0,80.0,80.0,80.0,60.0,80.0" style="Table_Total">[[data['form']['asset_lists'] == 'after_rehab' or removeParentNode('blockTable') ]]
+          <tr> 
+       <!--td> <para style="terp_default_Right_9"> </para> </td-->
+         <td> <para style="terp_default_Right_9"> [[ formatLang(sum_residual(data)) or 0.0]]</para></td>       
+         <td> <para style="terp_default_Right_9"> [[ formatLang(sum_amount(data)) or 0.0]]</para></td>       
+         <td> <para style="terp_default_Right_9"> [[ formatLang(sum_amount_before(data)) or 0.0]]</para>  </td>      
+       <td> <para style="terp_default_Right_9"> </para> </td>      
+       <td> <para style="terp_default_Right_9"> </para> </td>
+       <td> <para style="terp_default_Right_9">المجمــــــــــوع </para> </td>
+           </tr>
+        </blockTable>
+
+
+  </story>
+</document>

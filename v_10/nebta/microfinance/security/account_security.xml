@@ -1,0 +1,476 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Groups -->
+        <record id="category_finance" model="ir.module.category">
+            <field name="name">Financing</field>
+        </record>
+        <record id="group_general_manager" model="res.groups">
+            <field name="name">General Manager</field>
+            <field name="category_id" ref="category_finance"/>
+        </record>
+        <record id="group_operation_manager" model="res.groups">
+            <field name="name">Operation Manager</field>
+            <field name="category_id" ref="category_finance"/>
+        </record>
+        <record id="group_branch_manager" model="res.groups">
+            <field name="name">Branch Manager</field>
+            <field name="category_id" ref="category_finance"/>
+        </record>
+        <record id="group_supervisor" model="res.groups">
+            <field name="name">Supervisor</field>
+            <field name="category_id" ref="category_finance"/>
+        </record>
+        <record id="group_officer" model="res.groups">
+            <field name="name">Officer</field>
+            <field name="category_id" ref="category_finance"/>
+        </record>
+
+        <!-- Microfinance Officer Group  Rule -->
+        <record id="group_officer_group_cus_rule" model="ir.rule">
+            <field name="name">Officer Group Rule</field>
+            <field ref="microfinance.model_finance_group" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_officer'))]"/>
+            <field name="domain_force">
+                [('user_id','=',user.id)]
+            </field>
+        </record>
+	
+	<!-- Microfinance Officer Customer  Rule -->
+        <record id="group_officer_customer_rule" model="ir.rule">
+            <field name="name">Officer Customer Rule</field>
+            <field ref="microfinance.model_res_partner" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_officer'))]"/>
+            <field name="domain_force">
+                [('user_id','=',user.id)]
+            </field>
+        </record>
+
+
+        <!-- Microfinance Officer Indiv Requests  Rule -->
+        <record id="group_officer_indiv_rule" model="ir.rule">
+            <field name="name">Officer Indiv Rule</field>
+            <field ref="microfinance.model_finance_individual_order" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_officer'))]"/>
+            <field name="domain_force">
+                [('user_id','=',user.id)]
+            </field>
+        </record>
+
+        <!-- Microfinance Officer Group Requests  Rule -->
+        <record id="group_officer_group_rule" model="ir.rule">
+            <field name="name">Officer Group Rule</field>
+            <field ref="microfinance.model_finance_group_order" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_officer'))]"/>
+            <field name="domain_force">
+                [('user_id','=',user.id)]
+            </field>
+        </record>
+
+        <!-- Microfinance Officer Visit Requests  Rule -->
+        <record id="group_officer_visit_rule" model="ir.rule">
+            <field name="name">Officer Visit Rule</field>
+            <field ref="microfinance.model_finance_visit" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_officer'))]"/>
+            <field name="domain_force">
+                [('user_id','=',user.id)]
+            </field>
+        </record>
+
+        <!-- Microfinance Officer Approval Requests  Rule -->
+        <record id="group_officer_approval_rule" model="ir.rule">
+            <field name="name">Officer Approval Rule</field>
+            <field ref="microfinance.model_finance_approval" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_officer'))]"/>
+            <field name="domain_force">
+                [('user_id','=',user.id)]
+            </field>
+        </record>
+
+
+        <!-- Microfinance Branch Customer  Rule -->
+        <record id="group_branch_customer_rule" model="ir.rule">
+            <field name="name">Branch Customer Rule</field>
+            <field ref="microfinance.model_res_partner" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_branch_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+	
+	<!-- Microfinance Branch Customer  Rule -->
+        <record id="group_branch_group_cus_rule" model="ir.rule">
+            <field name="name">Branch Group customer Rule</field>
+            <field ref="microfinance.model_finance_group" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_branch_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Microfinance Branch Indiv  Rule -->
+        <record id="group_branch_indiv_rule" model="ir.rule">
+            <field name="name">Branch Indiv Rule</field>
+            <field ref="microfinance.model_finance_individual_order" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_branch_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+
+        <!-- Microfinance Branch Group  Rule -->
+        <record id="group_branch_group_rule" model="ir.rule">
+            <field name="name">Branch Group Rule</field>
+            <field ref="microfinance.model_finance_group_order" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_branch_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Microfinance Branch Visit  Rule -->
+        <record id="group_branch_visit_rule" model="ir.rule">
+            <field name="name">Branch Visit Rule</field>
+            <field ref="microfinance.model_finance_visit" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_branch_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Microfinance Branch Approval  Rule -->
+        <record id="group_branch_approval_rule" model="ir.rule">
+            <field name="name">Branch Approval Rule</field>
+            <field ref="microfinance.model_finance_approval" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_branch_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+
+
+        <!-- Microfinance SV Customer Rule -->
+        <record id="group_supervisor_customer_rule" model="ir.rule">
+            <field name="name">Supervisor Customer Rule</field>
+            <field ref="microfinance.model_res_partner" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_supervisor'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+	<!-- Microfinance SV Group Rule -->
+        <record id="group_supervisor_group_customer_rule" model="ir.rule">
+            <field name="name">Supervisor Group Customer Rule</field>
+            <field ref="microfinance.model_finance_group" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_supervisor'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Microfinance SV Indiv Rule -->
+        <record id="group_supervisor_indiv_rule" model="ir.rule">
+            <field name="name">Supervisor Indiv Rule</field>
+            <field ref="microfinance.model_finance_individual_order" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_supervisor'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Microfinance SV Group Rule -->
+        <record id="group_supervisor_group_rule" model="ir.rule">
+            <field name="name">Supervisor Group Rule</field>
+            <field ref="microfinance.model_finance_group_order" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_supervisor'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Microfinance SV Visit Rule -->
+        <record id="group_supervisor_visit_rule" model="ir.rule">
+            <field name="name">Supervisor Visit Rule</field>
+            <field ref="microfinance.model_finance_visit" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_supervisor'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+        <!-- Microfinance SV Approval Rule -->
+        <record id="group_supervisor_approval_rule" model="ir.rule">
+            <field name="name">Supervisor Approval</field>
+            <field ref="microfinance.model_finance_approval" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_supervisor'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- General Manager Rules -->
+
+        <!-- Microfinance General Customer Rule -->
+        <record id="group_general_customer_rule" model="ir.rule">
+            <field name="name">General Customer Rule</field>
+            <field ref="microfinance.model_res_partner" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_general_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+	<!-- Microfinance General group Rule -->
+        <record id="group_general_group_customer_rule" model="ir.rule">
+            <field name="name">General Group Customer Rule</field>
+            <field ref="microfinance.model_finance_group" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_general_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Microfinance General Indiv Rule -->
+        <record id="group_general_indiv_rule" model="ir.rule">
+            <field name="name">General Indiv Rule</field>
+            <field ref="microfinance.model_finance_individual_order" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_general_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Microfinance General Group Rule -->
+        <record id="group_general_group_rule" model="ir.rule">
+            <field name="name">General Group Rule</field>
+            <field ref="microfinance.model_finance_group_order" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_general_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Microfinance General Visit Rule -->
+        <record id="group_general_visit_rule" model="ir.rule">
+            <field name="name">General Visit Rule</field>
+            <field ref="microfinance.model_finance_visit" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_general_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Microfinance General Approval Rule -->
+        <record id="group_general_approval_rule" model="ir.rule">
+            <field name="name">General Approval Rule</field>
+            <field ref="microfinance.model_finance_approval" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_general_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+
+                <!-- Operation Manager Rules -->
+
+        <!-- Microfinance OP Customer Rule -->
+        <record id="group_operation_customer_rule" model="ir.rule">
+            <field name="name">Operation Customer Rule</field>
+            <field ref="microfinance.model_res_partner" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_operation_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+	<!-- Microfinance OP Customer Rule -->
+        <record id="group_operation_group_custoemr_rule" model="ir.rule">
+            <field name="name">Operation Group Customer Rule</field>
+            <field ref="microfinance.model_finance_group" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_operation_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+                <!-- Microfinance OP Indiv Rule -->
+        <record id="group_operation_indiv_rule" model="ir.rule">
+            <field name="name">Operation Indiv Rule</field>
+            <field ref="microfinance.model_finance_individual_order" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_operation_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+                <!-- Microfinance Op Group Rule -->
+        <record id="group_operation_group_rule" model="ir.rule">
+            <field name="name">Operation Group Rule</field>
+            <field ref="microfinance.model_finance_group_order" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_operation_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Microfinance Op Visit Rule -->
+        <record id="group_operation_visit_rule" model="ir.rule">
+            <field name="name">Operation Visit Rule</field>
+            <field ref="microfinance.model_finance_visit" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_operation_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+        <!-- Microfinance Op Approval Rule -->
+        <record id="group_operation_approval_rule" model="ir.rule">
+            <field name="name">Operation approval Rule</field>
+            <field ref="microfinance.model_finance_approval" name="model_id"/>
+            <field name="groups" eval="[(4, ref('group_operation_manager'))]"/>
+            <field name="domain_force">
+                [('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+
+
+
+        <!-- Record Rules for micro finance order model -->
+        <record id="finance_management_company_rule" model="ir.rule">
+            <field name="name">Individual Multi-Company</field>
+            <field ref="model_finance_order" name="model_id"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">
+                ['|','|',('company_id','=',False),('company_id','child_of',[user.company_id.id]),('company_id','in',[g.id
+                for g in user.company_ids])]
+            </field>
+        </record>
+
+        <!-- Record Rules for micro finance group order model -->
+        <record id="finance_group_order_company_rule" model="ir.rule">
+            <field name="name">Group Multi-Company</field>
+            <field ref="model_finance_group_order" name="model_id"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">
+                ['|','|',('company_id','=',False),('company_id','child_of',[user.company_id.id]),('company_id','in',[g.id
+                for g in user.company_ids])]
+            </field>
+        </record>
+
+        <!-- Record Rules for micro finance Customer  model -->
+        <record id="finance_Customer_company_rule" model="ir.rule">
+            <field name="name">Customer Multi-Company</field>
+            <field ref="model_res_partner" name="model_id"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">
+                [('company_id','in',[g.id for g in user.company_ids])]
+            </field>
+        </record>
+
+        <!-- Record Rules for micro finance Group Member  model -->
+        <record id="finance_member_company_rule" model="ir.rule">
+            <field name="name">Group Member Multi-Company</field>
+            <field ref="model_finance_group" name="model_id"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">
+                [('company_id','in',[g.id for g in user.company_ids])]
+            </field>
+        </record>
+
+        <!-- Record Rules for finance product model -->
+        <record id="finance_product_prevented_company_rule" model="ir.rule">
+            <field name="name">Product Prevented Company</field>
+            <field ref="model_finance_product" name="model_id"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">
+                [('company_ids','not in',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Record Rule for Finance Visit (multi-company) model -->
+        <record id="finance_visit_multi_company_rule" model="ir.rule">
+            <field name="name">Visit Multi Company</field>
+            <field ref="model_finance_visit" name="model_id"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">
+                ['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Record Rule for Finance Approval (multi-company) model -->
+        <record id="finance_approval_multi_company_rule" model="ir.rule">
+            <field name="name">Approval Multi Company</field>
+            <field ref="model_finance_approval" name="model_id"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">
+                ['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+	<record id="finance_installments_multi_company_rule" model="ir.rule">
+            <field name="name">Installments Multi Company</field>
+            <field ref="model_finance_installments" name="model_id" />
+            <field eval="True" name="global" />
+            <field name="domain_force">
+            ['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]
+	        </field>
+        </record>
+
+
+        <!--record id="transfer_groups" model="ir.rule">
+           <field name="name">Transfer Customer</field>
+           <field ref="microfinance.finance_transfer_customer_wiz" name="model_id"/>
+           <field name="groups_id" eval="[(6, 0, [ref('microfinance.group_operation_manager') ])]" />
+           <field name="arch" type="xml">
+           <xpath name="change_type" position="attributes" >
+             <attribute name="invisible">True</attribute>
+           </xpath>
+           </field>
+           </record-->
+
+        <!-- Record Rule for Portfolio Head request (multi-company) model -->
+        <record id="finance_portfolio_head_multi_company_rule" model="ir.rule">
+            <field name="name">Portfolio Head Request</field>
+            <field ref="model_portfolio_head_request" name="model_id"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">
+                ['|',('name','=',False),('name','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+        <!-- Record Rule for Portfolio Head Recieve (multi-company) model -->
+        <record id="finance_portfolio_head_recieve_multi_company_rule" model="ir.rule">
+            <field name="name">Portfolio Head Recieve</field>
+            <field ref="model_portfolio_head_recieve" name="model_id"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">
+                ['|',('requests.name','=',False),('requests.name','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+
+        <!-- Record Rule for Portfolio Branch Request (multi-company) model -->
+        <record id="finance_portfolio_branch_request_multi_company_rule" model="ir.rule">
+            <field name="name">Portfolio Branch Request</field>
+            <field ref="model_portfolio_branch_request" name="model_id"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">
+                ['|',('name','=',False),('name','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+
+        <!-- Record Rule for Portfolio Branch Receive (multi-company) model -->
+        <record id="finance_portfolio_branch_receive_multi_company_rule" model="ir.rule">
+            <field name="name">Portfolio Branch Receive</field>
+            <field ref="model_portfolio_branch_receive" name="model_id"/>
+            <field eval="True" name="global"/>
+            <field name="domain_force">
+                ['|',('name.name','=',False),('name.name','child_of',[user.company_id.id])]
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

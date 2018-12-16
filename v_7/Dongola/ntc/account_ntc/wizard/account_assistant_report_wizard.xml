@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="account_trial_balance_assistant" model='ir.ui.view'>
+			<field name="name">Trial Balance</field>
+			<field name="model">account.balance.report</field>
+			<field name="inherit_id" ref="account_arabic_reports.account_trial_balance_inherit_arabic" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='display_account']" position="after">
+					<field name="assistant_report" invisible="1" />
+ 
+				</xpath>
+				<xpath expr="//field[@name='unit']" position="after">
+ 
+					<field name="unit_type"   />
+				</xpath>
+                 
+                <xpath expr="//field[@name='chart_account_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+				</xpath>
+                <xpath expr="//field[@name='acc_balances']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('assistant_report','=',1)]}</attribute>
+				</xpath>
+                <xpath expr="//notebook/page[@name='filters']" position="after">
+                    <page string="Accounts" name="account_ids">
+                        <field name="account_ids"/>
+                    </page>
+                </xpath>
+			</field>
+		</record>
+
+        <record id="action_account_assistant" model="ir.actions.act_window">
+            <field name="name">Account Assistant</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.balance.report</field>
+            <field name="context">{'default_assistant_report': 1}</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_trial_balance_assistant"/>
+            <field name="target">new</field>
+        </record>
+
+
+	 <menuitem
+                icon="STOCK_PRINT"
+                name="Unit Reports"
+                parent="account.menu_finance_reports"
+                id="menu_account_unit_report"
+               />
+         <menuitem
+                icon="STOCK_PRINT"
+                name="Account Assistant"
+                parent="menu_account_unit_report"
+                action="action_account_assistant"
+                id="menu_account_assistant_report"
+               />
+	</data>
+</openerp>

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+    <data >
+       	   
+	<!-- Fuel plan order Form,Tree View & Action -->
+
+		<record id="view_fuel_plan_form" model="ir.ui.view">
+			<field name="name">fuel.plan.form</field>
+			<field name="model">fuel.plan</field>
+			<field name="arch" type="xml">
+			    <form string="Fuel plan order" version="7.0">
+		        	<header>
+					<button name="plan_cancel" states="draft,confirmed,approve"
+						string="Cancel"   confirm="Are you sure you want to cancel this order?"/>
+					<button name="action_cancel_draft" states="cancel" string="Set to Draft" 
+                                                type="object"  class="oe_highlight"/>
+			                <!--button name="confirmed_e" states="draft" string="officer" 
+                                         class="oe_highlight" confirm="Are you sure you want to request this order?" /-->
+                                        <button name="confirmed" states="draft" string="Confirm" class="oe_highlight" 
+						 confirm="Are you sure you want to confirm this Record?"  />
+					<button name="approve" states="confirmed" string="affair manager confirm"
+						 class="oe_highlight"  confirm="Are you sure you want to confirm this Record?" />
+					<button name="done" states="approve" string="General affair manager confirm"
+					        class="oe_highlight" confirm="Are you sure you want to create financial claim?" />
+				        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,approve,cancel" />
+		                </header>
+				<sheet>
+                       		 	<group col="4" colspan="4">
+						<field name="name" />
+						<field name="date" />
+						<field name="month" />
+						<field name="year" />
+						<field name="department_id" required="1"/>
+						<field name="partner_id" attrs="{'required':[('payment_selection','==','stock')]}"/>
+						<field name="cost"/>
+						<field name="payment_selection" colspan="2" attrs="{'invisible':[('state','not in',('approve','done'))],'required':[('state','=','approve')]}"/>
+						<field name="enrich_category" colspan="2" attrs="{'invisible':['!',('state','not in',('approve','done')),('payment_selection','!=','enrich')],'required':[('state','=','approve'),('payment_selection','==','enrich')]}" domain="[('state','=','confirmed'),('company_id','=',company_id)]"/>
+						<field name="voucher_no" attrs="{'invisible':[('state','!=','done')]}"/>
+				        	<field name="company_id" groups="base.group_multi_company" widget="selection"/>
+			    	  	</group>
+					<notebook colspan="4">
+						<page string="Department quantity">
+							<field colspan="4" name="quantity_ids" nolabel="1"  >	
+								<tree string="Fuel quantities" editable="top">
+								    <field name="department_id"/>
+								    <field name="fuel_type"/>
+								    <field name="gasoline_qty"/>
+								    <field name="petrol_qty"/>
+								    <field name="total_amount"/>	
+								</tree>
+							</field>					
+                                                </page>
+					  	<page string="Notes">	
+							<field name="notes" colspan="4" nolabel="1"/>
+						</page>
+					</notebook>
+			 		<group >
+						<field name="gasoline_total" colspan="1"/>
+						<field name="petrol_total" colspan="1"/>					 
+			 		</group>
+				</sheet>
+			    </form>
+			</field>
+		</record>
+
+		<record id="view_fuel_plan_tree" model="ir.ui.view">
+			<field name="name">fuel.plan.tree</field>
+			<field name="model">fuel.plan</field>
+			<field name="arch" type="xml">
+				<tree string="Fuel plan order">
+				        <field name="name"/>
+				        <field name="date"/>
+				        <field name="department_id"/>
+				        <field name="month" />
+					<field name="year" />
+					<field name="partner_id"/>
+					<field name="cost" />
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+	
+	    <!-- Fuel plan quantity Form and Tree -->
+
+		<record id="view_fuel_plan_qty_form" model="ir.ui.view">
+			<field name="name">fuel.quantity.form</field>
+			<field name="model">fuel.quantity</field>
+			<field name="arch" type="xml">
+				<form string="Fuel quantities" version="7.0">	
+                                	<sheet>
+                                                <group>	
+							<field name="department_id"/>
+							<field name="fuel_type" required="1"/>
+							<field name="total_amount"/>	
+							<field colspan="4" name="qty_lines" nolabel="1" readonly="1">	
+								<tree string="Fuel quantities">
+									<field name="vehicles_id"/>
+								    	<field name="department_id"/>
+								    	<field name="product_id"/>
+								    	<field name="product_uom"/>
+								    	<field name="product_qty"/>	
+								    	<field name="price_unit"/>
+									<field name="price_subtotal"/>
+								</tree>
+							</field>
+                                                </group>	
+                                	</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_fuel_plan_qty_tree" model="ir.ui.view">
+			<field name="name">fuel.quantity.tree</field>
+			<field name="model">fuel.quantity</field>
+			<field name="arch" type="xml">
+				<tree string="Department fuel">
+					<field name="department_id"/>
+					<field name="fuel_type"/>
+					<field name="name" string="Note"/>
+				</tree>
+			</field>
+		</record>
+	
+	<!-- Fuel plan quantity line Form and Tree-->
+
+		<record id="view_fuel_qty_line_form" model="ir.ui.view">
+			<field name="name">fuel.qty.line.form</field>
+			<field name="model">fuel.qty.line</field>
+			<field name="arch" type="xml">
+				<form string="Fuel quantities line" version="7.0">
+					<sheet>
+                                                <group>	
+							<field name="vehicles_id" readonly="1"/>
+							<field name="department_id" readonly="1"/>
+							<field name="product_id" readonly="1"/>
+							<field name="product_qty" readonly="1"/>	
+							<field name="product_uom" readonly="1"/>
+							<field name="price_unit" readonly="1"/>
+							<field name="price_subtotal"/>
+                                                </group>	
+					</sheet>	
+				</form>
+			</field>
+		</record>
+
+		<record id="view_fuel_qty_line_tree" model="ir.ui.view">
+			<field name="name">fuel.qty.line.tree</field>
+			<field name="model">fuel.qty.line</field>
+			<field name="arch" type="xml">
+				<tree string="Department fuel">
+					<field name="vehicles_id"/>
+					<field name="department_id"/>
+					<field name="product_id"/>
+					<field name="product_uom"/>
+					<field name="product_qty"/>
+					<field name="price_unit"/>
+					<field name="price_subtotal"/>
+				</tree>
+			</field>
+		</record>
+
+		<!-- Fuel plan order Search Filter-->		
+		<record id="view_fuel_plan_filter" model="ir.ui.view">
+			<field name="name">fuel.plan.list.select</field>
+			<field name="model">fuel.plan</field>
+			<field name="arch" type="xml">
+				<search string="Search for Fuel plan order Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="date" select="1" />
+					<field name="month" />
+					<field name="year" />
+					<newline />
+					<group expand="0" string="Extended Filters..." colspan="4" col="20" >
+		            			<field name="department_id" widget="selection" />
+						<field name="state" />
+						<field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                    			</group>
+                   			<newline/>
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Department" icon="terp-personal"
+							domain="[]" context="{'group_by':'department_id'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+						<filter string="Service date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					    <separator orientation="vertical"/>
+					</group>
+				</search>
+			</field>
+		</record>
+
+	<!--Shortcut To Fuel Picking-->
+
+       <act_window
+           domain="[('fuel_plan_id', '=', active_id),('type','=','in')]"
+           id="act_fuel_plant_and_Fuel_picking"
+           name="Fuel Picking In"
+           res_model="fuel.picking"
+           src_model="fuel.plan"/>
+           
+           <act_window
+           domain="[('fuel_plan_id', '=', active_id),('type','=','out')]"
+           id="act_fuel_plant_and_Fuel_picking_out"
+           name="Fuel Picking OUT"
+           res_model="fuel.picking"
+           src_model="fuel.plan"/>
+
+		<!-- Menus -->
+        <record id="fuel_plan_form_action" model="ir.actions.act_window">
+		<field name="res_model">fuel.plan</field>
+		<field name="domain">[]</field>
+                <field name="view_type">form</field>
+               <field name="view_mode">tree,form</field>
+	</record>
+
+        <menuitem id="menu_fuel_montly_plan" name="Fuel Monthly Plan" parent="fuel_management_menu" />
+        <menuitem id="menu_fuel_plan_form" name="Fuel plan order" parent="menu_fuel_montly_plan" action="fuel_plan_form_action" sequence="3" />
+
+	</data>
+</openerp>

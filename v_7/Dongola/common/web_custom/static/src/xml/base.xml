@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vim:fdl=1:
+-->
+<templates id="template" xml:space="preserve">
+
+	<table t-name="ListView" class="oe_list_content">
+    <t t-set="columns_count" t-value="visible_columns.length + (options.selectable ? 1 : 0) + (options.deletable ? 2 : 0)"/>
+    <thead>
+        <tr t-if="(!!options.action_buttons and !options.$buttons) or (!!options.pager and !options.$pager)">
+            <th t-att-colspan="columns_count">
+                <div class="oe_list_buttons"/>
+                <div class="oe_list_sidebar"/>
+                <div class="oe_list_pager"/>
+            </th>
+        </tr>
+        <tr t-if="options.header" class="oe_list_header_columns">
+            <t t-foreach="columns" t-as="column">
+                <th t-if="column.meta">
+                    <t t-esc="column.string"/>
+                </th>
+            </t>
+            <th t-if="options.selectable" width="1"  >
+                <input type="checkbox" class="oe_list_record_selector"/>
+            </th>
+            <t t-foreach="columns" t-as="column">
+                <th t-if="!column.meta and column.invisible !== '1'" t-att-data-id="column.id"
+                    t-attf-class="oe_list_header_#{column.widget or column.type} #{((options.sortable and column.tag !== 'button') ? 'oe_sortable' : null)}"><div>
+                    <t t-if="column.tag !== 'button'"><t t-esc="column.string"/></t>
+                </div></th>
+            </t>
+            <th t-if="options.deletable" class="oe_list_record_delete" width="13px"/>
+            <th t-if="options.deletable" class="oe_button oe_form_button_edit" width="13px"/>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td t-if="options.selectable"/>
+            <td t-foreach="aggregate_columns" t-as="column" class="oe_list_footer oe_number"
+                t-att-data-field="column.id" t-att-title="column.label">
+            </td>
+            <td t-if="options.deletable" class="oe_list_record_delete"/>
+            <td t-if="options.deletable" class="oe_button oe_form_button_edit"/>
+        </tr>
+    </tfoot>
+</table>
+
+<t t-name="One2Many.listview" t-extend="ListView">
+    <t t-jquery="thead.ui-widget-header > tr:first">
+        this.removeAttr('t-if');
+    </t>
+
+    <t t-jquery="td.oe-actions">
+        this.removeAttr('t-if');
+    </t>
+    <t t-jquery="td.oe-actions" t-operation="prepend">
+        <h3 class="oe_view_title"><t t-esc="fields_view.arch.attrs.string"/></h3>
+    </t>
+</t>
+
+	<tr t-name="ListView.row"
+        t-att-data-id="record.get('id')"
+        t-att-style="view.style_for(record)">
+	    <t t-set="asData" t-value="record.toForm().data"/>
+	    <t t-foreach="columns" t-as="column">
+	        <td t-if="column.meta"> </td>
+	    </t>
+	    <th t-if="options.selectable" class="oe_list_record_selector" width="1">
+	        <t t-set="checked" t-value="options.select_view_id == record.get('id') ? 'checked' : null"/>
+	        <input t-if="options.radio" type="radio" name="radiogroup" t-att-checked="checked"/>
+	        <input t-if="!options.radio" type="checkbox" name="radiogroup" t-att-checked="checked"/>
+	    </th>
+	    <t t-foreach="columns" t-as="column">
+	        <t t-set="number" t-value="column.type === 'integer' or column.type == 'float'"/>
+	        <t t-set="modifiers" t-value="column.modifiers_for(asData)"/>
+	        <td t-if="!column.meta and column.invisible !== '1'" t-att-title="column.help"
+	            t-attf-class="oe_list_field_cell oe_list_field_#{column.widget or column.type} #{number ? 'oe_number' : ''} #{column.tag === 'button' ? 'oe-button' : ''} #{modifiers.readonly ? 'oe_readonly' : ''} #{modifiers.required ? 'oe_required' : ''}"
+	            t-att-data-field="column.id"
+	            ><t t-raw="render_cell(record, column)"/></td>
+	    </t>
+	    <td t-if="options.deletable" class='oe_list_record_delete' width="13px">
+	        <button type="button" name="delete" class="oe_i">d</button>
+	    </td>
+	    <td t-if="options.deletable" class="oe_button oe_form_button_edit"  width="13px">
+	        <button type="button" name="save" class="oe_i">E</button>
+	    </td>
+	</tr>
+
+    <t t-name="Login">
+        <div class="oe_login">
+            <div class="oe_login_bottom"> </div>
+            <div class="oe_login_error_message"/>
+            <div class="oe_login_pane">
+                <div class="oe_login_logo"><img src='/web/static/src/img/logo2.png'/></div>
+                <form action="" method="post">
+                    <div class="oe_login_dbpane" >
+                        Database:
+                        <input name="db" t-att-value="widget.selected_db || ''"/>
+                    </div>
+                    <ul>
+                        <li>Username</li>
+                        <li><input name="login" type="text" value="" autofocus="autofocus"/></li>
+                        <li>Password</li>
+                        <li><input name="password" type="password" value=""/></li>
+                        <li><button >Login</button></li>
+                    </ul>
+                </form>
+                <div class="oe_login_footer">
+                    <!--a href="#" class="oe_login_manage_db">Manage Databases</a--> 
+                    <a href="http://www.nctr.sd/" target="_blank">Powered by <span>NCTR</span></a>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="FieldBinaryFile">
+    <t t-if="!widget.get('effective_readonly')">
+        <table class="oe_form_field oe_form_field_binary" cellpadding="0" cellspacing="0" border="0" t-att-style="widget.node.attrs.style">
+        <tr>
+            <td>
+                <input type="text" readonly="readonly"
+                    t-att-name="widget.name"
+                    t-att-tabindex="widget.node.attrs.tabindex"
+                    t-att-autofocus="widget.node.attrs.autofocus"
+                    class="field_binary"
+                    style="width:6px"
+                />
+            </td>
+            <td class="oe_form_binary" nowrap="true">
+                <table cellspacing="0" cellpadding="0" border="0">
+                <tr style="width:1%">
+                    <td width="10px">
+                        <t t-call="HiddenInputFile">
+                            <t t-set="fileupload_id" t-value="widget.fileupload_id"/>
+                            <t t-set="fileupload_style" t-translation="off">width: 55px;</t>
+                            <button class="oe_button oe_field_button" type="button" style="width:63px">
+                                <img t-att-src='_s + "/web/static/src/img/icons/STOCK_DIRECTORY.png"' style="width:11.5px; padding:0px; margin:0px"/>
+                                <span style="font-size:11px; padding:0px; margin:0px">Select</span>
+                            </button>
+                        </t>
+                    </td>
+                    <td width="10px">
+                        <a class="oe_form_binary_file_save_data">
+                            <button class="oe_button oe_form_binary_file_save" type="button" title="Save As" style="width:76px">
+                                <img t-att-src='_s + "/web/static/src/img/icons/gtk-save.png"' style="width:11.5px"/>
+                                <span style="font-size:10px">Save As</span>
+                            </button>
+                        </a>
+                    </td>
+                    <td width="10px">
+                        <button class="oe_button oe_form_binary_file_clear" type="button" title="Clear" style="width:63px">
+                            <img t-att-src='_s + "/web/static/src/img/icons/STOCK_MISSING_IMAGE.png"' style="width:11.5px"/>
+                            <span style="font-size:11px">Clear</span>
+                        </button>
+                    </td>
+                </tr>
+                </table>
+            </td>
+            <td class="oe_form_binary_progress" style="display: none" nowrap="true">
+                <img t-att-src='_s + "/web/static/src/img/throbber.gif"' width="16" height="16"/>
+                <b>Uploading ...</b>
+            </td>
+        </tr>
+        </table>
+    </t>
+    <t t-if="widget.get('effective_readonly')">
+        <span t-att-style="widget.node.attrs.style">
+            <a href="javascript:void(0)" class="oe_form_uri"/>
+        </span>
+    </t>
+</t>
+
+<t t-name="NCTRUserMenu">
+    <span class="oe_user_menu oe_topbar_item oe_dropdown_toggle oe_dropdown_arrow">
+        <img class="oe_topbar_avatar" t-att-data-default-src="_s + '/web/static/src/img/user_menu_avatar.png'"/>
+        <span class="oe_topbar_name"/>
+        <ul class="oe_dropdown_menu">
+            <li><a href="#" data-menu="settings">Preferences</a></li> 
+            <li><a data-menu="debug" href="?debug">developer mode</a></li>
+            <li><a href="#" data-menu="logout">Log out</a></li>
+        </ul>
+    </span>
+</t>
+<t t-name="NCTRUserMenu.about">
+
+    <div class="oe_about">
+
+       <img class="oe_logo oe_right" src="/custom_user_menu/static/src/img/shamil_logo.png"/>
+      <!--img class="oe_logo" src="/web/static/src/img/logo2.png"/>
+      <h3>Version <t t-esc="version_info.server_version"/></h3>
+
+      <div class="oe_bottom">
+        <p>Copyright © 2004-TODAY OpenERP SA. All Rights Reserved.<br />
+            OpenERP is a trademark of the <a target="_blank" href="http://openerp.com/" style="text-decoration: underline;">OpenERP SA Company</a>.</p>
+        <p>Licenced under the terms of <a target="_blank" href="http://www.gnu.org/licenses/agpl.html" style="text-decoration: underline;">GNU Affero General Public License</a></p>
+        <p>For more information visit <a target="_blank" href="http://openerp.com/" style="text-decoration: underline;">OpenERP.com</a></p>
+      </div-->
+    </div>
+
+</t>
+
+</templates>

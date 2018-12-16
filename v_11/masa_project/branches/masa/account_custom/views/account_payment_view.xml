@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="view_account_payment_form">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@name='post']" position="after">
+                    <button name="send" class="oe_highlight"  string="Send" type="object" 
+                         attrs="{'invisible': ['|',('payment_type', '!=', 'transfer'),('state', '!=', 'draft')]}"/>
+                    <button name="confirm" class="oe_highlight"  string="Confirm" type="object" 
+                        attrs="{'invisible': ['|',('payment_type', '!=', 'transfer'),('state', '!=', 'sent')]}"/>
+                </xpath>
+                <xpath expr="//sheet/group/group/field[@name='payment_date']" position="after">
+                    <field name="payment_transfer_date" 
+                        attrs="{'invisible': ['|',('payment_type', '!=', 'transfer'),('state', '=', 'draft')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_payment_form_inherit_custom" model="ir.ui.view">
+            <field name="name">view.account.payment.form.inherit.payment.custom</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="payment.view_account_payment_form_inherit_payment"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_transaction_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="payment_cancel_confirm_form_inherit" model="ir.ui.view">
+            <field name="name">payment.cancel.confirm.form.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account_cancel.payment_cancel_form_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@name='cancel']" position="replace">
+                    <button name="cancel" attrs="{'invisible': [('state', 'in', ['draft','cancelled'])]}" 
+                        confirm="Are You Sure You Want To Cancel this Payment?" string="Cancel" type="object"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
+

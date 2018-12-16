@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+       <record id="purchase.trans_picking_picking_done" model="workflow.transition">
+            <field name="act_from" ref="purchase.act_picking"/>
+            <field name="act_to" ref="purchase.act_picking_done"/>
+            <field name="trigger_model">stock.move</field>
+            <field name="trigger_expr_id">move_lines_get()</field>
+            <field name="condition">test_done()</field>
+            <field name="signal"></field>
+        </record>
+        <record id="purchase.trans_picking_except_picking" model="workflow.transition">
+            <field name="act_from" ref="purchase.act_picking"/>
+            <field name="act_to" ref="purchase.act_except_picking"/>
+            <field name="trigger_model">stock.move</field>
+            <field name="trigger_expr_id">move_lines_get()</field>
+            <field name="condition">test_cancel()</field>
+            <field name="signal"></field>
+        </record>
+ </data>
+</openerp>

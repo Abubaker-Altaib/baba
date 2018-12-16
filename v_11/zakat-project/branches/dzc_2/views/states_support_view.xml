@@ -1,0 +1,178 @@
+<odoo>
+  <data>
+    <!-- Tree view for prepairing states support -->
+    <!-- ********************************************-->
+    <record model='ir.ui.view' id='prepairing_states_support_tree'>
+
+      <field name='name'>dzc2.prepairing.states.support.tree</field>
+      <field name='model'>dzc2.prepairing.states.support</field>
+      <field name='arch' type='xml'>
+        <tree string='States support Tree'>
+
+          <field name="name"/>
+          <field name="date_of_plan_ids"/>
+          <field name="duration_from" />
+          <field name="duration_to" />
+          <field name="state" />
+          <field name="user_id" />
+
+        </tree>
+      </field>
+    </record>
+
+
+    <!-- search view for prepairing states support -->
+    <!-- ********************************************-->
+    <record id="states_support_view_search" model="ir.ui.view">
+     <field name="name">dzc2.prepairing.states.support.search</field>
+     <field name="model">dzc2.prepairing.states.support</field>
+     <field name="arch" type="xml">
+
+       <search string="Search Opportunities">
+       <field name="name"/>
+       <field name="duration_from"/>
+      <field name="duration_to"/>
+
+       <group expand="0" string="Group By">
+          <filter string="Duration From" context="{'group_by': 'duration_from'}"/>
+          <filter string="Duration To" context="{'group_by': 'duration_to'}"/>
+          
+          <filter string="State " context="{'group_by': 'state'}"/>
+
+          <filter string="Users" context="{'group_by': 'user_id'}"/>
+          <filter string="Company" context="{'group_by': 'company_id'}"/>
+
+        </group>
+     </search>
+
+
+     </field>
+   </record>
+   <!-- form view for prepairing states support -->
+   <!-- ********************************************-->
+   <record id="prepairing_states_view_form" model="ir.ui.view">
+    <field name="name">prepairing states support Form</field>
+    <field name="model">dzc2.prepairing.states.support</field>
+    <field name="arch" type="xml">
+      <form>
+
+
+        <header>
+         <button name="confirm_action" 
+          string="Confirm"
+          states="draft," 
+          type="object" 
+          class="oe_highlight" />
+
+          <button name="approve_action" string="Approve" states="confirm," type="object" class="oe_highlight" />
+
+          <button name="done_action" string="Done" states="approve," type="object" class="oe_highlight" />
+
+          <button name="cancel_action" string="Cancel" states="draft,confirm,approve" type="object" class="oe_highlight" />
+
+          <button name="set_to_draft_action" string="Set To Draft" states="cancel" type="object" class="oe_highlight" />
+
+          <field name="state" widget="statusbar"  />
+        </header>
+        <sheet>
+          <group col="4" colspan="2">
+            <field name="code" />
+            <field name="date_of_plan_ids" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+          </group>
+          <group>
+            <group>
+              <field name="name" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+
+            </group>
+            <group col="4" colspan="2">
+              <field name="duration_from" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+              <field name="duration_to" required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+            </group>
+
+
+              <group> 
+                <field name ="amana_planned_support"   required="1" attrs="{'readonly':[('state', '=', 'done')]}"/>
+                <field name="amana_remain_support" readonly="1"/>
+                <field name="company_id" readonly="1"/>
+             </group>
+             <group>
+               <field name="amana_execute_support" readonly="1"/>
+                 <field name="user_id" readonly="1"/>
+               </group>
+
+
+           </group>
+          <notebook>
+            <page string="states support details">
+              <field name="states_support" attrs="{'readonly':[('state', '=', 'done')]}">
+                <tree editable="bottom" >
+                 <field name="state_ids" required="1" />
+                 <field name="projects" required="1" />
+                 <field name="plan_ids_amount" required="1" />
+                 <field name="excute_amount" readonly="1"/>
+                 <field name="remain_amount" readonly="1"/>
+               </tree>
+             </field>
+           </page>
+         </notebook>
+       </sheet>
+     </form>
+   </field>
+ </record>
+
+
+<record id="almsakeen_action2" model="ir.actions.act_window">
+  <field name="name">Preparing States Support</field>
+  <field name="res_model">dzc2.prepairing.states.support</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record>
+
+
+      <!-- dzc_2 -->
+<menuitem id="almsakeen_main_menu"
+  name="Almsakeen Channel"
+          sequence="2"
+  />
+
+           <!-- dzc_2 -->
+<menuitem id="almsakeen_menu"
+  name="Al-Mskeen Channel"
+  parent="almsakeen_main_menu"
+  sequence="1"
+  />
+
+	<!-- this is the Report menu  -->
+        <menuitem id="dzc_2_report_menu"
+                  name="Report"
+                  parent="almsakeen_main_menu"
+                  sequence="2"
+        />
+
+
+  <record id="almsakeen_action2" model="ir.actions.act_window">
+    <field name="name">preparing states support</field>
+    <field name="res_model">dzc2.prepairing.states.support</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  
+
+   
+
+      <menuitem name="Prepairing States Support"
+        id="states_support_form_menu_action"
+        parent="almsakeen_menu"
+        action="almsakeen_action2"
+        sequence="6"/>
+
+
+
+        <!-- ====================================================== -->
+        <!-- ====================================================== -->
+
+
+
+      </data>
+    </odoo>

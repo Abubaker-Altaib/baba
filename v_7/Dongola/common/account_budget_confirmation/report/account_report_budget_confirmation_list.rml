@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<document filename="Account Budget.pdf">
+  <template pageSize="(595.0,842.0)" title="Account Budget" author="NCTR" allowSplitting="20">
+    <pageTemplate>
+		<frame id="first" x1="1.3cm" y1="0.9cm" height="786" width="440"/>
+    </pageTemplate>
+  </template>
+
+  <stylesheet>
+
+    <blockTableStyle id="Content_Table">
+	<blockValign value="CENTER"/>
+	<blockAlignment value="CENTER"/>
+	<blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+	<lineStyle kind="GRID" colorName="#e6e6e6"/>
+	<blockTopPadding length="8"/>
+	<blockBottomPadding length="4"/>
+    </blockTableStyle>
+
+    <initialize>
+	<paraStyle name="all" alignment="justify"/>
+    </initialize>
+
+    <paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Content_Table_Detail" fontName="Helvetica" fontSize="8.0" alignment="RIGHT"/>
+    <paraStyle name="Content_Table_Header" fontName="Helvetica-Bold" fontSize="9.0" alignment="CENTER"/>
+
+    <images/>
+  </stylesheet>
+
+  <story>
+	<para style="Tilte">أرشـيف المـوازنة</para>
+    <para> <font color="white"> </font> </para>
+    <para> <font color="white"> </font> </para>
+    <blockTable colWidths="70,90,60,110,60,190" style="Content_Table" repeatRows="1">
+      <tr>
+		<td>
+		     <para style="Content_Table_Header"> المبلغ </para>
+		</td>
+		<td>
+		     <para style="Content_Table_Header"> النوع </para>
+		</td>
+		<td>
+		     <para style="Content_Table_Header"> التاريخ</para>
+		</td>
+		<td>
+		     <para style="Content_Table_Header"> البيــان </para>
+		</td>
+		<td>
+		     <para style="Content_Table_Header"> البند </para>
+		</td>
+		<td>
+		     <para style="Content_Table_Header"> الجهة الطالبة </para>
+		</td>
+      </tr>
+      <tr>[[ repeatIn(objects, 'confirmation') ]]
+		<td>
+		     <para style="Content_Table_Detail"> [[ confirmation.amount ]] </para>
+		</td>
+		<td>
+		     <para style="Content_Table_Detail">  [[ (confirmation.type == 'other' and 'اخرى') or  (confirmation.type == 'ratification' and 'مطالبـة مالية') or (confirmation.type == 'purchase' and 'شراء مباشـر') or (confirmation.type == 'stock_in' and 'تغذية مخزن') or  (confirmation.type == 'stock_out' and 'سحب من المخزن') or confirmation.type ]]</para>
+		</td>
+		<td>
+		     <para style="Content_Table_Detail"> [[ confirmation.date ]] </para>
+		</td>
+		<td>
+		     <para style="Content_Table_Detail"> 
+		     [[ confirmation.general_account_id and confirmation.general_account_id.name or '/' ]] </para>
+		</td>
+		<td>
+		     <para style="Content_Table_Detail"> 
+		     [[ confirmation.general_account_id and confirmation.general_account_id.code or '/' ]] </para>
+		</td>
+		<td>
+		     <para style="Content_Table_Detail"> 
+		     [[  confirmation.analytic_account_id and confirmation.analytic_account_id.name or '/' ]] </para>
+		</td>
+      </tr>
+    </blockTable>
+    
+    <blockTable colWidths="70,510" style="Content_Table" repeatRows="1">
+      <tr>[[ repeatIn(_get_total(objects), 'total') ]]
+		<td>
+		     <para style="Content_Table_Detail"> [[ formatLang(total) ]] </para>
+		</td>
+		<td>
+		     <para style="Content_Table_Detail"> الإجمـــالي الكـــلي</para>
+		</td>
+      </tr>
+    </blockTable>
+  </story>
+</document>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <menuitem id="ratification_menu" name="Financial Ratification"  icon="terp-dolar"
+             web_icon_hover="images/gold-coin-vector.jpg" sequence="10"/>
+
+<!-- Financial Ratification -->
+       <record id="view_financial_ratification_filter" model="ir.ui.view">
+            <field name="name">account.financial.ratification.select</field>
+            <field name="model">account.voucher</field>
+            <field name="arch" type="xml">
+	            <search string="Financial Ratification">
+	                <field name="number"/>
+	                <field name="purpose"/>
+			<field name="partner_id" string="Beneficiary"/>
+			<field name="date"/>
+	                <field name="state"/>
+	            </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_financial_ratification_form">
+            <field name="name">account.financial.ratification.form</field>
+            <field name="model">account.voucher</field>
+            <field name="arch" type="xml">		
+                <form string="Financial Ratification"  version="7.0">
+                  <header>
+                     	<button name="cancel_voucher" string="Cancel" type="object" states="precomplete,preclose,preapprove,prepost,complete,close,approved,draft" icon="gtk-cancel" confirm="Are you sure to confirm this record ?"/>
+			<button name="action_draft_voucher" states="cancel" type="object" string="Set to Draft" icon="terp-stock_effects-object-colorize"/>
+                     	<button name="precomplete" string="Complete" states="draft"/>
+                     	<button name="preclose" string="Close" states="precomplete"/>
+                     	<button name="preapprove" string="Approve" states="prepost"/>
+                     	<button name="prepost" string="post" states="preclose"/>
+                     	<field name="state"  widget="statusbar"  statusbar_visible="draft" />
+                  </header>
+                  <sheet string="Financial ratification">
+			<group col="4" colspan="4">
+				<field name="number"/>
+				<field name="company_id" select="1" widget="selection" groups="base.group_multi_company"/>
+				<field name="partner_id"  required="False" readonly="False" attrs="{'readonly':[('state','!=','draft')]}" domain="[('supplier','=',True)]" on_change="onchange_partner_id_ratification(partner_id, journal_id, type, amount)" />
+				<field name="department_id" attrs="{'required':[('state','=','draft')]}"/>
+				<!--field name="currency_id" widget="selection" required="1"/-->
+				<field name="amount" on_change="onchange_partner_id_ratification(partner_id, journal_id, type, amount)"/>
+				<field name="amount_in_word" attrs="{'required':[('state','=','draft')]}"/>
+				<field name="date" attrs="{'required':[('state','=','draft')]}" on_change="onchange_date(date, currency_id, payment_rate_currency_id, amount, company_id)"/>
+				   <field name="purpose"  widget="selection"  attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')]}"/>
+				<field name="period_id" invisible="True"/>
+				<field name="type" invisible="True"/>
+				<field name="account_id" invisible="True"/>
+				<field name="journal_id" invisible="True"/>
+				<field name="currency_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+				<field name="payment_rate_currency_id" invisible="1"/>
+			</group>
+
+			<notebook colspan="4">
+				<page string="Note"><field name="narration" colspan="8" nolabel="1" required="1" attrs="{'readonly':[('state','=','posted')]}"/></page>
+				<!--page string="Voucher Line"><field name="line_ids" colspan="8" nolabel="1"/></page-->
+			</notebook>
+                  </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_financial_ratification_tree">
+            <field name="name">account.financial.ratification.view.tree</field>
+		    <field name="model">account.voucher</field>
+		    <field name="arch" type="xml">
+			<tree colors="blue:state in ('draft');gray:state in ('done','cancel');black:state in ('confirm','validate')" string="Financial Ratification">
+				<field name="number"/>
+	                        <field name="purpose"/>
+				<field name="partner_id" string="Beneficiary"/>
+				<field name="date"/>
+				<field name="amount" sum="Total" />
+				<field name="state"/>
+			</tree>
+	    	</field>
+        </record>
+
+        <record id="action_financial_ratification" model="ir.actions.act_window">
+            <field name="name">Financial Ratification</field>
+            <field name="res_model">account.voucher</field>
+            <field name="view_type">form</field>
+            <field name="domain">['|',('type','in',['ratification','pur_rat']),('ratification','=','True')]</field>
+            <field name="context">{'type':'ratification'}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="view_financial_ratification_filter"/>
+            <field name="target">current</field>
+        </record>
+
+        <record id="action_financial_ratification_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_financial_ratification_tree"/>
+            <field name="act_window_id" ref="action_financial_ratification"/>
+        </record>
+
+        <record id="action_financial_ratification_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_financial_ratification_form"/>
+            <field name="act_window_id" ref="action_financial_ratification"/>
+        </record>
+
+        <menuitem id="ratification_main_menu" name="Financial Ratification" parent="ratification_menu" sequence="10"/>
+            
+        <menuitem id="menu_action_financial_ratification" icon="STOCK_JUSTIFY_FILL"
+
+            action="action_financial_ratification" parent="ratification_main_menu" sequence="10"/>
+
+<!--  Supplier Voucher  -->
+        <record id="account_voucher.action_purchase_receipt" model="ir.actions.act_window">
+            <field name="name">Supplier Vouchers</field>
+            <field name="res_model">account.voucher</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('journal_id.type','=','purchase'), ('type','in',['purchase','pur_rat'])]</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+        </record>
+
+        <!--record model="ir.ui.view" id="account_budget_confirmation_view_form2">
+            <field name="name">account.budget.confirmation.view.form2</field>
+            <field name="model">account.budget.confirmation</field>
+            <field name="inherit_id" ref="account_budget_confirmation.account_budget_confirmation_view_form"/>
+            <field name="arch" type="xml">
+        	<field name="partner_id" position="replace">
+        	     <field name="partner_id" attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft'),('type','!=','ratification')] }" />
+                </field>
+                </field>
+        </record-->
+
+		<record model="ir.ui.view" id="view_purchase_receipt_form">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher.view_purchase_receipt_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='partner_id']" position="attributes">
+	                    <attribute name="attrs">{'readonly':[('state','not in',['draft','approve'])]}</attribute>
+	            </xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_purchase_receipt_form">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher.view_purchase_receipt_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='proforma_voucher']" position="attributes">
+					<attribute name="states">draft,approved</attribute>
+				</xpath>
+				<xpath expr="//field[@name='partner_id']" position="attributes">
+					<attribute name="attrs">{'readonly': [('state','=','posted')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='journal_id']" position="attributes">
+					<attribute name="attrs">{'readonly': [('state','=','posted')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='pay_now']" position="attributes">
+					<attribute name="attrs">{'readonly': [('state','=','posted')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='account_id']" position="attributes">
+					<attribute name="attrs">{'readonly': [('state','=','posted')]}</attribute>
+				</xpath>
+
+			</field>
+		</record>
+
+
+        <record model="ir.ui.view" id="view_financial_purpose_tree">
+            <field name="name">account.ratification.purpose.tree</field>
+		    <field name="model">account.ratification.purpose</field>
+		    <field name="arch" type="xml">
+		   <tree string="Financial Ratification Purpose">
+			<field name="code"/>
+			<field name="name" />
+			<field name="account_id"/>
+
+		   </tree>
+	    	</field>
+        </record>
+        <record model="ir.ui.view" id="view_financial_purpose_form">
+                    <field name="name">account.ratification.purpose.form</field>
+		    <field name="model">account.ratification.purpose</field>
+		    <field name="arch" type="xml">
+		   <form string="Financial Ratification Purpose"  version="7.0">
+			<group col="4" colspan="4">
+				<field name="code"/>  <newline/>
+				<field name="name" />
+				<field name="special" />
+				<field name="account_id"/>
+			</group>
+
+		   </form>
+	    	</field>
+        </record>
+        <record id="action_ratification_purpose" model="ir.actions.act_window">
+            <field name="name">Financial Ratification Purpose</field>
+            <field name="res_model">account.ratification.purpose</field>
+            <field name="view_type">form</field>
+        </record>
+        <menuitem id="menu_action_ratification_purpose" icon="STOCK_JUSTIFY_FILL" name="Financial Ratification Purpose"
+            action="action_ratification_purpose" parent="ratification_main_menu" sequence="10"/>
+    </data>
+</openerp>

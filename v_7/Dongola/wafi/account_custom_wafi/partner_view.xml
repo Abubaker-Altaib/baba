@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+        <record id="base.action_partner_supplier_form" model="ir.actions.act_window">
+            <field name="domain">[('active','in',('0','1'))]</field>
+            <field name="context">{'search_default_supplier': 1,'default_customer': 0,'default_supplier': 1,"search_default_active":1}</field>
+        </record>
+        
+        <record id="base.action_partner_customer_form" model="ir.actions.act_window">
+            <field name="domain">[('active','in',('0','1'))]</field>
+            <field name="context">{'default_customer':1, 'search_default_customer':1,"search_default_active":1}</field>
+        </record>
+        
+       <record id="view_res_partner_filter" model="ir.ui.view">
+            <field name="name">res.partner.select.inhert</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/filter[@name='supplier']" position="after">
+                   <filter string="Active" name="active" domain="[('active','=',1)]" help="Active Partners"/>
+                   <filter string="In Active" name="in_active" domain="[('active','=',0)]" help="In Active Partners"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="view_partner_tree" model="ir.ui.view">
+            <field name="name">res.partner.tree.inhert</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="active" invisible="1"/>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="colors">grey:(not active)</attribute>
+                </xpath>
+            </field>
+        </record>
+	</data>
+</openerp>

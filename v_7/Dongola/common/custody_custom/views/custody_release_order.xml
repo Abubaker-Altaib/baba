@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+
+  <data>
+
+   
+  <!--  Release Order Form Inherited -->
+    <record model="ir.ui.view" id="custody_release_order_form_inherit">
+		<field name="name">custody.release.order.form.inherit</field>
+		<field name="model">custody.release.order</field>
+        <field name="inherit_id" ref="asset_custody_management.custody_release_order_form"/>
+		<field name="arch" type="xml">
+
+        <field name="state" position="replace">
+               <field name="state" widget="statusbar" readonly="1" statusbar_visible="draft,confirm,approve,approve_ghrm,assign,cancel" />
+        </field>
+
+        <xpath expr="//button[@string='Confirm']" position="after">
+                     <button name="approve" states="confirm" string="Approve Order" confirm="Are you sure you approve the order?"/>
+                     <button name="approve_ghrm" states="approve" string="General HR Manager Approve" confirm="Are you sure you approve the order?"/>
+
+         </xpath >
+         <xpath expr="//button[@string='Verify From Custody']" position="replace">
+                     <button name="verify" states="approve_ghrm" string="Verify From Custody" type="object" />
+
+         </xpath>
+
+       </field>
+      </record>
+
+
+
+
+   </data>
+ </openerp>

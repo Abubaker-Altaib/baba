@@ -1,0 +1,57 @@
+<openerp>
+    <data>
+        <record id="luggage_transfer_view" model="ir.ui.view">
+            <field name="name">luggage transfer allowance</field>
+            <field name="model">luggage.transfer</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Luggage Transfer Allowance">
+                    <group col="4" colspan="4">
+                        <!-- <button icon="gtk-cancel" special="cancel" string="Cancel" colspan="2"/> -->
+                        <button icon="gtk-ok" name="luggage_transfer" string="OK" type="object" colspan="2" default_focus="1"
+                        attrs="{'invisible':[('additional_allowance_id','!=',False)]}"/>
+                    </group>
+                    <field name="company_id"  groups="base.group_multi_company" colspan="2"/>
+                    <field name="department_id" colspan="2"/>
+                    <field name="allowance_id" colspan="2" domain="[('name_type','=','allow'),('allowance_type','=','in_cycle')]"/>
+                    <field name="destination_id" colspan="2"/>
+                    <field name="date" colspan="4"/>
+                    <field name="additional_allowance_id" readonly="1" attrs="{'invisible':[('additional_allowance_id','=',False)]}" colspan="4"/>
+                    <separator colspan="4"/>
+                    <field colspan="4" name="emp_hours" nolabel="1" attrs="{'readonly':[('additional_allowance_id','!=',False)]}" >
+                        <form string="Employee Luggage Transfer hours">
+                            <field name="otherid" colspan="4" />
+                            <field name="employee" colspan="4" domain="[('state','=','approved')]"/>
+                            <field name="hours"/>
+                        </form>
+                        <tree editable="bottom" string="Employee Allowance Amount">
+                            <field name="otherid" colspan="4" on_change="onchange_name_code(otherid)"/>
+                            <field name="employee" domain="[('state','=','approved')]" colspan="4" on_change="onchange_name_code(employee,False)" context="{'emp_hours':parent.emp_hours}"/>
+                            <field name="hours"/>
+                        </tree>
+                    </field>
+                    <field name="purpose" colspan="4"/>
+                    <field name="descirption" colspan="4"/>
+                </form>
+            </field>
+        </record>
+        <record id="action_luggage_transfer" model="ir.actions.act_window">
+            <field name="name">luggage transfer allowance</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">luggage.transfer</field>
+            <field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+        </record>
+        <menuitem name="Luggage Transfer Allowance" action="action_luggage_transfer" id="menu_luggage_transfer_view" parent="menu_action_luggages"/>
+    
+        <report auto="False"
+            menu="True"
+            id="luggage_transfer_noti" 
+            model="luggage.transfer" 
+            name="luggage_transfer" 
+            rml="hr_custom_military/report/luggage_transfer.rml"
+            string="Luggage Transfer Report" header="True"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Car Operation Wizard View-->
+
+    	<record id="view_car_operation_report_wiz" model="ir.ui.view">
+            <field name="name">Car Operation wiz</field>
+            <field name="model">car.operation.report.wiz</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Car Operation Report" version="7.0">
+        			<group string="Car Operation Report">
+            <field name="Date_from" colspan="2"/>
+       				<newline/>
+            <field name="Date_to" colspan="2"/>
+       				<newline/>
+            <field name="operation_type" colspan="2"/>
+       				<newline/>
+       		<field name="end_period" colspan="2" attrs="{'invisible': [('operation_type','=', 'license')],'required':[('operation_type','=','insurance')]}"/>
+       		        <newline/>
+       				<newline/>
+            <field name="type" colspan="2"/>
+            </group>
+       				<footer>
+                   		<button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight"/>
+                  		or
+                  		<button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+            </form>
+            </field>
+		</record>
+<!-- Car Operation Wizard Action-->
+        <record id="action_wizard_car_operation_report_wiz" model="ir.actions.act_window">
+            <field name="name">Car Operation Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">car.operation.report.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_car_operation_report_wiz"/>
+            <field name="target">new</field>
+        </record>
+
+
+<!-- Car Operation Wizard Menu-->
+      
+       <menuitem
+                icon="STOCK_PRINT"
+                name="Car Operation Reports"
+                parent="admin_affairs.main_menu_report"
+                id="menu_car_operation_report_root"
+                />
+ 
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Car Operation Report"
+                parent="menu_car_operation_report_root"
+                action="action_wizard_car_operation_report_wiz"
+                id="menu_car_operation_report_wiz"
+                />
+
+    </data>
+</openerp>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+
+   <record id="garm_request_view_tree" model="ir.ui.view">
+    <field name="name"> Garm Request Tree</field>
+    <field name="model">dzc_6.garm.request</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="order_date"/>
+        <field name="order_date"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+
+  <!-- Form view  model -->
+  <record id="garm_request_view_form" model="ir.ui.view">
+    <field name="name">Garm Request Form</field>
+    <field name="model">dzc_6.garm.request</field>
+    <field name="arch" type="xml">
+      <form>
+
+        <header>
+         <button name="confirm_action" 
+          string="Confirm"
+          states="draft," 
+          type="object" 
+          class="oe_highlight" />
+
+          <button name="approve1_action" string="Approve" states="draft," type="object" class="oe_highlight" />
+
+          <button name="approve2_action" string="Approve" states="approve1," type="object" class="oe_highlight" />
+
+          <button name="complete_action" string=" Complete" states="approve2," type="object" class="oe_highlight" />
+
+
+          <button name="done_action" string="Done" states="complete," type="object" class="oe_highlight" />
+
+          <button name="cancel_action" string="Cancel" states="draft,confirm,approve1,approve2,complete" type="object" class="oe_highlight" />
+
+          <button name="set_to_draft_action" string="Set To Draft" states="cancel" type="object" class="oe_highlight" />
+
+          <field name="state" widget="statusbar"  />
+        </header>
+
+        <sheet>
+
+          <group col="4" colspan="2" >
+
+            <field name="name"  readonly="1"/>
+            <field name="order_date" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />
+
+            <field name="name" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />           
+
+            <field name="faqeer_id" required="1"  attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}"/>
+
+            <field name="national_number" readonly="1"  />
+
+            <field name="garm_state_id" readonly="1"/>
+
+            <field name="garm_local_state_id" readonly="1"  />
+
+            <field name="phone" readonly="1"  />
+
+            <field name="admin_unit_id" readonly="1"  />
+
+            <field name="village" readonly="1"  />
+
+            <field name="type" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />
+
+            <field name="state_id" required="1"  domain="[('company_id' ,'=' , company_id)]"  attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}"/>
+<!--               attrs="{'invisible':[(type.t_to_state ,'=' , True)]}"
+-->            
+<field name="local_state_id" required="1" domain="[('company_id' ,'=' , company_id)]" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}"/>
+
+<field name="is_legal" required="1"  attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}"/>
+<field name="loan_date" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />
+<field name="pay_date" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />
+<field name="total_amount" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />
+<field name="final_total_amount" readonly="1" />
+<field name="commitee_date" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}"/>
+<field name="address_id" required="1"/>
+<field name="company_id" readonly="1"/>
+<field name="user_id" readonly="1"/>
+
+
+</group>
+<notebook>
+  <page string="Request Details">
+   <group col="4" colspan="2">
+    <field name="loan_type" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />
+    <field name="has_assets" required="1" widget="radio" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}"/>
+    <field name="court_name" required="1"  attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}"/>
+    <field name="final_judgment_date" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />
+    <field name="follower_name" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />
+    <field name="follower_national_number" required="1"  attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}"/>
+    <field name="follower_phone" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />
+    <field name="relation" required="1"  attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}"/>
+  </group>
+</page>
+
+<page string="Documents Required">
+  <group col="4" colspan="2">
+    <field name="resident_certificate" required="1"  attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}"/>
+    <field name="igrar_document" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />
+    <field name="court_copy_decision" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" />
+
+  </group>
+</page>
+
+
+
+          <!-- attrs="{'invisible':[('pay_to' ,'!=' ,'creditors')] , 'required':[('pay_to' ,'=' ,'creditors')]}" -->
+          <page string="Creditors" >
+        
+
+<field name="partner_ids" required="1" attrs="{'readonly':['|',('state' , '=' ,'done'),('state' ,'=' , 'cancel')]}" >
+  <tree editable="buttom">
+
+   <field name="partner_id" context="{'form_view_ref': 'zakat_base.zakat_res_partner_form_view', 'default_zakat_partner': 1}" required="1" domain="[('zakat_partner' , '=' , False )]"  />
+   <field name="amount" required="1"  />
+   <field name="giveup_amount" required="1"  />
+   <field name="remain_amount" readonly="1"  />
+   <field name="p_name" invisible="1"  />
+ </tree>
+</field>
+
+</page>
+
+<page string="Committee" attrs="{'invisible':[('state' ,'=','draft')]}">
+  <group col="4" colspan="2">
+
+
+              <!-- <field name="pay_to" required="1"  />
+              <field name="pay_partner_id"  attrs="{'invisible':[('pay_to' ,'=' ,'creditors')],'required':[('pay_to' ,'=' ,'other')]}" context="{'form_view_ref': 'zakat_base.zakat_res_partner_form_view', 'default_zakat_partner': 1}"  domain="[('zakat_partner' , '=' , True )]" /> -->
+              <field name="committee"  attrs="{'required':[('state' ,'=' ,'confirm')],'readonly':[('state' ,'!=' ,'confirm')]}" />
+              <field name="commitee_decision" attrs="{'invisible':[('state' , '=' ,'confirm')] , 'required':[('state' ,'=' ,'approve1')], 'readonly':[('state' ,'!=' ,'approve1')]}" />
+
+              
+            </group>
+          </page>
+
+
+<page string="State Committee" attrs="{'invisible':[('state' ,'in',['draft','approve1'])]}">
+  <group col="4" colspan="2">
+
+              <field name="state_commitee"  attrs="{'required':[('state' ,'=' ,'approve2')],'readonly':[('state', '!=','approve2')]}" />
+              
+              <field name="state_commitee_decision" attrs="{'required':[('state' ,'=','approve2') ],'readonly':[('state', '!=','approve2')]}" />
+
+              
+            </group>
+          </page>
+
+<page string="Researcher" >
+  <group>
+    <field name="searcher" attrs="{'required':[('state' ,'=' ,'draft')], 'readonly':[('state' , '!=' ,'draft')]}" />
+  </group>
+</page>
+
+
+<!-- <page string="Almasarf Manager" attrs="{'invisible':['|',('state' ,'=' ,'draft') ,('state' , '=' ,'confirm')] , 'required':[('state' ,'=' ,'approve1')] , 'readonly':[('state' , '!=' ,'approve1')]}" >
+  <group>
+    <field name="almasarf"  attrs="{'required':[('state' ,'=' ,'approve1')], 'readonly':[('state' , '!=' ,'approve1')]}"/>
+  </group>
+</page> -->
+</notebook> 
+
+
+</sheet>
+</form>
+</field>
+</record>
+
+
+    <!-- <record id="gorm_plan_view_search" model="ir.ui.view">
+     <field name="name">gorm.type.search</field>
+     <field name="model">dzc_6.gorm.plan</field>
+     <field name="arch" type="xml">
+
+       <search string="Search Opportunities">
+         <field name="code"/>
+         <field name="name"/>
+       </search>
+
+     </field>
+   </record>
+ -->
+
+
+ <record id="garm_request_action" model="ir.actions.act_window">
+  <field name="name">Garm Request</field>
+  <field name="res_model">dzc_6.garm.request</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="dzc6_garm_request"
+  name="Garm Request"    
+  sequence="2"
+  parent="dzc6_menu"
+  action="garm_request_action"/>
+  />
+  <!-- case study tree view -->
+  <record id="garmeen_case_study_view_tree" model="ir.ui.view">
+    <field name="name">zakat application tree</field>
+    <field name="model">zakat.aplication.form</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="faqeer_id"/>
+        <field name="national_number"/>
+        <field name="state_id"/>
+        <field name="local_state_id"/>
+        <field name="admin_unit_id"/>
+        <field name="state"/>
+      </tree>
+    </field>
+  </record>
+  <!-- case study menu -->
+
+  <record id="case_study_garmeen_action" model="ir.actions.act_window">
+    <field name="name">Case Study</field>
+    <field name="res_model">zakat.aplication.form</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('case_type', '=', 'garm')]</field>
+    <field name="view_id" ref="garmeen_case_study_view_tree"/>
+    <field name="context">{'default_case_type':'garm'}</field>
+  </record>
+  <menuitem id="case_study_garmeen_menu"
+    parent="dzc6_menu"
+    name="Case Study"
+    action="case_study_garmeen_action"
+    sequence="2"/>
+    
+
+  </data>
+</odoo>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+     <data>
+
+        <record id="account_cost_type_balance_view" model="ir.ui.view">
+            <field name="name">Cost Type Balance</field>
+            <field name="model">account.cost.type.balance</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.account_common_report_view" />
+            <field name="arch" type="xml">
+
+		 <field name="chart_account_id" on_change="onchange_chart_id(chart_account_id)"/>
+
+		 <notebook tabpos="up" colspan="4">
+		     <page string="Accounts" name="accounts_ids">
+		    	  <field name="account_ids" colspan="4" nolabel="1" domain="[('type','!=','view'),('devolopment_projects','=','True')]"/>
+		     </page>
+		     <page string="Cost Types" name="cost_type_ids">
+		    	  <field name="cost_type_ids" colspan="4" nolabel="1"/>
+		     </page>
+		 </notebook>
+
+
+            </field>
+        </record>
+
+         <record id="action_account_cost_type_balance" model="ir.actions.act_window">
+             <field name="name">Cost Type Balance</field>
+             <field name="res_model">account.cost.type.balance</field>
+             <field name="type">ir.actions.act_window</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="view_id" ref="account_cost_type_balance_view"/>
+             <field name="context">{}</field>
+             <field name="target">new</field>
+
+       </record>
+
+       <menuitem id="account_cost_type_menu"  name="Cost Types" parent="account.menu_finance_generic_reporting" sequence="1"/>
+
+     <menuitem icon="STOCK_PRINT"
+            name="Cost Type Balance"
+            action="action_account_cost_type_balance"
+            id="menu_account_cost_type_balance_report"
+            parent="account_cost_type_menu"/>
+
+     </data>
+ </openerp>

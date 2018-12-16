@@ -1,0 +1,114 @@
+- 
+  I'm testing ratifcation
+- 
+  Creating a res.partner  record
+- 
+  !record {model: res.partner, id: res_partner_serpentcs0}:
+    address:
+      - city: Gandhinagar
+        color: 0.0
+        country_id: base.in
+        name: Jay
+        street: 404, Shalin Complex
+        street2: Sector 11
+    category_id:
+      - base.res_partner_category_retailers0
+    credit_limit: 0.0
+    property_account_receivable: account.a_recv
+    debit_limit: 0.0
+    name: SerpentCS
+    
+-
+    Add currency to cash account
+-
+    !record {model: account.account, id: account.cash}:
+      currency_id: base.USD
+-
+    Add currency to a_recv account
+-
+    !record {model: account.account, id: account.a_recv}:
+      currency_id: base.USD
+      
+-
+    Add Voucher Sequence in Bank Journal
+-
+    !record {model: account.journal, id: account.bank_journal}:
+      voucher_sequence_id: account.sequence_bank_journal
+      view_id: 2
+      currency: base.USD
+
+       
+-
+    Add New Sequence
+-
+    !record {model: ir.sequence, id: sequence_period1}:
+      name: 1
+      
+-
+    Add Period Sequence in period_1
+-
+    !record {model: account.period, id: account.period_1}:
+      sequence_id: sequence_period1
+        
+
+-
+  I create a customer voucher
+-
+  !record {model: account.voucher, id: account_voucher_voucher_ratification}:
+    account_id: account.cash
+    amount: 300.0
+    company_id: base.main_company
+    journal_id: account.bank_journal
+    name: Voucher for NCTR
+    narration: Basic Pc
+    line_cr_ids:
+      - account_id: account.a_recv
+        amount: 300.0
+        name: Voucher for NCTR
+    partner_id: res_partner_serpentcs0
+    period_id: account.period_1
+    type: ratification
+
+-
+  I complete the  voucher
+-
+  !workflow {model: account.voucher, action: precomplete, ref: account_voucher_voucher_ratification}
+
+-
+  I close the voucher
+-
+  !workflow {model: account.voucher, action: preclose, ref: account_voucher_voucher_ratification}
+
+-
+  I post the voucher
+-
+  !workflow {model: account.voucher, action: prepost, ref: account_voucher_voucher_ratification}
+
+-
+  I approve the voucher
+-
+  !workflow {model: account.voucher, action: preapprove, ref: account_voucher_voucher_ratification}
+
+-
+  I confirm the voucher to create budget confirmation
+-
+  !workflow {model: account.voucher, action: confirm_approve, ref: account_voucher_voucher_ratification}
+
+-
+  I check that the type is 'purchase'
+-
+  !assert {model: account.voucher, id: account_voucher_voucher_ratification}:
+    - type == 'purchase', 'The type is not purchase'
+
+-
+  I check that the state is 'approves'
+-
+  !assert {model: account.voucher, id: account_voucher_voucher_ratification}:
+    - state == 'approve', 'The state is not approve'
+
+-
+  I check that the ratification is True
+-
+  !assert {model: account.voucher, id: account_voucher_voucher_ratification}:
+    - ratification == 'True', 'It's not a ratification record'
+

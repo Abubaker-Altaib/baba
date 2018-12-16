@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>                           
+           	<record model="ir.ui.view" id="view_fleet_vehicle_form_inherit">
+			<field name="name">fleet.vehicle.form.inherit</field>
+			<field name="model">fleet.vehicle</field>
+                        <field name="inherit_id" ref="admin_affairs.view_fleet_vehicle_form_inherit"/>
+			<field name="arch" type="xml">
+				<xpath expr="//form/sheet/group/group/field[@name='fuel_type']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//form/sheet/notebook/page[@string='Notes']" position="before"> 
+					<page string="Fuel Details">
+
+						<group col="5" >
+							<field name="fuel_type" required="1" on_change="reset_id()" colspan="2"/>
+							<field name="product_id" colspan="2"
+							context="{'form_view_ref':'fuel_management.fuel_normal_form_view',
+							'default_fuel_ok': True}"
+							domain="[('fuel_type','=',fuel_type)]"
+							on_change="get_uom_domin(product_id)"
+							required="1"/>
+						</group>
+
+						<group col="5" >
+							<field name="fueltankcap" required="1" colspan="2"/>
+							<field name="product_uom" class="oe_inline" colspan="2" groups="product.group_uom"
+									attrs="{
+									'required':[('monthly_plan','=',True)],
+									'readonly':[('monthly_plan','=',False)]}">
+							</field>
+						</group>
+
+						<group col="5" >
+							<field name="monthly_plan" colspan="2"  invisible="0"  attrs="{'readonly':[('state','!=','draft')]}"/>
+							<field name="product_qty" class="oe_inline" colspan="2" attrs="{
+									'required':[('monthly_plan','==',True)],
+									'readonly':['|',('state','!=','draft'),('monthly_plan', '=', False)]}" />
+						</group>
+
+					</page>
+
+					<page string="Fuel Plans">
+
+						<group col="5">
+							<field name="fuel_plan_ids" nolabel="1" colspan="2" attrs="{
+									'invisible':[('monthly_plan','!=',True)]}" />
+						</group>
+
+					</page>
+				</xpath>
+			</field>
+		</record>
+
+		<!--record model="ir.ui.view" id="view_fleet_vehicle_form_inherit2">
+			<field name="name">fleet.vehicle.form.inherit2</field>
+			<field name="model">fleet.vehicle</field>
+            <field name="inherit_id" ref="admin_affairs.view_fleet_vehicle_form_inherit"/>
+		    <field name="groups_id" eval="[(6, 0, [ref('base.group_fuel_plan') ])]"/>
+		    <field name="arch" type="xml">
+		        <field name='monthly_plan' position="attributes">
+		            <attribute name="attrs">{'readonly':[('state','not in',['draft'])]}</attribute>
+		        </field>
+		    </field>
+		</record-->
+
+		<record model="ir.ui.view"  id="view_fleet_vehicle_form_inherit3">
+		    <field name="name">fleet.vehicle.form.inherit3</field>
+		    <field name="model">fleet.vehicle</field>
+		    <field name="inherit_id" ref="view_fleet_vehicle_form_inherit"/>
+		    <field name="groups_id" eval="[(6, 0, [ref('group_fuel_plan') ])]"/>
+		    <field name="arch" type="xml">
+		        <field name="monthly_plan" position="attributes">
+		            <attribute name="readonly">0</attribute>
+		        </field>
+		        <field name="product_qty" position="attributes">
+		            <attribute name="readonly">0</attribute>
+		        </field>
+		    </field>
+		</record>
+
+		<!--record model='ir.actions.act_window' id='fleet_vehicle_act'>
+            <field name="name">Vehicles</field>
+            <field name="res_model">fleet.vehicle</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="help" type="html">
+              
+            </field>
+        </record-->
+
+	</data>
+</openerp>

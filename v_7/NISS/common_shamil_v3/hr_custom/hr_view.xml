@@ -1,0 +1,799 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_hr_main_configuration" parent="hr.menu_hr_configuration" name="Human Resources" sequence="0" groups="base.group_hr_user"/>
+
+        <menuitem action="hr.open_view_categ_form" id="hr.menu_view_employee_category_form"
+            parent="menu_hr_main_configuration" sequence="1" groups="base.group_no_one"/>
+       <menuitem parent="menu_hr_main_configuration" id="hr.menu_hr_job" action="hr.action_hr_job" sequence="6"/>
+ <!--
+        ============
+        Employee Category inherits
+        ============
+        -->
+       <record id="hr_inherit_category" model="ir.ui.view">
+            <field name="name">hr.employee.category.form.inherit</field>
+            <field name="model">hr.employee.category</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr.view_employee_category_form"/>
+            <field name="arch" type="xml">
+                  <field name="name" position="before">
+                  <field name="code" />
+                  </field>
+                  <field name="parent_id" position="after">
+                  <field name="employee_ids" domain="[('state','=','approved')]" />
+                  </field>
+            </field>
+        </record>
+        
+      <record id="hr_inherit_category_tree" model="ir.ui.view">
+            <field name="name">hr.employee.category.list.inherit</field>
+            <field name="model">hr.employee.category</field>
+            <field name="type">tree</field>
+            <field eval="8" name="priority"/>
+            <field name="inherit_id" ref="hr.view_employee_category_list"/>
+            <field name="arch" type="xml">
+            <tree string="Employees Categories">
+                       <field name="code" />
+                </tree> 
+             </field>
+        </record>
+ <!--
+        ============
+        Employee  inherits
+        ============
+        -->
+       <record id="view_employee_form_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="before"> 
+                    <header>
+                        <button name="experiment" string="Experiment" states="draft" type="workflow" class="oe_highlight" groups="base.group_user"/>
+                        <button name="approve" string="Approve" states="draft,experiment" type="workflow" class="oe_highlight" groups="base.group_user"/>                
+                        <button name="refuse" string="Refuse" states="approved,experiment" type="workflow" class="oe_highlight" groups="base.group_user"/>
+                        <button string="Set to Draft" name="set_to_draft" states="refuse" type="workflow"  icon="gtk-convert"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,experiment,approved,refuse"/>
+                    </header>
+                </xpath>
+                <field name="name" position="replace">
+            	    <field name="name" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                </field>
+                <field name="department_id" position="replace" on_change="onchange_department_id(department_id)">
+            	    <field name="department_id" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}" on_change="onchange_department_id(department_id)"/>
+                </field>
+                <field name="job_id" position="replace">
+            	    <field name="job_id" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                </field>
+               <field name="gender" position="replace">
+            	    <field name="gender" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                </field>
+               <field name="marital" position="replace">
+            	    <field name="marital" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                </field>
+                <field name="birthday" position="replace">
+            	    <field name="birthday" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                </field>
+                <!--xpath expr='//field[@name="category_ids"]' position="replace" version="7.0"> 
+            	    <field name="category_ids"  widget="many2many_tags" placeholder="e.g. Part Time" groups="base.group_hr_user" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                </xpath-->
+                <xpath expr='//label[@for="category_ids"]' position="before" version="7.0"> 
+                    <group  col="2" colspan="4">
+			    <field name="emp_code"/>
+		            <field name="sequence"/>
+		            <field name="employee_type" invisible="1"/>
+                   </group>
+                </xpath>
+                <xpath expr='//group[@string="Birth"]' position="inside" version="7.0"> 
+		     <field name="birth_place"/>
+		     <field name="birthday_certificate_id"/>
+                </xpath>
+                <xpath expr='//field[@name="address_home_id"]' position="after" version="7.0"> 
+		     <field name="house_type"/>
+		     <field name="emergency_data"/>
+		     <field name="blood_type"/>
+                </xpath>
+                <xpath expr='//field[@name="job_id"]' position="after" version="7.0"> 
+		     <field name="join_date"/>
+                </xpath>
+                <xpath expr='//group[@string="Citizenship &amp; Other Info"]' position="inside" version="7.0"> 
+		    <field name="nationality_no"/>
+		    <field name="nationality_date"/>
+		    <field name="religion"/>
+                </xpath>
+                <xpath expr='//group[@string="Active"]' position="replace" version="7.0"> 
+		     <group string="Employment Dates">
+                          <field name="employment_date"/>
+                          <field name="first_employement_date" attrs="{'required':[('employee_type','=', 'employee')]}"/>
+                          <field name="end_date"  />
+                          <field name="re_employment_date"/>
+                          <field name="participate_date"/>
+                     </group>
+		     <group string="File Info">
+                          <field name="file_no"/>
+                          <field name="job_letter_no"/>
+                          <field name="job_letter_date"/>
+                     </group>
+		     <group string="National Service Info">
+                          <field name="nation_srevice"/>
+                          <field name="nation_ser_date"/>
+                     </group>
+		     <group string="Active" name="active_group">
+                          <field name="active"/>
+                          <label for="period"/>
+                          <div>
+                          <field name="period" class="oe_inline" attrs="{'required':[('state','=', 'experiment')]}"/> Months </div>
+                          <field name="delegation"/>
+                          <!--<field name="bonus_date"/>-->
+                     </group>
+                </xpath>
+                <xpath expr='//page[@string="HR Settings"]' position="after" version="7.0"> 
+		    <page string="Qualifications">
+                     	<field name="qualification_ids" nolabel="1">
+                        	<form string="Employee Qualifications">
+				        <field name="emp_qual_id" colspan="2"/>
+				        <field name="qual_date" colspan="2" />
+				        <field name="organization" colspan="2"/>
+				        <field name="specialization"  colspan="2"/>
+				        <field name="state" colspan="2"/>
+                                </form>
+                                <tree string="Employee Qualifications">
+				        <field name="emp_qual_id" />
+				        <field name="qual_date"  />
+				        <field name="organization" />
+				        <field name="specialization"  />
+				        <field name="state" />
+                                </tree>
+                        </field>
+                     </page>
+                     <page string="Family Relations">
+                     	<field name="relation_ids" nolabel="1">
+                        	<form string="Employee Family Relations">
+				        <field name="relation_name" colspan="2"/>
+				        <field name="relation_id" colspan="2" />
+				        <field name="birth_date" colspan="2"/>
+				        <field name="start_date"  colspan="2"/>
+				        <field name="state" colspan="2"/>
+                                </form>
+                                <tree string="Employee Family Relations">
+				        <field name="relation_name" />
+				        <field name="relation_id"  />
+				        <field name="birth_date" />
+				        <field name="start_date" />
+				        <field name="state"/>
+                                </tree>
+                        </field>
+                     </page>
+                     <page string="Analytic">
+                     	<field name="analytic_ids" nolabel="1">
+                                <tree string="Employee Family Relations" editable="bottom">
+				        <field name="month" />
+				        <field name="year"/>
+				        <field name="analytic_account_id" />
+				        <field name="percentage"  />
+                                </tree>
+                        </field>
+                     </page>
+                </xpath>
+                <field name="user_id" position="replace">
+            	    <field name="user_id" on_change="onchange_user(user_id)" groups="base.group_system"/>
+                </field>
+                <field name="parent_id" position="replace">
+                         <field name="parent_id" on_change="onchange_department_id(department_id)" />
+                </field>
+                <field name="company_id" position="replace">
+            	     <field name="company_id"  on_change="onchange_company(company_id)" attrs="{'readonly':[('state','not in','draft')]}"/>
+                      </field>
+
+                 <!--field name="coach_id" position="replace">
+                      </field-->
+                 </field>
+        </record>
+     
+        <record id="view_employee_tree_inherit" model="ir.ui.view">
+             <field name="name">view.employee.tree.inherit</field>
+             <field name="model">hr.employee</field>
+             <field name="inherit_id" ref="hr.view_employee_tree"/>
+             <field name="arch" type="xml">
+                <tree string="Employees"  position="replace">
+                <tree colors="red:state in ('refuse');blue:state in ('draft');black:state in ('approved')" string="employee" >
+                    <field name="emp_code" select="1"/>
+                    <field name="name"/>
+                    <field name="department_id"/>
+                    <field name="company_id" />
+                    <field name="job_id"/>
+                    <field name="state"/>
+
+                </tree>
+                </tree>  
+             </field>
+        </record>
+
+        <record id="view_employee_filter_inherit" model="ir.ui.view">
+            <field name="name">Employees inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+            <xpath expr='//field[@name="name"]' position='after'>
+                    <field name="emp_code"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="department_id" />
+                    <field name="state"/>
+                    <field name="otherid"/>
+            </xpath>           
+            <xpath expr='//group[@string="Group By..."]' position='replace'>
+                    <group expand="0" string="Group By...">
+                    <filter string="Manager" icon="terp-personal" domain="[]" context="{'group_by':'parent_id'}"/>
+                    <!--filter string="Coach" icon="terp-personal" domain="[]" context="{'group_by':'coach_id'}" /-->
+                    <separator orientation="vertical" />
+                    <filter string="Department" icon="terp-personal+" domain="[]" context="{'group_by':'department_id'}"/>
+                    <!--filter string="General Department" icon="terp-personal+" domain="[]" context="{'group_by':'dept_parent_id'}"/-->
+                    <filter string="Job" icon="terp-gtk-select-all" domain="[]" context="{'group_by':'job_id'}"/>
+                    <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    <filter string="Payroll Department" icon="terp-go-home" domain="[]" context="{'group_by':'payroll_state'}"/>
+                    <filter string="State" icon="terp-go-home" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+            </xpath>
+             </field>
+         </record> 
+
+
+<!--     
+   ============
+qualification specification
+        ============
+-->
+
+	<record id="view_hr_specifications_form" model="ir.ui.view">
+	                   <field name="name">hr.specifications.form</field>
+	                   <field name="model">hr.specifications</field>
+	                   <field name="type">form</field>
+	                   <field name="arch" type="xml">
+	                       <form string="Spesifications">
+	                           <field name="name" select="1"/>
+          		           <field name="code"/>
+                                   <field name="active"/>
+	                       </form>
+	                   </field>
+	               </record>
+	               <record id="view_hr_specifications_tree" model="ir.ui.view">
+	                   <field name="name">hr.specifications.tree</field>
+	                   <field name="model">hr.specifications</field>
+	                   <field name="type">tree</field>
+	                   <field name="arch" type="xml">
+	                       <tree string="Spesifications">
+                                   <field name="name" select="1"/>
+          		           <field name="code"/>
+                                   <field name="active" />
+	                       </tree>
+	                   </field>
+	               </record>
+	               
+	               <record id="open_hr_specifications_action" model="ir.actions.act_window">
+	       	            <field name="name">Spesifications</field>
+	       	            <field name="res_model">hr.specifications</field>
+	       	            <field name="view_type">form</field>
+	       	            <field name="view_mode">tree,form</field>
+	       	            <field name="view_id" ref="view_hr_specifications_tree"/>	       	           
+	               </record>
+          <menuitem id="hr_specifications_menu" name="Specifications" parent="menu_hr_main_configuration" action="open_hr_specifications_action"/>
+		
+
+
+<!--       ============
+            Hr.qualification
+          ============
+-->
+
+	   <record model="ir.ui.view" id="hr_qualification_form_view">
+                <field name="name">hr.qualification.form</field>
+                <field name="model">hr.qualification</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                    <form string="Qualifications" version="7.0">
+                      <sheet>                                     
+                         <label for="name" class="oe_edit_only" string="Qualification"/>
+                         <h1>
+                             <field name="name" class="oe_inline" placeholder="Category Name" style="width: 6em"/> -
+                             <field name="active" class="oe_inline" placeholder="Active"/>
+                         </h1>                         
+							      <notebook>
+								    <page string="Qualification Type" >
+									    <group>
+	                <field name="code" select="1" />	
+			<field name="parent_id" domain="[('type','=','view')]" colspan="2"/>	
+                        <field name="type" select="1" colspan="2"/>		
+				<field name="amount" attrs="{'invisible':[('type','=','view')]}" />
+			        <field name="order" attrs="{'invisible':[('type','=','view')]}"/>
+									    </group>
+									 </page>
+								</notebook>
+		            </sheet>						
+                 </form>
+             </field>
+       </record>
+            <record model="ir.ui.view" id="hr_qualification_tree_view">
+                <field name="name">hr.qualification.tree</field>
+                <field name="model">hr.qualification</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                    <tree string="Qualifications">
+                        <field name="code"/>
+                        <field name="name"/>			
+                        <field name="parent_id"/>                        
+			<field name="type"/>
+			<field name="amount" attrs="{'invisible':[('type','=','view')]}"/>                        
+                    </tree>
+                </field>
+            </record>  
+
+            <record id="hr_qualification_action" model="ir.actions.act_window">
+				<field name="name">Qualifications</field>
+				<field name="res_model">hr.qualification</field>
+				<field name="view_type">form</field>
+				<field name="view_mode">tree,form</field>
+				<field name="view_id" ref="hr_qualification_tree_view"/>
+			</record>
+          
+          <menuitem id="hr_emp_qualification_tree_menu" name="Qualification" parent="menu_hr_main_configuration" action="hr_qualification_action"/>
+
+<!--Employee Qualification-->
+
+         <record model="ir.ui.view" id="hr_emp_qualification_form_view">
+                <field name="name">hr.employee.qualification.form</field>
+                <field name="model">hr.employee.qualification</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                    <form string="Employee Qualification" version="7.0">
+	                     <header>
+	                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,rejected"/>
+	                        <button string="Approve" name="approve_quali" states="draft" type="workflow" class="oe_highlight" icon="gtk-apply" />
+	                        <button string="Reject" name="reject_quali" states="approved" type="workflow" icon="gtk-cancel" />
+	                        <button string="Set to Draft" name="set_to_draft" states="approved,rejected" type="object" icon="gtk-convert"/>
+	                     </header>  
+	                      <sheet>                                     
+	                         <label for="employee_id" class="oe_edit_only" string="Employee"/>
+	                         <h1>
+	                             <field name="employee_id" domain="[('state','=','approved')]" class="oe_inline" placeholder="Employee Name" style="width: 6em"/>
+	                         </h1>           
+			                   <group>
+		                        <group string="Employee Qualification">
+		                           <group>
+				                        <field name="emp_qual_id" select="1" colspan="2" domain="[('type','=','normal')]"/>			
+				                        <field name="qual_date" select="1" colspan="2" />
+				                        <field name="organization" select="1" colspan="2"/>
+				                        <field name="specialization" select="1" colspan="2"/>			                        
+			                         </group>
+		                        </group>                       
+	                        </group>
+	                        <group string="Note">
+	                           <field name="comments" select="1" colspan="2"  nolabel="1" />
+	                        </group>                
+	                      </sheet> 
+                    </form>
+                </field>
+            </record>
+
+            <record model="ir.ui.view" id="hr_emp_qualification_tree_view">
+                <field name="name">hr.employee.qualification.tree</field>
+                <field name="model">hr.employee.qualification</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                <tree colors="red:state in ('rejected');blue:state in ('draft');black:state in ('approved')" string="Employee Qualification">
+                   			
+			<field name="employee_id"/>
+                        <field name="emp_qual_id"/>
+                        <field name="qual_date"/>
+                        <field name="specialization"/>
+                        <field name="organization"/>
+                        <field name="state"/>
+                        <button string="Approve" name="approve_quali" states="draft" type="workflow" icon="gtk-apply" />
+                        <button string="Reject" name="reject_quali" states="approved" type="workflow" icon="gtk-cancel" />
+                        <button string="Set to Draft" name="set_to_draft" states="approved,rejected" type="object" icon="gtk-convert"/>
+                        
+                    </tree>
+                </field>
+            </record>  
+
+            <record id="hr_emp_qualification_action" model="ir.actions.act_window">
+				<field name="name">Employee Qualification</field>
+				<field name="res_model">hr.employee.qualification</field>
+				<field name="view_type">form</field>
+				<field name="view_mode">tree,form</field>
+				<field name="view_id" ref="hr_emp_qualification_tree_view"/>
+            </record>
+
+	
+	<!--  qualification search-->
+ <record id="hr_basic_emp_qualification_filter" model="ir.ui.view">
+            <field name="name">hr.employee.qualification.filter</field>
+            <field name="model">hr.employee.qualification</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search Qualification">
+                    <group col='8' colspan='4'>
+                        <field name="employee_id" widget="selection">
+                            <filter icon="terp-personal"
+                                name="my_qualification"
+                                domain="[('employee_id.user_id','=', uid)]"
+                                help="My Qualtification" />
+                        </field>
+			<separator orientation="vertical"/>
+			 <field name="emp_qual_id" widget="selection">		
+			</field>
+			<separator orientation="vertical"/>
+                        <field name="qual_date">     
+                        </field>
+                        <field name="state">     
+                        </field>
+                    </group>
+		</search>
+            </field>
+        </record>
+
+	  
+                 <menuitem id="hr_qualification_tree_menu" name="Employee Qualification" parent="hr.menu_hr_main" action="hr_emp_qualification_action" sequence = "10"/>
+<!--end-->
+	
+<!-- Hr Family Relation  -->
+
+
+            <record model="ir.ui.view" id="hr_family_relations_form_view">
+                <field name="name">hr.family.relation.form</field>
+                <field name="model">hr.family.relation</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                    <form string="Family Relations" version="7.0">
+                      <sheet>                                     
+                         <label for="name" class="oe_edit_only" string="Family Relations"/>
+                         <h1>
+                             <field name="name" class="oe_inline" placeholder="Relation Name" style="width: 6em"/> -
+                             <field name="code" class="oe_inline" placeholder="Code"/>
+                         </h1> 
+                          <group>    
+                        <group>                        
+                        <field name="max_age" />
+                        <field name="max_number"/>
+                        <field name="amount"/>
+                        </group> 
+                        <group>
+                        <field name="active" />
+                        </group>
+                       </group>  
+                    </sheet> 
+                    </form>
+                </field>
+            </record>
+            <record model="ir.ui.view" id="hr_family_relations_tree_view">
+                <field name="name">hr.family.relation.tree</field>
+                <field name="model">hr.family.relation</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                    <tree string="Family Relations">
+			<field name="code" select="1"/>
+                        <field name="name"/>
+                        <field name="max_age"/>
+                        <field name="max_number"/>
+                        <field name="amount"/>
+                    </tree>
+                </field>
+            </record>  
+            <record id="hr_family_relations_action" model="ir.actions.act_window">
+				<field name="name">Family Relations</field>
+				<field name="res_model">hr.family.relation</field>
+				<field name="view_type">form</field>
+				<field name="view_mode">tree,form</field>
+				<field name="view_id" ref="hr_family_relations_tree_view"/>
+		</record>
+
+          <menuitem id="hr_family_relation_tree_menu" 
+                    name="Custody Setting" 
+                    parent="menu_hr_main_configuration" 
+                    action="hr_family_relations_action" sequence = "10"/>
+			
+<!-- END -->
+
+<!--Employee Custody-->
+
+
+	<record model="ir.ui.view" id="hr_employee_family_view">
+                <field name="name">hr.employee.family.form</field>
+                <field name="model">hr.employee.family</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                    <form string="Employee Custody" version="7.0">
+                        <header>
+				<button string="Approve" name="approve_warantly" states="draft" type="workflow" icon="gtk-apply" />
+		                <button string="Stopped" name="stopped_warantly" states="approved" type="workflow" icon="gtk-apply" />
+                                   										     
+				<button string="Reject" name="reject_warantly"
+										     states="approved" type="workflow" icon="gtk-cancel" />	
+				<button string="Set to Draft" name="set_to_draft"
+				states="approved,stopped,rejected" type="object" icon="gtk-convert"/>
+				<field name="state" widget="statusbar" statusbar_visible="draft,approved,stopped"/>     
+                        </header>
+                        <sheet>
+                              <label for="employee_id" class="oe_edit_only" string="Employee" />
+                              <h1>
+                                 <field name="employee_id" class="oe_inline" placeholder="Employee Name"  style="width: 6em" attrs="{'readonly':[('state','!=','draft')]}"/>
+                              </h1>           
+				<group  colspan="2" col="4">
+				    <field name="relation_id" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+				    <field name="relation_name" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+				    <field name="birth_date" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+				    <newline/>									     
+				    <field name="start_date" colspan="2" attrs="{'readonly':[('state','!=','draft')]}"/>
+				    <field name="end_date" colspan="2" attrs="{'required':[('state','=','stopped')],'readonly':[('state','in',('rejected','stopped'))]}" />
+				    <newline/>
+				    <field name="comments" placeholder="Other Information ..." colspan="4"/>
+				</group>
+                         </sheet>
+                    </form>
+                </field>
+            </record>
+            <record model="ir.ui.view" id="hr_employee_family_tree_view">
+                <field name="name">hr.employee.family.tree</field>
+                <field name="model">hr.employee.family</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                    <tree colors="red:state in ('rejected');blue:state in ('draft');black:state in ('approved')" string="Employee Custody">
+			  <field name="employee_id"/>
+                          <field name="relation_id"/>
+                          <field name="relation_name"/>
+			  <field name="birth_date" />
+                          <field name="state"/>
+                          <button string="Approve" name="approve_warantly" states="draft" type="workflow" icon="gtk-apply" />
+                        <!--button string="Approvedd with fees" name="approvewfees_warantly" states="approved" type="workflow" icon="gtk-apply" /-->
+                          <button string="Reject" name="reject_warantly" states="approved" type="workflow" icon="gtk-cancel" />
+                      <!--button string="Rejected with fees" name="rejectedwfees_warantly" states="rejected" type="workflow" icon="gtk-cancel" /-->
+                          <button string="Set to Draft" name="set_to_draft" states="approved,rejected" type="object" icon="gtk-convert"/>
+                        </tree>
+                </field>
+            </record>
+   
+     <record id="hr_employee_family_tree" model="ir.actions.act_window">
+			<field name="name">Employee Custody</field>
+			<field name="res_model">hr.employee.family</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_employee_family_tree_view"/>
+	</record>
+		
+          <menuitem id="hr_emp_family_tree_menu" 
+                    name="Employee Custody" 
+                    parent="hr.menu_hr_main" 
+                    action="hr_employee_family_tree" sequence = "10"/>
+
+<!-- ============ hr Job inherits ============-->
+           <record model="ir.ui.view" id="hr_job_form_view">
+                <field name="name">hr.job.form.inhierit</field>
+                <field name="model">hr.job</field>
+                <field name="type">form</field>
+                <field name="inherit_id" ref="hr.view_hr_job_form"/>
+                <field name="arch" type="xml">
+                    <xpath expr='//sheet' position='replace' version="7.0">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1><field name="name" class="oe_inline"/></h1>
+                        </div>
+                        <group col="4" colspan="2">
+		            <field name="code" />
+                            <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+		            <field name="type"/>
+		            <field name="parent_id" class="oe_inline"/>
+                        </group>  
+                        <notebook colspan="4" attrs="{'invisible':[('type','=','view')]}">
+                            <page string="General Info">
+                                <group>
+                                    <field name="no_of_employee" groups="base.group_user"/>
+                                    <field name="no_of_recruitment" on_change="on_change_expected_employee(no_of_recruitment,no_of_employee)"/>
+                                    <field name="expected_employees" groups="base.group_user"/>
+                                </group>
+                                <group  colspan="4">
+                                    <div colspan="4">
+                                        <label for="description"/>
+                                        <field name="description"/>
+                                    </div>
+                                    <div colspan="4">
+                                        <label for="requirements"/>
+                                        <field name="requirements"/>
+                                    </div>
+                                </group>
+                            </page>
+                            <page string="Departments">
+                                <group colspan="4">
+			        <field colspan="4" name="deparment_ids" nolabel="1">			     
+			            <tree string="Departments" editable="top">
+                                        <field name="department_id"/>
+                                        <field name="no_emp"/>
+			            </tree>
+			        </field>
+                                </group> 
+                            </page>
+                        </notebook>
+                    </sheet>
+                    </xpath >
+             </field>
+            </record>
+
+            <record id="view_jobs_filter" model="ir.ui.view">
+             <field name="name">Job</field>
+             <field name="model">hr.job</field>
+             <field name="type">search</field>
+             <field name="inherit_id" ref="hr.view_job_filter"/>
+             <field name="arch" type="xml">
+                <xpath expr='//field[@name="name"]' position='after'>
+                    
+                    <group expand="0" string="Group By...">
+                        <filter string="Parent Jobs" icon="terp-folder-orange" domain="" context="{'group_by':'parent_id'}"/>
+                        <separator orientation="vertical"/>
+                        
+                        <filter string="Internal Type" icon="terp-stock_symbol-selection" domain="" context="{'group_by':'type'}"/>
+                    </group>
+                </xpath> 
+             </field>
+         </record>  
+
+
+         <record id="hr_job_graph" model="ir.ui.view">
+            <field name="name">hr.job.graph</field>
+            <field name="model">hr.job</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="job" type="bar">
+                    <field name="name"/>
+                    <field name="expected_employees" operator="+"/>
+                    <field name="no_of_employee" operator="+"/>
+                    <field name="no_of_recruitment" operator="+"/>
+                </graph>
+            </field>
+         </record>
+
+<!-- EMployee Shourtcut -->
+       <act_window
+          context="{'search_default_partner_id':[active_id], 'default_partner_id': active_id}"
+          id="act_employee_all_punishment"
+          name="Employee In This Job"
+          res_model="hr.employee"
+          src_model="hr.job"
+          domain="[('job_id','=', active_id)]"
+          view_type="form"
+          view_mode="tree,form"/>   
+          
+          
+        <record model="ir.actions.act_window" id="hr.action_hr_job">
+            <field name="name">Job Positions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.job</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,graph</field>
+            <field name="search_view_id" ref="hr.view_job_filter"/>
+            <field name="context">{"search_default_Current":1}</field>
+            <field name="help">Job Positions are used to define jobs and their requirements. You can keep track of the number of employees you have per job position and how many you expect in the future. You can also attach a survey to a job position that will be used in the recruitment process to evaluate the applicants for this job position.</field>
+        </record>
+<!--======== department_structure =============-->		
+
+<record id="view_department_structer" model="ir.ui.view">
+            <field name="name">hr.department.structer</field>
+            <field name="model">hr.department</field>
+            <field name="type">tree</field>
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree string="Department Categories">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="open_view_department_structe" model="ir.actions.act_window">
+            <field name="name">Departments Structure</field>
+            <field name="res_model">hr.department</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="view_department_structer"/>
+            <field name="domain">[('parent_id','=',False)]</field>
+        </record>
+         <menuitem name="Departments" id="menu_open_view_department" parent="menu_hr_main_configuration" sequence="6" />
+        <menuitem action="hr.open_module_tree_department" id="hr.menu_hr_department_tree" parent="menu_open_view_department" sequence="5"/>
+       <menuitem action="open_view_department_structe" id="menu_open_view_department_structe" parent="menu_open_view_department" sequence="7" />
+
+<!-- =========== Deptartment category ============= -->
+
+<record id="view_department_cat_form" model="ir.ui.view">
+            <field name="name">hr.department.cat.form</field>
+            <field name="model">hr.department.cat</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Department Category" version="7.0">
+                 <sheet>
+                   <label for="name" class="oe_edit_only" string="Department Category"/>
+                         <h1>
+                             <field name="name" class="oe_inline" placeholder="Department Category" style="width: 6em"/> -
+                             <field name="code" class="oe_inline" placeholder="Code"/>
+                         </h1>
+                  </sheet> 
+                </form>
+            </field>
+        </record>
+        <record id="view_department_cat_tree" model="ir.ui.view">
+            <field name="name">hr.department.cat.tree</field>
+            <field name="model">hr.department.cat</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Department Category">
+                    <field name="code"/>
+                    <field name="name"/>
+                   
+                </tree>
+            </field>
+        </record>
+         <record id="view_department_cat_filter" model="ir.ui.view">
+            <field name="name">Departments</field>
+            <field name="model">hr.department.cat</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Departments">
+                    <field name="name"/>
+                    <field name="code" />
+                </search>
+             </field>
+         </record>
+
+        <record id="hr_department_cat_tree" model="ir.actions.act_window">
+			<field name="name">Deptartment category</field>
+			<field name="res_model">hr.department.cat</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_department_cat_tree"/>
+	</record> 
+
+
+       <menuitem name="Deptartment category" action="hr_department_cat_tree" id="hr_dept_cat" parent="menu_open_view_department" sequence="6" />
+
+<!-- =========== hr Deptartment ============= -->
+<record model="ir.ui.view" id="hr_department_view">
+                <field name="name">hr.department.form.inherit</field>
+                <field name="model">hr.department</field>
+                <field name="type">form</field>
+                <field name="inherit_id" ref="hr.view_department_form"/>
+                <field name="arch" type="xml">
+                    <field name="name" position="after">
+                       <field name="cat_id"/>
+		       <field name="analytic_account_id"/>
+                    </field>
+                    <field name="company_id" position="after">
+                        <group col="4" colspan="4">
+                            <notebook colspan="4">
+                                <page string=" Employees">
+                                    <field name="employee_ids" nolabel="1" >         
+                                    </field>
+                               </page>
+                            </notebook>
+                        </group>
+                    </field>
+                </field>
+            </record>
+
+            <record id="view_department_filter" model="ir.ui.view">
+            <field name="name">view.department.filter.inherit</field>
+            <field name="model">hr.department</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="hr.view_department_filter"/>
+            <field name="arch" type="xml">
+                <search string="Departments">
+                    <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                    <field name="cat_id" widget="selection"/>
+                </search>
+             </field>
+         </record>
+
+        <!-- Reports main menu  -->
+        <menuitem id="menu_hr_reports" name="Reporting" parent="hr.menu_hr_root" sequence="40"/>
+          <menuitem id="menu_hr_employees_reports" name="Employees Reports" parent="menu_hr_reports" sequence="9"/>
+
+
+
+    </data>
+</openerp>

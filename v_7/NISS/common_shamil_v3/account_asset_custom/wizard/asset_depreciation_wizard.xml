@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_asset_depreciation_wiz" model="ir.ui.view">
+            <field name="name">asset.depreciation.wiz.form</field>
+            <field name="model">asset.depreciation</field>
+            <field name="arch" type="xml">
+                <form string="Asset depreciation" version="7.0">
+                    <group>
+		        <field name="company_id" widget="many2one_tags" />
+		        <field name="category_ids" widget="many2many_tags" domain="[('company_id','=',company_id)]"/>
+		        <field name="asset_ids" widget="many2many_tags" domain="[('category_id','in',category_ids[0][2])]"/>
+                        <group col="4" colspan="2">
+                	    <field name="date_from"/>
+                	    <field name="date_to"/>
+                        </group>                 
+                    </group>                 
+                    <footer>
+                        <button name="deprecate_asset" string="Deprecate" type="object" default_focus="1" class="oe_highlight"/>
+                  	or
+                  	<button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_asset_depreciation" model="ir.actions.act_window">
+            <field name="name">Asset Depreciation </field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">asset.depreciation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+       
+        <menuitem id="menu_asset_depreciation" 
+                  name="Asset Depreciation" 
+                  parent="account_asset.menu_finance_assets" 
+                  action="action_asset_depreciation"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,880 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Al-faqir Menu -->
+        <menuitem id="dzc1_menu"
+                  name="Alfuqara Channel"
+                  sequence="1"
+        />
+
+        <!-- alfokaraa Main menu -->
+        <record model="ir.actions.act_window" id="dzc1_menu_action">
+            <field name="name">Alfokaraa</field>
+            <field name="res_model">zakat.dzc1</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- this is the fageer menu -->
+        <menuitem id="dzc1_alfaqir_channel"
+                  parent="dzc1_menu"
+                  name="Al-Faqir Channel"
+                  sequence="1"
+
+        />
+
+        <!-- ======================================================-->
+
+        <!-- this is the hospital support ceiling form -->
+
+        <record id="view_hospital_support_ceiling_form" model="ir.ui.view">
+            <field name="name">Therapeutic unit</field>
+            <field name="model">hospital.ceiling</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="start_state" states="draft" string="Confirm" type="object" class="oe_highlight"/>
+                        <button name="action_draft" string="Set To Draft" states="confirmed" type="object"
+                                class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <div style="width:100%">
+                                <group>
+                                    <field name="name" attrs="{'readonly':[('state','=','confirmed')]}"/>
+                                </group>
+                            </div>
+                            <group>
+                                <field name="start_date" required="1" attrs="{'readonly':[('state','=','confirmed')]}"/>
+                            </group>
+                            <group>
+                                <field name="end_date" required="1" attrs="{'readonly':[('state','=','confirmed')]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Hospital Details">
+                                <field name="hospital_sub_choice_ids" attrs="{'readonly':[('state','=','confirmed')]}">
+                                    <tree editable="buttom">
+                                        <field name="hospital_id" required="1"
+                                               context="{'hospital_sub_choice':parent.hospital_sub_choice_ids}"
+                                               domain="[('state' , '=' , 'approve')]"/>
+                                        <field name="specified_monthly_amount" required="1"/>
+                                        <field name="monthly_amount"/>
+                                        <field name="taken_amount" readonly="1" required="1"/>
+                                        <field name="remaining_amount"/>
+                                        <field name="exceed_the_ceiling"/>
+                                        <field name="overpass_ceiling"
+                                               attrs="{'readonly':[('exceed_the_ceiling','!=','yes')],'required':[('exceed_the_ceiling','=','yes')]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- this is the hospital support ceiling tree -->
+        <record id="hospital_ceiling_tree_view" model="ir.ui.view">
+            <field name="name">Hospital Ceiling Tree</field>
+            <field name="model">hospital.ceiling</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- this is the hospital support ceiling action -->
+        <record id="hospital_ceiling_action" model="ir.actions.act_window">
+            <field name="name">Therapeutic unit Support</field>
+            <field name="res_model">hospital.ceiling</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- from here this is my shit starting -->
+        <!-- this is the application form form view -->
+        <record id="view_zakat_application_form" model="ir.ui.view">
+            <field name="name">Application Form</field>
+            <field name="model">zakat.aplication.form</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <!-- <button name="action_confirm" string="Confirm" states="draft" type="object"
+                          class="oe_highlight"/> -->
+                        <button name="action_set_draft" string="Update Information" states="done" type="object"
+                                class="oe_highlight"/>
+                        <!-- <button name="action_approve" string="Aprove" states="confirmed" type="object"
+                          class="oe_highlight"/> -->
+                        <button name="action_done" string="Done" states="draft" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_cancle" states="draft,confirmed,approval" string="Cancel" type="object"
+                                class="oe_highlight"/>
+                        <!-- <button name="action_set_draft" states="cancel" string="Set Draft" type="object"
+                          class="oe_highlight"/> -->
+                        <field name="state" statusbar_visible="draft,done" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <!-- attrs="{'invisible':[('state','!=','done')}" -->
+                            <div class="oe_button_box" name="button_box">
+                                <button name="print_report"
+                                        string="Certificate of Entitlement" type="object"
+                                        class="oe_stat_button" icon="fa-file"/>
+                            </div>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="faqeer_id"
+                                       attrs="{'readonly':['|',('state', '=', 'done'),('old_en','=',True)]}"
+                                       context="{'form_view_ref': 'zakat_base.zakat_res_partner_form_view', 'default_zakat_partner': 1, 'default_Fageer': 1,}"
+                                       domain="[('zakat_partner','=',True)]" required="1"/>
+                                <field name="old_en" invisible="1"/>
+                                <field name="name" readonly="1"/>
+                                <field name="phone" required="1" readonly="1"/>
+                                <field name="father_alive" attrs="{'readonly':[('state', '=','done')]}" widget='radio'
+                                       options="{'horizontal': true}"/>
+                                <field name="health_status" attrs="{'readonly':[('state', '=','done')]}"/>
+                                <field name="disability_status"
+                                       attrs="{'invisible': [('health_status', '!=','disabled')],'readonly':[('state', '=','done')]}"/>
+                                <field name="illness_type"
+                                       attrs="{'invisible': [('health_status', '!=','sick')], }"/>
+                                <field name="social_status" required="1" attrs="{'readonly':[('state', '=','done')]}"/>
+                                <field name="family_sponsor"
+                                       attrs="{'readonly':[('state', '=','done')], 'invisible': [('case_type', '!=','project')]}"/>
+                                <field name="family_left_education"
+                                       attrs="{'invisible': [('case_type', '!=','project')]}"/>
+                                <field name="case_study" readonly="1" invisible="1"/>
+                                <field name="create_project" context="{'ccc':create_project}"
+                                       attrs="{'invisible':[('case_type','!=','project')],'readonly':[('state', '=','done')],
+                                'required':[('case_type','=','project')]}"/>
+                                <field name="case_study_purpose"
+                                       attrs="{'invisible':[('case_type','!=','urgent')],'required':[('case_type', '=','urgent')],'readonly':[('state','=','done')]}"/>
+
+                               
+
+                            </group>
+                            <group>
+                                <field name="national_number" readonly="1" required="1"/>
+                                <field name="gender" readonly="1" required="1" widget='radio'
+                                       options="{'horizontal': true}"/>
+                                <field name="birth_date" readonly="1" required="1"/>
+                                <field name="job" readonly="1"/>
+                                <field name="mother_alive" attrs="{'readonly':[('state', '=','done')]}" widget='radio'
+                                       options="{'horizontal': true}"/>
+                                <field name="educational_status" attrs="{'readonly':[('state', '=','done')]}"/>
+                                <field name="sponsor_type"
+                                       attrs="{'invisible': [('family_sponsor', '!=','yes')],'readonly':[('state', '=','done')]}"/>
+                                <field name="monthly_income" attrs="{'invisible': [('case_type', '!=','project')]}"/>
+                                <field name="monthly_expenses" attrs="{'readonly':[('state','=','done')]}"/>
+                                <field name="reason"
+                                       attrs="{'invisible':[('family_left_education','!=','yes')],'readonly':[('state', '=','done')]}"/>
+                                <field name="case_type" readonly="1" required="1"/>
+
+
+                                <field name="company_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+
+
+                            <page string="Living Information">
+                                <group>
+                                    <group>
+                                        <field name="housing_ownership" attrs="{'readonly':[('state', '=','done')]}"/>
+                                        <field name="type_toilet" attrs="{'readonly':[('state', '=','done')]}"/>
+                                        <field name="other_toilet"
+                                               attrs="{'invisible': [('type_toilet', '!=','others')],'readonly':[('state', '=','done')]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="house_type" attrs="{'readonly':[('state', '=','done')]}"/>
+                                        <field name="other_house"
+                                               attrs="{'invisible': [('house_type', '!=','others')],'readonly':[('state', '=','done')]}"/>
+                                        <field name="cooking_fule" attrs="{'readonly':[('state', '=','done')]}"/>
+                                        <field name="other_fule"
+                                               attrs="{'invisible': [('cooking_fule', '!=','others')],'readonly':[('state', '=','done')]}"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Address">
+                                <group>
+                                    <group>
+                                        <field name="state_id" readonly="1" required="1"/>
+                                        <field name="admin_unit_id" readonly="1" required="1"/>
+                                        <field name="village" readonly="1"/>
+    <field name="sector" domain="[('sector_state','=',state_id)]" 
+    attrs="{'readonly':[('state','=','done')],'invisible': [('case_type', '!=','project')],'required':[('case_type','=','project')]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="local_state_id" readonly="1" domain="[('state_id','=',state_id)]"
+                                               required="1"/>
+                                        <field name="city" required="1" readonly="1"/>
+                                        <field name="house_number" required="1" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Family Information">
+                                <field name="family_ids" attrs="{'readonly':[('state', '=','done')]}"
+                                       context="{'family_ids':family_ids, 'id':id}">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="national_number" required="1"/>
+                                        <field name="relation" required="1"/>
+                                        <field name="job_type" required="1"/>
+                                        <field name="educational_status"/>
+                                        <field name="health_status"/>
+                                        <field name="age" required="1"/>
+                                        <field name="is_orphan" readonly="1"/>
+                                        <field name="no_of_individual" readonly="1" groups="zakat_base.group_insurance_health_state,zakat_base.group_insurance_health_local_state"/>
+                                    </tree>
+
+                                </field>
+                            </page>
+                            <page string="Grantee">
+                                <group col="4" colspan="2">
+                                    <field name="s_support" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="i_health" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="student" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="orphan" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="basal_drainage" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="project" attrs="{'invisible':[('case_type', '!=','project')]}"
+                                           readonly="1"/>
+                                </group>
+                                <group col="4" colspan="2" string="Social Status"
+                                       attrs="{'invisible':[('s_support', '=', False)], 'required':[('s_support', '=', True)]}">
+                                    <field name="status" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="social_amount"
+                                           attrs="{'invisible':[('s_support', '=', False)], 'required':[('s_support', '=', True)] , 'readonly':[('state', '=','done')]}"/>
+                                </group>
+                            </page>
+
+                            <page string="Insurance Health" attrs="{'invisible':[('i_health', '!=',True)]}">
+
+                                <group col="4" colspan="2">
+
+                                    <field name="insurance_type"
+                                           attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="no_insurance"
+                                           attrs="{'readonly':[('state', '=','done')]}"/>
+
+                                    <field name="no_head_of_family"
+                                           attrs="{'readonly':[('state', '=','done')],'required':[('i_health' , '=' , True)]}"
+                                           readonly="1"/>
+
+                                    <field name="insurance_start_date"
+                                           attrs="{'readonly':[('state', '=','done')]}"/>
+
+                                    <field name="insurance_end_date"
+                                           readonly="1"/>
+
+                                </group>
+
+                            </page>
+
+                            <!--<page string="student guarantee" attrs="{'invisible':[('student', '!=',True)]}">-->
+                                <!--<field name="student_guarantee_ids">-->
+                                    <!--<tree string="Student" editable="bottom">-->
+                                        <!--<field name="family_id"/>-->
+                                        <!--<field name="card_no"/>-->
+                                        <!--<field name="card_extraction"/>-->
+                                        <!--<field name="card_expiration"/>-->
+                                        <!--<field name="university"/>-->
+                                        <!--<field name="collage"/>-->
+                                        <!--<field name="educational_year"/>-->
+                                    <!--</tree>-->
+                                <!--</field>-->
+                            <!--</page>-->
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="zakat_application_tree_view" model="ir.ui.view">
+            <field name="name">zakat application tree</field>
+            <field name="model">zakat.aplication.form</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="faqeer_id"/>
+                    <field name="national_number"/>
+                    <field name="state_id"/>
+                    <field name="local_state_id"/>
+                    <field name="admin_unit_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- this is the fageer action -->
+        <record id="zakat_application_action" model="ir.actions.act_window">
+            <field name="name">Application Form</field>
+            <field name="res_model">zakat.aplication.form</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="zakat_application_tree_view"/>
+            <field name="domain">[('case_type', '=', 'urgent')]</field>
+            <field name="context">{'default_case_type':'urgent'}</field>
+        </record>
+
+
+        <!-- this is the fageer menu -->
+        <menuitem id="dzc1_federal_treatment"
+                  parent="dzc1_menu"
+                  name="Federal Treatment"
+                  sequence="2"
+
+        />
+
+        <!--this is the fageer menu-->
+        <menuitem id="zakat_application_menu"
+                  parent="dzc1_alfaqir_channel"
+                  name="Case Study"
+                  action="zakat_application_action"
+                  sequence="1"
+        />
+
+        <!-- this is the hospital support ceiling menu -->
+        <menuitem id="hospital_ceiling_menu"
+                  parent="dzc1_federal_treatment"
+                  name="Therapeutic unit Ceiling"
+                  action="hospital_ceiling_action"
+                  sequence="7"
+
+        />
+
+        <!-- Emergency and Urgent Cases search view -->
+        <record id="emergency_cases_search" model="ir.ui.view">
+            <field name="name">Emergency and Urgent Cases search</field>
+            <field name="model">emergency.and.urgent.cases</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="partnrt_id"/>
+                    <field name="name"/>
+                    <field name="case_description"/>
+                    <group expand="0" string="Group By">
+                        <filter string="partner" name="partnrt_id" domain="[]" context="{'group_by':'partnrt_id'}"/>
+                        <filter string="Case Type" name="case_type" domain="[]" context="{'group_by':'case_type'}"/>
+                        <filter string="Case Classification" name="case_classification" domain="[]"
+                                context="{'group_by':'case_class'}"/>
+                        <filter string="State" name="state_id" domain="[]" context="{'group_by':'state_id'}"/>
+                        <filter string="Local State" name="local_state_id" domain="[]"
+                                context="{'group_by':'local_state_id'}"/>
+                        <filter string="status" name="state" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <!-- Emergency and Urgent Cases tree view -->
+        <record id="emergency_and_urgent_cases_tree" model="ir.ui.view">
+            <field name="name">Emergency and Urgent Cases</field>
+            <field name="model">emergency.and.urgent.cases</field>
+            <field name="arch" type="xml">
+                <tree create="false">
+                    <field name="name"/>
+                    <field name="order_date"/>
+                    <field name="partnrt_id"/>
+                    <field name="case_type"/>
+                    <field name="case_classification"/>
+                    <field name="state_id"/>
+                    <field name="local_state_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!-- Emergency and Urgent Cases form view -->
+        <record id="emergency_and_urgent_cases_form" model="ir.ui.view">
+            <field name="name">Emergency and Urgent Cases</field>
+            <field name="model">emergency.and.urgent.cases</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form create="false">
+                    <header>
+                        <button name="confirm" states="draft" string="Confirm" type="object" class="oe_highlight"/>
+                        <button name="approve" states="confirm" string="Approve" type="object" class="oe_highlight"/>
+                        <button name="social_research" state="approve" string="Social Research" type="object"
+                                class="oe_highlight"
+                                attrs="{'invisible':['|',('state', '!=' , 'approve'),('case_type' , '!=' , 'urgent')]}"/>
+                        <button name="zakat_commitee" states="social_research" string="Zakat Commitee" type="object"
+                                class="oe_highlight"/>
+                        <button name="done" state="approve" string="Done" type="object" class="oe_highlight"
+                                attrs="{'invisible':['|','&amp;',('case_type' , '!=' , 'emergency'),('state' , '=' , 'approve'),('state' , 'not in' , ('approve' , 'zakat_commitee'))]}"/>
+                        <button name="cancel" states="draft,confirm,approve,social_research,zakat_commitee"
+                                string="Cancel" type="object" class="oe_highlight"/>
+                        <button name="draft" states="cancel" string="Set To Draft" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done,cancel"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" style="margin-right:20%;" name="button_box">
+                                <button name="print_social_status"
+                                        string="Emergency Case Study"
+                                        type="object" class="oe_stat_button" icon="fa-file"/>
+
+                        </div>
+                        <group colspan="2">
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="partnrt_id" required="1"
+                                       attrs="{'readonly':[('state', 'in' , ('done' , 'cancel'))]}" readonly="1"/>
+                                <field name="local_state_id" attrs="{'readonly':[('state', 'in' , ('done' , 'cancel'))]
+                                ,'required':[('category','=','local_state')]}"
+                                       domain="[('state_id','=',state_id)]"/>
+                                <field name="case_type" required="1"
+                                       attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="company_id" readonly="1" required="1"/>
+                            </group>
+                            <group>
+                                <field name="order_date" required="1"
+                                       attrs="{'readonly':[('state', 'in' , ('done' , 'cancel'))]}" readonly="1"/>
+                                <field name="state_id" attrs="{'readonly':[('state', 'in' , ('done' , 'cancel'))]
+                                ,'required':[('category','=','state_id')]}"
+                                       domain="[('company_id', '=', company_id)]"/>
+                                <field name="case_classification" domain="[('company_id', '=', company_id)]"
+                                       options="{'no_open': True,  'no_quick_create': True, 'no_create_edit': True}"
+                                       required="1" attrs="{'readonly':[('state', 'in' , ('done' , 'cancel'))]}"/>
+                                <field name="amount" required="1"
+                                       attrs="{'readonly':[('state', 'in' , ('done' , 'cancel'))]}"/>
+                                <field name="category" invisible="1"/>
+                                <field name="user_id" readonly="1" required="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Case Description"
+                                  attrs="{'readonly':[('state', 'in' , ('done' , 'cancel'))]}">
+                                <field name="case_description"
+                                       attrs="{'required':[('state','in',['draft','confirm','approve','social_research','zakat_commitee'])],'readonly':[('state', 'in' , ('done','cancel'))]}"/>
+                            </page>
+                            <page string="Masaref Manger Decision" attrs="{'invisible':[('state' , '=' , 'draft')]}">
+                                    <field name="masaref_manger_decision"
+                                           attrs="{'required':[('state' ,'in' , ['confirm','approve','social_research','zakat_commitee'])],'readonly':[('state', 'in' , ['done','cancel'])]}"/>
+                            </page>
+    <page string="Urgent Cases Committe" 
+        attrs="{'invisible':
+        ['|',('case_type' , '!=','urgent'),('state','in',['draft','confirm'])]}">            
+        <group>
+            <field name="decision" attrs="{'required':['&amp;',('case_type' , '=' , 'urgent'),('state' , '=' , 'zakat_commitee')]
+            ,'invisible':[('state' , 'not in' , ('zakat_commitee','done','cancel'))],'readonly':[('state', 'in' , ('done' , 'cancel'))]}"/>
+            <field name="committe_date" attrs="{'required':['&amp;',('case_type' , '=' , 'urgent'),('state','not in',('draft','confirm'))]
+            ,'readonly':[('state', 'in' , ('done' , 'cancel'))]}"/>            
+            <field name="committe_decision" attrs="{'required':['&amp;',('state' , '=' , 'approve'),('case_type','=','urgent')]
+            ,'readonly':[('state', 'in' , ('done' , 'cancel'))]}"/>
+        </group>
+    </page>
+    <page string="Voucher" attrs="{'invisible':[('state', '!=', 'done')]}">
+        <group>
+            <field name="voucher_id" readonly="1"/>
+        </group>
+    </page>
+</notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Urgent Cases payment search view -->
+        <record id="urgent_cases_search" model="ir.ui.view">
+            <field name="name">Urgent Cases Payment search</field>
+            <field name="model">urgent.cases.payments</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        <!-- Urgent Cases Payment tree view -->
+        <record id="urgent_cases_Payment_tree" model="ir.ui.view">
+            <field name="name">Urgent Cases Payments</field>
+            <field name="model">urgent.cases.payments</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="order_date"/>
+                    <field name="committe_date"/>
+                    <field name="company_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!-- Urgent Cases Payment form view -->
+        <record id="urgent_cases_payment_form" model="ir.ui.view">
+            <field name="name">Urgent Cases Payment</field>
+            <field name="model">urgent.cases.payments</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="confirm" states="draft" string="Confirm" type="object" class="oe_highlight"/>
+                        <button name="done" states="confirm" string="Done" type="object" class="oe_highlight"/>
+                        <button name="cancel" states="draft,confirm" string="Cancel" type="object"
+                                class="oe_highlight"/>
+                        <button name="draft" states="cancel" string="Set To Draft" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group colspan="2">
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="committe_date" required="1"
+                                       attrs="{'readonly':[('state', 'in' , ('done','cancel'))]}"/>
+                                <field name="user_id" readonly="1" required="1"
+                                       attrs="{'readonly':[('state', '=' , 'done')]}"/>
+                                <field name="subject" required="1"
+                                   attrs="{'readonly':[('state', 'in' , ('done','cancel'))]}"/>
+                            </group>
+                            <group>
+                                <field name="order_date" required="1" readonly="1"/>
+                                <field name="amount" readonly="1"/>
+                                <field name="company_id" readonly="1" required="1"
+                                       attrs="{'readonly':[('state', 'in' , ('done','cancel'))]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Cases">
+                                <field name="cases_ids"
+                                       domain="['&amp;' ,'&amp;',('case_type', '=' ,'urgent'),('committe_date' , '=' , committe_date ),('state' , '=' ,'done'),('decision','=','agree')]"
+                                       attrs="{'readonly':[('state', 'in' , ('done','cancel'))]}">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="order_date"/>
+                                        <field name="partnrt_id"/>
+                                        <field name="case_type"/>
+                                        <field name="case_classification"/>
+                                        <field name="state_id"/>
+                                        <field name="local_state_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string = "الوصف">
+                                <group>
+                                    <field name="subject" required="1"
+                                   attrs="{'readonly':[('state', 'in' , ('done','cancel'))]}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- Emergency and Urgent Cases  Action-->
+        <act_window id="emergency_and_urgent_cases_action"
+                    name="Emergency and Urgent Cases"
+                    res_model="emergency.and.urgent.cases"
+                    view_mode="search,tree,form"/>
+        <!-- Emergency and Urgent Cases  Action-->
+        <act_window id="urgent_cases_payments_action"
+                    name="Urgent Cases Payments"
+                    res_model="urgent.cases.payments"
+                    view_mode="search,tree,form"/>
+
+
+        <!-- Social Guarantees Form View -->
+        <record id="social_support_form_view" model="ir.ui.view">
+            <field name="name">Social Guarantees</field>
+            <field name="model">zakat.social.support</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_confirm" string="Confirm" states="draft" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_approve" string="Approve" states="confirm" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_done" states="approve" string="Done" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_cancel" string="Cancel" states="draft,approve,confirm" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_draft" string="Set To Draft" states="cancel" type="object"
+                                class="oe_highlight"/>
+                        <field name="state" statusbar_visible="draft,approve,done" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <h1>
+                                <field name="name" readonly="1" style="width:60%"/>
+                            </h1>
+                            <div class="oe_button_box" name="button_box">
+                                <button name="get_data" string="Get Data" type="object" class="oe_stat_button"
+                                        icon="fa-magnet"/>
+                            </div>
+                        </group>
+
+
+                        <group col="4" colspan="2">
+                            <field name="order_date" required="1"/>
+                            <field name="type" readonly="1"/>
+                            <field name="description" required="1"/>
+                            <field name="social_lines"/>
+                            <field name="amount"/>
+                            <field name="company_id" readonly="1"/>
+                        </group>
+                        <group string="Guarantees">
+                            <div>
+                                <field name="guaranteed_ids" required="1" readonly="1"/>
+                            </div>
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="zakat_social_lines_tree_view" model="ir.ui.view">
+            <field name="name">zakat social lines</field>
+            <field name="model">zakat.social.lines</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="guaranteed_id"/>
+                    <field name="status"/>
+                    <field name="salary"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Social Guarantees Tree -->
+        <record id="social_support_tree_view" model="ir.ui.view">
+            <field name="name">Social Guarantees</field>
+            <field name="model">zakat.social.support</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="order_date"/>
+                    <field name="type"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- Social Guarantees action -->
+        <record id="social_support_action" model="ir.actions.act_window">
+            <field name="name">Social Guarantees Action</field>
+            <field name="res_model">zakat.social.support</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('type', '=', 's_support')]</field>
+            <field name="context">{'default_type': 's_support'}</field>
+            <field name="view_id" ref="social_support_tree_view"/>
+        </record>
+
+        <!-- Social Guarantees Menu-item -->
+        <menuitem id="guarantees_main_menu"
+                  name="Guarantees"
+                  parent="dzc1_menu"
+                  sequence="3"/>
+
+        <menuitem id="orphan_main_menu"
+                  name="Orphans"
+                  parent="dzc1_menu"
+                  sequence="3"/>
+
+        <menuitem id="social_guarantees_menu"
+                  name="Social Support Payment"
+                  action="social_support_action"
+                  parent="guarantees_main_menu"
+                  sequence="3"/>
+
+
+        <!-- Emergency and Urgent Cases menu -->
+        <menuitem id="emergency_and_urgent_cases"
+                  parent="dzc1_alfaqir_channel"
+                  name="Emergency and Urgent Cases"
+                  action="emergency_and_urgent_cases_action"
+                  sequence="2"
+                  
+        />
+        <!-- Urgent Cases Payments menu -->
+        <menuitem id="urgent_cases_payments"
+                  parent="dzc1_alfaqir_channel"
+                  name="Urgent Cases Payments"
+                  action="urgent_cases_payments_action"
+                  sequence="3"
+                  
+        />
+        <!-- Orphan Grantee Planning tree -->
+        <record id="orphang_rantee_planning_tree_view" model="ir.ui.view">
+            <field name="name">orphan grantee planning</field>
+            <field name="model">orphang.rantee.planning</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="order_date"/>
+                    <field name="name"/>
+                    <field name="state"/>
+
+                </tree>
+            </field>
+        </record>
+
+        <!-- Orphan Grantee Planning search -->
+        <record id="orphang_rantee_planning_search_view" model="ir.ui.view">
+            <field name="name">orphan grantee planning</field>
+            <field name="model">orphang.rantee.planning</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="code"/>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        <!-- Orphan Grantee Planning Form -->
+
+        <record id="orphang_rantee_planning_form_view" model="ir.ui.view">
+            <field name="name">orphan grantee planning</field>
+            <field name="model">orphang.rantee.planning</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="confirm" string="Confirm" states="draft" type="object"
+                                class="oe_highlight"/>
+
+
+                        <button name="done" states="confirm" string="Done" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="cancel" string="Cancel" states="draft,confirm" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="draft" string="Set To Draft" states="cancel" type="object"
+                                class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group colspan="2">
+                            <group>
+                                <field name="code" readonly="1" attrs="{'readonly':[('state','=','done')]}"/>
+                                <field name="name" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+
+                                <field name="date_from" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+
+                                 <field name="company_id" readonly="1" attrs="{'readonly':[('state','=','done')]}"/>
+                                
+                            </group>
+                            <group>
+                                <field name="order_date" required="1" readonly="1"/>
+
+                                <field name="type" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                                
+                                <field name="date_to" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+
+                               
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Adminstration Units">
+                                <field name="sector_ids" Required="1" attrs="{'readonly':[('state','=','done')]}">
+                                    <tree editable="bottom">
+                                        <field name="unit_of_adminstrative_id"
+                                               domain="[('local_state_id.state_id.company_id' , '=', parent.company_id )]"
+                                               required="1" context="{'admin_ids': parent.sector_ids}"/>
+                                        <field name="committee"
+                                               domain="[('administrative_unit_id', '=', unit_of_adminstrative_id)]"
+                                               attrs="{'column_invisible': [('parent.type', 'not in', ['z_c', False])], 'required':[('parent.type','=','z_c')]}"/>
+                                        <field name="no_of_families" required="1"/>
+                                        <field name="executing_actual" required="1" readonly="1"/>
+                                        <field name="percentage" widget="progressbar"/>
+                                    </tree>
+
+                                </field>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- Orphan Grantee Planning action -->
+        <act_window id="orphang_rantee_planning_action"
+                    name="Orphan gurentee Planning"
+                    res_model="orphang.rantee.planning"
+                    view_mode="search,tree,form"
+                    />
+       <!--  Orphan Grantee Planning menu -->
+        <menuitem id="orphan_grantee_menu"
+                  name="Orphan Grantee Planning"
+                  action="orphang_rantee_planning_action"
+                  parent="orphan_main_menu"
+                  sequence="2"/>
+
+        <!-- Social list View -->
+        <record id="social_support_list_view" model="ir.ui.view">
+            <field name="name">Social Support List</field>
+            <field name="model">zakat.aplication.form</field>
+            <field name="arch" type="xml">
+                <tree create="false" edit="false" delete="false">
+                    <field name="faqeer_id"/>
+                    <field name="national_number"/>
+                    <field name="state_id"/>
+                    <field name="local_state_id"/>
+                    <field name="admin_unit_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Social Support  action -->
+        <record id="social_support_list_action" model="ir.actions.act_window">
+            <field name="name">Social Support</field>
+            <field name="res_model">zakat.aplication.form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('s_support', '=', True)]</field>
+            <field name="context">{'s_support': True}</field>
+            <field name="view_id" ref="social_support_list_view"/>
+        </record>
+
+        <!--Filter menu in dzc1_menu for view only -->
+        <menuitem id="social_support_list"
+                  name="Social Benificries"
+                  action="social_support_list_action"
+                  parent="guarantees_main_menu"
+                  sequence="0"/>
+
+
+        <!-- Orphan Support list view -->
+        <record id="orphan_support_list_view" model="ir.ui.view">
+            <field name="name">Orphan Support List</field>
+            <field name="model">zakat.aplication.form</field>
+            <field name="arch" type="xml">
+                <tree create="false" edit="false" delete="false">
+                    <field name="faqeer_id"/>
+                    <field name="national_number"/>
+                    <field name="state_id"/>
+                    <field name="local_state_id"/>
+                    <field name="admin_unit_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Orphan Support action -->
+        <record id="orphan_support_action" model="ir.actions.act_window">
+            <field name="name">Orphan Support</field>
+            <field name="res_model">zakat.aplication.form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('orphan', '=', True)]</field>
+            <field name="context">{'orphan': True}</field>
+            <field name="view_id" ref="orphan_support_list_view"/>
+        </record>
+
+
+        <!-- Filter menu in dzc1_menu for view only -->
+        <menuitem id="orphan_support_list"
+                  name="Beneficiaries"
+                  action="orphan_support_action"
+                  parent="orphan_main_menu"
+                  sequence="1"/>
+
+
+    </data>
+</odoo>
+

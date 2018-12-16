@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!--
+    Resource: stock.location
+        -->
+        <record id="stock_fuel_locations" model="stock.location">
+            <field name="name">Fuel Locations</field>
+            <field name="usage">view</field>
+            <field name="icon">terp-stock</field>
+            <field name="fuel_location">True</field>
+            <field name="company_id"></field>
+        </record>
+ 
+        <record id="fuel_location_fixed" model="stock.location">
+            <field name="name">Fuel fixed</field>
+            <field name="location_id" ref="stock_fuel_locations"/>
+            <field name="usage">internal</field>
+            <field name="fuel_location">True</field>
+            <field name="company_id"></field>
+        </record>
+        
+        <record id="fuel_location_extra" model="stock.location">
+            <field name="name">Fuel Extra</field>
+            <field name="location_id" ref="stock_fuel_locations"/>
+            <field name="usage">internal</field>
+            <field name="fuel_location">True</field>
+            <field name="company_id"></field>
+        </record>
+
+	<!--record id="fuel_location_customer" model="stock.location">
+            <field name="name">Fuel Output</field>
+            <field name="location_id" ref="stock.stock_location_locations_partner"/>
+            <field name="usage">customer</field>
+            <field name="company_id"></field>
+        </record>
+
+        <
+            Properties
+        -->
+   		<record forcecreate="True" id="property_fuel_fixed" model="ir.property">
+            <field name="name">property_fuel_fixed</field>
+            <field name="fields_id" search="[('model','=','product.product'),('name','=','property_fuel_fixed')]"/>
+            <field eval="'stock.location,'+str(fuel_location_fixed)" name="value"/>
+        </record>
+       
+       <record forcecreate="True" id="property_fuel_extra" model="ir.property">
+            <field name="name">property_fuel_extra</field>
+            <field name="fields_id" search="[('model','=','product.product'),('name','=','property_fuel_extra')]"/>
+            <field eval="'stock.location,'+str(fuel_location_extra)" name="value"/>
+        </record>
+        
+        <!--record forcecreate="True" id="property_fuel_customer" model="ir.property">
+            <field name="name">property_fuel_customer</field>
+            <field name="fields_id" search="[('model','=','product.product'),('name','=','property_fuel_customer')]"/>
+            <field eval="'stock.location,'+str(fuel_location_customer)" name="value"/>
+        </record>
+        
+        <
+    Resource: stock.warehouse
+    -->
+        <record id="warehouse_fuel_fixed" model="stock.warehouse">
+            <field name="name">Fuel fixed</field>
+            <field name="lot_input_id" ref="fuel_location_fixed"/>
+            <field name="lot_stock_id" ref="fuel_location_fixed"/>
+            <field name="lot_output_id" ref="fuel_location_fixed"/>
+        </record>
+        
+        <record id="warehouse_fuel_extra" model="stock.warehouse">
+            <field name="name">Fuel Extra</field>
+            <field name="lot_input_id" ref="fuel_location_extra"/>
+            <field name="lot_stock_id" ref="fuel_location_extra"/>
+            <field name="lot_output_id" ref="fuel_location_extra"/>
+        </record>
+    </data>
+</openerp>

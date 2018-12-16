@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Building accident Activity-->
+
+        <record id="wkf_building_accident" model="workflow">
+            <field name="name">wkf.building.accident</field>
+            <field name="osv">building.accident</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_building_accident_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_building_accident"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+
+        <record id="wkf_building_accident_section" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_building_accident"/>
+            <field name="name">section</field>
+            <field name="kind">function</field>
+            <field name="action">section()</field>
+        </record>
+
+        <record id="wkf_building_accident_approve" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_building_accident"/>
+            <field name="name">approve</field>
+            <field name="kind">function</field>
+            <field name="action">approve()</field>
+        </record>
+
+        <record id="wkf_building_accident_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_building_accident"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>
+            <field name="flow_stop">True</field>
+        </record>
+
+	<record id="wkf_building_accident_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_building_accident"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel()</field>
+        </record>
+
+<!-- Building accident Transition-->
+
+        <record id="wkf_building_accident_draft_section" model="workflow.transition">
+            <field name="act_from" ref="wkf_building_accident_draft"/>
+            <field name="act_to" ref="wkf_building_accident_section"/>
+            <field name="signal">section</field>
+        </record>
+
+        <record id="wkf_building_accident_section_approve" model="workflow.transition">
+            <field name="act_from" ref="wkf_building_accident_section"/>
+            <field name="act_to" ref="wkf_building_accident_approve"/>
+            <field name="signal">approve</field>
+        </record>
+
+        <record id="wkf_building_accident_approve_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_building_accident_approve"/>
+            <field name="act_to" ref="wkf_building_accident_done"/>
+            <field name="signal">done</field>
+        </record>
+
+        <record id="wkf_building_accident_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_building_accident_draft"/>
+            <field name="act_to" ref="wkf_building_accident_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_building_accident_section_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_building_accident_section"/>
+            <field name="act_to" ref="wkf_building_accident_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_building_accident_approve_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_building_accident_approve"/>
+            <field name="act_to" ref="wkf_building_accident_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_building_accident_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_building_accident_cancel"/>
+            <field name="act_to" ref="wkf_building_accident_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+
+
+
+    </data>
+</openerp>
+

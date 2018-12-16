@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<!-- Budget Approving Flow -->
+		<!-- Activities -->
+		<record id="account_voucher.act_proforma" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="flow_start">True</field>
+			<field name="name">proforma</field>
+			<field name="action">write({'state':'draft'})
+			create_budget_confirmation()</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_no_approve" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="name">budget_not_approve</field>
+			<field name="action">write({'state':'no_approve'})</field>
+			<field name="kind">function</field>
+		</record>
+
+		<!-- Transitions -->
+		<record id="account_voucher.t2" model="workflow.transition">
+			<field name="act_from" ref="account_voucher.act_proforma" />
+			<field name="act_to" ref="account_voucher.act_done" />
+			<field name="signal">proforma_voucher</field>
+			<field name="trigger_model">account.budget.confirmation</field>
+			<field name="trigger_expr_id">confirmation_get()</field>
+			<field name="condition">test_state('finished')</field>
+		</record>
+		<record id="t1" model="workflow.transition">
+			<field name="act_from" ref="account_voucher.act_proforma" />
+			<field name="act_to" ref="act_no_approve" />
+			<field name="signal">proforma_voucher</field>
+			<field name="trigger_model">account.budget.confirmation</field>
+			<field name="trigger_expr_id">confirmation_get()</field>
+			<field name="condition">not test_state('finished')</field>
+		</record>
+		<record id="t2" model="workflow.transition">
+			<field name="act_from" ref="act_no_approve" />
+			<field name="act_to" ref="account_voucher.act_done" />
+			<field name="trigger_model">account.budget.confirmation</field>
+			<field name="trigger_expr_id">confirmation_get()</field>
+			<field name="condition">test_state('finished')</field>
+		</record>
+        <record id="t3" model="workflow.transition">
+			<field name="act_from" ref="act_no_approve" />
+			<field name="act_to" ref="account_voucher.act_cancel" />
+			<field name="trigger_model">account.budget.confirmation</field>
+			<field name="trigger_expr_id">confirmation_get()</field>
+			<field name="condition">test_state('canceled')</field>
+		</record>
+	</data>
+</openerp>

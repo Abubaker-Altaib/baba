@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<!-- Employee Violation and Punishment -->
+		<record model="ir.ui.view" id="hr_employee_violation_form_view">
+			<field name="name">hr.employee.violation.form</field>
+			<field name="model">hr.employee.violation</field>
+			<field name="inherit_id"
+				ref="hr_violation_punishment_wafi.hr_employee_violation_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="punishment_id"]' position="replace">
+				    <field name="punishment_id" widget="many2many_tags" required="True" on_change="onchange_punishment(punishment_id)"/>
+				</xpath>
+				<xpath expr="//field[@name='punishment_id']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',['draft', 'confirm2'])]}
+					</attribute>
+				</xpath>
+				<!--form string="Employee Violation and Punishment" version="7.0">
+					<header>
+						<button string="Complete" name="complete" states="draft"
+							icon="gtk-apply" />
+						<button string="Set to Draft" name="set_to_draft" type="object"
+							states="complete" icon="gtk-convert" />
+						<button string="Implement" name="implement" states="complete" groups="base.group_hr_user" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,complete,implement" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<p>Employees Violations</p>
+							</h1>
+						</div>
+						<group>
+
+								<field name="employee_id" class="oe_inline"/>
+
+						</group>
+						<notebook>
+							<page>
+								<group>
+									<group string="Violation Information">
+										<field name="violation_id" on_change="onchange_violation(violation_id)" />
+										<field name="violation_date" />
+									</group>
+									<group string="Decision Description">
+										<field name="decision_date" required="True" />
+										<field name="punishment_id" widget="many2many_tags" required="True" on_change="onchange_punishment(punishment_id)"/>
+										<field name="penalty" invisible="True"/>
+									</group>
+								</group>
+								<group>
+									
+									<group string="Penalty Dates" attrs="{'invisible':['|',('penalty','=',False),('state','=','draft')]}">
+										<field name="start_date" attrs="{'readonly':[('state','=','implement')],
+										                                 'required':[('state','!=','draft'),('penalty','=',True)]}"/>
+										<field name="end_date" attrs="{'readonly':[('state','=','implement')],
+																	   'required':[('state','!=','draft'),('penalty','=',True)]}"/>
+									</group>
+									<group string="Penalty" attrs="{'invisible':['|',('penalty','=',False),('state','=','draft')]}">
+										<field name="factor" on_change="onchange_factor(start_date,factor,employee_id,punishment_id)"
+												attrs="{'readonly':[('state','=','implement')],
+														'required':[('state','!=','draft'),('penalty','=',True)]}"/>
+										<field name="penalty_amount"  on_change="onchange_factor(start_date,factor,employee_id,punishment_id)"
+												attrs="{'readonly':[('state','=','implement')],
+														'required':[('state','!=','draft'),('penalty','=',True)]}"/>
+									</group>
+								</group>
+								<group>
+									<field nolabel="1" name="violation_descr" placeholder="Violation Description..." />
+									<field nolabel="1" name="decision_descr" placeholder="Decision Description ..." />
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form-->
+			</field>
+		</record>
+
+		<!-- Employee Violation [Employee Violation] -->
+		<!--record model="ir.ui.view" id="hr_employee_violation_form_view">
+			<field name="name">hr.employee.violation.form.inherit</field>
+			<field name="model">hr.employee.violation</field>
+			<field name="inherit_id"
+				ref="hr_violation_punishment.hr_employee_violation_form_view" />
+			<field name="arch" type="xml">
+				<button name="implement" position="replace">
+					<button string="Confirm" name="complete_confirm" states="complete"
+						icon="gtk-apply" groups="base.group_hr_user" />
+					<button string="Approve" name="validate_approve_cond" type="object"
+						icon="gtk-apply"
+						attrs="{'invisible': ['|',('operation_type','=','remove'),('state','!=','confirm')]}"
+						groups="base.group_hr_user" />
+					<button string="Last Confirm" name="approve_confirm2" type="object"
+						icon="gtk-print"
+						attrs="{'invisible': ['|',('operation_type','=','remove'),('state','!=','approve')]}"
+						groups="base.group_hr_user" />
+					<button string="Implement" name="implement_penalty" type="object"
+						states="confirm2" class="oe_highlight" groups="base.group_hr_user" />
+					<button string="Approve Remove" name="validate_approve_cond"
+						type="object" icon="gtk-apply"
+						attrs="{'invisible': ['|',('operation_type','!=','remove') ,('state','!=','validate')]}"
+						groups="base.group_hr_user" />
+					<button string="Confirm Remove" name="approve_confirm_cond"
+						type="object" icon="gtk-apply"
+						attrs="{'invisible': ['|',('operation_type','!=','remove'),('state','!=','approve')]}"
+						groups="base.group_hr_user" />
+					<button string="Cancel" name="confirm1_cancel" type="object"
+						icon="gtk-apply"
+						attrs="{'invisible': ['|',('operation_type','!=','remove'),('state','!=','approve')]}"
+						groups="base.group_hr_user" />
+					<button string="Done Remove" name="done" type="object"
+						class="oe_highlight"
+						attrs="{'invisible': ['|',('operation_type','!=','remove'),('state','!=','confirm')]}"
+						groups="base.group_hr_user" />
+					<button string="Cancel" name="confirm1_cancel" type="object"
+						attrs="{'invisible': ['|',('operation_type','!=','remove'),('state','!=','confirm')]}"
+						groups="base.group_hr_user" />
+				</button>
+				<button name="implement_penalty" position="after">
+					<button string="Cancel" name="confirm1_cancel" type="object"
+						states="confirm2" groups="base.group_hr_user" />
+				</button>
+				<div class="oe_title" position="before">
+					<div class="oe_button_box oe_right">
+						<button string="TO Appeal" name="to_appeal" type="object"
+							states="confirm2" />
+						<button string="Appeal Punishment" name="appeal_punishment"
+							type="object" states="resumption" />
+					</div>
+				</div>
+				<div class="oe_title" position="before">
+					<div class="oe_button_box oe_right">
+						<button name="remove_button" states="implement" type="object"
+							string="Remove Punishment" />
+						<button name="resume_button" states="implement" string="Resume Employee"
+							type="object" />
+					</div>
+				</div>
+				<field name="end_date" position="after">
+					<field name="type" invisible="1" />
+					<field name="ref_process" invisible="1" />
+				</field>
+				<field name="violation_date" position="after">
+					<field name="active" attrs="{'readonly': [('state','!=','draft')]}" />
+				</field>
+				<field name="punishment_id" position="after">
+					<field name="operation_type" attrs="{'readonly':['|',('state','!=','draft')]}" />
+					<field name="resumption_type"
+						attrs="{'readonly':['|',('state','!=','resumption')],'required':[('state','=','resumption')]}" />
+				</field>
+				<xpath expr="//field[@name='punishment_id']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',['draft', 'confirm2'])]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='violation_descr']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',['draft', 'confirm2'])]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='decision_descr']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',['draft', 'confirm2','cancel'])]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='factor']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',['draft', 'confirm2'])]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='penalty_amount']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',['draft', 'confirm2'])]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='start_date']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',['draft', 'confirm2'])]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='end_date']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',['draft', 'confirm2'])]}
+					</attribute>
+				</xpath>
+				<xpath expr="//group[@string='Penalty']" position="after">
+					<group string="Resume Date"
+						attrs="{'invisible':[('state','not in',('implement'))]}">
+						<field name="resume_date" />
+					</group>
+				</xpath>
+			</field>
+		</record-->
+
+		<!-- Employee Violation and Punishment orgenallllllllllllllllllllll -->
+		<record model="ir.ui.view" id="hr_employee_violation_procedural_form_view">
+			<field name="name">hr.employee.violation.form1</field>
+			<field name="model">hr.employee.violation</field>
+			<field name="inherit_id"
+				ref="hr_violation_punishment_wafi.hr_employee_violation_procedural_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="punishment_id"]' position="replace">
+				    <field name="punishment_id" on_change="onchange_punishment(punishment_id)"
+						attrs="{'required':[('state','=','draft')]}" widget="many2many_tags" domain="[('ref_process','=', 'procedural_suspend')]" />
+				</xpath>
+				<!--form string="Employee Violation and Punishment" version="7.0">
+					<header>
+						<button string="Complete" name="complete" states="draft"
+							icon="gtk-apply" />
+						<button string="Accounting Board" name="accounting_board"
+							states="implement" type="object" icon="gtk-print" />
+						<button name="implement" string="Procedural Suspend"
+							states="complete" type="workflow" class="oe_highlight" />
+						<button name="resume_button" string="Procedural Resume"
+							states="implement" type="object" class="oe_highlight" />
+
+						<button string="Set to Draft" name="set_to_draft" type="object"
+							states="complete" icon="gtk-convert" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,complete,implement,done" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<p>Employee Procedural Stop</p>
+							</h1>
+						</div>
+						<group>
+							<h1>
+								<field name="employee_id" class="oe_inline" placeholder="Employee" />
+							</h1>
+						</group>
+						<notebook>
+							<page>
+								<group>
+									<group string="Violation Information">
+										<field name="violation_id" on_change="onchange_violation(violation_id)" />
+										<field name="violation_date" />
+									</group>
+									<group string="Decision Description">
+										<field string="Procedural Decision Date" name="decision_date" />
+										<field name="punishment_id" on_change="onchange_punishment(punishment_id)"
+											attrs="{'required':[('state','=','draft')]}" domain="[('ref_process','=', 'procedural_suspend')]" />
+										<field name="penalty" invisible="True" />
+									</group>
+								</group>
+								<group>
+									<group string="Procedural Stop Dates">
+										<field string="Procedural start date" name="start_date"
+											attrs="{'readonly':['|',('state','=','implement'),('penalty','=',False)],
+													'required':[('state','!=','draft'),('penalty','=',True)]}" />
+										<field string="Procedural End date" name="end_date"
+											attrs="{'readonly':['|',('state','=','implement'),('penalty','=',False)],
+													'required':[('state','!=','draft'),('penalty','=',True)]}" />
+									</group>
+									<group string="Penalty" attrs="{'invisible':[('penalty','=',False)]}">
+										<field name="factor"
+											on_change="onchange_factor(start_date,factor,employee_id,punishment_id)"
+											attrs="{'readonly':['|',('state','=','implement'),('penalty','=',False)],
+													'required':[('state','!=','draft'),('penalty','=',True)]}" />
+										<field name="penalty_amount"
+											on_change="onchange_factor(start_date,factor,employee_id,punishment_id)"
+											attrs="{'readonly':['|',('state','=','implement'),('penalty','=',False)],
+													'required':[('state','!=','draft'),('penalty','=',True)]}" />
+									</group>
+									<group string="Resume Date" attrs="{'invisible':[('state','not in',('implement'))]}">
+										<field name="resume_date" />
+									</group>
+								</group>
+								<group>
+									<field nolabel="1" name="violation_descr" placeholder="Violation Description..." />
+									<field nolabel="1" name="decision_descr" placeholder="Decision Description ..." />
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form-->
+			</field>
+		</record>
+
+	</data>
+</openerp>

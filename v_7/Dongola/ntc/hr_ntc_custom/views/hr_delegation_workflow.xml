@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <!-- Activities -->
+        <record model="workflow.activity" id="act_general_dep1">
+            <field name="wkf_id" ref="hr_custom.delegation" />
+            <field name="name">general_dep</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'general_dep'})</field>
+        </record>
+
+        <record model="workflow.activity" id="act_hr_finance12">
+            <field name="wkf_id" ref="hr_custom.delegation" />
+            <field name="name">hr_finance1</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'hr_finance'})</field>
+        </record>
+
+        <!-- Transitions -->
+        <record id="hr_custom.trans_complete_confirm" model="workflow.transition">
+            <field name="act_from" ref="hr_custom.act_delegation_complete"/>
+            <field name="act_to" ref="hr_custom.act_delegation_confirm"/>
+            <field name="signal">confirm</field>
+            <field name="condition">manager()</field>
+            <field name="group_id" ref="base.group_department_manager"/>
+        </record>
+
+        <record model="workflow.transition" id="ntc_complete_hr_finance12">
+            <field name="act_from" ref="hr_custom.act_delegation_complete" />
+            <field name="act_to" ref="act_hr_finance12" />
+            <field name="condition">check_general_dep_manager()</field>
+        </record>
+
+        <record model="workflow.transition" id="ntc11">
+            <field name="act_from" ref="hr_custom.act_delegation_confirm" />
+            <field name="act_to" ref="act_general_dep1" />
+            <field name="signal">general_dep</field>
+            <field name="condition">manager()</field>
+        </record>
+
+        
+        <record model="workflow.transition" id="ntc12">
+            <field name="act_from" ref="act_general_dep1" />
+            <field name="act_to" ref="act_hr_finance12" />
+            <field name="signal">hr_finance_mg</field>
+        </record>
+
+        <record model="workflow.transition" id="ntc16">
+            <field name="act_from" ref="act_hr_finance12" />
+            <field name="act_to" ref="hr_custom.act_delegation_approve" />
+            <field name="signal">approve</field>
+        </record>
+
+        <record model="workflow.transition" id="ntc14">
+            <field name="act_from" ref="act_hr_finance12" />
+            <field name="act_to" ref="hr_custom.act_delegation_cancel" />
+            <field name="signal">cancel</field>
+        </record>
+
+        <record model="workflow.transition" id="ntc15">
+            <field name="act_from" ref="act_general_dep1" />
+            <field name="act_to" ref="hr_custom.act_delegation_cancel" />
+            <field name="signal">hr_general_mg_cancel</field>
+        </record>
+
+
+        
+        
+        
+
+    </data>
+</openerp>

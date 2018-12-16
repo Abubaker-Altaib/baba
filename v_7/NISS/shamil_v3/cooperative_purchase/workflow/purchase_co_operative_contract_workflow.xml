@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+        <record id="wkf_purchase_co_operative_contract_approve" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_contracts.wkf_purchase_contract"/>
+            <field name="name">approve</field>
+            <field name="kind">function</field>
+            <field name="action">approve()</field>            
+        </record>
+        <record id="wkf_purchase_contract_trans_confirmed_approve" model="workflow.transition">
+            <field name="act_from" ref="purchase_contracts.wkf_purchase_contract_confirmed"/>
+            <field name="act_to" ref="wkf_purchase_co_operative_contract_approve"/>
+            <field name="signal">approve</field>
+	</record>
+        <record id="wkf_purchase_co_operative_contract_trans_approve_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_purchase_co_operative_contract_approve"/>
+            <field name="act_to" ref="purchase_contracts.wkf_purchase_contract_done"/>
+            <field name="signal">done</field>
+        </record>
+        <record id="wkf_purchase_co_operative_contract_trans_approve_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_purchase_co_operative_contract_approve"/>
+            <field name="act_to" ref="purchase_contracts.wkf_purchase_contract_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+    <record id="wkf_purchase_co_operative_contract_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="purchase_contracts.wkf_purchase_contract_cancel"/>
+            <field name="act_to" ref="purchase_contracts.wkf_purchase_contract_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+        <record id="wkf_purchase_co_operative_contract_trans_done_approve" model="workflow.transition">
+            <field name="act_from" ref="purchase_contracts.wkf_purchase_contract_done"/>
+            <field name="act_to" ref="wkf_purchase_co_operative_contract_approve"/>
+            <field name="signal">approve</field>
+        </record>
+	</data>
+</openerp>
+	

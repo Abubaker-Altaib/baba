@@ -1,0 +1,85 @@
+<document filename="maintenance_purchase.pdf">
+	<template pageSize="(595.0,842.0)" title="Car Maintenance Purchase"
+		author="NCTR" allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="1.3cm" y1="0.9cm" height="28cm" width="19cm" />
+		</pageTemplate>
+	</template>
+	
+	<stylesheet>
+		<blockTableStyle id="Table4">
+			<blockValign value="CENETR" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#e6e6e6" start="0,0" stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#2F4F4F" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table3">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+
+		<paraStyle name="P5" fontName="Helvetica-Bold" fontSize="16.0" 
+			leading="5" alignment="CENTER" spaceBefore="20.0" spaceAfter="20.0" />
+		<paraStyle name="P6" fontName="Helvetica-Bold" fontSize="10.0"
+			leading="10" alignment="RIGHT" spaceBefore="6.0" spaceAfter="6.0" />
+		<paraStyle name="P11" rightIndent="0.0" leftIndent="0.0"
+			fontName="Helvetica" fontSize="10.0" leading="10" alignment="RIGHT"
+			spaceBefore="0.0" spaceAfter="0.0" />
+		<paraStyle name="col_Right" fontName="Helvetica-Bold"
+			fontSize="14" leading="17" alignment="RIGHT" spaceBefore="25.0"
+			spaceAfter="25.0" />
+		<images />
+	</stylesheet>
+
+	<story>
+		<para style="P5">[[ repeatIn(objects,'req') ]]</para>
+		<para style="P5">[[ req.name ]] تقرير مشتروات الصيانة للعربة </para>
+		<blockTable colWidths="100,100.0,100.0,108.0,100.0" style="Table3">
+			<tr>
+                <td>
+					<para style="P11">سعر الوحدة</para>
+				</td>
+				<td>
+					<para style="P11">وحدة القياس</para>
+				</td>
+				<td>
+					<para style="P6">الكمية</para>
+				</td>
+				<td>
+					<para style="P6">المنتج</para>
+				</td>
+				<td>
+					<para style="P6">طلب الشراء</para>
+				</td>
+			</tr>
+			<tr >
+				 <td>
+					<para style="P11">[[ repeatIn(req.purchase_requisitions,'req_purchase') ]][[ req_purchase.price ]]</para>
+				</td>
+				<td>
+					<para style="P11">[[ req_purchase.product_uom_id.name ]]</para>
+				</td>
+				<td>
+					<para style="P11">[[ req_purchase.product_qty ]]</para>
+				</td>
+				<td>
+					<para style="P11">[[ req_purchase.product_id.name ]]</para>
+				</td>
+				<td>
+                    <para style="P11">[[ req_purchase.purchase_requisition.origin ]]</para>
+				</td>
+			</tr>
+		</blockTable>
+	
+	</story>
+</document>
