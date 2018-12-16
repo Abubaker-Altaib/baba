@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      
+       <record id="view_contractor_form" model="ir.ui.view">
+            <field name="name">hr.employee.form</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <form string="Contractor" version="7.0">
+                    <header>
+                        <button name="approve" string="Approve" states="draft,experiment" type="workflow" class="oe_highlight" groups="base.group_user"/>                
+                        <button name="refuse" string="Refuse" states="approved,experiment" type="workflow" class="oe_highlight" groups="base.group_user"/>
+                        <button string="Set to Draft" name="set_to_draft" states="refuse" type="workflow"  icon="gtk-convert"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,refuse"/>
+                    </header>
+                    <sheet>
+                        <field name="image_medium" widget='image' class="oe_left oe_avatar"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+            	            <field name="name" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                            </h1>
+                        <group  col="2" colspan="4">
+			    <field name="emp_code" srting="Contractor code"/>
+		            <field name="sequence"/>
+		            <field name="employee_type" invisible="1"/>
+                        </group>
+                        
+                            <label for="category_ids" class="oe_edit_only" groups="base.group_hr_user"/>
+                            <field name="category_ids" widget="many2many_tags" placeholder="e.g. Part Time" readonly ="1" groups="base.group_hr_user"/>
+                        </div>
+                        <div class="oe_right oe_button_box" name="button_box">
+                            <!-- Put here related buttons -->
+                            <button name="%(create_employee_action)d" type="action" string="Create Employee" />
+                        </div>
+                        <notebook>
+                            <page string="Public Information">
+                                <group>
+                                    <group string="Contact Information">
+                                        <field name="address_id" on_change="onchange_address_id(address_id)" context="{'show_address': 1}" options='{"always_reload": True, "highlight_first_line": True}'/>
+                                        <field name="work_email" widget="email"/>
+                                        <field name="work_phone"/>
+                                        <field name="mobile_phone"/>
+                                        <field name="work_location"/>
+                                    </group>
+                                    <group string="Position">
+            	                        <field name="department_id" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                        <field name="job_id" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+		                        <field name="join_date"/>
+                                        <field name="parent_id" on_change="onchange_department_id(department_id)" />
+                                        <field name="coach_id"/>
+                                    </group>
+                                    <group>
+            	                        <field name="company_id" groups="base.group_multi_company" on_change="onchange_company(company_id)" attrs="{'readonly':[('state','not in','draft')]}"/>
+            	                        <field name="user_id" on_change="onchange_user(user_id)" groups="base.group_system"/>
+                                    </group>
+                                </group>
+                                <field name="notes" placeholder="Other Information ..." colspan="4"/>
+                            </page>
+                            <page string="Personal Information" groups="base.group_hr_user">
+                                <group>
+                                    <group string="Citizenship &amp; Other Info">
+                                        <field name="country_id" options='{"no_open": True}'/>
+                                        <field name="identification_id" groups="base.group_hr_user"/>
+                                        <field name="passport_id" groups="base.group_hr_user"/>
+                                        <field name="bank_account_id"/>
+                                        <field name="otherid" groups="base.group_hr_user"/>
+		                        <field name="nationality_no"/>
+		                        <field name="nationality_date"/>
+		                        <field name="religion"/>
+                                    </group>
+                                    <group string="Contact Information">
+                                        <field name="address_home_id" context="{'show_address': 1}" options='{"always_reload": True, "highlight_first_line": True}'/>
+		                        <field name="house_type"/>
+		                        <field name="emergency_data"/>
+		                        <field name="blood_type"/>
+                                    </group>
+                                    <group string="Status">
+            	                        <field name="gender" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+            	                        <field name="marital" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                    </group>
+                                    <group string="Birth">
+            	                        <field name="birthday" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                        <field name="birth_place"/>
+		                        <field name="birthday_certificate_id"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="HR Settings" groups="base.group_hr_user">
+                                <group>
+		                       <group string="Employment Dates">
+                                            <field name="employment_date"/>
+                                            <field name="end_date" required="1"/>
+                                            <field name="first_employement_date" invisible="1"/>
+                                            <field name="re_employment_date"/>
+                                            <field name="participate_date"/>
+                                        </group>
+                                        <group string="File Info">
+                                            <field name="file_no"/>
+                                            <field name="job_letter_no"/>
+                                            <field name="job_letter_date"/>
+                                        </group>
+                                        <group string="National Service Info">
+                                            <field name="nation_srevice"/>
+                                            <field name="nation_ser_date"/>
+                                        </group>
+                                        <group string="Active" name="active_group">
+                                            <field name="active"/>
+                                            <label for="period"/>
+                                            <div>
+                                            <field name="period" class="oe_inline"/> Months </div>
+                                            <field name="delegation"/>
+                                        </group>
+                                </group>
+                            </page>
+                            <page string="Qualifications">
+                     	       <field name="qualification_ids" nolabel="1">
+                        	<form string="Employee Qualifications">
+				        <field name="emp_qual_id" colspan="2"/>
+				        <field name="qual_date" colspan="2" />
+				        <field name="organization" colspan="2"/>
+				        <field name="specialization"  colspan="2"/>
+				        <field name="state" colspan="2"/>
+                                </form>
+                                <tree string="Employee Qualifications">
+				        <field name="emp_qual_id" />
+				        <field name="qual_date"  />
+				        <field name="organization" />
+				        <field name="specialization"  />
+				        <field name="state" />
+                                </tree>
+                               </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+       <record id="view_contractor_filter" model="ir.ui.view">
+            <field name="name">Contractor</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <search string="Contractor">
+                    <field name="name" string="Contractors"/>
+                    <field name="department_id" />
+                    <field name="category_ids" groups="base.group_hr_user"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Manager" icon="terp-personal" domain="[]" context="{'group_by':'parent_id'}"/>
+                        <filter string="Coach" icon="terp-personal" domain="[]" context="{'group_by':'coach_id'}"/>
+                        <filter string="Department" icon="terp-personal+" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter string="Job" icon="terp-gtk-select-all" domain="[]" context="{'group_by':'job_id'}"/>
+                        <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+                </search>
+             </field>
+         </record>
+        <!-- HR Kanban View  -->
+
+    <record model="ir.ui.view" id="hr_kanban_view_contractors">
+        <field name="name">HR - Contractor Kanban</field>
+        <field name="model">hr.employee</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="last_login"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_employee_vignette">
+                            <div class="oe_employee_image">
+                                <a type="open"><img t-att-src="kanban_image('hr.employee', 'image_medium', record.id.value)" class="oe_employee_picture"/></a>
+                            </div>
+                            <div class="oe_employee_details">
+                                <h4>
+                                    <a type="open"><field name="name"/><t t-if="record.login.raw_value"> (<field name="login"/>)</t></a>
+                                </h4>
+                                <ul>
+                                    <li id="last_login">
+                                        <span t-if="record.last_login.raw_value &amp;&amp; record.last_login.raw_value.is().today()" class="oe_kanban_button" style="font-size: 100%%">
+                                              <t t-esc="record.last_login.raw_value.toString('HH:mm')"/>
+                                        </span>
+                                    </li>
+                                    <li t-if="record.job_id.raw_value"><field name="job_id"/></li>
+                                    <li t-if="record.work_location.raw_value"><field name="work_location"/></li>
+                                    <li t-if="record.work_phone.raw_value">Tel: <field name="work_phone"/></li>
+                                    <li t-if="record.mobile_phone.raw_value">Mobile: <field name="mobile_phone"/></li>
+                                    <li t-if="record.work_email.raw_value"><a t-attf-href="mailto:#{record.work_email.value}"><field name="work_email"/></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <script>
+                            $('.oe_employee_picture').load(function() { if($(this).width() > $(this).height()) { $(this).addClass('oe_employee_picture_wide') } });
+                        </script>
+                    </t>
+                </templates>
+            </kanban>
+
+        </field>
+    </record>
+        <record id="open_view_contractor_list_my" model="ir.actions.act_window">
+            <field name="name">Contractors</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('employee_type','=','contractor')]</field>
+            <field name="context">{'employee_type':'contractor'}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="view_contractor_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new contractor.
+              </p><p>
+                With just a quick glance on the OpenERP employee screen, you
+                can easily find all the information you need for each person;
+                contact data, job position, availability, etc.
+              </p>
+            </field>
+        </record>
+
+        <record id="view_contractor_tree" model="ir.ui.view">
+            <field name="name">hr.contractor.tree</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <tree string="Contractors">
+                    <field name="name"/>
+                    <field name="work_phone"/>
+                    <field name="work_email"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="parent_id"/>
+                    <field name="coach_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_contractor_kanban" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="hr_kanban_view_contractors"/>
+            <field name="act_window_id" ref="open_view_contractor_list_my"/>
+        </record>
+        <record id="action_contractor_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_contractor_form"/>
+            <field name="act_window_id" ref="open_view_contractor_list_my"/>
+        </record>
+        <record id="open_view_contractor_tree" model="ir.actions.act_window">
+            <field name="name">Contractors Structure</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">tree</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_contractor_tree"/>
+            <field name="domain">[('parent_id','=',False)]</field>
+            <field name="search_view_id" ref="view_contractor_filter"/>
+        </record>
+
+        <menuitem action="open_view_contractor_list_my" id="menu_open_view_contractor_list_my" sequence="3" parent="hr.menu_hr_main"/>
+
+        <record id="ir_ui_view_sc_contractor" model="ir.ui.view_sc">
+            <field name="name">Contractors</field>
+            <field name="resource">ir.ui.menu</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="res_id" ref="hr_custom.menu_open_view_contractor_list_my"/>
+        </record>
+
+<!--  trainee    -->
+
+       <record id="view_trainee_form" model="ir.ui.view">
+            <field name="name">hr.employee.form</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <form string="Trainee" version="7.0">
+                    <header>
+                        <button name="approve" string="Approve" states="draft,experiment" type="workflow" class="oe_highlight" groups="base.group_user"/>                
+                        <button name="refuse" string="Refuse" states="approved,experiment" type="workflow" class="oe_highlight" groups="base.group_user"/>
+                        <button string="Set to Draft" name="set_to_draft" states="refuse" type="workflow"  icon="gtk-convert"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,refuse"/>
+                    </header>
+                    <sheet>
+                        <field name="image_medium" widget='image' class="oe_left oe_avatar"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+            	            <field name="name" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                            </h1>
+                        <group  col="2" colspan="4">
+			    <field name="emp_code"/>
+		            <field name="sequence"/>
+		            <field name="employee_type" invisible="1"/>
+                        </group>
+                            <label for="category_ids" class="oe_edit_only" groups="base.group_hr_user"/>
+                            <field name="category_ids" widget="many2many_tags" placeholder="e.g. Part Time" groups="base.group_hr_user"/>
+                        </div>
+                        <div class="oe_right oe_button_box" name="button_box">
+                            <!-- Put here related buttons -->
+                            <button name="%(create_employee_action)d" type="action" string="Create Employee" />
+                        </div>
+                        <notebook>
+                            <page string="Public Information">
+                                <group>
+                                    <group string="Contact Information">
+                                        <field name="address_id" on_change="onchange_address_id(address_id)" context="{'show_address': 1}" options='{"always_reload": True, "highlight_first_line": True}'/>
+                                        <field name="work_email" widget="email"/>
+                                        <field name="work_phone"/>
+                                        <field name="mobile_phone"/>
+                                        <field name="work_location"/>
+                                    </group>
+                                    <group string="Position">
+            	                        <field name="department_id" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                        <field name="job_id" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+		                        <field name="join_date"/>
+                                        <field name="parent_id" on_change="onchange_department_id(department_id)" />
+                                        <field name="coach_id"/>
+                                    </group>
+                                    <group>
+            	                        <field name="company_id" groups="base.group_multi_company" on_change="onchange_company(company_id)" attrs="{'readonly':[('state','not in','draft')]}"/>
+            	                        <field name="user_id" on_change="onchange_user(user_id)" groups="base.group_system"/>
+                                    </group>
+                                </group>
+                                <field name="notes" placeholder="Other Information ..." colspan="4"/>
+                            </page>
+                            <page string="Personal Information" groups="base.group_hr_user">
+                                <group>
+                                    <group string="Citizenship &amp; Other Info">
+                                        <field name="country_id" options='{"no_open": True}'/>
+                                        <field name="identification_id" groups="base.group_hr_user"/>
+                                        <field name="passport_id" groups="base.group_hr_user"/>
+                                        <field name="bank_account_id"/>
+                                        <field name="otherid" groups="base.group_hr_user"/>
+		                        <field name="nationality_no"/>
+		                        <field name="nationality_date"/>
+		                        <field name="religion"/>
+                                    </group>
+                                    <group string="Contact Information">
+                                        <field name="address_home_id" context="{'show_address': 1}" options='{"always_reload": True, "highlight_first_line": True}'/>
+		                        <field name="house_type"/>
+		                        <field name="emergency_data"/>
+		                        <field name="blood_type"/>
+                                    </group>
+                                    <group string="Status">
+            	                        <field name="gender" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+            	                        <field name="marital" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                    </group>
+                                    <group string="Birth">
+            	                        <field name="birthday" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                        <field name="birth_place"/>
+		                        <field name="birthday_certificate_id"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="HR Settings" groups="base.group_hr_user">
+                                <group>
+		                       <group string="Employment Dates">
+                                            <field name="employment_date"/>
+                                            <field name="end_date" required="1"/>
+                                            <field name="participate_date"/>
+                                        </group>
+                                        <group string="File Info">
+                                            <field name="file_no"/>
+                                            <field name="job_letter_no"/>
+                                            <field name="job_letter_date"/>
+                                        </group>
+                                        <group string="National Service Info">
+                                            <field name="nation_srevice"/>
+                                            <field name="nation_ser_date"/>
+                                        </group>
+                                        <group string="Active" name="active_group">
+                                            <field name="active"/>
+                                            <label for="period"/>
+                                            <div>
+                                            <field name="period" class="oe_inline"/> Months </div>
+                                            <field name="delegation"/>
+                                        </group>
+                                </group>
+                            </page>
+                            <page string="Qualifications">
+                     	       <field name="qualification_ids" nolabel="1">
+                        	<form string="Employee Qualifications">
+				        <field name="emp_qual_id" colspan="2"/>
+				        <field name="qual_date" colspan="2" />
+				        <field name="organization" colspan="2"/>
+				        <field name="specialization"  colspan="2"/>
+				        <field name="state" colspan="2"/>
+                                </form>
+                                <tree string="Employee Qualifications">
+				        <field name="emp_qual_id" />
+				        <field name="qual_date"  />
+				        <field name="organization" />
+				        <field name="specialization"  />
+				        <field name="state" />
+                                </tree>
+                               </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+       <record id="view_trainee_filter" model="ir.ui.view">
+            <field name="name">Trainee</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <search string="Trainee">
+                    <field name="name" string="Trainee"/>
+                    <field name="department_id" />
+                    <field name="category_ids" groups="base.group_hr_user"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Manager" icon="terp-personal" domain="[]" context="{'group_by':'parent_id'}"/>
+                        <filter string="Coach" icon="terp-personal" domain="[]" context="{'group_by':'coach_id'}"/>
+                        <filter string="Department" icon="terp-personal+" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter string="Job" icon="terp-gtk-select-all" domain="[]" context="{'group_by':'job_id'}"/>
+                        <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+                </search>
+             </field>
+         </record>
+        <!-- HR Kanban View  -->
+
+    <record model="ir.ui.view" id="hr_kanban_view_trainee">
+        <field name="name">HR - Trainee Kanban</field>
+        <field name="model">hr.employee</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="last_login"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_employee_vignette">
+                            <div class="oe_employee_image">
+                                <a type="open"><img t-att-src="kanban_image('hr.employee', 'image_medium', record.id.value)" class="oe_employee_picture"/></a>
+                            </div>
+                            <div class="oe_employee_details">
+                                <h4>
+                                    <a type="open"><field name="name"/><t t-if="record.login.raw_value"> (<field name="login"/>)</t></a>
+                                </h4>
+                                <ul>
+                                    <li id="last_login">
+                                        <span t-if="record.last_login.raw_value &amp;&amp; record.last_login.raw_value.is().today()" class="oe_kanban_button" style="font-size: 100%%">
+                                              <t t-esc="record.last_login.raw_value.toString('HH:mm')"/>
+                                        </span>
+                                    </li>
+                                    <li t-if="record.job_id.raw_value"><field name="job_id"/></li>
+                                    <li t-if="record.work_location.raw_value"><field name="work_location"/></li>
+                                    <li t-if="record.work_phone.raw_value">Tel: <field name="work_phone"/></li>
+                                    <li t-if="record.mobile_phone.raw_value">Mobile: <field name="mobile_phone"/></li>
+                                    <li t-if="record.work_email.raw_value"><a t-attf-href="mailto:#{record.work_email.value}"><field name="work_email"/></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <script>
+                            $('.oe_employee_picture').load(function() { if($(this).width() > $(this).height()) { $(this).addClass('oe_employee_picture_wide') } });
+                        </script>
+                    </t>
+                </templates>
+            </kanban>
+
+        </field>
+    </record>
+        <record id="open_view_trainee_list_my" model="ir.actions.act_window">
+            <field name="name">Trainee</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('employee_type','=','trainee')]</field>
+            <field name="context">{'employee_type':'trainee'}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="view_trainee_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new trainee.
+              </p><p>
+                With just a quick glance on the OpenERP employee screen, you
+                can easily find all the information you need for each person;
+                contact data, job position, availability, etc.
+              </p>
+            </field>
+        </record>
+
+        <record id="view_trainee_tree" model="ir.ui.view">
+            <field name="name">hr.trainee.tree</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <tree string="Trainee">
+                    <field name="name"/>
+                    <field name="work_phone"/>
+                    <field name="work_email"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="parent_id"/>
+                    <field name="coach_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_trainee_kanban" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="hr_kanban_view_trainee"/>
+            <field name="act_window_id" ref="open_view_trainee_list_my"/>
+        </record>
+        <record id="action_trainee_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_trainee_form"/>
+            <field name="act_window_id" ref="open_view_trainee_list_my"/>
+        </record>
+        <record id="open_view_trainee_tree" model="ir.actions.act_window">
+            <field name="name">Trainee Structure</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">tree</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_id" ref="view_trainee_tree"/>
+            <field name="domain">[('parent_id','=',False)]</field>
+            <field name="search_view_id" ref="view_trainee_filter"/>
+        </record>
+
+        <menuitem action="open_view_trainee_list_my" id="menu_open_view_trainee_list_my" sequence="3" parent="hr.menu_hr_main"/>
+
+        <record id="ir_ui_view_sc_trainee" model="ir.ui.view_sc">
+            <field name="name">Trainee</field>
+            <field name="resource">ir.ui.menu</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="res_id" ref="hr_custom.menu_open_view_trainee_list_my"/>
+        </record>
+
+<!--  recruit    -->
+
+       <record id="view_recruit_form" model="ir.ui.view">
+            <field name="name">hr.employee.form</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <form string="Recruit" version="7.0">
+                    <header>
+                        <button name="approve" string="Approve" states="draft,experiment" type="workflow" class="oe_highlight" groups="base.group_user"/>                
+                        <button name="refuse" string="Refuse" states="approved,experiment" type="workflow" class="oe_highlight" groups="base.group_user"/>
+                        <button string="Set to Draft" name="set_to_draft" states="refuse" type="workflow"  icon="gtk-convert"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,refuse"/>
+                    </header>
+                    <sheet>
+                        <field name="image_medium" widget='image' class="oe_left oe_avatar"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                            </h1>
+                        <group  col="2" colspan="4">
+			    <field name="emp_code" string="Recruit code"/>
+		            <field name="sequence"/>
+                            <field name="employee_type" invisible="1"/>
+                        </group>
+                            <label for="category_ids" class="oe_edit_only" groups="base.group_hr_user"/>
+                            <field name="category_ids" widget="many2many_tags" placeholder="e.g. Part Time" readonly ="1"  groups="base.group_hr_user"/>
+                        </div>
+                        <div class="oe_right oe_button_box" name="button_box">
+                            <!-- Put here related buttons -->
+                            <button name="%(create_employee_action)d" type="action" string="Create Employee" />
+                        </div>
+                        <notebook>
+                            <page string="Public Information">
+                                <group>
+                                    <group string="Contact Information">
+                                        <field name="address_id" on_change="onchange_address_id(address_id)" context="{'show_address': 1}" options='{"always_reload": True, "highlight_first_line": True}'/>
+                                        <field name="work_email" widget="email"/>
+                                        <field name="work_phone"/>
+                                        <field name="mobile_phone"/>
+                                        <field name="work_location"/>
+                                    </group>
+                                    <group string="Position">
+            	                        <field name="department_id" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                        <field name="job_id" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+		                        <field name="join_date"/>
+                                        <field name="parent_id" on_change="onchange_department_id(department_id)" />
+                                        <field name="coach_id"/>
+                                    </group>
+                                    <group>
+            	                        <field name="company_id" groups="base.group_multi_company" on_change="onchange_company(company_id)" attrs="{'readonly':[('state','not in','draft')]}"/>
+            	                        <field name="user_id" on_change="onchange_user(user_id)" groups="base.group_system"/>
+                                    </group>
+                                </group>
+                                <field name="notes" placeholder="Other Information ..." colspan="4"/>
+                            </page>
+                            <page string="Personal Information" groups="base.group_hr_user">
+                                <group>
+                                    <group string="Citizenship &amp; Other Info">
+                                        <field name="country_id" options='{"no_open": True}'/>
+                                        <field name="identification_id" groups="base.group_hr_user"/>
+                                        <field name="passport_id" groups="base.group_hr_user"/>
+                                        <field name="bank_account_id"/>
+                                        <field name="otherid" groups="base.group_hr_user"/>
+		                        <field name="nationality_no"/>
+		                        <field name="nationality_date"/>
+		                        <field name="religion"/>
+                                    </group>
+                                    <group string="Contact Information">
+                                        <field name="address_home_id" context="{'show_address': 1}" options='{"always_reload": True, "highlight_first_line": True}'/>
+		                        <field name="house_type"/>
+		                        <field name="emergency_data"/>
+		                        <field name="blood_type"/>
+                                    </group>
+                                    <group string="Status">
+            	                        <field name="gender" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+            	                        <field name="marital" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                    </group>
+                                    <group string="Birth">
+            	                        <field name="birthday" required="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+                                        <field name="birth_place"/>
+		                        <field name="birthday_certificate_id"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="HR Settings" groups="base.group_hr_user">
+                                <group>
+		                       <group string="Employment Dates">
+                                            <field name="employment_date"/>
+                                            <field name="end_date" required="1"/>
+                                            <field name="participate_date"/>
+                                        </group>
+                                        <group string="File Info">
+                                            <field name="file_no"/>
+                                            <field name="job_letter_no"/>
+                                            <field name="job_letter_date"/>
+                                        </group>
+                                        <group string="National Service Info" invisible="1">
+                                            <field name="nation_srevice"/>
+                                            <field name="nation_ser_date"/>
+                                        </group>
+                                        <group string="Active" name="active_group">
+                                            <field name="active"/>
+                                            <label for="period"/>
+                                            <div>
+                                            <field name="period" class="oe_inline"/> Months </div>
+                                            <field name="delegation"/>
+                                        </group>
+                                </group>
+                            </page>
+                            <page string="Qualifications">
+                     	       <field name="qualification_ids" nolabel="1">
+                        	<form string="Employee Qualifications">
+				        <field name="emp_qual_id" colspan="2"/>
+				        <field name="qual_date" colspan="2" />
+				        <field name="organization" colspan="2"/>
+				        <field name="specialization"  colspan="2"/>
+				        <field name="state" colspan="2"/>
+                                </form>
+                                <tree string="Employee Qualifications">
+				        <field name="emp_qual_id" />
+				        <field name="qual_date"  />
+				        <field name="organization" />
+				        <field name="specialization"  />
+				        <field name="state" />
+                                </tree>
+                               </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+       <record id="view_recruit_filter" model="ir.ui.view">
+            <field name="name">Recruit</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <search string="Recruit">
+                    <field name="name" string="Recruit"/>
+                    <field name="department_id" />
+                    <field name="category_ids" groups="base.group_hr_user"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Manager" icon="terp-personal" domain="[]" context="{'group_by':'parent_id'}"/>
+                        <filter string="Coach" icon="terp-personal" domain="[]" context="{'group_by':'coach_id'}"/>
+                        <filter string="Department" icon="terp-personal+" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter string="Job" icon="terp-gtk-select-all" domain="[]" context="{'group_by':'job_id'}"/>
+                        <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+                </search>
+             </field>
+         </record>
+        <!-- HR Kanban View  -->
+
+    <record model="ir.ui.view" id="hr_kanban_view_recruit">
+        <field name="name">HR - Recruit Kanban</field>
+        <field name="model">hr.employee</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="last_login"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_employee_vignette">
+                            <div class="oe_employee_image">
+                                <a type="open"><img t-att-src="kanban_image('hr.employee', 'image_medium', record.id.value)" class="oe_employee_picture"/></a>
+                            </div>
+                            <div class="oe_employee_details">
+                                <h4>
+                                    <a type="open"><field name="name"/><t t-if="record.login.raw_value"> (<field name="login"/>)</t></a>
+                                </h4>
+                                <ul>
+                                    <li id="last_login">
+                                        <span t-if="record.last_login.raw_value &amp;&amp; record.last_login.raw_value.is().today()" class="oe_kanban_button" style="font-size: 100%%">
+                                              <t t-esc="record.last_login.raw_value.toString('HH:mm')"/>
+                                        </span>
+                                    </li>
+                                    <li t-if="record.job_id.raw_value"><field name="job_id"/></li>
+                                    <li t-if="record.work_location.raw_value"><field name="work_location"/></li>
+                                    <li t-if="record.work_phone.raw_value">Tel: <field name="work_phone"/></li>
+                                    <li t-if="record.mobile_phone.raw_value">Mobile: <field name="mobile_phone"/></li>
+                                    <li t-if="record.work_email.raw_value"><a t-attf-href="mailto:#{record.work_email.value}"><field name="work_email"/></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <script>
+                            $('.oe_employee_picture').load(function() { if($(this).width() > $(this).height()) { $(this).addClass('oe_employee_picture_wide') } });
+                        </script>
+                    </t>
+                </templates>
+            </kanban>
+
+        </field>
+    </record>
+        <record id="open_view_recruit_list_my" model="ir.actions.act_window">
+            <field name="name">Recruit</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('employee_type','=','recruit')]</field>
+            <field name="context">{'employee_type':'recruit'}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="view_recruit_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new recruit.
+              </p><p>
+                With just a quick glance on the OpenERP employee screen, you
+                can easily find all the information you need for each person;
+                contact data, job position, availability, etc.
+              </p>
+            </field>
+        </record>
+
+        <record id="view_recruit_tree" model="ir.ui.view">
+            <field name="name">hr.recruit.tree</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <tree string="Recruit">
+                    <field name="name"/>
+                    <field name="work_phone"/>
+                    <field name="work_email"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="parent_id"/>
+                    <field name="coach_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_recruit_kanban" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="hr_kanban_view_recruit"/>
+            <field name="act_window_id" ref="open_view_recruit_list_my"/>
+        </record>
+        <record id="action_recruit_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_recruit_form"/>
+            <field name="act_window_id" ref="open_view_recruit_list_my"/>
+        </record>
+        <record id="open_view_recruit_tree" model="ir.actions.act_window">
+            <field name="name">Recruit Structure</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">tree</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_id" ref="view_recruit_tree"/>
+            <field name="domain">[('parent_id','=',False)]</field>
+            <field name="search_view_id" ref="view_recruit_filter"/>
+        </record>
+
+        <menuitem action="open_view_recruit_list_my" id="menu_open_view_recruit_list_my" sequence="3" parent="hr.menu_hr_main"/>
+
+        <record id="ir_ui_view_sc_recruit" model="ir.ui.view_sc">
+            <field name="name">Recruit</field>
+            <field name="resource">ir.ui.menu</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="res_id" ref="hr_custom.menu_open_view_recruit_list_my"/>
+        </record>
+ 
+
+<!-- employee action inhiret -->
+        <record id="hr.open_view_employee_list_my" model="ir.actions.act_window">
+            <field name="name">Employees</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('employee_type','=','employee')]</field>
+            <field name="view_id" ref="hr.hr_kanban_view_employees"/>
+            <field name="search_view_id" ref="hr.view_employee_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new employee.
+              </p><p>
+                With just a quick glance on the OpenERP employee screen, you
+                can easily find all the information you need for each person;
+                contact data, job position, availability, etc.
+              </p>
+            </field>
+        </record>
+    </data>
+</openerp>

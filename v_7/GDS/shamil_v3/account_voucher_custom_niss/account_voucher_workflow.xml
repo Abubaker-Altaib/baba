@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+	<!-- States -->
+        <record id="act_complete" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">complete</field>
+            <field name="action">open_voucher()</field>
+            <field name="kind">function</field>
+        </record>
+
+       
+        <!--record id="act_paid" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">paid</field>
+            <field name="action">write({'state':'paid'})</field>
+            <field name="kind">function</field>
+        </record-->
+        
+ 
+	<!-- Transitions -->
+        <record id="voucher_t1" model="workflow.transition">
+            <field name="act_from" ref="account_voucher.act_proforma"/>
+            <field name="act_to" ref="act_complete"/>
+            <field name="signal">open_voucher</field>
+            <!--field name="group_id" ref="group_shamil_account_voucher_complete"/-->
+        </record>
+     
+        <record id="voucher_t3" model="workflow.transition">
+            <field name="act_from" ref="account_voucher.act_proforma"/>
+            <field name="act_to" ref="account_voucher.act_done"/>
+            <field name="signal">proforma_voucher</field>
+            <!--field name="group_id" ref="group_shamil_account_voucher_post"/>
+            <field name="condition">True</field-->
+        </record>
+        
+        <record id="voucher_t3" model="workflow.transition">
+            <field name="act_from" ref="act_complete"/>
+            <field name="act_to" ref="account_voucher.act_done"/>
+            <field name="signal">proforma_voucher</field>
+            <!--field name="group_id" ref="group_shamil_account_voucher_post"/>
+            <field name="condition">True</field-->
+        </record>
+
+        <!--record id="voucher_t5" model="workflow.transition">
+            <field name="act_from" ref="account_voucher.act_done"/>
+            <field name="act_to" ref="act_paid"/>
+            <field name="trigger_model">account.move.line</field>
+            <field name="trigger_expr_id">move_line_id_payment_get()</field>
+            <field name="condition">test_paid()</field>
+        </record-->
+
+        <!--record id="paid_reopen" model="workflow.transition">
+            <field name="act_from" ref="act_paid"/>
+            <field name="act_to" ref="act_open_test"/>
+            <field name="signal">open_test</field>
+        </record-->
+
+        <!--record id="reopen_paid" model="workflow.transition">
+            <field name="act_from" ref="act_open_test"/>
+            <field name="act_to" ref="act_paid"/>
+            <field name="trigger_model">account.move.line</field>
+            <field name="trigger_expr_id">move_line_id_payment_get()</field>
+            <field name="condition">test_paid()</field>
+        </record-->
+	</data>
+</openerp>

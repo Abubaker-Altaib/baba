@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<document filename="Analytic Balance.pdf">
+	<template pageSize="(595.0,842.0)" title="Analytic Balance"
+		author="OpenERP S.A.(sales@openerp.com)" allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="31.0" y1="30.0" width="531" height="779" />
+		</pageTemplate>
+	</template>
+	<stylesheet>
+		<blockTableStyle id="Table_Header_analytic">
+			<blockAlignment value="LEFT" />
+			<blockValign value="TOP" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Content_Table_Header">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Content_Table">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+		<paraStyle name="terp_tblheader_Details_Centre" fontName="Helvetica-Bold"
+			fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="terp_tblheader_Details_Right" fontName="Helvetica-Bold"
+			fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="terp_header_Centre" fontName="Helvetica-Bold"
+			fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="terp_default_Right_9" fontName="Helvetica"
+			fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="terp_default_Right_9_Bold" fontName="Helvetica-Bold"
+			fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<images />
+	</stylesheet>
+	<story>
+		<blockTable colWidths="532.0" style="Table_Header_analytic">
+			<tr>
+				<td>
+					<para style="terp_header_Centre">ميزان تحليلي</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="terp_header_Centre">[[ data['form']['date2'] ]] - [[
+						data['form']['date1'] ]]</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para>
+			<font color="white">
+			</font>
+		</para>
+		<blockTable colWidths="95.0,95.0,95.0,205.0,60.0" style="Content_Table_Header">
+			<tr>
+				<td>
+					<para style="terp_tblheader_Details_Centre">رصيد</para>
+				</td>
+				<td>
+					<para style="terp_tblheader_Details_Centre">دائن</para>
+				</td>
+				<td>
+					<para style="terp_tblheader_Details_Centre">مدين</para>
+				</td>
+				<td>
+					<para style="terp_tblheader_Details_Centre">الحســـــــاب</para>
+				</td>
+				<td>
+					<para style="terp_tblheader_Details_Centre">الرمز</para>
+				</td>
+			</tr>
+		</blockTable>
+		<section>[[ repeatIn(get_objects(data['form']['empty_acc'], data['form']['date1'], data['form']['date2']),'o') ]]
+			<blockTable colWidths="95.0,95.0,95.0,205.0,60.0" style="Content_Table">
+				<tr>
+					<td>
+						<para style="terp_default_Right_9_Bold">[[ formatLang(o['debit']-o['credit']) ]] [[
+							company.currency_id.symbol]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right_9_Bold">[[ formatLang(o['credit']) ]] </para>
+					</td>
+					<td>
+						<para style="terp_default_Right_9_Bold">[[ formatLang(o['debit']) ]] </para>
+					</td>
+					<td>
+						<para style="terp_default_Right_9_Bold"> [[ o['company'] ]]/ [[ o['name'] ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right_9_Bold">[[ o['code'] ]]</para>
+					</td>
+				</tr>
+				<tr> [[ repeatIn(lines_g(o['id'],data['form']['date1'],data['form']['date2']),'move_g')]] 
+					<td>
+						<para style="terp_default_Right_9">
+							[[ formatLang(move_g['debit']-move_g['credit'])]] [[ company.currency_id.symbol ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right_9">[[ formatLang(move_g['credit']) ]] </para>
+					</td>
+					<td>
+						<para style="terp_default_Right_9">[[ formatLang(move_g['debit'])]] </para>
+					</td>
+					<td>
+						<para style="terp_default_Right_9">[[ move_g['name'] ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right_9">
+							[[ move_g['code'] ]]</para>
+					</td>
+				</tr>
+			</blockTable>
+		</section>
+		<blockTable colWidths="95.0,95.0,95.0,265.0" style="Content_Table">
+			<tr>
+				<td>
+					<para style="terp_tblheader_Details_Right">[[ formatLang(t['debit']-t['credit']) ]] [[
+						company.currency_id.symbol]]</para>
+				</td>
+				<td>
+					<para style="terp_tblheader_Details_Right">[[ formatLang(t['credit']) ]] </para>
+				</td>
+				<td>
+					<para style="terp_tblheader_Details_Right">[[ formatLang(t['debit']) ]] </para>
+				</td>
+				<td>
+					<para style="terp_tblheader_Details_Right">[[ repeatIn(total(),'t') ]] المجمــــوع</para>
+				</td>
+			</tr>
+		</blockTable>
+	</story>
+</document>

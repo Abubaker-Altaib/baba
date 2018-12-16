@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Fuel Stock report wiz View -->
+		<record id="view_fuel_stock_content_report_wiz" model="ir.ui.view">
+			<field name="name">Fuel Stock Content Report Wiz</field>
+			<field name="model">fuel.stock.report.wiz</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Present Content Report of Pump" version="7.0">
+					<group>
+						<field name="company_id" colspan="2" groups="base.group_multi_company" required="1" readonly="1"/>
+						<field name="content" invisible="1" />
+					</group>
+					<group >
+						<newline />
+							<field name="product_id" domain="[('fuel_ok','=',True)]"/>
+							<!--field name="pick_type" required="1"/-->
+							<field name="locations_ids" required="1" domain="[('fuel_ok','=',True),('usage','=','internal')]" string="Pumps"/>							
+							
+					</group>
+					<!--group>
+						<field name="date_from" required="1"/>
+						<field name="date_to" required="1"/>
+					</group-->
+					<footer>
+						<button name="print_report" string="Print" type="object"
+							class="oe_highlight" />
+						or
+						<button special="cancel" string="Cancel" class="oe_link" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<!-- Fuel Stock report wiz Action -->
+		<record id="action_fuel_stock_content_report_wiz" model="ir.actions.act_window">
+			<field name="name">Present Content Of Pump</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">fuel.stock.report.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="context">{'default_content': True}</field>
+			<field name="view_id" ref="view_fuel_stock_content_report_wiz" />
+			<field name="target">new</field>
+		</record>
+
+		<!-- Fuel Stock report wizard Menu -->
+		<menuitem name="Present Content Of Pump" parent="fuel_management.fuel_report_menu" action="action_fuel_stock_content_report_wiz" id="menu_fuel_stock_report_content_wiz" sequence="5"/>
+      
+ 		
+
+	</data>
+</openerp>

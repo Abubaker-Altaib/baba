@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_allowance_deduction_report_form" model="ir.ui.view">
+            <field name="name">hr.allowance.deduction.report.form</field>
+            <field name="model">hr.allowance.deduction.report</field>
+            <field name="arch" type="xml">
+                <form string="Allowances/Deductions Report" version="7.0">
+                    <group>
+
+                       <group colspan="4">
+                        <field name="company_id"  widget="many2many_tags" groups="base.group_multi_company" 
+                               on_change="onchange_data(company_id,payroll_ids,type,in_salary_sheet,pay_sheet)"/>
+                        <field name="payroll_ids" widget="many2many_tags"
+                               on_change="onchange_data(company_id,payroll_ids,type,in_salary_sheet,pay_sheet)" />
+                       </group>
+
+                            <group >
+                                <field name="month"  />
+                                <field name="year"  /> 
+                                <field name="landscape"  />  
+                            </group>
+                       
+                        <group>
+                           <field name="display"/>
+                           <field name="in_salary_sheet" on_change="onchange_data(company_id,payroll_ids,type,in_salary_sheet,pay_sheet)"/>
+                           <field name="pay_sheet"
+                                  attrs="{'invisible':[('in_salary_sheet','=',False)]}"
+                                  on_change="onchange_data(company_id,payroll_ids,type,in_salary_sheet,pay_sheet)"/>
+                        </group>
+                        <group>
+                           <field name="by"/>
+                           <field name="type"
+                                  on_change="onchange_data(company_id,payroll_ids,type,in_salary_sheet,pay_sheet)"/>
+                           <field name="state_id" attrs="{'required':[('display','=','total')] }"/>
+                        </group>
+                       <group colspan="4">
+                       <field name="allow_deduct_ids" 
+ 
+                     attrs="{'required':[('by','=','allow'),('display','=','detail')],'invisible':[('by','!=','allow')]}"/>
+		
+			    <field name="employee_ids"
+                       domain= "[('company_id','in',company_id[0][2])]" 
+                       attrs="{'required':[('display','=','detail'),('by','=','employee')],'invisible':['&amp;','|',('by','!=','employee'),('display','!=','detail'),('landscape','!=',True)]}"/>
+</group>
+                    </group>
+
+                    <footer>
+                   	<button name="print_report" string="Print" type="object" />
+                  	or
+                  	<button string="Cancel" class="oe_link" special="cancel"/>
+                     </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_allowance_deduction_report" model="ir.actions.act_window">
+            <field name="name">Allowances/Deductions Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.allowance.deduction.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+	<menuitem
+            action="action_allowance_deduction_report"
+            id="menu_allowance_deduction_report"
+            parent="menu_hr_payroll_reporting"
+            name="Allowances/Deductions Report" />
+
+
+ 
+    </data>
+</openerp>

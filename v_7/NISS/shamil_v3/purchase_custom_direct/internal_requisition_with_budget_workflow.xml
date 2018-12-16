@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+     <data>
+        
+	<!-- Budget Approved State -->
+
+       <record id="purchase_custom.wkf_ireq_m_approve1" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">approve1</field>
+            <field name="kind">function</field>
+            <field name="action">approve1()</field>
+	    <field name="split_mode">OR</field>
+        </record>
+
+
+	 <record id="act_budget_wkf_ireq" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">budget</field>
+            <field name="kind">subflow</field>
+            <field name="subflow_id" search="[('osv','=','account.budget.confirmation')]" type="int"/>
+            <field name="action">action_budget_create()</field>
+        </record>
+
+
+        <record id="wkf_ireq_m_trans_approve2_budget" model="workflow.transition">
+            <field name="act_from" ref="purchase_custom.wkf_ireq_m_approve2"/>
+            <field name="act_to" ref="act_budget_wkf_ireq"/>
+            <field name="condition">check()</field>
+        </record>
+        <record id="trans_approve_buget" model="workflow.transition">
+            <field name="act_from" ref="act_budget_wkf_ireq"/>
+            <field name="act_to" ref="purchase_custom.wkf_ireq_m_check"/>
+            <field name="signal">subflow.valid</field>
+        </record>
+
+
+        <record id="purchase_custom.wkf_ireq_m_trans_approve2_check" model="workflow.transition">
+            <field name="act_from" ref="purchase_custom.wkf_ireq_m_check"/>
+            <field name="act_to" ref="purchase_custom.wkf_ireq_m_done"/>
+            <field name="signal">done</field>
+        </record>
+
+        <record id="purchase_custom.draft_check" model="workflow.transition">
+            <field name="act_from" ref="purchase_custom.wkf_ireq_m_draft"/>
+            <field name="act_to" ref="purchase_custom.wkf_ireq_m_check"/>
+            <field name="signal">budget_checked</field>
+        </record>
+
+
+
+
+     </data>
+</openerp>

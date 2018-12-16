@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- enrich report wiz View -->
+		<record id="view_enrich_report_wiz" model="ir.ui.view">
+			<field name="name">enrich report wiz</field>
+			<field name="model">enrich.report.wiz</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Enrich Payment" version="7.0">
+					<separator string="Enrich Payment" colspan="4" />
+					<group col="6" colspan="6">
+						<field name="company_id" colspan="4" groups="base.group_multi_company"/>
+						<newline />
+						<field name="month" colspan="2" />
+						<field name="year" colspan="2" />
+						<newline />
+						<field name="payment_enrich" colspan="4"
+							domain="[('company_id','=',company_id),('type','=','enrich'),('month','=',month),('year','=',year)]"
+							context="{'form_view_ref': 'admin_affairs.view_payment_enrich_view_form', 'default_type':'enrich'}" />
+						<newline />
+					</group>
+					<footer>
+						<button name="print_report" string="Print" type="object"
+							class="oe_highlight" />
+						or
+						<button special="cancel" string="Cancel" class="oe_link" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<!-- enrich report wiz Action -->
+		<record id="action_enrich_report_wiz" model="ir.actions.act_window">
+			<field name="name">Enrich Report </field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">enrich.report.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_enrich_report_wiz" />
+			<field name="target">new</field>
+		</record>
+
+		<!-- enrich report wizard Menu -->
+		<menuitem name="Enrich Payment Report" parent="admin_affairs.main_menu_report"
+			action="action_enrich_report_wiz" id="menu_enrich_report_wiz" />
+
+		<!-- Gover and Rented Cars Wizard Menu-->
+      
+ 		
+
+	</data>
+</openerp>

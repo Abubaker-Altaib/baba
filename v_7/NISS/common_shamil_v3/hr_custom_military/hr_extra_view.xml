@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+        <!-- =========== hr Deptartment ============= -->
+        <!-- <record model="ir.ui.view" id="hr_department_view">
+                <field name="name">hr.department.form.inherit</field>
+                <field name="model">hr.department</field>
+                <field name="type">form</field>
+                <field name="inherit_id" ref="hr.view_department_form"/>
+                <field name="arch" type="xml">
+                    <field name="name" position="after">
+                       <field name="cat_id"/>
+               <field name="analytic_account_id"/>
+                    </field>
+                    <field name="company_id" position="after">
+                        <group col="4" colspan="4">
+                            <notebook colspan="4">
+                                <page string=" Employees">
+                                    <field name="employee_ids" nolabel="1" >         
+                                    </field>
+                               </page>
+                            </notebook>
+                        </group>
+                    </field>
+                </field>
+            </record> -->
+		
+		<!-- Employee Batches -->
+		<record id="batch_form" model="ir.ui.view">
+			<field name="name">batch.form</field>
+			<field name="model">hr.batch</field>
+			<field name="arch" type="xml">
+           		 <form string="Batch" version="7.0">
+           		 	    <sheet>
+							<group col="2">
+								<field name="company_id" group="base.group_multi_company"/>
+							</group>
+							
+                        	<group col="2">
+                            	<group>
+                            		<field name="name" required="1"/>
+                                    <field name="code"/>
+                                    <field name="sequence" required="1"/>
+									<field name="type" required="1"/>
+									<field name="parent_id" 
+										attrs="{'invisible': [('type','=','view')]}"
+									/>
+                            	</group>
+                            </group>
+                        </sheet>
+           		 </form>
+           	</field>
+		</record>
+		<record id='batch_tree' model='ir.ui.view'>
+            <field name="name">batch.tree</field>
+            <field name="model">hr.batch</field>
+            <field name="arch" type="xml">
+                <tree string="Batches" version="7.0">
+                        <field name="name" />
+                        <field name="sequence"/>
+						<field name="type" />
+						<field name="company_id" group="base.group_multi_company"/>                   
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_batch">
+            <field name="name">Batches</field>
+            <field name="res_model">hr.batch</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a batch. 
+              </p>
+              <p>
+              		Add a new batch
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="batch_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="batch_form"/>
+            <field name="act_window_id" ref="action_batch"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="batch_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="batch_tree"/>
+            <field name="act_window_id" ref="action_batch"/>
+        </record>
+
+		<menuitem id="menu_action_batch" name="Batches"
+			parent="hr_custom.menu_hr_main_configuration" action="action_batch" sequence="2"/>
+
+		<!-- Employee Tribes -->
+		<record id="tribe_form" model="ir.ui.view">
+			<field name="name">tribe.form</field>
+			<field name="model">hr.basic</field>
+			<field name="arch" type="xml">
+           		 <form string="Tribe" version="7.0">
+           		 	    <sheet>
+							<group col="2">
+								<field name="company_id" group="base.group_multi_company"/>
+							</group>
+							
+                        	<group col="2">
+                            	<group>
+                            		<field name="name" required="1"/>
+                                    <field name="code"/>
+									<field name="type" required="1"/>
+									<field name="parent_id" 
+										attrs="{'invisible': [('type','=','view')], 'required': [('type','!=','view')]}"
+									/>
+                            	</group>
+                            </group>
+                        </sheet>
+           		 </form>
+           	</field>
+		</record>
+		<record id='tribe_tree' model='ir.ui.view'>
+            <field name="name">tribe.tree</field>
+            <field name="model">hr.basic</field>
+            <field name="arch" type="xml">
+                <tree string="Tribes" version="7.0">
+                        <field name="name" />
+						<field name="type" />
+						<field name="company_id" group="base.group_multi_company"/>                   
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_tribe">
+            <field name="name">Tribes</field>
+            <field name="res_model">hr.basic</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+			<field name="domain">[]</field>
+			<field name="context">{}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a tribe. 
+              </p>
+              <p>
+              		Add a new tribe
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="tribe_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="tribe_form"/>
+            <field name="act_window_id" ref="action_tribe"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="tribe_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="tribe_tree"/>
+            <field name="act_window_id" ref="action_tribe"/>
+        </record>
+
+		<menuitem id="menu_action_tribe" name="Tribes"
+			parent="hr_custom.menu_hr_main_configuration" action="action_tribe" sequence="3"/>
+
+        <!-- employee action inhiret (officer)-->
+        <record id="hr.open_view_employee_list_my" model="ir.actions.act_window">
+            <field name="name">officer</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('employee_type','=','employee'),('military_type','=','officer')]</field>
+            <field name="context">{'default_military_type':'officer'}</field>
+            <field name="view_id" ref="hr.hr_kanban_view_employees"/>
+            <field name="search_view_id" ref="hr.view_employee_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new employee.
+              </p><p>
+                With just a quick glance on the OpenERP employee screen, you
+                can easily find all the information you need for each person;
+                contact data, job position, availability, etc.
+              </p>
+            </field>
+        </record>
+
+        
+
+		<!--
+			============
+			Employee  inherits
+			============
+        -->
+       <record id="view_employee_form_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_custom.view_employee_form_inherit"/>
+            <field name="arch" type="xml">
+                <!-- make field first_employement_date take the value of employment_date field
+                and invisibe the first_employement_date field -->
+                
+                <xpath expr='//field[@name="employment_date"]' position="attributes">
+                    <attribute name="on_change">onchange_employment_date(employment_date)</attribute>
+                </xpath>
+                <xpath expr='//field[@name="first_employement_date"]' position="attributes">
+                    <attribute name="attrs">{'invisible':True,'required':False}</attribute>
+                </xpath>
+
+                <!-- make some fields readonly not in draft -->
+                <xpath expr='//field[@name="house_type"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="parent_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="end_date"]' position="attributes">
+                    <attribute name="attrs">{'readonly':True}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="bank_account_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+                <xpath expr='//field[@name="otherid"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="address_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="work_email"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="work_phone"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="mobile_phone"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="work_location"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="user_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="notes"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="country_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="identification_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="passport_id"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <!-- -->
+
+                <xpath expr='//field[@name="category_ids"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                
+
+                <xpath expr='//field[@name="job_id"]' position="before">
+            	    <field name="parent_job_id"
+						attrs="{'readonly':[('state','not in', ('draft'))], 'required':[('state','=','draft')]}"
+						domain="[('type','=','view')]" context="{'default_type':'view'}" on_change="on_change_job(job_id)"/>
+                </xpath>
+				<xpath expr='//field[@name="job_id"]' position="attributes">
+					<attribute name="domain">[('parent_id','=',parent_job_id)]</attribute>
+					<attribute name="context">[('type','=','normal')]</attribute>
+                </xpath>
+				<xpath expr='//group[@string="Birth"]' position="after" version="7.0">
+					<group string="Additional Information" colspan="2" col="4">
+                        <group>
+						<field name="parent_batch" attrs="{'readonly':[('state','not in', ('draft'))]}"
+							domain="[('type','=','view')]" context="{'default_type':'view','form_view_ref':'hr_custom_military.batch_form'}" on_change="on_change_batch(parent_batch)"/>
+						<field name="batch"  attrs="{'readonly':[('state','not in', ('draft'))]}"
+							domain="[('type','=','normal'),('parent_id','=',parent_batch)]" 
+							context="{'default_type':'normal','form_view_ref':'hr_custom_military.batch_form'}"/>
+                        <field name="placement_batch"  attrs="{'readonly':[('state','not in', ('draft'))]}"
+                            domain="[('type','=','normal'),('parent_id','=',parent_batch)]" 
+                            context="{'default_type':'normal','form_view_ref':'hr_custom_military.batch_form'}"/>
+                        </group>
+                        <group>
+						<field name="parent_tribe"  attrs="{'readonly':[('state','not in', ('draft'))]}"
+							domain="[('type','=','view')]" context="{'default_type':'view','form_view_ref':'hr_custom_military.tribe_form'}" on_change="on_change_basic(parent_tribe)"/>
+						<field name="tribe"  attrs="{'readonly':[('state','not in', ('draft'))]}"
+							domain="[('type','=','normal'),('parent_id','=',parent_tribe)]" 
+							context="{'default_type':'normal','form_view_ref':'hr_custom_military.tribe_form'}"/>
+                        </group>
+					</group> 
+				</xpath>
+               <xpath expr='//field[@name="address_home_id"]' position="attributes">
+				    <attribute name="invisible">True</attribute>
+				</xpath>
+                <xpath expr='//field[@name="coach_id"]' position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+				<xpath expr='//field[@name="address_home_id"]' position="before">
+                    <field name="place_residence" invisible="1"/>
+                    <label for="home_1" string="Home Address" invisible="1"/>
+                    <div invisible="1">
+                        <field name="home_1" placeholder="First Address"/>
+                        <field name="home_2" placeholder="Second Address"/>
+                        <div class="address_format">
+                            <field name="home_3" placeholder="Third Address" style="width: 40%%"/>
+                            <field name="home_4" placeholder="Fourth Address" style="width: 50%%"/>
+                        </div>
+                    </div>
+				</xpath>
+
+
+
+
+                
+                
+
+                <xpath expr='//button[@name="experiment"]' position="replace">
+                    <button name="experiment" string="Experiment" states="no_draft" type="object" class="oe_highlight" groups="base.group_hr_user,hr_custom_military.hr_emp_data_entery"/>
+				</xpath>
+				<xpath expr='//button[@name="approve"]' position="replace">
+                    <button name="approve" string="Approve" states="draft,experiment" type="object" class="oe_highlight" groups="base.group_hr_user,hr_custom_military.hr_emp_data_entery"/>                
+			   	 	<attribute name="groups"></attribute>
+				</xpath>
+				<xpath expr='//button[@name="refuse"]' position="replace">
+                    <button name="refuse" string="Refuse" states="no_approved,no_experiment" type="object" class="oe_highlight" groups="base.group_hr_user,hr_custom_military.hr_emp_data_entery"/>
+				</xpath>
+				<xpath expr='//button[@name="set_to_draft"]' position="replace">
+                    <button string="Set to Draft" name="set_to_draft" states="refuse,approved" type="object"  icon="gtk-convert" groups="base.group_hr_user,hr_custom_military.hr_emp_data_entery"/>
+				</xpath>
+
+                <xpath expr='//field[@name="state"]' position="replace">
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approved,refuse"/>
+				</xpath>
+
+                
+			</field>
+
+        </record>
+
+        <!--record id="view_employee_form_protal_custom" model="ir.ui.view">
+            <field name="name">portal_hr_employees_form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="portal_hr_employees.view_employee_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr='//field[@name="visibility"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+                <xpath expr='//field[@name="public_info"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+                
+            </field>
+        </record-->
+
+        <record id="view_employee_form_inherit2" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_employee_form_inherit2" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="tax"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+			</field>
+		</record>
+        
+        <record id="view_contractor_form_inherit" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_contractor_form_inherit" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="tax"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+			</field>
+		</record>
+
+        <record id="view_contractor_form" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_custom.view_contractor_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="active"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+
+			</field>
+		</record>
+
+
+        <record id="view_employee_form_inherit_add_followers" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//form/sheet' position="after">
+                        <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </xpath>
+            </field>
+
+        </record>
+
+
+        <!-- employee action inhiret (soldier)-->
+        <record id="open_view_employee_list_soldier" model="ir.actions.act_window">
+            <field name="name">soldier</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('employee_type','=','employee'),('military_type','=','soldier')]</field>
+            <field name="context">{'default_military_type':'soldier'}</field>
+            <field name="view_id" ref="hr.hr_kanban_view_employees"/>
+            <field name="search_view_id" ref="hr.view_employee_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new employee.
+              </p><p>
+                With just a quick glance on the OpenERP employee screen, you
+                can easily find all the information you need for each person;
+                contact data, job position, availability, etc.
+              </p>
+            </field>
+        </record>
+        <record id="action_employee_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_employee_form_inherit"/>
+            <field name="act_window_id" ref="open_view_employee_list_soldier"/>
+        </record>
+        <record id="action_employee_kanban" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="hr.hr_kanban_view_employees"/>
+            <field name="act_window_id" ref="open_view_employee_list_soldier"/>
+        </record>
+
+        <menuitem action="open_view_employee_list_soldier" id="menu_open_view_employee_list_soldier" sequence="4" parent="hr.menu_hr_main"/>
+
+     
+	</data>
+</openerp>

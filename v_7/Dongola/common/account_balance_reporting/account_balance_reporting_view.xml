@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_account_balance_reporting_form">
+			<field name="name">account.balance.reporting.form</field>
+			<field name="model">account.balance.reporting</field>
+			<field name="arch" type="xml">
+				<form string="Account Balance Report" version="7.0">
+					<header>
+						<button name="action_calculate" type="object" string="Calculate"
+							states="draft,calc_done" icon="gtk-execute" />
+						<button name="action_cancel" string="Cancel" type="object"
+							states="calc_done,done" icon="gtk-cancel" />
+						<button name="action_recover" string="Draft" type="object"
+							states="canceled" icon="gtk-undo" />
+						<field name="state" widget="statusbar" select="2" readonly="1" />
+					</header>
+					<sheet string="Account Balance Report">
+						<div class="oe_title">
+							<h1>
+								<field name="name" class="oe_inline" placeholder="Report Name..." />
+							</h1>
+						</div>
+						<group>
+							<group>
+								<field name="rml" invisible="1" />
+								<field name="template_id" on_change="onchange_template_id(template_id)" />
+								<field name="target_move" />
+								<field name="company_id" select="1" widget="selection"
+									on_change="onchange_company_id(current_fiscalyear_id, company_id)"
+									groups="base.group_multi_company" />
+							</group>
+							<group>
+								<field name="chart_account_id" widget="selection" />
+								<field name="detail" attrs="{'readonly':[('rml','not in',['4','5'])]}" />
+ 
+ 
+							</group>
+							<group >
+ 
+ 
+								<field name="date_from"   attrs="{'readonly':[('rml','in',['6'])]}"/>
+								<field name="date_to" required="1"/>
+								<field name="type_rep"/>
+
+
+							</group>
+								<group attrs="{'invisible':[('rml','not in',['7'])]}">
+
+								<field name="openning_db" />
+								<field name="openning_cr" />
+								<field name="debit" />
+								<field name="credit" />
+								<field name="balance_db" />
+								<field name="balance_cr" />
+							</group>
+						</group>
+						<notebook colspan="4">
+							<page string="Periods">
+								<group colspan="2">
+									<group string="Fiscal year 1" colspan="1">
+										<field name="current_fiscalyear_id" nolabel="1"
+											on_change="onchange_fiscalyear('current_period_ids',current_fiscalyear_id)" />
+										<newline />
+										<field name="current_period_ids" nolabel="1">
+											<tree>
+												<field name="name" />
+												<field name="special" />
+												<field name="state" />
+											</tree>
+										</field>
+									</group>
+									<group string="Fiscal year 2" colspan="1">
+										<field name="previous_fiscalyear_id" nolabel="1"
+											on_change="onchange_fiscalyear('previous_period_ids',previous_fiscalyear_id)" />
+										<newline />
+										<field name="previous_period_ids" nolabel="1"
+											domain="[('fiscalyear_id','=',previous_fiscalyear_id)]">
+											<tree>
+												<field name="name" />
+												<field name="special" />
+												<field name="state" />
+											</tree>
+										</field>
+									</group>
+								</group>
+							</page>
+							<page string="Lines">
+								<field name="line_ids" nolabel="1" context="{'report_id':active_id}">
+									<tree string="Report lines" editable="bottom"
+										colors="blue:css_class in ('l1')">
+										<field name="code" select="1" colspan="1" />
+										<field name="name" select="1" colspan="2" />
+										<field name="notes" colspan="4" />
+										<field name="current_value" colspan="2" />
+										<field name="debit" colspan="2" />
+										<field name="credit" colspan="2" />
+										<field name="current_value_no_f_mounth" colspan="2"/>
+										<field name="openning_balance" colspan="2"/>
+										<field name="previous_value" colspan="2" />
+										<field name="report_id" invisible="1" />
+										<field name="parent_id" select="1" colspan="1"
+											domain="[('report_id','=',report_id)]" />
+										<field name="sequence" select="1" colspan="1" />
+										<field name="css_class" select="1" colspan="1" />
+									</tree>
+								</field>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_account_balance_reporting_tree">
+			<field name="name">account.balance.reporting.tree</field>
+			<field name="model">account.balance.reporting</field>
+			<field name="arch" type="xml">
+				<tree string="Account balance reports">
+					<field name="name" select="1" />
+					<field name="company_id" select="1" groups="base.group_multi_company" />
+					<field name="template_id" select="2" colspan="4" />
+					<field name="current_fiscalyear_id" select="1" />
+					<field name="previous_fiscalyear_id" select="2" />
+					<field name="state" colspan="4" select="2" />
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_account_balance_reporting_line_form">
+			<field name="name">
+				account.balance.reporting.line.form
+			</field>
+			<field name="model">account.balance.reporting.line</field>
+			<field name="arch" type="xml">
+				<form string="Account balance report line">
+					<group colspan="4">
+						<field name="code" select="1" colspan="1" />
+						<field name="name" select="1" colspan="3" />
+					</group>
+					<group colspan="4">
+						<field name="report_id" select="1" />
+						<field name="parent_id" select="1" />
+					</group>
+					<group string="Values" colspan="4">
+						<field name="current_value" colspan="2" />
+						<field name="previous_value" colspan="2" />
+					</group>
+					<group string="Style" colspan="4">
+						<field name="sequence" colspan="1" />
+						<field name="css_class" colspan="1" />
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_account_balance_reporting_line_tree">
+			<field name="name">
+				account.balance.reporting.line.tree
+			</field>
+			<field name="model">account.balance.reporting.line</field>
+			<field name="arch" type="xml">
+				<tree string="Account balance report lines">
+					<field name="sequence" select="1" colspan="1" />
+					<field name="code" select="1" />
+					<field name="name" select="1" />
+					<field name="report_id" select="1" />
+					<field name="parent_id" select="1" />
+					<field name="sequence" select="1" colspan="1" />
+					<field name="css_class" select="1" colspan="1" />
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="action_view_account_balance_reporting">
+			<field name="name">Account balance reports</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.balance.reporting</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_account_balance_reporting_tree" />
+		</record>
+
+		<menuitem id="menu_account_balance_reporting" name="Account balance reports"
+			parent="account.menu_finance_legal_statement" />
+
+		<menuitem id="menu_account_balance_reporting_reports" name="Reports"
+			parent="menu_account_balance_reporting" action="action_view_account_balance_reporting" />
+	</data>
+</openerp>

@@ -1,0 +1,869 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Stock Location -->
+        <record id="view_location_form" model="ir.ui.view">
+            <field name="name">stock.location.form</field>
+            <field name="model">stock.location</field>
+            <field name="arch" type="xml">
+                <form string="Stock Location" version="7.0">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1>
+                        <field name="name"/>
+                    </h1>
+                    <label for="location_id" class="oe_edit_only"/>
+                    <h2>
+                        <field name="location_id" context="{'fuel_ok': True}" />
+                    </h2>
+                    <group>
+                        <group string="Additional Information">
+                            <field name="fuel_ok" invisible="1"/>
+                            <field name="usage"/>
+                            <field name="partner_id"/>
+                            <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                            <field name="icon"/>
+                            <field name="scrap_location" invisible="1" />
+                            <field name="active"/>
+                        </group>
+                        <group string="Chained Locations">
+                            <field name="chained_location_type"/>
+                            <field name="chained_location_id" attrs="{'required':[('chained_location_type','=','fixed')],'invisible':[('chained_location_type','in',['none','customer'])]}"/>
+                            <field name="chained_auto_packing"/>
+                            <field name="chained_delay"/>
+                            <field name="chained_journal_id"/>
+                            <field name="chained_picking_type"/>
+                            <field name="chained_company_id" widget="selection"/>
+                        </group>
+                        <!--group string="Localization"><field name="posx"/><field name="posy"/><field name="posz"/></group-->
+                        <group string="Accounting Information" attrs="{'invisible':[('usage','not in',('inventory','production'))]}">
+                            <field name="valuation_in_account_id"/>
+                            <field name="valuation_out_account_id"/>
+                        </group>
+                    </group>
+                    <separator string="Additional Information"/>
+                    <field name="comment"/>
+                </form>
+            </field>
+        </record>
+        <record id="view_location_search" model="ir.ui.view">
+            <field name="name">stock.location.search</field>
+            <field name="model">stock.location</field>
+            <field name="arch" type="xml">
+                <search string="Stock Locations">
+                    <field name="name" string="Stock Locations"/>
+                    <filter icon="terp-go-home" name="in_location" string="Internal" domain="[('usage', '=', 'internal')]" help="Internal Locations"/>
+                    <filter icon="terp-personal" name="customer" string="Customer" domain="[('usage', '=', 'customer')]" help="Customer Locations"/>
+                    <filter icon="terp-personal" name="supplier" string="Supplier" domain="[('usage', '=', 'supplier')]" help="Supplier Locations"/>
+                    <field name="location_id" string="Parent Location"/>
+                </search>
+            </field>
+        </record>
+        <record id="view_location_tree2" model="ir.ui.view">
+            <field name="name">stock.location.tree</field>
+            <field name="model">stock.location</field>
+            <field name="priority" eval="2"/>
+            <field name="arch" type="xml">
+                <tree string="Stock Location" colors="blue:usage=='view';darkred:usage=='internal'">
+                    <field name="complete_name"/>
+                    <field name="usage"/>
+                    <field name="stock_real" invisible="'product_id' not in context"/>
+                    <field name="stock_virtual" invisible="'product_id' not in context"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_location_form" model="ir.actions.act_window">
+            <field name="name">Locations</field>
+            <field name="res_model">stock.location</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_location_tree2"/>
+            <field name="search_view_id" ref="view_location_search"/>
+            <field name="domain">[('fuel_ok','=',True)]</field>
+            <field name="context">{'search_default_in_location':1,'default_fuel_ok': True}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">                Click to add a location.              </p>
+                <p>                Define your locations to reflect your warehouse structure and                organization. OpenERP is able to manage physical locations                (warehouses, shelves, bin, etc), partner locations (customers,                suppliers) and virtual locations which are the counterpart of                the stock operations like the manufacturing orders                consumptions, inventories, etc.              </p>
+                <p>                  Every stock operation in OpenERP moves the products from one                location to another one.  For instance, if you receive products                from a supplier, OpenERP will move products from the Supplier                location to the Stock location. Each report can be performed on                physical, partner or virtual locations.              </p>
+            </field>
+        </record>
+        <menuitem action="action_location_form" id="menu_action_location_form" parent="fuel_management.fuel_config_menu" sequence="5"/>
+        <!-- Update location menu action Not to open fuel locations -->
+        <record id="stock.action_location_form" model="ir.actions.act_window">
+            <field name="domain">[('fuel_ok','=',False)]</field>
+        </record>
+        <!-- Stock Picking -->
+        <record id="view_picking_form" model="ir.ui.view">
+            <field name="name">stock.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Internal Picking List" version="7.0">
+                    <header>
+                        <button name="draft_force_assign" states="draft" string="Confirm" type="object" class="oe_highlight" groups="base.group_user" />
+                        <button name="draft_validate" states="draft" string="Confirm &amp; Transfer" type="object" class="oe_highlight" groups="base.group_user"/>
+                        <button name="action_assign" states="confirmed" string="Check Availability" type="object" class="oe_highlight" />
+                        <button name="force_assign" states="confirmed" string="Force Availability" type="object" class="oe_highlight" />
+                        <button name="action_process" states="assigned" string="Confirm &amp; Transfer" type="object" class="oe_highlight"/>
+                        <button name="%(stock.action_stock_invoice_onshipping)d" string="Create Invoice/Refund" attrs="{'invisible': ['|','|',('state','&lt;&gt;','done'),('invoice_state','=','invoiced'),('invoice_state','=','none')]}" type="action" class="oe_highlight" groups="base.group_user"/>
+                        <button name="%(stock.act_stock_return_picking)d" string="Reverse Transfer" states="done" type="action" />
+                        <button name="button_cancel" states="assigned,confirmed,draft" string="Cancel Transfer" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,assigned,done" statusbar_colors='{"shipping_except":"red","invoice_except":"red","waiting_date":"blue"}'/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" class="oe_inline" attrs="{'invisible': [('name','=','/')]}" readonly="1"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="partner_id" on_change="onchange_partner_in(partner_id)"/>
+                                <field name="backorder_id" readonly="1" attrs="{'invisible': [('backorder_id','=',False)]}"/>
+                                <field name="invoice_state" string="Invoice Control" groups="account.group_account_invoice"/>
+                                <field name="stock_journal_id" widget="selection" groups="account.group_account_user"/>
+                                <field name="hq" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="date" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="min_date" readonly="1" attrs="{'invisible': [('min_date','=',False)]}"/>
+                                <field name="origin" placeholder="e.g. PO0032" class="oe_inline" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Products">
+                                <field name="move_lines" string="Stock Move" context="{'address_in_id': partner_id, 									'form_view_ref':'view_move_picking_form', 									'tree_view_ref':'view_move_picking_tree', 									'picking_type': 'internal'}" options='{"reload_on_button": true}'/>
+                                <field name="note" placeholder="Add an internal note..." class="oe_inline"/>
+                            </page>
+                            <page string="Additional Info">
+                                <group>
+                                    <group>
+                                        <field name="move_type"/>
+                                        <field name="type" invisible="1"/>
+                                        <field name="auto_picking" groups="base.group_user" invisible="1"/>
+                                        <!--field name="executing_agency" invisible="1"/-->
+                                    </group>
+                                    <group>
+                                        <field name="company_id" groups="base.group_multi_company" widget="selection"  readonly="1"/>
+                                        <field name="date_done" groups="base.group_no_one"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- Sending Products -->
+        <record model="ir.ui.view" id="stock_picking_out_calendar">
+            <field name="name">stock.picking.out.calendar</field>
+            <field name="model">stock.picking.out</field>
+            <field name="priority" eval="20"/>
+            <field name="arch" type="xml">
+                <calendar string="Calendar View" date_start="min_date" date_stop="max_date" color="partner_id">
+                    <field name="origin"/>
+                    <field name="type"/>
+                    <field name="partner_id"/>
+                </calendar>
+            </field>
+        </record>
+        <record id="view_picking_out_tree" model="ir.ui.view">
+            <field name="name">stock.picking.out.tree</field>
+            <field name="model">stock.picking.out</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <tree colors="blue:state == 'draft';grey:state == 'cancel';red:state not in ('cancel', 'done') and min_date &lt; current_date" string="Delivery Orders">
+                    <field name="name"/>
+                    <!--field name="partner_id" string="Customer"/-->
+                    <field name="fleet_employee_id"/>
+                    <field name="outgoing_fuel_type"/>
+                    <field name="origin" invisible="1"/>
+                    <field name="min_date" invisible="1"/>
+                    <field name="date"/>
+                    <field name="fuel_out_location_id"/>
+                    <!-- <field name="fuel_out_location_dest_id"/> -->
+                    <field name="backorder_id" invisible="1" />
+                    <field name="stock_journal_id" groups="account.group_account_user" invisible="1" />
+                    <field name="invoice_state" invisible="1" />
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_picking_out_form" model="ir.ui.view">
+            <field name="name">stock.picking.out.form</field>
+            <field name="model">stock.picking.out</field>
+            <field eval="20" name="priority"/>
+            <field name="inherit_id" ref="view_picking_form"/>
+            <field name="arch" type="xml">
+                <field name="min_date" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date_done" position="attributes" version="7.0">
+                    <attribute name="string">Date of Delivery</attribute>
+                </field>
+                <xpath expr="/form/header//button[@name='%(stock.act_stock_return_picking)d']" position="replace">
+                    <button name="%(stock.report_picking_list_out)d" string="Print Delivery Slip" type="action" states="done" class="oe_highlight" invisible="1"/>
+                    <button name="%(stock.act_stock_return_picking)d" string="Return Products" states="done" type="action" invisible="1"/>
+                </xpath>
+                <xpath expr="/form/header//button[@name='draft_validate']" position="replace">
+                    <!--button name="draft_validate" states="draft" string="Confirm &amp; Deliver" type="object" class="oe_highlight" groups="fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_pump_hq"/-->
+                    <button name="draft_validate" attrs="{'invisible':['|',('hq','!=',True),('state','!=','draft')]}" string="Confirm &amp; Deliver" type="object" class="oe_highlight" groups="fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_pump_hq"/>
+                </xpath>
+                
+                <xpath expr="//button[@name='draft_force_assign']" position="replace">
+                    <!--button name="draft_force_assign" states="draft" string="Confirm" type="object" class="oe_highlight" groups="fuel_management.group_fuel_financial_hq" /-->
+                    <button name="draft_force_assign" attrs="{'invisible':['|',('hq','=',True),('state','!=','draft')]}" string="Confirm" type="object" class="oe_highlight" groups="fuel_management.group_fuel_financial_hq" />
+                </xpath>
+                <xpath expr="/form/header//button[@name='action_process']" position="replace">
+                    <!--button name="action_process" states="assigned" string="Deliver" type="object" class="oe_highlight" groups="fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_pump_hq"/-->
+                    <button name="action_process" attrs="{'invisible':['|',('hq','!=',True),('state','!=','assigned')]}" string="Deliver" type="object" class="oe_highlight" groups="fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_pump_hq"/>
+                    <button name="button_oc_receive" attrs="{'invisible':['|',('hq','=',True),('state','!=','assigned')]}" string="Deliver" type="object" class="oe_highlight" groups="fuel_management.group_fuel_pump_hq"/>
+                </xpath>
+                <!--xpath expr="/form/header//button[@name='draft_force_assign']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath-->
+                <xpath expr="/form/header//button[@name='button_cancel']" position="replace">
+                    <button name="button_cancel" states="assigned,confirmed,draft" string="Cancel Transfer" groups="fuel_management.group_fuel_officer_oc,fuel_management.group_fuel_pump_hq"/>
+                    <button name="button_cancel_in_done" states="done" string="Cancel Transfer" type="object" groups="fuel_management.admin_it_fuel"/>
+                </xpath>
+                <xpath expr="/form/header//field[@name='state']" position="replace">
+                    <field name="state" nolabel="1" readonly="1" widget="statusbar" statusbar_visible="draft,confirmed,assigned,done" statusbar_colors='{"auto":"blue", "confirmed":"blue"}'/>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_id']" position="replace">
+                    <field name="partner_id" on_change="onchange_partner_in(partner_id)" string="Customer" domain="[('customer','=',True)]" invisible="1"/>
+
+                    <field name="require_user" invisible="1"/>
+
+                    <field name="fleet_employee_id" on_change="onchange_fleet_employee_id(fleet_employee_id)" domain="[('state','=','approved')]" attrs="{'readonly':[('state','!=','draft')],'invisible':[('require_user','=',False)],'required':[('require_user','=',True)]}" />
+                    <field name="fuel_delegate_id" on_change="onchange_fuel_delegate_id(fuel_delegate_id)" domain="[('state','=','confirm')]" attrs="{'readonly':[('state','!=','draft')],'required':[('hq','!=',True)],'invisible':[('hq','=',True)]}" context="{'fuel_delegate':True}"/>
+                    <field name="fleet_degree_id" attrs="{'invisible':[('require_user','=',False)]}" readonly="1"/>
+                    <field name="outgoing_fuel_type" domain="[('evaporation_type','=',False)]" attrs="{'invisible':[('hq','!=',True)], 'required':[('state','=','draft'),('hq','=',True)],'readonly': [('state','!=','draft')]}" on_change="onchange_outgoing_fuel_type(outgoing_fuel_type)"/>
+                    <field name="fuel_type" attrs="{'invisible':[('hq','=',True)],'required':[('hq','!=',True),('state','=','draft')], 'readonly':[('state','!=','draft')]}" on_change="onchange_fuel_type(fuel_type)" />
+                    <field name="card_no" readonly="1" attrs="{'invisible':[('hq','=',True)]}"/>
+                </xpath>
+                <field name="date" position="before" version="7.0">
+                    <field name="fleet_department_id" attrs="{'invisible':[('require_user','=',False)]}" readonly="1"/>
+                    <field name="fleet_emp_code" attrs="{'invisible':[('require_user','=',False)]}" readonly="1"/>
+                    <field name="fuel_product_id" domain="[('fuel_type','=',fuel_type),('fuel_ok','=',True)]" attrs="{'invisible':[('hq','=',True)],'required':[('hq','!=',True),('state','=','draft')], 'readonly':[('state','!=','draft')]}" 
+                       context="{'default_fuel_ok':True, 'fuel_delegate':fuel_delegate_id, 'fuel_type':fuel_type,               'form_view_ref':'fuel_management.fuel_normal_form_view',                     'tree_view_ref':'fuel_management.fuel_product_tree_view'}" on_change="onchange_fuel_product_id(fuel_product_id,fuel_delegate_id,fuel_type)"/>
+                </field>
+                <xpath expr="//field[@name='move_lines']" position="replace">
+                    <field name="move_lines" string="Stock Move" attrs="{'readonly':['|',('hq','!=',True),('state','!=','draft')]}"
+                        context="{'address_out_id': partner_id, 'picking_type': 'out', 'default_fuel_ok':True,				'form_view_ref':'fuel_niss.view_move_picking_form_out', 					'tree_view_ref':'fuel_niss.view_move_picking_tree_out', 
+                        'fuel_type': fuel_type, 'fuel_product': fuel_product_id,}" options='{"reload_on_button": true}'/>
+                </xpath>
+                <xpath expr="/form/sheet" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </xpath>
+                <field name="invoice_state" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <!--field name="origin" position="attributes" version="7.0"><attribute name="invisible">1</attribute></field-->
+                <field name="stock_journal_id" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="auto_picking" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date" position="after" version="7.0">
+                    <field name="fuel_ok" invisible="1"/>
+                </field>
+                <xpath expr="//page[@string='Products']" position="after">
+                    <page string="Vehicles Data" attrs="{'invisible':[('hq','=',True)],'readonly':[('state','!=','draft')]}">
+                        <!-- on_change="onchange_stock_fuel_id(stock_fuel_id,fuel_delegate_id )"-->
+                        <field name="stock_fuel_id" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}" >
+                            <tree editable="top">
+                                <field name="picking_id" invisible="1"/>
+                                <field name="vehicle_id" domain="[('fuel_type','=',parent.fuel_type),('company_id','=',parent.company_id),('product_id','=',parent.fuel_product_id),('status','=','active'),('state','=','confirm'),('belong_to','=','in')]" required="1" context="{'model':'stock.picking.fuel','line_ids':parent.stock_fuel_id}" />
+                                <field name="product_id" domain="[('id','=',parent.fuel_product_id)]" required="1" />
+                                <field name="product_qty" required="1" />
+                                <field name="location_id" required="1" domain="[('usage','=','internal'),('fuel_ok','=',True)]" context="{'default_fuel_ok':True, 'fuel_delegate': parent.fuel_delegate_id, 'fuel_type':parent.fuel_type,               'form_view_ref':'fuel_niss.view_location_form',                     'tree_view_ref':'fuel_niss.view_location_tree2'}"/>
+                                <field name="location_dest_id" required="1" domain="[('usage','=', 'customer'),('fuel_ok','=',True)]" context="{'default_fuel_ok':True,               'form_view_ref':'fuel_niss.view_location_form',                     'tree_view_ref':'fuel_niss.view_location_tree2'}" />
+
+                            </tree>
+                        </field>
+                        
+                    </page>
+                </xpath>
+            </field>
+
+        </record>
+        <record id="view_picking_out_search" model="ir.ui.view">
+            <field name="name">stock.picking.out.search</field>
+            <field name="model">stock.picking</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <search string="Picking list">
+                    <field name="name" string="Picking List" filter_domain="['|',('name','ilike', self),('origin','ilike',self)]"/>
+                    <filter icon="terp-check" name="available" string="Ready" domain="[('state','=','assigned')]" help="Assigned Delivery Orders"/>
+                    <filter icon="terp-camera_test" name="confirmed" string="Waiting" domain="[('state','=','confirmed')]" help="Confirmed Delivery Orders"/>
+                    <filter icon="terp-dialog-close" name="done" string="Done" domain="[('state','=','done')]" help="Delivery orders already processed"/>
+                    <separator/>
+                    <filter icon="terp-accessories-archiver-minus" string="Back Orders" domain="[('backorder_id', '!=', False)]" help="Is a Back Order"/>
+                    <separator/>
+                    <!--filter icon="terp-dolar" name="to_invoice" string="To Invoice" domain="[('invoice_state','=','2binvoiced')]" help="Delivery orders to invoice"/-->
+                    <field name="partner_id" filter_domain="[('partner_id','child_of',self)]" select="1"/>
+
+                    <field name="fuel_out_location_id" filter_domain="[('fuel_out_location_id','=',self)]" select="1"/>
+                    <field name="date" select="1"/>
+                    <!--field name="stock_journal_id"/-->
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Status" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Creation Date" icon="terp-go-month" domain="[]" context="{'group_by':'date'}"/>
+                        <filter string="Location" icon="terp-go-month" domain="[]" context="{'group_by':'fuel_out_location_id'}"/>
+                        <!--filter string="Expected Date" icon="terp-go-month" domain="[]" context="{'group_by':'min_date'}"/-->
+                        <!--filter string="Journal" icon="terp-folder-orange" domain="[]" context="{'group_by':'stock_journal_id'}"/-->
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="action_picking_tree" model="ir.actions.act_window">
+            <field name="name">Exchange From Pumps</field>
+            <field name="res_model">stock.picking.out</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="domain">[('type','=','out'),('fuel_ok','=',True)]</field>
+            <field name="context">{'default_type': 'out', 'contact_display': 'partner_address', 'default_fuel_ok': True}</field>
+            <field name="search_view_id" ref="view_picking_out_search"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">                Click to create a delivery order.               </p>
+                <p>                This is the list of all delivery orders that have to be                prepared, according to your different sales orders and your                logistics rules.              </p>
+            </field>
+        </record>
+        <record id="action_picking_tree_out_view1_waiting" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_picking_out_tree"/>
+            <field name="act_window_id" ref="action_picking_tree"/>
+        </record>
+        <record id="action_picking_tree_out_view2_waiting" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_picking_out_form"/>
+            <field name="act_window_id" ref="action_picking_tree"/>
+        </record>
+        <record id="action_picking_tree_out_view2_waiting_cal" model="ir.actions.act_window.view">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">calendar</field>
+            <field name="view_id" ref="stock_picking_out_calendar"/>
+            <field name="act_window_id" ref="action_picking_tree"/>
+        </record>
+        <menuitem action="action_picking_tree" id="menu_action_picking_tree" parent="fuel_management.fuel_management_menu" sequence="5"/>
+        <!-- Incomming Shipments -->
+        <record model="ir.ui.view" id="stock_picking_in_calendar">
+            <field name="name">stock.picking.in.calendar</field>
+            <field name="model">stock.picking.in</field>
+            <field name="priority" eval="20"/>
+            <field name="arch" type="xml">
+                <calendar string="Calendar View" date_start="min_date" date_stop="max_date" color="partner_id">
+                    <field name="origin"/>
+                    <field name="type"/>
+                    <field name="partner_id"/>
+                </calendar>
+            </field>
+        </record>
+        <record id="view_picking_in_tree" model="ir.ui.view">
+            <field name="name">stock.picking.in.tree</field>
+            <field name="model">stock.picking.in</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <tree colors="blue:state == 'draft';grey:state == 'done';red:state not in ('cancel', 'done') and min_date &lt; current_date" string="Picking list">
+                    <field name="name"/> 
+                    <!--field name="partner_id" string="Supplier"/-->
+                    <field name="fleet_employee_id" string="Driver"/>
+                    <field name="stock_in_type"/>
+                    <field name="fuel_product_id"/>
+                    <field name="fuel_location_dest_id"/>
+                    <field name="backorder_id" invisible="1"/>
+                    <field name="origin" invisible="1"/>
+                    <field name="date"/>
+                    <field name="min_date" invisible="1"/>
+                    <field name="invoice_state" groups="account.group_account_invoice" invisible="1" />
+                    <field name="stock_journal_id" widget="selection" groups="account.group_account_user" invisible="1"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!-- Stock Picking In -->
+        <record id="view_picking_in_form" model="ir.ui.view">
+            <field name="name">stock.picking.in.form</field>
+            <field name="model">stock.picking.in</field>
+            <field eval="20" name="priority"/>
+            <field name="inherit_id" ref="view_picking_form"/>
+            <field name="arch" type="xml">
+                <field name="date_done" position="attributes" version="7.0">
+                    <attribute name="string">Date of Reception</attribute>
+                </field>
+                <field name="min_date" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="partner_id" position="after" version="7.0">
+                    <field name="department_id" string="Requesting Party" attrs="{'readonly': [('state','!=','draft')]}" required="1"/>
+                </field>
+                <xpath expr="/form/header//button[@name='%(stock.act_stock_return_picking)d']" position="replace">
+                    <button name="%(stock.act_stock_return_picking)d" string="Return Products" states="done" type="action" invisible="1"/>
+                </xpath>
+                <xpath expr="//button[@name='draft_validate']" position="replace">
+                    <!--button name="draft_validate" states="draft" string="Confirm &amp; Receive" type="object" class="oe_highlight" groups="fuel_management.group_fuel_manager_oc" /-->
+                    <button name="draft_validate" attrs="{'invisible':['|',('hq','=',True),('state','!=','draft')]}" string="Confirm &amp; Receive" type="object" class="oe_highlight" groups="fuel_management.group_fuel_manager_oc" />
+                </xpath>
+                <xpath expr="//button[@name='draft_force_assign']" position="replace">
+                    <!--button name="draft_force_assign" states="draft" string="Confirm" type="object" class="oe_highlight" groups="fuel_management.group_fuel_financial_hq" /-->
+                    <button name="draft_force_assign" attrs="{'invisible':['|',('hq','!=',True),('state','!=','draft')]}" string="Confirm" type="object" class="oe_highlight" groups="fuel_management.group_fuel_financial_hq" />
+                </xpath>
+                <xpath expr="//button[@name='action_process']" position="replace">
+                    <!--button name="action_process" states="assigned" string="Receive" type="object" class="oe_highlight" groups="fuel_management.group_fuel_pump_hq,fuel_management.group_fuel_manager_oc"/-->
+                    <button name="action_process" attrs="{'invisible':['|',('hq','=',True),('state','!=','assigned')]}" string="Receive" type="object" class="oe_highlight" groups="fuel_management.group_fuel_manager_oc"/>
+                    <button name="button_hq_receive" attrs="{'invisible':['|',('hq','!=',True),('state','!=','assigned')]}" string="Receive" type="object" class="oe_highlight" groups="fuel_management.group_fuel_pump_hq"/>
+                </xpath>
+                <xpath expr="/form/header//button[@name='button_cancel']" position="replace">
+                    <button name="button_cancel" states="assigned,confirmed,draft" string="Cancel Transfer" groups="fuel_management.group_fuel_pump_hq,fuel_management.group_fuel_manager_oc"/>
+                    <button name="button_cancel_in_done" states="done" string="Cancel Transfer" type="object" groups="fuel_management.admin_it_fuel"/>
+                </xpath>
+                <field name="date" position="before" version="7.0">
+                    <field name="fleet_department_id" readonly="1" />
+                    <field name="fleet_emp_code" readonly="1" />
+                </field>
+                <field name="date" position="after" version="7.0">
+                    <field name="fuel_ok" invisible="1" />
+                    <field name="stock_in_type" attrs="{'invisible':[('hq','!=',True)],'required':[('hq','=',True)], 'readonly':[('state','!=','draft')]}"/>
+		    <field name="confiscation_employee_id" attrs="{'invisible':[('stock_in_type','!=','requisition')],'required':[('stock_in_type','=','requisition')], 'readonly':[('state','!=','draft')]}"/>
+                </field>
+                <field name="hq" position="after" version="7.0">
+                	<field name="desc" attrs="{'invisible':[('stock_in_type','!=','requisition')],'required':[('stock_in_type','=','requisition')], 'readonly':[('state','!=','draft')]}"/>
+                    <field name="receipt_no" attrs="{'invisible':[('stock_in_type','!=','claim')],'required':[('stock_in_type','=','claim'),('state','=','draft')], 'readonly':[('state','!=','draft')]}"/>
+ 		</field>
+
+                <xpath expr="//field[@name='partner_id']" position="replace">
+                    <field name="partner_id" on_change="onchange_partner_in(partner_id)" string="Transferer" domain="[('supplier','=',True)]" context="{'default_supplier':1,'default_customer':0}" invisible="1"/>
+                    <field name="fleet_employee_id" on_change="onchange_fleet_employee_id(fleet_employee_id)" string="Driver" domain="[('state','=','approved')]" attrs="{'required':['|',('hq','=',False),('stock_in_type','=','claim')], 'readonly':[('state','!=','draft')]}"/>
+                    <field name="fleet_degree_id" readonly="1" />
+                </xpath>
+                <xpath expr="//field[@name='move_lines']" position="replace">
+                    <field name="move_lines" string="Stock Move" context="{'address_in_id': partner_id, 'picking_type': 'in', 'default_fuel_ok':True, 'default_hq': hq, 'default_stock_in_type':stock_in_type,							'form_view_ref':'fuel_niss.view_move_picking_form', 							'tree_view_ref':'fuel_niss.view_move_picking_tree'}" options='{"reload_on_button": true}' 
+                        attrs="{'readonly':['|',('hq','=',True),('state','!=','draft')]}"/>
+                </xpath>
+                <xpath expr="/form/sheet" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </xpath>
+                <field name="invoice_state" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <!--field name="origin" position="attributes" version="7.0"><attribute name="invisible">1</attribute></field-->
+                <field name="stock_journal_id" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="auto_picking" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="move_lines" position="after" version="7.0">
+                    <group class="oe_right">
+                        <field name="amount_total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_total_ch" />
+                    </group>
+                </field>
+                <xpath expr="//page[@string='Products']" position="after">
+                    <page string="Request" attrs="{'invisible':[('hq','!=',True)],'readonly':[('state','!=','draft')]}">
+                        <!-- attrs="{'invisible':[('hq','!=',True)],'required':[('hq','=',True),('state','=','assigned')], 'readonly':[('state','!=','assigned')]}" -->
+                        <group>
+                            <field name="fuel_deliver_date" attrs="{'required':[('hq','=',True),('state','=','draft')],'readonly':[('state','!=','draft')]}"/>
+                        </group>
+                        <newline/>
+                        <group col="4">
+                            <field name="fuel_location_id" string="From" attrs="{'required':[('hq','=',True),('state','=','draft')],'readonly':[('state','!=','draft')]}" domain="[('usage','in',['internal', 'supplier']),('fuel_ok','=',True)]" context="{'default_fuel_ok':True,               'form_view_ref':'fuel_niss.view_location_form',                     'tree_view_ref':'fuel_niss.view_location_tree2'}" />
+                           
+                            <field name="fuel_location_dest_id" string="To" attrs="{'required':[('hq','=',True),('state','=','draft')],'readonly':[('state','!=','draft')]}" domain="[('usage','in', ['internal', 'customer']),('fuel_ok','=',True)]" context="{'default_fuel_ok':True,               'form_view_ref':'fuel_niss.view_location_form',                     'tree_view_ref':'fuel_niss.view_location_tree2'}" />
+                            
+                            <field name="deliver_fuel_product_id" attrs="{'required':[('hq','=',True),('state','=','draft')],'readonly':[('state','!=','draft')]}" on_change="onchange_deliver_product(deliver_fuel_product_id)" domain="[('fuel_ok','=',True)]" context="{'default_fuel_ok':True,               'form_view_ref':'fuel_management.fuel_normal_form_view',                     'tree_view_ref':'fuel_management.fuel_product_tree_view'}" />
+                            
+                            <field name="deliver_fuel_product_qty" required="1" attrs="{'readonly':[('state','!=','draft')]}" />
+                            <field name="deliver_product_uom" readonly="1" />
+                            <field name="deliver_product_price" readonly="1" />
+                            <field name="fuel_invoice_num" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </group>
+                        <newline/>
+                    </page>
+                    <page string="Receiving" attrs="{'invisible':['|',('hq','!=',True),('state','=','draft')], 'readonly':[('state','!=','assigned')]}">
+                        <!-- attrs="{'invisible':[('hq','!=',True)],'required':[('hq','=',True),('state','=','assigned')], 'readonly':[('state','!=','assigned')]}" -->
+                        <group>
+                            <field name="fuel_receiver_id" attrs="{'readonly':[('state','!=','assigned')]}"/>
+                        </group>
+                        <newline/>
+                        <group col="4">
+                            <field name="fuel_product_id" attrs="{'required':[('hq','=',True),('state','=','assigned')],'readonly':[('state','!=','assigned')]}" domain="[('fuel_ok','=',True),('id','=',deliver_fuel_product_id)]" context="{'default_fuel_ok':True,               'form_view_ref':'fuel_management.fuel_normal_form_view',                     'tree_view_ref':'fuel_management.fuel_product_tree_view'}"/>
+                            <field name="hole_num" invisible="1" attrs="{'readonly':[('state','!=','assigned')]}"/>
+                        </group>
+                        <newline/>
+                        <group col="6">
+                            <!-- <field name="product_qty_before" attrs="{'required':[('hq','=',True),('state','=','assigned')],'readonly':[('state','!=','assigned')]}" on_change="onchange_quantity(product_qty_before,product_qty_after)"/>
+                            <field name="product_qty_after" attrs="{'required':[('hq','=',True),('state','=','assigned')],'readonly':[('state','!=','assigned')]}" on_change="onchange_quantity(product_qty_before,product_qty_after)"/>
+                             -->
+                            <field name="product_qty_before" readonly="1"/>
+                            <field name="product_qty_after" readonly="1"/>
+                             
+                            <field name="fuel_product_qty" readonly="1" />
+                            <field name="deliver_fuel_product_fuel_type" readonly="1" invisible="1"/>
+                        </group>
+                        <group col="6">
+                            <field name="wells_ids" on_change="onchange_wells_ids(wells_ids)" attrs="{'required':[('hq','=',True),('state','=','assigned')],'readonly':[('state','!=','assigned')]}">
+                                <tree editable="bottom">
+                                    <field name="well_id" domain="[('fuel_type','=',parent.deliver_fuel_product_fuel_type),('station','=',parent.fuel_location_dest_id),]"/>
+                                    <field name="fuel_type" readonly="1" />
+                                    <field name="before_amount" on_change="onchange_quantity(before_amount,after_amount)" />
+                                    <field name="after_amount" on_change="onchange_quantity(before_amount,after_amount)" />   
+                                    <field name="recieved_amount" readonly="1"/>   
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                            <field name="reason" attrs="{'readonly':[('state','!=','assigned')]}" />
+                        </group>
+
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='backorder_id']" position="replace">
+                    <field name="backorder_id" attrs="{'invisible': [('backorder_id','=',False)]}" options="{'no_open':True}" readonly="1"/>
+                </xpath>
+
+                <!--xpath expr="//field[@name='move_lines']" position="attributes">
+                    <attribute name="readonly" >1</attribute>
+                    <attribute name="attrs" >{'invisible':[('hq','!=',True)]}</attribute>
+                </xpath-->
+                
+                
+            </field>
+        </record>
+            
+        <record id="view_picking_in_search" model="ir.ui.view">
+            <field name="name">stock.picking.in.search</field>
+            <field name="model">stock.picking.in</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <search string="Incoming Shipments">
+                    <field name="name" string="Incoming Shipments" filter_domain="['|',('name','ilike',self),('origin','ilike',self)]"/>
+                    <filter icon="terp-check" name="available" string="Ready to Process" domain="[('state','=','assigned')]" help="Incoming Shipments Available"/>
+                    <filter icon="terp-dialog-close" name="done" string="Done" domain="[('state','=','done')]" help="Incoming Shipments already processed"/>
+                    <separator/>
+                    <filter icon="terp-accessories-archiver-minus" string="Back Orders" domain="[('backorder_id', '!=', False)]" help="Is a Back Order"/>
+                    <separator/>
+                    <!--filter string="To Invoice" name="to_invoice" icon="terp-dolar" domain="[('invoice_state', '=', '2binvoiced')]"/-->
+                    <field name="partner_id" filter_domain="[('partner_id','child_of',self)]" select="1"/>
+                    <field name="date" select="1"/>
+                    <!-- field name="stock_journal_id"/-->
+                    <field name="product_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter icon="terp-stock_effects-object-colorize" name="state" string="Status" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Creation Date" icon="terp-go-month" domain="[]" context="{'group_by':'date'}"/>
+                        <!--filter string="Expected Date" icon="terp-go-month" domain="[]" context="{'group_by':'min_date'}"/-->
+                        <!--filter string="Journal" icon="terp-folder-orange" domain="[]" context="{'group_by':'stock_journal_id'}"/-->
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="action_picking_tree4" model="ir.actions.act_window">
+            <field name="name">Incoming Shipments</field>
+            <field name="res_model">stock.picking.in</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="domain">[('type','=','in'),('fuel_ok','=',True)]</field>
+            <field name="context">{'contact_display': 'partner_address', 'default_type': 'in', 'default_fuel_ok': True}</field>
+            <field name="search_view_id" ref="view_picking_in_search"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">                Click to create an incoming shipment.               </p>
+                <p>                The Incoming Shipments is the list of all orders you will                receive from your suppliers. An incoming shipment contains a                list of products to be received according to the original                purchase order.              </p>
+            </field>
+        </record>
+        <record id="action_invoice_tree5_view1" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_picking_in_tree"/>
+            <field name="act_window_id" ref="action_picking_tree4"/>
+        </record>
+        <record id="action_invoice_tree5_view2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_picking_in_form"/>
+            <field name="act_window_id" ref="action_picking_tree4"/>
+        </record>
+        <record id="action_invoice_tree5_view2_cal" model="ir.actions.act_window.view">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">calendar</field>
+            <field name="view_id" ref="stock_picking_in_calendar"/>
+            <field name="act_window_id" ref="action_picking_tree4"/>
+        </record>
+        <menuitem action="action_picking_tree4" id="menu_action_picking_tree4" parent="fuel_management.fuel_management_menu" sequence="4"/>
+        <!--menuitem action="action_picking_tree6" id="menu_action_picking_tree6" parent="menu_stock_warehouse_mgmt" sequence="2" groups="stock.group_locations" /-->
+        
+        <!-- Stock Move -->
+        <record id="view_move_picking_form" model="ir.ui.view">
+            <field name="name">stock.move.form</field>
+            <field name="model">stock.move</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Stock Moves" version="7.0">
+                    <header>
+                        <!--button name="force_assign" states="confirmed" string="Force Availability" type="object" groups="base.group_user"/><button name="action_confirm" states="draft" string="Confirm" type="object" groups="base.group_user"/><button name="cancel_assign" states="assigned" string="Cancel Availability" type="object" groups="base.group_user"/-->
+                        <field name="state" widget="statusbar" statusbar_visible="draft,assigned,done"/>
+                    </header>
+                    <group>
+                        <group>
+                            <field name="name" invisible="1"/>
+                            <field name="hq" invisible="1" />
+                            <field name="stock_in_type" invisible="1" />
+                            <field name="product_id" on_change="onchange_product_id(product_id,location_id,location_dest_id, parent.partner_id)" domain="[('fuel_ok','=',True)]" context="{'default_fuel_ok':True,               'form_view_ref':'fuel_management.fuel_normal_form_view',                     'tree_view_ref':'fuel_management.fuel_product_tree_view'}"/>
+                            <field name="type" invisible="1"/>
+                            <label for="product_qty"/>
+                            <div>
+                                <field name="product_qty" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)" class="oe_inline"/>
+                                <field name="product_qty_ch" readonly="1"/>
+                                <field name="product_uom" string="Unit Of Measure" groups="product.group_uom" class="oe_inline" invisible="1"/>
+                                <!--button name="%(stock.move_scrap)d" string="Scrap" type="action" icon="terp-gtk-jump-to-ltr" context="{'scrap': True}" states="draft,waiting,confirmed,assigned" groups="base.group_user"/-->
+                            </div>
+                            <field name="product_amount" attrs="{'invisible':[('type','!=','in')]}"/>
+                            <field name="product_amount_ch" readonly="1" attrs="{'invisible':[('type','!=','in')]}"/>
+                            <label for="product_uos_qty" groups="product.group_uos" invisible="1"/>
+                            <div groups="product.group_uos" invisible="1">
+                                <field name="product_uos_qty" on_change="onchange_uos_quantity(product_id, product_uos_qty, product_uos, product_uom)" class="oe_inline"/>
+                                <field name="product_uos" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)" class="oe_inline"/>
+                            </div>
+                            <field name="product_packaging" groups="product.group_stock_packaging" domain="[('product_id','=',product_id)]" invisible="1"/>
+                            <field name="partner_id" invisible="1"/>
+                        </group>
+                        <group invisible="1">
+                            <field name="create_date" invisible="1"/>
+                            <field name="date"/>
+                            <field name="date_expected" on_change="onchange_date(date,date_expected)"/>
+                            <field name="fuel_ok" invisible="1" />
+                        </group>
+                        <group string="Locations">
+                            <field name="location_id" domain="[('usage','in',['internal', 'supplier']),('fuel_ok','=',True)]" string="Transferer Location" context="{'default_fuel_ok':True,               'form_view_ref':'fuel_niss.view_location_form',                     'tree_view_ref':'fuel_niss.view_location_tree2'}"/>
+                            <field name="location_dest_id" domain="[('usage','=','customer'),('fuel_ok','=',True)]" string="Destination Location" context="{'default_fuel_ok':True,               'form_view_ref':'fuel_niss.view_location_form',                     'tree_view_ref':'fuel_niss.view_location_tree2'}"/>
+                        </group>
+                        <group groups="stock.group_tracking_lot,stock.group_production_lot" string="Traceability" invisible="1">
+                            <label for="tracking_id"/>
+                            <div>
+                                <field name="tracking_id" groups="stock.group_tracking_lot" class="oe_inline"/>
+                                <button name="%(stock.split_into)d" string="New Pack" type="action" icon="terp-accessories-archiver+" states="draft,assigned,confirmed"/>
+                            </div>
+                            <label for="prodlot_id"/>
+                            <div>
+                                <field name="prodlot_id" groups="stock.group_production_lot" context="{'location_id':location_id, 'product_id':product_id}" domain="[('product_id','=?',product_id)]" on_change="onchange_lot_id(prodlot_id,product_qty, location_id, product_id, product_uom)" class="oe_inline"/>
+                                <button name="%(stock.track_line)d" groups="stock.group_production_lot" states="draft,waiting,confirmed,assigned" string="Split" type="action" icon="gtk-justify-fill"/>
+                            </div>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_move_picking_form_out" model="ir.ui.view">
+            <field name="name">stock.move.form</field>
+            <field name="model">stock.move</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Stock Moves" version="7.0">
+                    <header>
+                        <!--button name="force_assign" states="confirmed" string="Force Availability" type="object" groups="base.group_user"/><button name="action_confirm" states="draft" string="Confirm" type="object" groups="base.group_user"/><button name="cancel_assign" states="assigned" string="Cancel Availability" type="object" groups="base.group_user"/-->
+                        <field name="state" widget="statusbar" statusbar_visible="draft,assigned,done"/>
+                    </header>
+                    <group>
+                        <group>
+                            <field name="hq" invisible="1" />
+                            <field name="name" invisible="1"/>
+                            <!--field name="vehicle_id" attrs="{'invisible':[('hq','=',True)], 'required':[('hq','!=',True)]}"/-->
+                            <field name="product_id" on_change="onchange_product_id(product_id,location_id,location_dest_id, parent.partner_id)" domain="[('fuel_ok','=',True)]" context="{'default_fuel_ok':True,               'form_view_ref':'fuel_management.fuel_normal_form_view',                     'tree_view_ref':'fuel_management.fuel_product_tree_view'}"/>
+                            <field name="type" invisible="1"/>
+                            <label for="product_qty"/>
+                            <div>
+                                <field name="product_qty" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)" class="oe_inline"/>
+                                <field name="product_qty_ch" readonly="1"/>
+                                <field name="product_uom" string="Unit Of Measure" groups="product.group_uom" class="oe_inline" invisible="1"/>
+                                <!--button name="%(stock.move_scrap)d" string="Scrap" type="action" icon="terp-gtk-jump-to-ltr" context="{'scrap': True}" states="draft,waiting,confirmed,assigned" groups="base.group_user"/-->
+                            </div>
+                            <field name="product_amount" attrs="{'invisible':[('type','!=','in')]}"/>
+                            <field name="product_amount_ch" readonly="1" attrs="{'invisible':[('type','!=','in')]}"/>
+                            <label for="product_uos_qty" groups="product.group_uos" invisible="1"/>
+                            <div groups="product.group_uos" invisible="1">
+                                <field name="product_uos_qty" on_change="onchange_uos_quantity(product_id, product_uos_qty, product_uos, product_uom)" class="oe_inline"/>
+                                <field name="product_uos" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)" class="oe_inline"/>
+                            </div>
+                            <field name="product_packaging" groups="product.group_stock_packaging" domain="[('product_id','=',product_id)]" invisible="1"/>
+                            <field name="partner_id"/>
+                            <field name="company_id" on_change="onchange_fuel_company_id(company_id)" />
+                        </group>
+                        <group invisible="1">
+                            <field name="create_date" invisible="1"/>
+                            <field name="date"/>
+                            <field name="date_expected" on_change="onchange_date(date,date_expected)"/>
+                            <field name="fuel_ok" invisible="1" />
+
+                        </group>
+                        <group string="Locations">
+                            <field name="location_id" domain="[('usage','=','internal'),('fuel_ok','=',True)]" string="Source Location" context="{'default_fuel_ok':True,               'form_view_ref':'fuel_niss.view_location_form',                     'tree_view_ref':'fuel_niss.view_location_tree2'}" />
+                            <field name="location_dest_id" domain="[('usage','=','customer'),('fuel_ok','=',True)]" string="Customer Location" context="{'default_fuel_ok':True,               'form_view_ref':'fuel_niss.view_location_form',                     'tree_view_ref':'fuel_niss.view_location_tree2'}"/>
+                        </group>
+                        <group groups="stock.group_tracking_lot,stock.group_production_lot" string="Traceability" invisible="1">
+                            <label for="tracking_id"/>
+                            <div>
+                                <field name="tracking_id" groups="stock.group_tracking_lot" class="oe_inline"/>
+                                <button name="%(stock.split_into)d" string="New Pack" type="action" icon="terp-accessories-archiver+" states="draft,assigned,confirmed"/>
+                            </div>
+                            <label for="prodlot_id"/>
+                            <div>
+                                <field name="prodlot_id" groups="stock.group_production_lot" context="{'location_id':location_id, 'product_id':product_id}" domain="[('product_id','=?',product_id)]" on_change="onchange_lot_id(prodlot_id,product_qty, location_id, product_id, product_uom)" class="oe_inline" invisible="1"/>
+                                <button name="%(stock.track_line)d" groups="stock.group_production_lot" states="draft,waiting,confirmed,assigned" string="Split" type="action" icon="gtk-justify-fill"/>
+                            </div>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_move_picking_tree" model="ir.ui.view">
+            <field name="name">stock.move.tree</field>
+            <field name="model">stock.move</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <tree colors="grey:scrapped == True" string="Stock Moves">
+                    <field name="product_id"/>
+                    <field name="product_qty" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)"/>
+                    <field name="product_qty_ch"/>
+                    <field name="product_uom" string="Unit of Measure" groups="product.group_uom"/>
+                    <field name="standard_price" readonly="1"/>
+                    <field name="product_amount" />
+                    <field name="product_amount_ch" />
+                    <field name="product_uos_qty" groups="product.group_uos" invisible="1"/>
+                    <field name="product_uos" groups="product.group_uos" invisible="1"/>
+                    <field name="location_id" string="Transferer Location"/>
+                    <field name="picking_id" invisible="1" />
+                    <field name="create_date" invisible="1" />
+                    <field name="date_expected" invisible="1" />
+                    <button name="%(stock.move_scrap)d" string="Scrap Products" type="action" icon="terp-gtk-jump-to-ltr" context="{'scrap': True}" states="draft,waiting,confirmed,assigned" groups="base.group_user" invisible="1" />
+                    <field name="scrapped" invisible="1"/>
+                    <field name="prodlot_id" groups="stock.group_production_lot" invisible="1"/>
+                    <button name="%(stock.track_line)d" string="Split in Serial Number" groups="stock.group_production_lot" type="action" icon="gtk-justify-fill" states="draft,waiting,confirmed,assigned" invisible="1"/>
+                    <field groups="stock.group_tracking_lot" name="tracking_id" invisible="1"/>
+                    <button name="setlast_tracking" string="Put in current pack" type="object" attrs="{'invisible': [('tracking_id','&lt;&gt;',False)]}" icon="terp-accessories-archiver" groups="stock.group_tracking_lot" states="draft,assigned,confirmed" invisible="1"/>
+                    <button name="%(stock.split_into)d" string="Put in a new pack" type="action" groups="stock.group_tracking_lot" icon="terp-accessories-archiver+" states="draft,assigned,confirmed" invisible="1"/>
+                    <field name="location_dest_id" string="Destination Location"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_move_picking_tree_out" model="ir.ui.view">
+            <field name="name">stock.move.tree</field>
+            <field name="model">stock.move</field>
+            <field eval="40" name="priority"/>
+            <field name="arch" type="xml">
+                <tree colors="grey:scrapped == True" string="Stock Moves">
+                    <!--field name="vehicle_id"/--> 
+                    <field name="product_id"/>
+                    <field name="product_qty" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)"/>
+                    <field name="product_qty_ch"/>
+                    <field name="product_uom" string="Unit of Measure" groups="product.group_uom"/>
+                    <field name="standard_price" readonly="1"/>
+                    <field name="product_amount" />
+                    <field name="product_uos_qty" groups="product.group_uos" invisible="1"/>
+                    <field name="product_uos" groups="product.group_uos" invisible="1"/>
+                    <field name="location_id" string="From" />
+                    <field name="picking_id" invisible="1" />
+                    <field name="create_date" invisible="1" />
+                    <field name="date_expected" invisible="1" />
+                    <button name="%(stock.move_scrap)d" string="Scrap Products" type="action" icon="terp-gtk-jump-to-ltr" context="{'scrap': True}" states="draft,waiting,confirmed,assigned" groups="base.group_user" invisible="1"/>
+                    <field name="scrapped" invisible="1"/>
+                    <field name="prodlot_id" groups="stock.group_production_lot" invisible="1"/>
+                    <button name="%(stock.track_line)d" string="Split in Serial Number" groups="stock.group_production_lot" type="action" icon="gtk-justify-fill" states="draft,waiting,confirmed,assigned" invisible="1"/>
+                    <field groups="stock.group_tracking_lot" name="tracking_id" invisible="1"/>
+                    <button name="setlast_tracking" string="Put in current pack" type="object" attrs="{'invisible': [('tracking_id','&lt;&gt;',False)]}" icon="terp-accessories-archiver" groups="stock.group_tracking_lot" states="draft,assigned,confirmed" invisible="1"/>
+                    <button name="%(stock.split_into)d" string="Put in a new pack" type="action" groups="stock.group_tracking_lot" icon="terp-accessories-archiver+" states="draft,assigned,confirmed" invisible="1"/>
+                    <field name="location_dest_id" string="To" />
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!-- Stock Partial -->
+        <record id="action_partial_picking" model="ir.actions.act_window">
+            <field name="name">Process Picking</field>
+            <field name="res_model">stock.partial.picking</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <!-- this view of stock.partial.picking wizard is dedicated to internal picking. The fields_view_get is ovveridden in order to change the label of the process button and the separator. -->
+        <record id="stock_partial_picking_form" model="ir.ui.view">
+            <field name="name">stock.partial.picking.form</field>
+            <field name="model">stock.partial.picking</field>
+            <field name="priority" eval="18"/>
+            <field name="arch" type="xml">
+                <form string="Stock partial Picking" version="7.0">
+                    <field name="hide_tracking" invisible="1"/>
+                    <separator string="Transfer Products" name="product_separator"/>
+                    <field name="move_ids" context="{'hide_tracking': hide_tracking}">
+                        <tree editable="bottom" string="Product Moves" create="false">
+                            <field name="product_id" on_change="onchange_product_id(product_id)"/>
+                            <field name="quantity" />
+                            <field name="product_uom" groups="product.group_uom"/>
+                            <field name="tracking" invisible="1"/>
+                            <field name="prodlot_id" domain="[('product_id', '=', product_id)]" invisible="context.get('hide_tracking',False)" attrs="{'required':[('tracking','=',True), ('quantity', '!=', 0)]}" groups="stock.group_production_lot" context="{'default_product_id':product_id}"/>
+                            <!-- Removed as this feature is not logic: price must be updated upon reception of invoice -->
+                            <field name="update_cost" invisible="1"/>
+                            <field name="cost" groups="base.group_multi_currency"/>
+                            <field name="currency" readonly="1" groups="base.group_multi_currency"/>
+                        </tree>
+                    </field>
+                    <!--field name="help_text" groups="base.group_multi_currency" class="oe_grey"/-->
+                    <footer>
+                        <button name="do_partial" string="_Transfer" type="object" class="oe_highlight"/>                        or                        
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="stock_partial_picking_line_list" model="ir.ui.view">
+            <field name="name">stock.partial.picking.line.list</field>
+            <field name="model">stock.partial.picking.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" string="Product Moves">
+                    <field name="product_id" />
+                    <field name="quantity" />
+                    <field name="product_uom" />
+                    <field name="real_qty" />
+                    <field name="tracking" invisible="1"/>
+                    <field name="prodlot_id" domain="[('product_id', '=', product_id)]" attrs="{'required':[('tracking','=',True)]}"/>
+                    <!-- Removed as this feature is not logic: price must be updated upon reception of invoice -->
+                    <field name="update_cost" invisible="1"/>
+                    <field name="cost" invisible="1"/>
+                    <field name="currency" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        <record id="stock_partial_picking_line_form" model="ir.ui.view">
+            <field name="name">stock.partial.picking.line.form</field>
+            <field name="model">stock.partial.picking.line</field>
+            <field name="arch" type="xml">
+                <form string="Stock Picking Line" version="7.0">
+                    <group col="4">
+                        <field name="product_id" />
+                        <field name="quantity" />
+                        <field name="product_uom" />
+                        <field name="real_qty" />
+                        <field name="location_id" />
+                        <field name="location_dest_id" />
+                        <field name="tracking" invisible="1"/>
+                        <field name="prodlot_id" domain="[('product_id', '=', product_id)]" attrs="{'required':[('tracking','=',True)]}"/>
+                        <field name="update_cost" invisible="1"/>
+                        <field name="cost" attrs="{'invisible': [('update_cost','=', False)]}"/>
+                        <field name="currency" attrs="{'invisible': [('update_cost','=', False)]}" groups="base.group_multi_currency"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+    </data>
+</openerp>

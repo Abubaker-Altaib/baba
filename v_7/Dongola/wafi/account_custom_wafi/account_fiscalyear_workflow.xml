@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<openerp>
+	<data>
+		<!-- account.fiscalyear Workflow definition -->
+		<record model="workflow" id="wkf_account_fiscalyear">
+			<field name="name">wkf.account.fiscalyear</field>
+			<field name="osv">account.fiscalyear</field>
+			<field name="on_create">True</field>
+		</record>
+		<record model="workflow.activity" id="act_draft">
+			<field name="wkf_id" ref="wkf_account_fiscalyear" />
+			<field name="flow_start">True</field>
+			<field name="name">draft</field>
+			<field name="action">write({'state':'draft'})</field>
+			<field name="kind">function</field>
+		</record>
+		<record model="workflow.activity" id="act_locked_temporarily">
+			<field name="wkf_id" ref="wkf_account_fiscalyear" />
+			<field name="name">locked</field>
+			<field name="kind">function</field>
+			<field name="action">action_locked_temporarily()</field>
+		</record>
+		<record model="workflow.activity" id="act_open_extension_period">
+			<field name="wkf_id" ref="wkf_account_fiscalyear" />
+			<field name="name">open_extension_period</field>
+			<field name="kind">function</field>
+			<field name="action">action_open_extension_period()</field>
+		</record>
+		<record model="workflow.activity" id="act_close_extension_period">
+			<field name="wkf_id" ref="wkf_account_fiscalyear" />
+			<field name="name">close_extension_period</field>
+			<field name="kind">function</field>
+			<field name="action">action_close_extension_period()</field>
+		</record>
+		<record model="workflow.activity" id="act_first_lock">
+			<field name="wkf_id" ref="wkf_account_fiscalyear" />
+			<field name="name">first_lock</field>
+			<field name="kind">function</field>
+			<field name="action">action_first_lock()</field>
+		</record>
+		<record model="workflow.activity" id="act_final_lock">
+			<field name="wkf_id" ref="wkf_account_fiscalyear" />
+			<field name="name">final_lock</field>
+			<field name="kind">function</field>
+			<field name="action">action_final_lock()</field>
+		</record>
+
+		<!-- transitions -->
+		<record model="workflow.transition" id="t1">
+			<field name="act_from" ref="act_draft" />
+			<field name="act_to" ref="act_locked_temporarily" />
+			<field name="signal">locked</field>
+			<field name="group_id" ref="" />
+		</record>
+		<record model="workflow.transition" id="t2">
+			<field name="act_from" ref="act_locked_temporarily" />
+			<field name="act_to" ref="act_open_extension_period" />
+			<field name="signal">open_extension_period</field>
+		</record>
+		<record model="workflow.transition" id="t3">
+			<field name="act_from" ref="act_open_extension_period" />
+			<field name="act_to" ref="act_close_extension_period" />
+			<field name="signal">open_extension_period</field>
+		</record>
+		<record model="workflow.transition" id="t4">
+			<field name="act_from" ref="act_close_extension_period" />
+			<field name="act_to" ref="act_first_lock" />
+			<field name="signal">first_lock</field>
+		</record>
+		<record model="workflow.transition" id="t5">
+			<field name="act_from" ref="act_first_lock" />
+			<field name="act_to" ref="act_final_lock" />
+			<field name="signal">final_lock</field>
+		</record>
+	</data>
+</openerp>

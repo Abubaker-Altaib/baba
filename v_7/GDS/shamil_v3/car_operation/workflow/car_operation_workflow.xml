@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Car Operation Activity-->
+
+        <record id="wkf_car_operation" model="workflow">
+            <field name="name">wkf.car.operation</field>
+            <field name="osv">car.operation</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_car_operation_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_operation"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+        <record id="wkf_car_operation_confirmed_d" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_operation"/>
+            <field name="name">confirmed_d</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_d()</field>  
+        </record>
+        <record id="wkf_car_operation_gm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_operation"/>
+            <field name="name">gm</field>
+            <field name="kind">function</field>
+            <field name="action">gm()</field>  
+        </record>
+
+        <record id="wkf_car_operation_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_operation"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>  
+            <field name="flow_stop">True</field>          
+        </record>
+        <record id="wkf_car_operation_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_car_operation"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+        </record>
+
+<!-- Car Operation Transition-->
+
+        <record id="wkf_car_operation_darft_confirmed_d" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_operation_draft"/>
+            <field name="act_to" ref="wkf_car_operation_confirmed_d"/>
+            <field name="signal">confirmed_d</field>
+        </record>
+
+        <record id="wkf_car_operation_confirmed_d_gm" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_operation_confirmed_d"/>
+            <field name="act_to" ref="wkf_car_operation_gm"/>
+            <field name="signal">gm</field>
+        </record>
+
+            
+        <record id="wkf_car_operation_gm_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_operation_gm"/>
+            <field name="act_to" ref="wkf_car_operation_done"/>
+            <field name="signal">done</field>
+        </record>
+
+        <record id="wkf_car_operation_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_operation_draft"/>
+            <field name="act_to" ref="wkf_car_operation_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_car_operation_confirmed_d_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_operation_confirmed_d"/>
+            <field name="act_to" ref="wkf_car_operation_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_car_operation_gm_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_car_operation_gm"/>
+            <field name="act_to" ref="wkf_car_operation_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+
+    </data>
+</openerp>
+

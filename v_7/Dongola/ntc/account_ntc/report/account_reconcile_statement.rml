@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<document filename="Detailed Account Statement.pdf">
+
+  <template pageSize="(595.0,842.0)" title="Cash Reconcilation" author="NCTR" allowSplitting="20">
+    <pageTemplate id="first">
+      	<frame id="first" x1="28.0" y1="28.0" width="539" height="786"/>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+    <blockTableStyle id="Table2">
+      <blockAlignment value="CENTER" />
+      <lineStyle kind="GRID" colorName="#0E0C0C" />
+      <blockValign value="CENTER" />
+      <blockTopPadding length="8" />
+      <blockBottomPadding length="4" />
+    </blockTableStyle>
+
+    <blockTableStyle id="Table3">
+      <blockAlignment value="CENTER" />
+      <blockValign value="CENTER" />
+      <blockTopPadding length="8" />
+      <blockBottomPadding length="4" />
+    </blockTableStyle>
+
+
+
+    <initialize>
+      <paraStyle name="all" alignment="justify" />
+    </initialize>
+    <paraStyle name="Main_header" fontName="Helvetica-Bold"
+      fontSize="16.0" alignment="CENTER" spaceBefore="0.0" spaceAfter="20.0" />
+    <paraStyle name="P3" fontName="Helvetica-Bold" fontSize="11.0" alignment="CENTER" />
+    <paraStyle name="P2" fontName="Helvetica-Bold" fontSize="11.0" alignment="RIGHT" />
+    <paraStyle name="P1" fontName="Helvetica-Bold" fontSize="11.0" alignment="LEFT"/>
+    <images />
+  </stylesheet>
+     <images/>
+
+    
+	<story>
+    
+    
+    <para style="Main_header">المطابقة [[ o.journal_id.name ]]</para>
+    <para> <font color="white"> </font> </para>
+    <para> <font color="white"> </font> </para>
+    <para style="P1">التاريخ :  [[formatLang (o.date , date=True) ]]  </para>
+    <para> <font color="white"> </font> </para>
+    <para> <font color="white"> </font> </para>
+
+    <blockTable colWidths="250.0,300.0" style="Table3">
+      <tr>
+        <td>
+          <para style="P2">[[ o.balance_start or '0.0' ]] </para>
+        </td>
+        <td>
+          <para style="P2" rightIndent="27">رصيد أول المدة</para>
+        </td>
+      </tr>
+      <tr>[[ repeatIn(line_type_sum(o) , 'line') ]]
+        <td>
+          <para style="P2">[[ line['revenues'] or '0.0' ]]</para>
+        </td>
+        <td>
+          <para style="P2" rightIndent="25">إيرادات نقدية</para>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <para style="P2">[[ line['expenses'] or '0.0' ]]</para>
+        </td>
+        <td>
+          <para style="P2" rightIndent="21">مصروفات نقدية</para>
+        </td>
+      </tr>
+    </blockTable>
+    <para> <font color="white"> </font> </para>
+    <para> <font color="white"> </font> </para>
+
+    <para style="P2" rightIndent="-6">قائمة الأذونات التي لم تصرف : </para>
+    <para> <font color="white"> </font> </para>
+
+    <blockTable colWidths="100,100,150,100" style="Table2" rightIndent="5">
+      <tr>
+        <td>
+          <para style="P3">المبلغ</para>
+        </td>
+        <td>
+          <para style="P3">تاريخ الإذن</para>
+        </td>
+        <td>
+          <para style="P3">المستفيد</para>
+        </td>
+        <td>
+          <para style="P3">رقم الإذن</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P3"> [[ repeatIn(report_data(o) , 'voucher')]] [[ formatLang(voucher['amount']) or '0.0']] </para>
+        </td>
+        <td>
+          <para style="P3">[[ formatLang (voucher['date'] , date=True) or '/' ]]</para>
+        </td>
+        <td>
+          <para style="P3">[[ voucher['partner'] or '/' ]]</para>
+        </td>
+        <td>
+          <para style="P3">[[ voucher['number'] or '/' ]]</para>
+        </td>
+      </tr>
+    </blockTable>
+    <blockTable colWidths="100,350" style="Table2" rightIndent="5">
+      <tr>
+        <td>
+          <para style="P3">[[ formatLang(total(data))]]
+          </para>
+        </td>
+        <td>
+          <para style="P3">اﻹجمالى</para>
+        </td>
+      </tr>
+    </blockTable>
+
+    <para> <font color="white"> </font> </para>
+
+    <para style="P2" rightIndent="25">رصيد أخر المدة : </para>
+    <para> <font color="white"> </font> </para>
+    <para> <font color="white"> </font> </para>
+
+    <blockTable colWidths="150.0,200.0" style="Table3">
+      <tr>
+        <td>
+          <para style="P2"> [[ o.journal_balance or '0.0' ]]  </para>
+        </td>
+        <td>
+          <para style="P2">الدفتر</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P2"> [[ o.balance_end_real or '0.0' ]] </para>
+        </td>
+        <td>
+          <para style="P2">الخزينة </para>
+        </td>
+      </tr>
+    </blockTable>
+
+    <para>[[ repeatIn(objects , 'o')]]</para>
+
+  </story>
+</document>
+
+	

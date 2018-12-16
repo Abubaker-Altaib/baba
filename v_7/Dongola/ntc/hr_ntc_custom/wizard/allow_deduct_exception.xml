@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	<record id="view_allow_deduct_exception_form_ntc" model="ir.ui.view">
+            <field name="name">Allowance Deduction Exception</field>
+            <field name="model">hr.allow.deduct.exception</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_allow_deduct_exception_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='amount'] " position ='replace'>
+                    <field name="amount" on_change="onchange_factor(amount,factor)" attrs="{'invisible':[('action','=','exclusion')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='end_date'] " position ='after'>
+                    <field name="factor" on_change="onchange_factor(amount,factor)" attrs="{'invisible':[('action','!=','special')]}" />
+                    <field name="special_amount" attrs="{'invisible':[('action','!=','special')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

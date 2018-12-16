@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="account_report_budget_view" model="ir.ui.view">
+          <field name="name">Budget</field>
+          <field name="model">account.report.budget</field>
+          <field name="arch" type="xml">
+          	<form string="Budget Report" version="7.0">
+                <label nolabel="1" colspan="4" string="This report allows you to print or generate a pdf of your Budget, allowing you to quickly check the balance and residual balance of each of your accounts in each cost center"/>
+				<group col="4" colspan="4">
+          		<field name="chart_account_id" on_change="onchange_chart_account_id(chart_account_id)" widget='selection'/>
+          		<field name="company_id" invisible="1"/>
+          		<field name="fiscalyear_id" domain="[('company_id','=',company_id)]" options='{"no_open":True}'/>
+          		<field name="chart_analytic_account_id" widget='selection'/>
+				<field name="report_type" on_change="onchange_report_type(report_type)"/>
+				<field name="type_selection" attrs="{'readonly':[('report_type', '!=', '3')]}"/>
+                                <field name="accuracy"/>
+				</group>
+				<notebook tabpos="up" colspan="4">
+					<page string="Filters" name="filters">
+					    <group>
+						  <field name="filter" on_change="onchange_filter(filter, fiscalyear_id)" attrs="{'readonly':[('fiscalyear_id','=',False)]}" />
+                        </group>
+						<group string="Periods" attrs="{'invisible':['|',('filter','!=','filter_period'),('fiscalyear_id','=',False)], 'required':[('filter', '=', 'filter_period')]}">
+                            <field name="period_from" domain="[('fiscalyear_id', '=', fiscalyear_id)]" context="{'closed':True}"/>
+                            <field name="period_to" domain="[('fiscalyear_id', '=', fiscalyear_id)]" context="{'closed':True}"/>
+                        </group>
+						
+		            </page>
+					<page string="Accounts" name="accounts_ids">
+			    		<field name="account_ids" colspan="4" nolabel="1" domain="[('parent_id', 'child_of', chart_account_id)]"/>
+					</page>
+					<page string="Cost Centers" name="analytic_account_ids">
+			    		<field name="analytic_account_ids" colspan="4" nolabel="1" domain="[('parent_id', 'child_of', chart_analytic_account_id)]" attrs="{'required':[('report_type', '=', '2')]}"/>
+					</page>
+				</notebook>
+		        <footer>
+                      <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight"/>
+                      or
+                     <button string="Cancel" class="oe_link" special="cancel"/>
+                 </footer>
+            </form>
+            </field>
+        </record>        
+
+        <record id="action_account_budget_report_menu" model="ir.actions.act_window">
+            <field name="name">Budget Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.report.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_report_budget_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem icon="STOCK_PRINT" name="Budget Report" parent="menu_budget_reporting" 
+        			action="action_account_budget_report_menu" id="menu_budget_report"
+        			groups="group_budget_user"/>
+
+<!-- Budget Comparison Report -->
+    	<record id="account_report_compare_budget_view" model="ir.ui.view">
+          <field name="name">Budget Comparison Report</field>
+          <field name="model">account.report.compare.budget</field>
+          <field name="type">form</field>
+          <field name="arch" type="xml">
+          	<form string="Budget Report" version="7.0">
+          		<separator string="Comparison Budget Report" colspan="4"/>
+          		<label nolabel="1" colspan="4" string="This allows you to print or generate a Budget Comparison Report which allowing you to quickly compare your current planned budget amount with the suggested budget of the next year, comparing suggested budget of the main departments and the cash flow."/>
+          		<newline/>
+                <group col="4">
+          		<field name="chart_account_id" on_change="onchange_chart_account_id(chart_account_id)" widget='selection'/>
+          		<field name="chart_analytic_account_id" widget='selection'/>
+          		<field name="company_id" invisible="1"/>
+          		<field name="first_fiscalyear" domain="[('company_id', '=', company_id)]" on_change="onchange_fiscalyear(first_fiscalyear)"/>
+				<field name="second_fiscalyear" domain="[('company_id', '=', company_id)]" 
+						attrs="{'readonly':[('report_name','!=','compare')], 'required':[('report_name','=','compare')]}"/>
+          		<field name="type_selection"/>
+				<field name="report_name"/>
+				<field name="accuracy"/>
+				<field name="size"/>
+				<field name="landscape"/>
+                </group>
+				<notebook tabpos="up" colspan="4">
+					<page string="Filters" name="filters">
+                			<group  col="4">
+						<field 	name="filter" on_change="onchange_filter(filter, first_fiscalyear)" colspan="4"
+						attrs="{'readonly':['|',('first_fiscalyear','=',False),('report_name','in',['compare','summary'])]}"/>
+                			</group>
+						<separator string="Periods"  colspan="4"/>
+                			<group  col="4">
+						<field name="period_from"  domain="[('fiscalyear_id', '=', first_fiscalyear)]" colspan="4"
+								attrs="{'readonly':['|',('filter','!=','filter_period'),('first_fiscalyear','=',False)], 
+										'required':[('filter', '=', 'filter_period')]}"/>
+						<field name="period_to" domain="[('fiscalyear_id', '=', first_fiscalyear)]" colspan="4"
+								attrs="{'readonly':['|',('filter','!=','filter_period'),('first_fiscalyear','=',False)], 
+										'required':[('filter', '=', 'filter_period')]}"/>
+                			</group>
+					</page>
+					<page string="Cost Centers" name="analytic_account_ids">
+						<field 	name="analytic_account_ids" colspan="4" nolabel="1" 
+								domain="[('parent_id', 'child_of', chart_analytic_account_id)]"
+								attrs="{'readonly':[('report_name','=','summary')]}"/>
+					</page>
+				</notebook>
+				<separator colspan="4"/>
+				
+                                        <footer>
+					<button name="print_report" string="Print" type="object" colspan="2" default_focus="1" class="oe_highlight"/>
+					or
+					<button special="cancel" string="Cancel" colspan="2" class="oe_link"/>
+                                         </footer>
+			
+            </form>
+            </field>
+        </record>
+
+        <record id="action_account_report_compare_budget_menu" model="ir.actions.act_window">
+            <field name="name">Budget Comparison Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.report.compare.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_report_compare_budget_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem 	icon="STOCK_PRINT" name="Budget Comparison Report" 
+        			parent="account_budget_custom.menu_budget_reporting"
+					action="action_account_report_compare_budget_menu"   
+
+					id="menu_compare_budget"/>
+    </data>
+</openerp>

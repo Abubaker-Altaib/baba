@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     
+<template id="account_custom.journal_entry_view">
+    <t t-call="web.html_container">
+    <t t-foreach="docs" t-as="o">
+       <t t-call="web.internal_layout">
+    <div class="page">
+     <body>
+        <center>
+            <h3><strong>Print an observatory entry</strong></h3>
+        </center>
+
+            <td><h3 class="text-right"><span t-field="o.id"/>:    Entry number</h3></td>
+            <table style="width:100%;">
+                <thead>
+                <tr> 
+                    <td><h3 class="text-right"><span t-field="o.create_uid.name"/>   :entry</h3></td>
+                    <td><h3 class="text-right"><span t-field="o.date"/>:  Date</h3></td>
+                </tr>      
+                <tr>
+                   <td><h3 class="text-right"><span t-field="o.company_id"/> :   Region</h3></td> 
+                   <td><h3 class="text-right"><span t-field="o.currency_id"/>:   currency</h3></td>
+                </tr>
+                </thead>
+            </table><br></br>
+
+            <div class="table-responsive"><table class="table table-hover o_portal_my_doc_table">
+                <thead>
+                    <tr>
+                    <th class="text-right">Credit</th>
+                    <th class="text-right">Debit</th>
+                    <th class="text-right"><t t-if="o.voucher_id">voucher</t></th>
+                    <th class="text-right">M.cost</th>
+                    <th class="text-right">the description</th>
+                    <th class="text-right">Account name</th>
+                    <th class="text-right">code</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <div t-foreach="o.line_ids" t-as="line">
+                    <tr>
+                    <td class="text-right"><span t-field="line.credit"/></td>
+                    <td class="text-right"><span t-field="line.debit"/></td>
+                    <td class="text-right"><span t-field="o.voucher_id"/></td>
+                    <td class="text-right"><span t-field="line.analytic_account_id.name"/></td>
+                    <td class="text-right"><span t-field="line.name"/></td>
+                    <td class="text-right"><span t-field="line.account_id.name"/></td>
+                    <td class="text-right"><span t-field="line.account_id.code"/></td>
+                    </tr>
+                    </div>
+                    <tr>
+                    <th class="text-right"><span t-esc="sum([line.credit for line in o.line_ids])"/></th>
+                    <th class="text-right"><span t-esc="sum([line.debit for line in o.line_ids])"/></th>
+                    <th class="text-right" style="text-align: center;" colspan="7">Entry clause</th>
+                    </tr>
+                   
+                </tbody>
+            </table></div><br></br><br></br>
+             <div class="row">
+                <td><p class="text-right"><spane t-esc="request.env.user.name" />  Printed by</p></td> 
+
+                      
+             </div>
+
+        </body>
+    </div>
+        
+    </t>
+    </t>
+    </t>
+
+    </template>
+</odoo>

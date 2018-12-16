@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+
+
+<data noupdate="0" >
+
+
+    <!--record id="group_cooperative_stock_management" model="res.groups">
+        <field name="name"> cooperative / stock management </field>
+    </record -->
+
+
+
+    <record id="group_cooperative_account_management" model="res.groups">
+        <field name="name"> cooperative / account management </field>
+    </record >
+      
+
+       <record id="cooperative_stock_location_user_rule" model="ir.rule">
+            <field name="name">Co-operative / Stock Location Users</field>
+            <field name="model_id" ref="model_stock_location"/>
+            <field name="domain_force">[('co_operative','=',True)]</field>
+            <field name="groups" eval="[(4, ref('cooperative_sale.group_cooperative_stock_management'))]"/>
+            <field eval="1" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="1" name="perm_create"/>
+       </record>
+
+      <record id="cooperative_product_category_user_rule" model="ir.rule">
+            <field name="name">Co-operative / Product Category Users</field>
+            <field name="model_id" ref="model_product_category"/>
+            <field name="domain_force">[('co_operative','=',True)]</field>
+            <field name="groups" eval="[(4, ref('cooperative_sale.group_cooperative_stock_management'))]"/>
+            <field eval="1" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="1" name="perm_create"/>
+       </record>
+    
+
+
+
+      <record id="cooperative_stock_picking_out_user_rule" model="ir.rule">
+            <field name="name">Co-operative / Stock Picking Out </field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="domain_force">[('location_id.co_operative','=',True),('type','=','out')]</field>
+            <field name="groups" eval="[(4, ref('cooperative_sale.group_cooperative_stock_management'))]"/>
+            <field eval="1" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="1" name="perm_create"/>
+       </record>
+
+    
+
+
+       <record id="cooperative_stock_stock_inventory_rule" model="ir.rule">
+            <field name="name">Co-operative / Stock Inventory </field>
+            <field name="model_id" ref="stock.model_stock_inventory"/>
+            <field name="domain_force">[('location_id.co_operative','=',True)]</field>
+            <field name="groups" eval="[(4, ref('cooperative_sale.group_cooperative_stock_management'))]"/>
+            <field eval="1" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="1" name="perm_create"/>
+       </record>
+
+    
+       <record id="cooperative_stock_picking_in_user_rule" model="ir.rule">
+            <field name="name">Co-operative / Stock Picking In </field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="domain_force">[('location_dest_id.co_operative','=',True),('type','=','in')]</field>
+            <field name="groups" eval="[(4, ref('cooperative_sale.group_cooperative_stock_management'))]"/>
+            <field eval="1" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="1" name="perm_create"/>
+       </record>
+        
+
+
+      <record id="cooperative_account_acount_user_rule" model="ir.rule">
+            <field name="name">Co-operative / Account Account </field>
+            <field name="model_id" ref="account.model_account_account"/>
+            <field name="domain_force">[('code','child_of', 'CO%')]</field>
+            <field name="groups" eval="[(4, ref('group_cooperative_account_management'))]"/>
+            <field eval="1" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="1" name="perm_create"/>
+       </record>
+
+       <record id="cooperative_account_journal_user_rule" model="ir.rule">
+            <field name="name">Co-operative / Account Journal </field>
+            <field name="model_id" ref="account.model_account_journal"/>
+            <field name="domain_force">[('code','like', 'CO%')]</field>
+            <field name="groups" eval="[(4, ref('group_cooperative_account_management'))]"/>
+            <field eval="1" name="perm_unlink"/>
+            <field eval="1" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="1" name="perm_create"/>
+       </record>
+ </data>
+</openerp>

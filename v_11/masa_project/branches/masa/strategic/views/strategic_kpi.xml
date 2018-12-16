@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="strategic_kpi_view_form">
+            <field name="name">strategic.kpi.view.form</field>
+            <field name="model">strategic.kpi</field>
+            <field name="arch" type="xml">
+                <form string="Strategic Kpi">
+                    <header>
+						<button string="Done" name="set_done" class="oe_highlight" states="inprogress" 
+							type="object"/>
+						<button string="InProgress" name="set_inprogress" class="oe_highlight" states="draft,suspend,delayed,done,stumbling" 
+							type="object"/>							
+						<button string="Delayed" name="set_delayed" class="oe_highlight" 
+							states="inprogress" type="object"/>
+                        <button string="Stumbling" name="set_stumbling" class="oe_highlight" 
+                            states="inprogress" type="object"/>
+						<button string="Suspend" name="set_suspend" states="inprogress" type="object" class="oe_highlight"/>
+						<button string="Reset to Draft" name="set_draft"
+							states="inprogress,suspend" type="object"/>	
+                        <field name="state" widget="statusbar" statusbar_visible="draft,inprogress,done"/>
+                        <button string="Transformer To Kpi" name="kpi_transformer" class="oe_highlight" 
+                            type="object"/>	
+                    </header>
+                    <sheet string="Strategic">
+                    	<div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                            <button name="action_get_attachment_view"
+                              class="oe_stat_button"
+                              icon="fa-book"
+                              type="object">
+                              <field name="attachment_number" widget="statinfo" string="Documents"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"  placeholder="Strategic Kpi Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code"/>
+                                <field name="sequence" widget='integer'/>
+                                <field name="type" widget='selection'/>
+                                <field name="company_id" groups="base.group_multi_company"/> 
+                            </group>
+                            <group>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                            </group>     
+                        </group>
+                        <notebook>
+                            <page string="definition">
+                                <sheet>
+                                    <form string="definition">
+                                        <group>
+                                            <group>
+                                                <field name="measuring_unit"/>
+                                                <field name="unit_type" widget='selection'/>
+                                             <field name="cal_method" widget='selection'/>
+                                            </group>
+                                            <group>
+                                                <field name="target_value"/>
+                                                <field name="actual_value"/>
+                                                <field name="percentage" widget='progressbar'/>
+                                                <field name="transformer"/>
+                                            </group>
+                                        </group>
+                                    </form>
+                                </sheet>
+                            </page>
+                            <page string="Tasks">
+                            <field name="task_ids">
+                                <tree string="Task" editable="top">
+                                    <field name="sequence"/>
+                                    <field name="name"/>
+                                    <field name="user_id"/>
+                                    <field name="weight"/>
+                                    <field name="verified"/>
+                                    <field name="progress"/>
+                                    <field name="date_start"/>
+                                    <field name="date_end"/>
+                                </tree>
+                            </field>
+                           </page>
+                        </notebook>
+                        <group>
+                            <field name="description" nolabel="1" placeholder="Strategic Kpi Description."/>
+                        </group>
+                        <group>
+                            <field name="Evaluation_management" nolabel="1" placeholder="Evaluation Management"/>
+                        </group>
+                        <group>
+                            <field name="Evaluation_senior_management" nolabel="1" placeholder="Evaluation Senior Management"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_strategic_kpi_tree">
+            <field name="name">strategic.kpi.tree</field>
+            <field name="model">strategic.kpi</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'draft'" decoration-muted="state in ('done','suspend','delayed')" string="Strategic Kpi">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="type"/>
+                    <field name="target_value"/>
+                    <field name="actual_value"/>
+                    <field name="percentage" widget='progressbar'/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_strategic_kpi_view">
+            <field name="name">Strategic</field>
+            <field name="res_model">strategic.kpi</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_strategic_kpi_tree"/>
+        </record>
+
+        <record id="view_strategic_kpi_search" model="ir.ui.view">
+           <field name="name">strategic.kpi.search</field>
+           <field name="model">strategic.kpi</field>
+           <field name="arch" type="xml">
+               <search string="Strategic Kpi">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Strategic Kpi"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="code"/>
+                    <field name="type"/>
+                    <field name="percentage"/>
+                    <field name="active"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+        <menuitem id="menu_strategic_view"
+        	      name="Strategic"/>
+        <menuitem parent="menu_strategic_view"
+                  id="menu_strategic_configuration_view"
+                  sequence="100"
+                  name="Configuration"/>
+        <menuitem parent="menu_executive_plan"
+        	      id="menu_strategic_kpi_view"
+        	      name="Strategic Kpi"
+        	      action="act_strategic_kpi_view"/>
+
+
+        <record model="ir.ui.view" id="strategic_partnerships_view_form">
+            <field name="name">strategic.partnerships.view.form</field>
+            <field name="model">strategic.partnerships</field>
+            <field name="arch" type="xml">
+                <form string="Strategic Partnerships">
+                    <sheet string="Strategic Partnerships">
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"  placeholder="Strategic Partnership Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>    
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_strategic_partnerships_tree">
+            <field name="name">strategic.partnerships.tree</field>
+            <field name="model">strategic.partnerships</field>
+            <field name="arch" type="xml">
+                <tree string="Strategic Partnerships">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_strategic_partnerships_view">
+            <field name="name">Strategic Partnerships</field>
+            <field name="res_model">strategic.partnerships</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_strategic_partnerships_tree"/>
+        </record>
+
+        <record id="view_strategic_partnerships_search" model="ir.ui.view">
+           <field name="name">strategic.partnerships.search</field>
+           <field name="model">strategic.partnerships</field>
+           <field name="arch" type="xml">
+               <search string="Strategic Partnerships">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="domain name"/>
+                    <field name="code"/>
+                    <field name="company_id"/>
+                </search>
+            </field>
+        </record>
+        <menuitem parent="menu_strategic_configuration_view"
+                  id="menu_strategic_partnerships_view"
+                  name="Strategic Partnerships"
+                  action="act_strategic_partnerships_view"/>
+
+
+        <record model="ir.ui.view" id="strategic_partnerships_view_form">
+            <field name="name">strategic.initiatives.view.form</field>
+            <field name="model">strategic.initiatives</field>
+            <field name="arch" type="xml">
+                <form string="Strategic Initiatives">
+                    <sheet string="Strategic Initiatives">
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"  placeholder="Strategic Initiatives Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>    
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_strategic_initiatives_tree">
+            <field name="name">strategic.initiatives.tree</field>
+            <field name="model">strategic.initiatives</field>
+            <field name="arch" type="xml">
+                <tree string="Strategic 
+                    Initiatives">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_strategic_initiatives_view">
+            <field name="name">strategic.initiatives</field>
+            <field name="res_model">strategic.initiatives</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_strategic_initiatives_tree"/>
+        </record>
+
+        <record id="view_strategic_initiatives_search" model="ir.ui.view">
+           <field name="name">strategic.initiatives.search</field>
+           <field name="model">strategic.initiatives</field>
+           <field name="arch" type="xml">
+               <search string="Strategic Initiatives">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="domain name"/>
+                    <field name="code"/>
+                    <field name="company_id"/>
+                </search>
+            </field>
+        </record>
+        <menuitem parent="menu_strategic_configuration_view"
+                  id="menu_strategic_initiatives_view"
+                  name="Strategic Initiatives"
+                  action="act_strategic_initiatives_view"/>
+    </data>
+</odoo>

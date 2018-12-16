@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="account_check_print_wizard_view" model="ir.ui.view">
+			<field name="name">Print Checks</field>
+			<field name="model">account.check.print.wizard</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Check Print" version="7.0">
+					<group col="9" colspan="9" width="800" height="150">
+						<field name="msg" colspan="9" nolabel="1" readonly="1"
+							height="70" />
+						<field name="name" colspan="3" readonly="1"
+							attrs="{'invisible':[('state','not in',['draft','reprint','update'])]}" />
+						<field name="new_no" colspan="3"
+							attrs="{'invisible':[('state','not in',['draft','reprint','update'])]}" />
+						<field name="status" colspan="9"
+							attrs="{'invisible':[('state','not in',['reprint_new'])],'required':[('state','in',['reprint_new'])]}" />
+						<field name="payment_id" invisible="1" />
+						<field name="state" invisible="1" />
+					</group>
+					<footer>
+						<group col="8" colspan="8" width="800" height="50">
+							<button name="check_payment" string="Print" states="draft,reprint"
+								type="object" />
+							<button name="check_payment" string="Update" states="update"
+								type="object"/>
+							<button name="reprint_new" string="Print New" states="printed"
+								type="object" />
+							<button name="print_report" string="Reprint" states="printed"
+								type="object" />
+							<button name="update_check_no" string="Update" states="printed"
+								type="object" />
+							<button name="do_delete" string="Delete" states="printed,unpost"
+								type="object" />
+							<button name="reprint_new_next" string="Next" states="reprint_new"
+								type="object" />
+							<button special="cancel" string="Cancel" />
+						</group>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<act_window id="action_account_check_print" key2="client_action_multi"
+			name="Check Print" res_model="account.check.print.wizard" src_model="account.move"
+			view_id="account_check_print_wizard_view" domain="[('journal_id.type', '=', 'bank')]"
+			view_mode="form" target="new" view_type="form" />
+	</data>
+</openerp>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+        <record model="workflow" id="wkf_purchase_requisition">
+            <field name="name">wkf.purchase.requisition</field>
+            <field name="osv">purchase.requisition</field>
+            <field name="on_create">True</field>
+        </record>
+        
+		<!-- Activities -->
+        <record model="workflow.activity" id="act_draft">
+            <field name="wkf_id" ref="wkf_purchase_requisition"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+        </record>
+        
+        <record model="workflow.activity" id="act_confirm">
+            <field name="wkf_id" ref="wkf_purchase_requisition"/>
+            <field name="name">confirm</field>
+            <field name="kind">function</field>
+            <field name="action">tender_confirm()</field>
+        </record>
+        
+        <record model="workflow.activity" id="act_confirm_dept">
+            <field name="wkf_id" ref="wkf_purchase_requisition"/>
+            <field name="name">confirm_dept</field>
+            <field name="kind">function</field>
+            <field name="action">tender_approve()</field>
+        </record>
+        
+        <record model="workflow.activity" id="act_approve">
+            <field name="wkf_id" ref="wkf_purchase_requisition"/>
+            <field name="name">approve</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'approve'})</field>
+        </record>
+        
+        <record model="workflow.activity" id="act_progress">
+            <field name="wkf_id" ref="wkf_purchase_requisition"/>
+            <field name="name">in_progress</field>
+            <field name="kind">function</field>
+            <field name="action">tender_in_progress()</field>
+        </record>
+        
+        <record model="workflow.activity" id="act_done">
+            <field name="wkf_id" ref="wkf_purchase_requisition"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">tender_done()</field>
+        </record>
+        
+        <record model="workflow.activity" id="act_cancel">
+            <field name="wkf_id" ref="wkf_purchase_requisition"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">tender_cancel()</field>
+        </record>
+        
+        <record model="workflow.activity" id="act_reset">
+            <field name="wkf_id" ref="wkf_purchase_requisition"/>
+            <field name="name">reset</field>
+            <field name="action">tender_reset()</field>
+            <field name="kind">function</field>
+        </record>
+
+
+        <record id="act_budget_approve" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_purchase_requisition"/>
+            <field name="name">budget_approve</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'budget_approve'})</field>
+        </record>
+        <record id="act_purchase_order" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_purchase_requisition"/>
+            <field name="name">purchase_order</field>
+            <field name="kind">function</field>
+            <field name="action">purchase_order()</field>
+        </record>
+
+		<!-- Transitions -->
+		<record id="t1" model="workflow.transition">
+			<field name="act_from" ref="act_draft"/>
+			<field name="act_to" ref="act_confirm"/>
+			<field name="signal">tender_confirm</field>
+            <field name="group_id" ref="base_custom.group_section_manager" />
+		</record>
+		
+		<record id="t2" model="workflow.transition">
+			<field name="act_from" ref="act_confirm"/>
+			<field name="act_to" ref="act_confirm_dept"/>
+			<field name="signal">tender_confirm_dept</field>
+		</record>
+		
+		<record id="t3" model="workflow.transition">
+			<field name="act_from" ref="act_confirm_dept"/>
+			<field name="act_to" ref="act_approve"/>
+			<field name="signal">tender_approve</field>
+		</record>
+		
+		<record id="t4" model="workflow.transition">
+			<field name="act_from" ref="act_approve"/>
+			<field name="act_to" ref="act_progress"/>
+			<field name="signal">tender_in_progress</field>
+		</record>
+		
+		<record id="t5" model="workflow.transition">
+			<field name="act_from" ref="act_progress"/>
+			<field name="act_to" ref="act_done"/>
+			<field name="signal">tender_done</field>
+		</record>
+		
+		<record id="t6" model="workflow.transition">
+			<field name="act_from" ref="act_confirm"/>
+			<field name="act_to" ref="act_cancel"/>
+			<field name="signal">tender_cancel</field>
+		</record>
+		
+		<record id="t7" model="workflow.transition">
+			<field name="act_from" ref="act_confirm_dept"/>
+			<field name="act_to" ref="act_cancel"/>
+			<field name="signal">tender_cancel</field>
+		</record>
+		
+		<record id="t8" model="workflow.transition">
+			<field name="act_from" ref="act_approve"/>
+			<field name="act_to" ref="act_cancel"/>
+			<field name="signal">tender_cancel</field>
+		</record>
+		
+		<record id="t9" model="workflow.transition">
+			<field name="act_from" ref="act_cancel"/>
+			<field name="act_to" ref="act_reset"/>
+			<field name="signal">tender_reset</field>
+		</record>
+
+        <record id="transi_act_budget_approve" model="workflow.transition">
+            <field name="act_from" ref="act_progress"/>
+            <field name="act_to" ref="act_budget_approve"/>
+            <field name="condition">test_state()</field>
+        </record>
+
+        <record id="purchase_order" model="workflow.transition">
+            <field name="act_from" ref="act_budget_approve"/>
+            <field name="act_to" ref="act_purchase_order"/>
+            <field name="signal">purchase_order</field>
+        </record>
+
+        <record id="t10" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_confirm_dept"/>
+            <field name="signal">tender_confirm</field>
+            <field name="group_id" ref="base_custom.group_department_manager" />
+        </record>
+
+        <record id="t11" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_approve"/>
+            <field name="signal">tender_confirm</field>
+            <field name="group_id" ref="base_custom.group_account_general_manager" />
+        </record>
+    </data>
+</openerp>

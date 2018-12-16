@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="view_purchase_order_or_request" model="ir.ui.view">
+            <field name="name">purchase order request</field>
+            <field name="model">purchase.order.request</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="report :">
+        			<separator string="purchase report" colspan="4"/>
+            <field name="Date_from" colspan="2"/>
+       				<newline/>
+            <field name="Date_to" colspan="2"/>
+       				<newline/>
+       		        <field name="purchase_type" colspan="4"/>
+       				<newline/>
+                        <field name="purchase_kind" colspan="4"/>
+       				<newline/>
+
+                        <field name="department_id" colspan="4"/>
+       				<newline/>
+			<field name="request_state" colspan="4"  attrs="{'invisible' : [('purchase_kind','=','order')] }"/>
+			       				<newline/>
+			<field name="order_state" colspan="4" attrs="{'invisible' : [('purchase_kind','=','request')] }"/>
+			       				<newline/>
+					<button special="cancel" string="_Cancel" icon="gtk-cancel" />
+           	    	<button name="print_report" string="Print" type="object" icon="gtk-ok"/>
+    			</form>
+            </field>
+		</record>
+
+        <record id="action_urchase_order_or_request" model="ir.actions.act_window">
+            <field name="name">purchase order request</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_purchase_order_or_request"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="تقرير طلبات واوامر الشراء"
+                parent="menu_purchase_advance_reports"
+                action="action_urchase_order_or_request"
+                id="menu_wizard_view_purchase_order_or_request"
+                />
+
+    </data>
+</openerp>

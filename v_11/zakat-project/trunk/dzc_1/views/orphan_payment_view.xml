@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <data>
+   <!-- Orphan sponsorship Payment-->
+
+                    <record model='ir.ui.view' id='orphan_sponsorship_payment_tree'>
+
+                      <field name='name'> Payment of Orphan Sponsorship Tree</field>
+                      <field name='model'>zakat.orphan.sponsorship.payment</field>
+                      <field name='arch' type='xml'>
+                        <tree string='Payment of Orphan Sponsorship Tree'>
+
+
+                          <field name="order_date"/>
+                          <field name="name"/>
+
+                          <field name="company_id"/>
+
+                          <field name="state" />
+
+                        </tree>
+                      </field>
+                    </record>
+
+
+
+
+                    <record id="orphan_sponsorship_payment_form" model="ir.ui.view">
+                      <field name="name">Payment of Orphan Sponsorship Order</field>
+                      <field name="model">zakat.orphan.sponsorship.payment</field>
+                      <field name="type">form</field>
+                      <field name="arch" type="xml" >
+                        <form >
+                          <header>
+                            <button name="confirm_action" states="draft," string="Confirm" type="object" class="oe_highlight" />
+
+          
+                            <button name="done_action" states="confirm," string="Done" type="object" class="oe_highlight" />
+
+                            <button name="cancel_action" states="draft,confirm,approve," string="Cancel" type="object" class="oe_highlight" />
+
+                            <button name="set_to_draft_action" states="cancel," string="Set To Draft" type="object" class="oe_highlight" />
+
+                            <field name="state" widget="statusbar"/>
+                          </header>
+                          <sheet>
+
+                            <group>
+                              <h1>
+                                <field name="name" readonly="1" style="width:60%"/>
+                              </h1>
+                              <div class="oe_button_box"  name="button_box">
+                                <button name="get_data" string="Get Data" type="object"  class="oe_stat_button" icon="fa-magnet"/>
+                              </div>
+                            </group>
+                            <group col="4" colspan="2">
+                             <field name="order_date" required="1" readonly="1"/>
+                             
+                           <field name="local_state_id" attrs="{'readonly':['|' ,('state', '=', 'done') , ('state' , '=' , 'cancel')]}" required="1" domain="[('company_id','=',company_id)]"/>
+
+                             <field name="salary_total" readonly="1"/>
+                             <field name="orphan_no" readonly="1"/>
+                             <field name="company_id" required="1" readonly="1"/>
+                              <field name="type" readonly="1"/>
+
+                           </group>
+                           <notebook>
+
+                             <page string="Guaranteed">
+                              <field name="guaranteed_ids" readonly="1">
+                                <tree editable="bottom">
+                                  <field name="guaranteed_id" required="1"/>
+                                  <field name="unit_admin" readonly="1"/>
+                                  <field name="salary" required="1" string="Salary"/>
+                                  <field name = "vaucher_id" attrs="{'column_invisible':[('parent.state', '!=', 'done')]}"/>
+                                </tree>
+                              </field>
+                            </page>
+
+                            <page string="Notes">
+                              <field name="notes" attrs="{'required':[('state','=','draft')],'readonly':[('state','!=','draft')]}"/>
+                            </page>
+
+
+
+                          </notebook>
+
+                        </sheet>
+                      </form>
+                    </field>
+                  </record>
+
+                  <!-- Payment of Orphan Sponsorship action -->
+                  <record id="orphan_sponsorship_payment_action" model="ir.actions.act_window">
+                    <field name="name">Payment of Orphan Sponsorship Order</field>
+                    <field name="res_model">zakat.orphan.sponsorship.payment</field>
+                    <field name="view_type">form</field>
+                    <field name="view_mode">tree,form</field>
+                    <field name="domain">[('type', '=', 'orphan')]</field>
+                    <field name="context">{'default_type': 'orphan'}</field>
+                    <field name="view_id" ref="orphan_sponsorship_payment_tree"/>
+                  </record>
+
+
+                  <!--Payment of Orphan Sponsorship menu -->
+                  <menuitem id="orphan_sponsorship_payment_menu"
+                    parent="orphan_main_menu"
+                    name="Payment Of Orphan Sponsorship"
+                    action="orphan_sponsorship_payment_action"
+                    sequence="4"/>
+
+                  </data>
+                </odoo>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="workflow.activity" id="act_cut">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">cut</field>
+			<field name="kind">function</field>
+			<field name="action">cut()</field>
+		</record>
+
+		<record model="workflow.activity" id="act_approve_cut">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">cut_approve</field>
+			<field name="kind">function</field>
+			<field name="action">approve_cut()</field>
+		</record>
+
+		<record model="workflow.activity" id="act_done_cut">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">cut_done</field>
+			<field name="kind">function</field>
+			<field name="action">done_cut()</field>
+		</record>
+
+<!--postpone leave-->
+
+		<record model="workflow.activity" id="act_postpone">
+			<field name="wkf_id" ref="hr_holidays.wkf_holidays" />
+			<field name="name">postpone</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'postpone'})</field>
+		</record>
+
+<!--transition-->
+               <record model="workflow.transition" id="hr_holidays.holiday_draft2confirm"> 
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="hr_holidays.act_confirm" />
+			<field name="signal">confirm</field>
+		</record>
+
+
+		<record model="workflow.transition" id="t30">
+			<field name="act_from" ref="hr_holidays.act_validate" />
+			<field name="act_to" ref="act_cut" />
+			<field name="signal">cut_leave</field>
+		</record>
+
+		<record model="workflow.transition" id="t40">
+			<field name="act_from" ref="act_cut" />
+			<field name="act_to" ref="act_approve_cut" />
+			<field name="signal">approve_cut</field>
+		</record>
+
+		<record model="workflow.transition" id="t50">
+			<field name="act_from" ref="act_approve_cut" />
+			<field name="act_to" ref="act_done_cut" />
+			<field name="signal">done_cut</field>
+		</record>
+
+		<record model="workflow.transition" id="t80">
+			<field name="act_from" ref="act_cut" />
+			<field name="act_to" ref="hr_holidays.act_validate" />
+			<field name="signal">refuse_cut</field>
+		</record>
+
+		<record model="workflow.transition" id="t90">
+			<field name="act_from" ref="act_approve_cut" />
+			<field name="act_to" ref="hr_holidays.act_validate" />
+			<field name="signal">refuse_cut</field>
+		</record>
+
+<!--postopne transition-->
+
+		<record model="workflow.transition" id="t110">
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="act_postpone" />
+			<field name="signal">postpone</field>
+		</record>
+
+<!--absence transition-->
+
+		<record model="workflow.transition" id="t120">
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="hr_holidays.act_validate" />
+			<field name="signal">absence_validate</field>
+		</record>
+		
+		<record model="workflow.transition" id="t140">
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="hr_holidays.act_confirm" />
+			<field name="signal">permission_confirm</field>
+		</record>
+
+		<record model="workflow.transition" id="t122">
+			<field name="act_from" ref="hr_holidays.act_confirm" />
+			<field name="act_to" ref="hr_holidays.act_validate" />
+			<field name="signal">permission_validate</field>
+		</record>
+
+	</data>
+</openerp>

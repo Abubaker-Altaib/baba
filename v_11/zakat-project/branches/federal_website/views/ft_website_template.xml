@@ -1,0 +1,1367 @@
+<odoo>
+
+
+<template id="assets_frontend" name="helpdesk assets" inherit_id="website.assets_frontend">
+    <xpath expr="//script[last()]" position="after">
+        <script type="text/javascript" src="/federal_website/static/src/js/ft.js">
+        </script>
+
+        <link href="federal_website/static/fonts/roboto"/>
+        <link rel="stylesheet" href="/federal_website/static/src/css/sheet.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+        <!--  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"/> -->
+
+    </xpath>
+</template>
+
+
+<template id="federal_request" name="Federal Template">
+    <html>
+        <head>
+            <link rel="shortcut icon" type="image/x-icon" href="/federal_website/static/img/n.ico"/>
+            <title>العلاج الإتحادي-ديوان الزكاة</title>
+
+        </head>
+
+        <xpath expr="//script[last()]" position="after">
+            <script type="text/javascript" src="/federal_website/static/src/js/ft.js">
+
+            </script>
+            <script src="/federal_website/static/src/js/jquery.js"></script>
+            <link rel="stylesheet" href="/federal_website/static/src/css/sheet.css"/>
+
+
+            <link rel="stylesheet" href="/federal_website/static/src/css/bootstrap.min.css"/>
+            <link rel="stylesheet" href="/federal_website/static/src/css/bootstrap.css"/>
+
+            <link rel="stylesheet" href="/federal_website/static/src/css/style.css"/>
+
+
+            <script src="/federal_website/static/src/js/bootstrap.js"></script>
+            <script src="/federal_website/static/src/js/bootstrap.min.js"></script>
+
+            <script src="/federal_website/static/src/js/example.js"></script>
+        </xpath>
+
+        <t t-call="website.layout">
+            <div style=";width:100%;direction:rtl">
+
+                <div class="oe_structure">
+
+                    <div class="panel-heading">
+
+                        <div class="row">
+
+                            <b>
+                                <a type="button" t-attf-href="http://www.zakat-chamber.gov.sd/arabic/"
+                                   style="color:white;font-size:15px;margin-right:30px">
+                                    <i class="fa fa-building" aria-hidden="true"></i>
+                                    <u>الصفحة الرئيسية</u>
+                                </a>
+                            </b>
+                            <div class="col-md-12">
+
+                                <center>
+                                    <img src="/federal_website/static/img/z.png" style="width:20%"/>
+                                </center>
+
+                            </div>
+
+
+                            <div class="col-md-12">
+                                <br/>
+                                <center>
+
+                                    <button type="button" data-dismiss="modal" class="btn btn-info"
+                                            style="color:white;width:10%;background-color:#16843a;border-color:#46803d"
+                                            id="myBtn2">تقديم طلب
+                                        <i class="fa fa-check-square" aria-hidden="true"></i>
+                                    </button>
+
+                                    <button type="button" data-dismiss="modal" class="btn btn-info"
+                                            style="color:white;width:10%;background-color:#16843a; border-color:#46803d"
+                                            id="myBtn">متابعة طلب
+                                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                                    </button>
+
+                                </center>
+                            </div>
+
+                            <div id="natio_wrong" style="display:none">
+                                <p>efgdddddddddddddddddddddddddddddrong</p>
+                            </div>
+
+                            <div class="container">
+
+                                <!-- Trigger the modal with a button -->
+                                <!-- Modal -->
+
+                            </div>
+
+                            <div class="modal fade" id="myModal" role="dialog">
+                                <div class="modal-dialog">
+
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="padding:35px 50px;">
+                                            <button type="button" class="close" data-dismiss="modal"></button>
+                                            <center>
+                                                <h3 style="color:#fff; margin-right:85px;">متابعة الطلب</h3>
+                                            </center>
+                                        </div>
+                                        <div class="modal-body" style="padding:40px 50px;">
+                                            <h4 style="color:#000;">طريقة المتابعة</h4>
+                                            <input type="radio" name="folow_bu" value="natio" id="folow_natio"
+                                                   onclick="folowing()">بالرقم الوطني
+                                            </input>
+                                            <br/>
+                                            <input type="radio" name="folow_bu" value="pass" id="pass_fol"
+                                                   onclick="folowing()">برقم الجواز
+                                            </input>
+                                            <br/>
+                                            <input type="radio" name="folow_bu" value="foll" id="folow_fo"
+                                                   onclick="folowing()">برقم الطلب
+                                            </input>
+
+                                            <form method="post"
+                                                  class="s_website_form form-horizontal container-fluid mt32"
+                                                  enctype="multipart/form-data" data-model_name="ft.website"
+                                                  action="/federal_following">
+
+                                                <input type="hidden" id="n_nat" name="n_nat"></input>
+
+                                                <div name="na_fol" id="na_fol" style="display:none">
+                                                    <input name="national_folow" style="margin-right:25px;"
+                                                           id="national_folow"
+                                                           placeholder="الرقم الوطني"></input>
+
+                                                    <input type="hidden" t-att-value="True" style=";width:180px"
+                                                           name="natio_validate" id="natio_validate"/>
+
+                                                    <div id="natio_msg" style="display:none">
+                                                        <p style="color:red;background-color:#feecea">الرقم الوطني
+                                                            يجب ان يكون مكون من 11 رقم
+                                                        </p>
+                                                    </div>
+
+                                                    <input type="hidden" t-att-value="wrong_req" name="req_n"
+                                                           id="req_n"></input>
+
+                                                </div>
+
+                                                <div name="fol_folwing" id="fol_folwing" style="display:none;">
+                                                    <label></label>
+                                                    <input name="follow_num" style="margin-right:25px;"
+                                                           placeholder="رقم الطلب"></input>
+
+                                                    <input type="hidden" t-att-value="True" style=";width:180px"
+                                                           name="fol_validate" id="fol_validate"/>
+
+                                                    <div id="fol_msg" style="display:none">
+                                                        <p style="color:red;background-color:#feecea">الرقم الوطني
+                                                            يجب ان يكون مكون من 11 رقم
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div id="passport_fol" style="display:none">
+
+                                                    <input type="text" style="margin-right:26px;"
+                                                           placeholder="رقم الجواز" name="pass_fol"
+                                                           id="pass_fol"/>
+                                                    <input type="hidden" t-att-value="True" style=";width:180px"
+                                                           name="pass_validate" id="pass_validate"/>
+
+                                                    <div id="pass_msg" style="display:none">
+                                                        <p style="color:red;background-color:#feecea">الرقم الوطني
+                                                            يجب ان يكون مكون من 11 رقم
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-info"
+                                                            action="return followingValidation()"
+                                                            style="background-color:#16843a; color:white;border-color:#46803d;width:auto; margin-right:10px;"
+                                                            onclick="return followingValidation()">متابعة الطلب
+                                                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                                                    </button>
+
+                                                    <button type="submit"
+                                                            style="width:95; margin-right:15px;"
+                                                            class="btn btn-danger btn-default pull-left"
+                                                            data-dismiss="modal">الغاء
+                                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                            <div class="container">
+
+                                <!-- Trigger the modal with a button -->
+                                <!-- Modal -->
+                                <div class="modal fade" id="myModal2" role="dialog">
+                                    <div class="modal-dialog">
+
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header" style="padding:35px 50px;">
+                                                <button type="button" class="close" data-dismiss="modal"></button>
+                                                <center>
+                                                    <h3 style="color:#fff; margin-right:85px;">إنشاء طلب</h3>
+                                                </center>
+                                            </div>
+                                            <div class="modal-body" style="padding:1px 50px;">
+
+                                                <form method="post"
+                                                      class="s_website_form form-horizontal container-fluid mt32"
+                                                      enctype="multipart/form-data" data-model_name="ft.website"
+                                                      data-success_page="/thank_you"
+                                                      action="/federal_request_submit">
+                                                    <center>
+                                                        <p style="font-size:20px">
+                                                            <u>بيانات الطلب</u>
+                                                        </p>
+                                                        <input name="session_start" id="session_start" value="False"
+                                                               type="hidden"></input>
+                                                        <h6 class="text-right" style="text-align: right;">نوع
+                                                            الطلب
+                                                        </h6>
+                                                        <!--           <label style="float:right;font-family:Arial,Helvetica, sans-serif">
+                                                        -->
+                                                        <select style="width:186px" id="req_type" name="req_type">
+                                                            نوع الطلب
+
+                                                            <option value='it'>علاج بالداخل</option>
+                                                            <option value='at'>علاج بالخارج</option>
+
+                                                        </select>
+
+                                                        <br/>
+
+                                                        <input type="hidden" t-att-value="req_type" name="req_copy"
+                                                               id="req_copy"/>
+
+                                                        <h6 class="text-right" style="text-align: right;">الجنسية
+                                                        </h6>
+
+                                                        <select name="nationality" style=";width:190px"
+                                                                id="nationality" onchange="show(this)">الجنسية
+
+                                                            <option value="sd">سوداني/ة</option>
+                                                            <option value="other">اخرى</option>
+
+                                                        </select>
+
+
+                                                        <div id="passport_div" style="display:none">
+                                                            <h6 class="text-right" style="text-align: right;">رقم
+                                                                الجواز
+                                                            </h6>
+
+                                                            <input type="text" name="passport" id="passport"/>
+                                                            <input type="hidden" t-att-value="True"
+                                                                   style=";width:180px" name="passport_validate"
+                                                                   id="passport_validate"/>
+
+                                                            <div id="passport_msg" style="display:none">
+                                                                <p style="color:red;background-color:#feecea">رقم
+                                                                    الجواز يجب ان يتكون من 9 خانات فقط
+                                                                </p>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div id="national_number_div">
+                                                            <h6 class="text-right" style="text-align: right;">الرقم
+                                                                الوطني
+                                                            </h6>
+
+
+                                                            <input type="hidden" t-att-value="True"
+                                                                   style=";width:180px" name="national_validate"
+                                                                   id="national_validate"/>
+
+
+                                                            <input type="text" style=";width:180px"
+                                                                   name="national_number" id="national_n"/>
+
+                                                            <div id="national_msg" style="display:none">
+                                                                <p style="color:red;background-color:#feecea">الرقم
+                                                                    الوطني يجب ان يكون مكون من 11 رقم
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <br/>
+
+
+                                                        <input type="hidden" name="csrf_token"
+                                                               t-att-value="request.csrf_token()"/>
+
+
+                                                        <div class="modal-footer">
+                                                            <button type="submit" class="btn btn-info"
+                                                                    style=" margin-right:10px;width:95;background-color:#16843a; color:white;border-color:#46803d"
+                                                                    onclick="return validateForm()">تقديم
+                                                                <i class="fa fa-check-square" aria-hidden="true"></i>
+                                                            </button>
+
+                                                            <button type="submit"
+                                                                    style="width:95; margin-right:15px;"
+                                                                    class="btn btn-danger btn-default pull-left"
+                                                                    data-dismiss="modal">الغاء
+                                                                <i class="fa fa-times" aria-hidden="true"></i>
+                                                            </button>
+                                                        </div>
+
+                                                    </center>
+                                                </form>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </t>
+    </html>
+</template>
+
+<!-- Already registerd request-->
+<template id="registered_data" name="Federal Template">
+    <html>
+        <head>
+
+            <title>طلب جديد</title>
+
+        </head>
+
+        <xpath expr="//script[last()]" position="after">
+            <script type="text/javascript" src="/federal_website/static/src/js/ft.js">
+            </script>
+            <script src="https://www.google.com/reCAPTCHA/api.js"></script>
+
+            <link rel="stylesheet" href="/federal_website/static/src/css/sheet.css"/>
+        </xpath>
+
+        <t t-call="website.layout">
+            <!--  <a type="button" t-attf-href="http://www.google.com" style="color:white;font-size:20px;font-family:mono;float:left;margin-left:30px">رجوع للخلف</a>
+          -->
+            <div class="container">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+
+
+                            <div class="col-md-12" style="direction:rtl">
+                                <center>
+                                    <h4 style="color:#118171">
+                                        <u>بيانات الطلب</u>
+                                    </h4>
+                                    <hr style="background-color:#e5e6de"/>
+                                </center>
+                                <div class="col-md-12">
+                                    <form method="post" class="s_website_form form-horizontal container-fluid mt32"
+                                          enctype="multipart/form-data" data-success_page="/thank_you"
+                                          action="/request_submit">
+
+                                        <t t-foreach="result" t-as="r">
+                                            <h4 style="color:#111515;float:right">* بيانات مقدم الطلب</h4>
+                                            <div class="col-md-12">
+                                                <table class="table-responsive table-striped"
+                                                       style="border-spacing:10px;border:1">
+                                                    <tr>
+                                                        <td style="padding: 6px;">
+                                                            <label style="color:#118171">الإسم</label>
+                                                        </td>
+                                                        <td style="padding: 6px;">
+                                                            <strong>
+                                                                <t t-esc="r.first_name"/>
+                                                            </strong>
+
+                                                            <strong>
+                                                                <t t-esc="r.second_name"/>
+                                                            </strong>
+                                                            <strong>
+                                                                <t t-esc="r.third_name"/>
+                                                            </strong>
+
+                                                            <strong>
+                                                                <t t-esc="r.forth_name"/>
+                                                            </strong>
+                                                        </td>
+
+                                                    </tr>
+                                                    <t t-if="r.nationality == 'sd'">
+                                                        <tr>
+                                                            <td style="padding: 6px;">
+                                                                <label style="color:#118171">الرقم الوطني</label>
+                                                            </td>
+                                                            <td style="padding: 6px;">
+                                                                <strong>
+                                                                    <t t-esc="r.national_number"/>
+                                                                </strong>
+                                                            </td>
+
+                                                            <td style="padding: 6px;">
+                                                                <label style="color:#118171">الجنسية</label>
+                                                            </td>
+                                                            <td style="padding: 6px;">
+                                                                <strong>سوداني</strong>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+
+                                                    <t t-if="r.nationality == 'other'">
+                                                        <tr>
+                                                            <td style="padding: 6px;">
+                                                                <label style="color:#118171">رقم الجواز</label>
+                                                            </td>
+                                                            <td style="padding: 6px;">
+                                                                <strong>
+                                                                    <t t-esc="r.passport"/>
+                                                                </strong>
+                                                            </td>
+
+                                                            <td style="padding: 6px;">
+                                                                <label style="color:#118171">الجنسية</label>
+                                                            </td>
+                                                            <td style="padding: 6px;">
+                                                                <strong>غير سوداني</strong>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+
+
+                                                    <!--   <tr>
+                                                           <td style="padding: 6px;">
+                                                               <label style="color:#118171">رقم الهاتف</label>
+                                                           </td>
+
+                                                           <td style="padding: 6px;">
+                                                               <strong>
+                                                                   <t t-esc="r.phone"/>
+                                                               </strong>
+                                                           </td>
+                                                       </tr>-->
+
+
+                                                    <!--  <tr><td style="padding: 6px;"><label style="color:#118171">تارخ الميلاد</label></td>
+
+
+                                                     <td style="padding: 6px;"><strong><t t-esc="r.birth_date" /></strong></td>
+                                                   </tr>
+                                        -->
+
+
+                                                    <tr>
+                                                        <td style="padding: 6px;">
+                                                            <label style="color:#118171">المدينة</label>
+                                                        </td>
+                                                        <td style="padding: 6px;">
+                                                            <strong>
+                                                                <t t-esc="r.city"/>
+                                                            </strong>
+                                                        </td>
+
+                                                        <td style="padding: 6px;">
+                                                            <label style="color:#118171">الوظيفة</label>
+                                                        </td>
+                                                        <td style="padding: 6px;">
+                                                            <strong>
+                                                                <t t-esc="r.job"/>
+                                                            </strong>
+                                                        </td>
+                                                    </tr>
+
+
+                                                    <tr>
+                                                        <td style="padding: 6px;">
+                                                            <label style="color:#118171">رقم المنزل</label>
+                                                        </td>
+                                                        <td style="padding: 6px;">
+                                                            <strong>
+                                                                <t t-esc="r.house_no"/>
+                                                            </strong>
+                                                        </td>
+
+                                                        <td style="padding: 6px;">
+                                                            <label style="color:#118171">القرية \ الحي</label>
+                                                        </td>
+
+                                                        <td style="padding: 6px;">
+                                                            <strong>
+                                                                <t t-esc="r.Village"/>
+                                                            </strong>
+                                                        </td>
+                                                    </tr>
+<input name="connection_reset" id="connection_reset" value="False" type="hidden"></input>
+                                                </table>
+                                                <hr style="background-color:#e5e6de"/>
+
+                                                <h4 style="color:#111515;float:right">* بيانات العلاج</h4>
+
+                                                <strong>
+                                                    <br/>
+
+
+                                                    <input type="hidden" name="req_type"
+                                                           t-att-value="req_type"></input>
+                                                    <br/>
+
+                                                    <label style="color:#118171">نوع العلاج</label>
+
+                                                    <t t-if="req_type == 'it' ">
+                                                        <label name="r_it">علاج بالداخل</label>
+
+                                                    </t>
+
+                                                    <t t-if="req_type == 'at' ">
+                                                        <label name="r_at">علاج بالخارج</label>
+
+                                                    </t>
+
+
+                                                </strong>
+                                                <br/>
+
+                                                <label style="color:#118171">مبلغ العلاج</label>
+                                                <input type="text" name="treatment_amount" id="treatment_amount"/>
+
+                                                <input type="hidden" id="amount_v" name="amount_v"
+                                                       t-att-value="True"></input>
+
+                                                <div id="amount_validate" name="amount_validate"
+                                                     style="display:none;background-color:#feecea">
+                                                    <p style="color:red">ادخل المبلغ بالأرقام فقط</p>
+                                                </div>
+
+                                                <br/>
+
+
+                                                <input type="hidden" name="national_number"
+                                                       t-att-value="r.national_number"></input>
+
+
+                                                <input type="hidden" name="nationality"
+                                                       t-att-value="r.nationality"></input>
+
+                                                <input type="hidden" name="passport"
+                                                       t-att-value="r.passport"></input>
+
+                                                <input name="session_start" id="session_start" value="True"
+                                                       type="hidden"></input>
+
+                                                <hr style="background-color:#e5e6de"/>
+
+                                                <h4 style="float:right;color:#000">* المستندات المطلوبة</h4>
+                                                <br/>
+
+                                                <br/>
+                                               
+                                            <br/>
+
+ <t t-if="req_type == 'it' ">
+                          
+                                <table style="border-spacing:10px">
+ 
+                                                            <tr>                                  
+                                            <td style="padding: 6px"><label>فاتورة مبدئية</label></td>
+
+            <td style="padding: 6px">
+                <input id="fileInput1" type="file" accept=".png,.jpg,.jpeg,.pdf" style="display:none;" onchange="ValidateSize(this)"/>
+
+                                            <input type="button" value="إرفاق" onclick="document.getElementById('fileInput1').click();" /></td>
+
+                                            <td style="padding: 6px"><label>التقرير الطبي</label></td>
+                                        
+                                        <td style="padding: 6px"><input id="fileInput2" accept=".png,.jpg,.jpeg,.pdf" type="file" style="display:none;" onchange="ValidateSize(this)"/>
+                                        
+                                        <input type="button" value="إرفاق" onclick="document.getElementById('fileInput2').click();" /></td>
+                                                            </tr>
+
+                                                            <tr>
+                                            <td style="padding: 6px"><label>حالة الدفعية</label></td>
+                                            <td style="padding: 6px"><input id="fileInput3" type="file" accept=".png,.jpg,.jpeg,.pdf" style="display:none;" onchange="ValidateSize(this)"/>
+
+                                            <input type="button" value="إرفاق" onclick="document.getElementById('fileInput3').click();" /></td>
+                                                                        
+                                             <td style="padding: 6px"><label>دراسة لجنة زكاة الحي</label></td>
+                                                                
+                                            <td style="padding: 6px"><input id="fileInput4" type="file" accept=".png,.jpg,.jpeg,.pdf" style="display:none;" onchange="ValidateSize(this)"/>
+                                            <input type="button" value="إرفاق" onclick="document.getElementById('fileInput4').click();" /></td>
+
+                                                </tr>
+
+                                                        </table>
+                                                    </t>
+
+                                     <t t-if="req_type == 'at' ">
+
+
+                                 <table style="border-spacing:10px">  
+                                                            <tr>
+                                    <td style="padding: 6px"><label>شهادة من القمسيون الطبي لهذا العام</label></td>
+                                        
+                                    <td style="padding: 6px"><input id="fileInput5" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                                    <input type="button" value="إرفاق" onclick="document.getElementById('fileInput5').click();"  />
+                                                        </td>
+                                                        
+                                <td style="padding: 6px"><label>تكلفة العلاج</label></td>
+                                
+                                <td style="padding: 6px"><input id="fileInput6" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                                <input type="button" value="إرفاق" onclick="document.getElementById('fileInput6').click();" /></td>
+                                                        
+                                                        </tr>
+
+                                                        <tr>                                     
+                                 <td style="padding: 6px"><label>صورة من جواز السفر</label></td>
+                                
+                                <td style="padding: 6px"><input id="fileInput7" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                                
+                             <input type="button" value="إرفاق" onclick="document.getElementById('fileInput7').click();" /></td>
+                                                                       
+                                <td style="padding: 6px"><label>التذاكر</label></td>
+                                
+                                <td style="padding: 6px"><input id="fileInput8" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                                
+                                <input type="button" value="إرفاق" onclick="document.getElementById('fileInput8').click();" /></td>
+                                        </tr>
+
+                                        <tr>                                           
+                                <td style="padding: 6px"><label>التأشيرة</label></td>
+                                
+                                <td style="padding: 6px"><input id="fileInput9" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                                    <input type="button" value="إرفاق" onclick="document.getElementById('fileInput9').click();" /></td>
+                                                       
+                                                       
+
+                                 <td style="padding: 6px"><label>تحويل او استبدال مالايقل عن 50 في المائة</label></td>
+                                
+                                <td style="padding: 6px"><input id="fileInput10" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                                
+                                <input type="button" class="oe_button_box oe_right" value="إرفاق" onclick="document.getElementById('fileInput10').click();" /></td>
+                                                        </tr>
+                                                    </table>
+                                                </t>
+                                            <div class="form-group">
+                                                <br/>
+
+                                                <label style="color:#118171">ملاحظة</label>
+                                                <br/>
+                                                <textarea class="pad" rows="4" type="text" name="note">
+
+                                                </textarea>
+                                                <hr style="background-color:#e5e6de"/>
+
+                                            </div>
+                                            <center>
+                                                <button type="submit"
+                                                    style="background-color:#16843a;border-color:#46803d;color:white;width:10%;"
+                                                    class="btn" onclick="return validateAlreasyReg()">تقديم
+                                                    <i class="fa fa-check-square" aria-hidden="true"></i>
+                                                </button>
+
+                                                <a t-attf-href="/federal_request"
+                                                 style="background-color:#8f380f;width:10%;color:white"
+                                                 class="btn">الغاء
+                                                 <i class="fa fa-times" aria-hidden="true"></i>
+                                             </a>
+
+                                         </center>
+
+                                         <input type="hidden" name="csrf_token"
+                                             t-att-value="request.csrf_token()"/>
+
+                                         </div>
+                                        <!--       <div class="g-reCAPTCHA" data-sitekey="your_site_key"></div>
+                                    -->
+                                                </t>
+
+                                                <br/>
+
+                                                <input type="hidden" name="csrf_token"
+                                                       t-att-value="request.csrf_token()"></input>
+
+                                            <!--       <div class="g-reCAPTCHA" data-sitekey="your_site_key"></div>
+                                             -->
+<!--                                         </t>
+ -->
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="oe_structure mb32"/>
+        </t>
+    </html>
+</template>
+
+
+<!-- new request-->
+<template id="new_registration" name="Federal Template">
+    <html>
+        <head>
+
+            <title>طلب جديد</title>
+
+        </head>
+
+        <xpath expr="//script[last()]" position="after">
+            <script type="text/javascript" src="/federal_website/static/src/js/ft.js">
+
+            </script>
+
+            <link rel="stylesheet" href="/federal_website/static/src/css/sheet.css"/>
+        </xpath>
+        <t t-call="website.layout">
+            <!--   <a t-attf-href="/federal_request" >
+                           <img style="width:60px;float:left" src="/federal_website/static/img/back.png"/>
+                       </a>-->
+            <div class="container">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <br/>
+
+                            <div class="col-md-24" style="direction:rtl;padding:0 20px 0 0">
+                                <center>
+                                    <h3 style="color:black">بيانات الطلب</h3>
+                                </center>
+
+                                <form method="post" class="s_website_form form-horizontal container-fluid mt32"
+                                      enctype="multipart/form-data" data-success_page="/thank_you"
+                                      action="/registration">
+
+                                    <t t-foreach="result" t-as="r"></t>
+                                    <div class="col-md-12,form-group">
+                                        <hr style="background-color:#e5e6de"/>
+
+                                        <h4 style="font-family:serif">* بيانات المستفيد</h4>
+
+                                        <input type="text" style="width:180px" name="first_name" id="first_name"
+                                               placeholder="الإسم الأول"/>
+
+                                        <input type="text" style="width:180px" placeholder="الإسم الثاني"
+                                               name="second_name" id="second_name"/>
+
+                                        <input type="text" style="width:180px" placeholder="الإسم الثالث"
+                                               name="third_name" id="third_name"/>
+
+                                        <input type="text" style="width:180px" placeholder="الإسم الرابع"
+                                               name="forth_name" id="forth_name"/>
+                                    </div>
+                                    <br/>
+                                    <input type="hidden" id="name_v" name="name_v" t-att-value="True"></input>
+
+                                    <div id="name_validate" name="name_validate"
+                                         style="display:none;background-color:#feecea">
+                                        <p style="color:red">خانة الإسم مطلوبة و يجب أن تحتوي على احرف فقط</p>
+
+                                    </div>
+
+                                    <div class="col-md-12,form-group">
+                                        <label style="font-family:serif">الجنس</label>
+
+                                        <select name="gender">
+                                            <option></option>
+                                            <option value="male">ذكر</option>
+                                            <option value="female">انثى</option>
+                                        </select>
+
+
+                                        <label>تاريخ الميلاد</label>
+
+                                        <input type="date" name="birth_date" id="birth_date"/>
+                                        <input type="hidden" id="birth_v" name="birth_v" t-att-value="True"></input>
+
+                                        <div id="birth_validate" name="birth_validate"
+                                             style="display:none;background-color:#feecea">
+                                            <p style="color:red">تاريخ الميلاد يجب أن يكون بعد تاريخ اليوم</p>
+
+                                        </div>
+
+                                        <label>رقم الهاتف</label>
+
+
+                                        <input type="text" placeholder="رقم الهاتف" name="phone" id="phone"/>
+                                        <input type="hidden" id="phone_v" name="phone_v" t-att-value="True"></input>
+
+                                        <div id="phone_validate" name="phone_validate"
+                                             style="display:none;background-color:#feecea">
+                                            <p style="color:red">رقم الهاتف يجب أن يتكون من 10 أرقام تبدأ ب 0</p>
+
+                                        </div>
+
+                                    </div>
+                                    <br/>
+
+                                    <label>الوظيفة</label>
+
+                                    <input type="text" placeholder="الوظيفة" name="job" id="job"/>
+                                    <input type="hidden" id="job_v" name="job_v" t-att-value="True"></input>
+
+                                    <div id="job_validate" name="job_validate"
+                                         style="display:none;background-color:#feecea">
+                                        <p style="color:red">خانة الوظيفة مطلوبة ويجب أن لاتحتوي على ارقام</p>
+
+                                    </div>
+
+                                    <hr style="background-color:#e5e6de"/>
+
+                                    <div class="col-md-12,form-group">
+                                        <h4>* بيانات السكن</h4>
+                                        <label>الولاية</label>
+
+                                        <select name="state_id">
+                                            <option></option>
+                                            <t t-foreach="states" t-as="s">
+                                                <option t-att-value='s.id'>
+                                                    <t t-esc="s.name"/>
+                                                </option>
+                                            </t>
+
+                                        </select>
+
+
+                                        <input type="hidden" name="req_type" t-att-value="req_type"></input>
+
+                                        <label>المحلية</label>
+
+                                        <input type="text" placeholder="المحلية" style="width:120px"
+                                               name="local_state"/>
+                                        <label>الوحدة الإدارية</label>
+
+                                        <input type="text" style="width:120px" placeholder="الوحدة الإدارية"
+                                               name="administrative_unit"/>
+                                        <br/>
+                                        <br/>
+
+                                        <label>القرية \ الحي</label>
+
+                                        <input type="text" placeholder="القرية\الحي" name="village"/>
+                                        <label>المدينة</label>
+
+                                        <input type="text" placeholder="المدينة" name="city"/>
+                                        <label>رقم المنزل</label>
+
+                                        <input style="width:95px" type="text" placeholder="رقم المنزل"
+                                               name="house_no" id="house_no"/>
+                                        <input type="hidden" id="house_v" name="house_v" t-att-value="True"></input>
+
+                                        <div id="house_validate" name="house_validate"
+                                             style="display:none;background-color:#feecea">
+                                            <p style="color:red">خانة رقم المنزل مطلوبة ويجب أن تتكون من ارقام</p>
+
+                                        </div>
+                                    </div>
+
+                                    <br/>
+                                    <hr style="background-color:#e5e6de"/>
+
+                                    <div class="col-md-12,form-group">
+                                        <h4>* بيانات العلاج</h4>
+                                        <label>مبلغ العلاج</label>
+                                        <input type="text" placeholder="مبلغ العلاج" name="treatment_amount"
+                                               id="treatment_amount"/>
+
+                                        <input type="hidden" id="amount_v" name="amount_v"
+                                               t-att-value="True"></input>
+
+                                        <div id="amount_validate" name="amount_validate"
+                                             style="display:none;background-color:#feecea">
+                                            <p style="color:red">ادخل المبلغ بالأرقام فقط</p>
+
+                                        </div>
+                                        <label>ملاحظة</label>
+                                        <input placeholder="ملاحظة" name="note"/>
+
+                                    </div>
+                                    <br/>
+
+                                    <div class="col-md-12">
+                                        <h4 style="float:right">* المستندات المطلوبة</h4>
+                                        <br/>
+                                        <br/>
+                                        <t t-if="req_type == 'it' ">
+                                            <table style="border-spacing:10px">
+
+                                                        <tr>                                  
+                                        <td style="padding: 6px"><label>فاتورة مبدئية</label></td>
+
+                                        <td style="padding: 6px">
+                                            <input id="fileInput1" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateFile1(this)"/>
+
+                                        <input type="button" value="إرفاق" onclick="document.getElementById('fileInput1').click();" />
+
+                                        <div id="file1_div" style="display:none">
+                                       
+                                        <input  name="file_name1" id="file_name1" style="border:0;"></input>
+
+                                    </div>
+                                </td>
+
+                                        <td style="padding: 6px"><label>التقرير الطبي</label></td>
+                                    
+                                    <td style="padding: 6px"><input id="fileInput2" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateFile2(this)"/>
+                                    
+                                    <input type="button" value="إرفاق" onclick="document.getElementById('fileInput2').click();" />
+
+                                 <div id="file2_div" style="display:none">
+                                        <input  name="file_name2" id="file_name2" style="border:0;"></input>
+                                    </div>
+                                </td>
+                                                        </tr>
+
+                                                        <tr>
+                                        <td style="padding: 6px"><label>حالة الدفعية</label></td>
+                                        <td style="padding: 6px"><input id="fileInput3" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateFile3(this)"/>
+                                        <input type="button" value="إرفاق" onclick="document.getElementById('fileInput3').click();" />
+  <div id="file3_div" style="display:none">
+                                        <input  name="file_name3" id="file_name3" style="border:0;"></input>
+                                    </div>
+                                    </td>
+                                                                    
+                                         <td style="padding: 6px"><label>دراسة لجنة زكاة الحي</label></td>
+                                                            
+                                        <td style="padding: 6px"><input id="fileInput4" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateFile4(this)"/>
+
+                                        <input type="button" value="إرفاق" onclick="document.getElementById('fileInput4').click();" />
+<div id="file4_div" style="display:none">
+                                        <input  name="file_name4" id="file_name4" style="border:0;"></input>
+                                    </div>
+                                    </td>
+
+                                            </tr>
+
+                                                    </table>
+                                                </t>
+
+                                 <t t-if="req_type == 'at' ">
+
+
+                             <table style="border-spacing:10px">  
+                                                        <tr>
+                                <td style="padding: 6px"><label>شهادة من القمسيون الطبي لهذا العام</label></td>
+                                    
+                                <td style="padding: 6px"><input id="fileInput5" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                                <input type="button" value="إرفاق" onclick="document.getElementById('fileInput5').click();" />
+                                                    </td>
+                                                    
+                            <td style="padding: 6px"><label>تكلفة العلاج</label></td>
+                            
+                            <td style="padding: 6px"><input id="fileInput6" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                            <input type="button" value="إرفاق" onclick="document.getElementById('fileInput6').click();" /></td>
+                                                    
+                                                    </tr>
+
+                                                    <tr>                                     
+                             <td style="padding: 6px"><label>صورة من جواز السفر</label></td>
+                            
+                            <td style="padding: 6px"><input id="fileInput7" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                            
+                         <input type="button" value="إرفاق" onclick="document.getElementById('fileInput7').click();" /></td>
+                                                                   
+                            <td style="padding: 6px"><label>التذاكر</label></td>
+                            
+                            <td style="padding: 6px"><input id="fileInput8" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                            
+                            <input type="button" value="إرفاق" onclick="document.getElementById('fileInput8').click();" /></td>
+                                    </tr>
+
+                                    <tr>                                           
+                            <td style="padding: 6px"><label>التأشيرة</label></td>
+                            
+                            <td style="padding: 6px"><input id="fileInput9" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                                <input type="button" value="إرفاق" onclick="document.getElementById('fileInput9').click();" /></td>
+                                                   
+                                                   
+
+                             <td style="padding: 6px"><label>تحويل او استبدال مالايقل عن 50 في المائة</label></td>
+                            
+                            <td style="padding: 6px"><input id="fileInput10" type="file" style="display:none;" accept=".png,.jpg,.jpeg,.pdf" onchange="ValidateSize(this)"/>
+                            
+                            <input type="button" class="oe_button_box oe_right" value="إرفاق" onclick="document.getElementById('fileInput10').click();" /></td>
+                                                    </tr>
+                                                </table>
+                                            </t>
+
+                                            <br/>
+
+
+                                            <div class="form-group">
+                                                <br/>
+
+                                                <label style="color:#118171">ملاحظة</label>
+                                                <br/>
+                                                <textarea class="pad" rows="4" type="text" name="note">
+
+                                                </textarea>
+                                                <hr style="background-color:#e5e6de"/>
+
+                                            </div>
+                                            <center>
+                                                <button type="submit"
+                                                    style="background-color:#16843a;border-color:#46803d;color:white;width:10%;"
+                                                    class="btn" onclick="return validateAlreasyReg()">تقديم
+                                                    <i class="fa fa-check-square" aria-hidden="true"></i>
+                                                </button>
+
+                                                <a t-attf-href="/federal_request"
+                                                 style="background-color:#8f380f;width:10%;color:white"
+                                                 class="btn">الغاء
+                                                 <i class="fa fa-times" aria-hidden="true"></i>
+                                             </a>
+
+                                         </center>
+
+                                         <input type="hidden" name="csrf_token"
+                                             t-att-value="request.csrf_token()"/>
+
+                                         </div>
+                                        <!--       <div class="g-reCAPTCHA" data-sitekey="your_site_key"></div>
+                                    -->
+                                      
+                                        <hr style="background-color:#e5e6de"/>
+
+
+                                    <br/>
+
+                                
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                    <input type="hidden" name="national_number" t-att-value="national_n"></input>
+
+                                    <input type="hidden" name="passport" t-att-value="passport"></input>
+                                    <input type="hidden" name="nationality" t-att-value="nationality"></input>
+                                    <input name="session_start" id="session_start" value="True"
+                                           type="hidden"></input>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="oe_structure mb32"/>
+        </t>
+    </html>
+</template>
+
+
+<!-- 404 page not found-->
+<template id="404" inherit_id="website.404" customize_show="True" name="404">
+    <xpath expr="//div[hasclass('container')]" position="replace">
+        <!--  <img src="/federal_website/static/img/404.gif" style="width:80%" />
+    -->
+        <p>الصفحة التي طلبتها غير موجوده 404</p>
+
+
+        <t t-if="request.debug">
+            <t t-call="website.http_error_debug"/>
+        </t>
+
+
+    </xpath>
+</template>
+
+
+<template id="layout" name="layout" inherit_id="website.layout">
+    <xpath expr="//header//div[hasclass('navbar-header')]" position="replace">
+
+
+    </xpath>
+
+    <xpath expr="//header//div[hasclass('collapse')]" position="replace">
+
+    </xpath>
+
+
+</template>
+<!-- <xpath expr="//header//div[hasclass('nav')]" position="replace">
+
+
+
+</xpath> -->
+
+
+<template id="inherit_assets_frontend" name="web_example assets" inherit_id="website.assets_frontend">
+
+    <xpath expr="script[last()]" position="after">
+
+        <script type="text/javascript" src="/federal_website/static/src/js/ft.js"/>
+
+    </xpath>
+
+</template>
+
+
+<template id="assets_login" inherit_id="web.assets_frontend">
+    <xpath expr="." position="inside">
+        <link rel="stylesheet" href="/federal_website/static/src/css/sheet.css"/>
+    </xpath>
+</template>
+
+<!--<template id="layout_footer_copyright" inherit_id="website.layout_footer_copyright" name="Footer Copyright">-->
+
+<!--<xpath expr="//footer//div[hasclass('pull-right')]" position="replace">-->
+
+<!--</xpath>-->
+
+
+<!--<xpath expr="//footer//div[hasclass('pull-left')]" position="replace">-->
+
+
+<!--</xpath>-->
+
+<!--</template>-->
+
+
+<template id="footer_default" inherit_id="website.footer_custom" customize_show="True" name="Automatic Footer">
+    <xpath expr="//div[@id='footer']" position="replace">
+        <div id="footer" class="container hidden-print" t-if='not no_footer'>
+        </div>
+    </xpath>
+</template>
+
+
+<template id="federal_thanks" name="Federal Template">
+    <html>
+        <head>
+
+            <title>اكتمال الطلب</title>
+
+        </head>
+
+        <t t-call="website.layout">
+            <a style="color:white;font-size:17px;margin-right:30px" t-attf-href="/federal_request">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                <u>عودة إلى صفحة الطلب</u>
+
+            </a>
+<input name="connection_reset" id="connection_reset" t-att-value="connection_reset" type="hidden"></input>
+            <div style="direction:rtl" class="container">
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <center>
+                    <div class="col-md-12">
+
+                        <img src="/federal_website/static/img/true3.gif" style="width:30%"/>
+
+                        <h1 style="color:green">تم ارسال الطلب بنجاح</h1>
+                    </div>
+                    <input name="session_start" id="session_start" value="False" type="hidden"></input>
+                    <h1 style="color:black">رقم الطلب الخاص بك هو:</h1>
+                    <h1>
+                        <strong style="color:green">
+                            <u>
+                                <t t-esc="req_ref"/>
+                            </u>
+                        </strong>
+                    </h1>
+                </center>
+
+            </div>
+            <div class="oe_structure mb32"/>
+        </t>
+    </html>
+</template>
+
+<!-- -->
+
+<template id="federal_following" name="Federal Template">
+    <html>
+        <head>
+
+            <title>متابعة الطلب</title>
+
+        </head>
+
+
+        <xpath expr="//script[last()]" position="after">
+            <script type="text/javascript" src="/federal_website/static/src/js/ft.js">
+
+            </script>
+            <script src="/federal_website/static/src/js/main.js"></script>
+            <link rel="stylesheet" href="/federal_website/static/src/css/main.css"/>
+            <link rel="stylesheet" href="/federal_website/static/src/css/util.css"/>
+
+
+            <link rel="stylesheet" href="/federal_website/static/src/css/sheet.css"/>
+        </xpath>
+
+        <t t-call="website.layout">
+            <div style=";width:100%;direction:rtl">
+
+                <div class="col-md-12">
+
+                    <a style="color:white;font-size:17px;margin-right:30px" t-attf-href="/federal_request">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                       <u>عودة إلى صفحة الطلب</u>
+                    </a>
+                    <center>
+
+                        <t t-foreach="partner_info" t-as="p">
+                                 <center>
+                            <div class="row" style="background:transparent;">
+                                <div class="col-md-6">
+                                    <p style="font-size:20px;color:#fff;text-align:center;color:#000;font-weight:bold;">
+                                       <u> اسم مقدم الطلب:-</u>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                        <p style="font-size:20px;color:#fff;text-align:center;color:#000;font-weight:bold;">
+                                            <u>
+                                                <t t-esc="p.name"/>
+                                            </u>
+                                        </p>
+                                </div>
+                            </div>
+
+                            </center>
+                            <br/>
+
+                        </t>
+
+
+                        <div class="limiter">
+                            <div class="container-table100" style="margin-top:-150px;">
+                                <div class="wrap-table100">
+                                    <div class="table">
+                                        <div class="row header">
+                                            <div class="cell">
+                                                رقم الطلب
+                                            </div>
+                                            <div class="cell">
+                                                نوع العلاج
+                                            </div>
+                                            <div class="cell">
+                                                مبلغ العلاج
+                                            </div>
+                                            <div class="cell">
+                                                تاريخ التقديم
+                                            </div>
+                                            <div class="cell">
+                                                حالة الطلب
+                                            </div>
+                                            <div class="cell">
+                                                رقم المتابعة
+                                            </div>
+                                            <div class="cell">
+                                                ملاحظات
+                                            </div>
+                                        </div>
+                                        <t t-foreach="fol_req" t-as="r">
+                                            <div class="row">
+                                                <div class="cell" data-title="رقم الطلب">
+                                                    <t t-esc="r.code"/>
+                                                </div>
+                                                <div class="cell" data-title="نوع الطلب">
+                                                    <t t-if="r.type == 'it'">
+                                                        علاج بالداخل
+                                                    </t>
+                                                    <t t-if="r.type == 'at'">
+                                                        علاج بالخارج
+                                                    </t>
+
+                                                </div>
+                                                <div class="cell" data-title="مبلغ العلاج">
+                                                    <t t-esc="int(r.treatment_amount)"/>
+                                                </div>
+                                                <div class="cell" data-title="تاريخ التقديم">
+                                                    <t t-esc="r.create_date"/>
+                                                </div>
+                                                <div class="cell" data-title="حالة الطلب">
+                                                    <t t-if="r.state == 'draft'">
+
+                                                        <strong>مبدئي</strong>
+                                                    </t>
+
+                                                    <t t-if="r.state == 'done'">
+
+                                                        <strong style="color:green">مكتمل</strong>
+                                                    </t>
+
+
+                                                    <t t-if="r.state == 'cancel'">
+
+                                                        <strong>ملغي</strong>
+                                                    </t>
+                                                </div>
+
+                                                <div class="cell" data-title="رقم المتابعة">
+
+
+                                                    <t t-if="r.follow_up_ref">
+                                                       <b style="color:#d9534f;"><t t-esc="r.follow_up_ref"/></b>
+                                                    </t>
+
+                                                    <t t-if="r.follow_up_ref == False">
+                                                        -----------
+                                                    </t>
+
+                                                </div>
+
+                                                <div class="cell" data-title="ملاحظات">
+
+                                                    <t t-if="r.state == 'draft'">
+
+                                                        <strong>---------</strong>
+                                                    </t>
+
+                                                    <t t-if="r.state == 'done'">
+
+                                                        <p style="color:green">الرجاء مراجعة مكتب العلاج <u style="color:#d9534f;"><b>برقم المتابعه</b></u> لإكمال الإجراءت</p>
+                                                    </t>
+
+
+                                                    <t t-if="r.state == 'cancel'">
+
+                                                        <p>تم رفص طلب العلاج الخاص بك يرجى مراجعة المكتب</p>
+                                                    </t>
+
+                                                </div>
+
+
+                                            </div>
+                                        </t>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </center>
+
+                </div>
+
+            </div>
+        </t>
+    </html>
+</template>
+
+
+</odoo>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <odoo>
+    <data>
+        <record id="account_bank_statement_inherit_view" model="ir.ui.view">
+            <field name="name">account.bank.statement.inherit.form</field>
+            <field name="model">account.bank.statement</field>
+            <field name="inherit_id" ref="account.view_bank_statement_form" />
+            <field name="arch" type="xml">
+                <xpath expr='//header/field[@name="state"]' position="after">
+                    <button name="account_statement_line_refresh" string="Refresh" type="object" class="oe_highlight"/>
+                </xpath>
+                <xpath expr='//sheet/group/group' position="after">
+                    <group>
+                        <label for="balance_Journal_start"/>
+                        <div>
+                            <field class="oe_inline" name="balance_Journal_start"/>
+                        </div>
+                        <label for="balance_Journal_end"/>
+                        <div>
+                            <field class="oe_inline" name="balance_Journal_end"/>
+                        </div>
+                        <field name="journal_credit_account_id" invisible="1"/>
+                        <field name="journal_debit_account_id" invisible="1"/>
+                   </group>
+                </xpath>
+
+                <xpath expr="//field[@name='balance_end_real']" position="attributes">
+                    <attribute name="attrs">
+                        {'readonly' :False}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='balance_start']" position="attributes">
+                    <attribute name="attrs">
+                        {'readonly' :True}
+                    </attribute>
+                </xpath>
+                <xpath expr="//group[@name='sale_total']" position="attributes">
+                    <attribute name="attrs">
+                        {'invisible' :True}
+                    </attribute>
+                </xpath>
+                <xpath expr="//label[@for='balance_end_real']" position="before">
+                    <field name="balance_end"/>
+                </xpath>
+
+                <xpath expr='//page[@name="statement_line_ids"]' position="after">
+                    <page string="To Reconciled Move">
+                        <button name="get_to_reconcile_lines" string="Get Moves" type="object" class="oe_highlight"/>
+                        <field name="move_line_to_reconcile_ids">
+                            <tree string="Journal Items" create="false">
+                                <field name="date"/>
+                                <field name="move_id"/>
+                                <field name="journal_id" options='{"no_open":True}' invisible="1"/>
+                                <field name="name"/>
+                                <field name="ref"/>
+                                <field name="statement_id" invisible="1"/>
+                                <field name="partner_id"/>
+                                <field name="account_id" options='{"no_open":True}' invisible="1"/>
+                                <field name="analytic_account_id" invisible="1"/>
+                                <field name="reconciled" invisible="1"/>
+                                <field name="full_reconcile_id" invisible="1"/>
+                                <field name="debit" sum="Total Debit"/>
+                                <field name="credit" sum="Total Credit"/>
+                                <field name="amount_currency" readonly="True" groups="base.group_multi_currency" invisible="1"/>
+                                <field name="currency_id" readonly="True" invisible="1" />
+                                <field name="date_maturity" invisible="1"/>
+                                <button name="do_reconcile_lines" string="reconcile" type="object" icon="fa-check text-success"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Reconciled Move" name="reconciled_move">
+                        <field name="move_line_ids" domain="['|',('account_id','=',journal_credit_account_id),('account_id','=',journal_debit_account_id)]">
+                            <tree string="Journal Items" create="false">
+                                <field name="date"/>
+                                <field name="move_id"/>
+                                <field name="journal_id" options='{"no_open":True}' invisible="1"/>
+                                <field name="name"/>
+                                <field name="ref"/>
+                                <field name="statement_id" invisible="1"/>
+                                <field name="partner_id"/>
+                                <field name="account_id" options='{"no_open":True}' invisible="1"/>
+                                <field name="analytic_account_id" invisible="1"/>
+                                <field name="reconciled" invisible="1"/>
+                                <field name="full_reconcile_id" invisible="1"/>
+                                <field name="debit" sum="Total Debit"/>
+                                <field name="credit" sum="Total Credit"/>
+                                <field name="amount_currency" readonly="True" groups="base.group_multi_currency" invisible="1"/>
+                                <field name="currency_id" readonly="True" invisible="1" />
+                                <field name="date_maturity" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherited form view of account journal -->
+	    <record model="ir.ui.view" id="view_account_journal_form_inherit">
+			<field name="name">account.journal.form</field>
+			<field name="model">account.journal</field>
+			<field name="inherit_id" ref="account.view_account_journal_form"/>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+                <xpath expr='//field[@name="type"]' position="after">
+                    <field name="journal_parent" domain="[('journal_parent','=',False)]"  attrs="{'invisible': [('type','!=','bank')]}" />
+                </xpath>
+            </field>
+		</record>
+
+        <!-- Inherited view of account journal dashboard kanban -->
+        <record id="account_journal_dashboard_kanban_view_js" model="ir.ui.view">
+            <field name="name">account.journal.dashboard.kanban.js</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
+            <field name="arch" type="xml">
+                    <xpath expr="//kanban/templates/t[@t-name='JournalManage']/div/div/div[2]" position="replace">
+                        <a t-if="journal_type == 'bank'" type="object" name="open_action" context="{'use_domain': ['|',('journal_id.journal_parent', '=', active_id) , ('journal_id', '=', active_id)]}">Bank Statements</a>
+                        <a type="object" name="open_action">
+                            <t t-if="journal_type == 'cash'">Cash Statements</t>
+                        </a>
+                    </xpath>
+            </field>
+        </record>
+
+        <record id="action_account_payments_transfer" model="ir.actions.act_window">
+            <field name="name">Payments Transfers</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,graph</field>
+            <field name="context">{'default_payment_type': 'transfer'}</field>
+            <field name="domain">[('payment_type', '=', 'transfer')]</field>
+            <field name="view_id" ref="account.view_account_payment_tree"/>
+        </record>
+
+        <menuitem name="Banks Management" parent="account.menu_finance" id="menu_banks_management" sequence="4"/>
+
+        <menuitem name="Banks Statments imports" parent="menu_banks_management" id="menu_banks_bank_stmt_import" sequence="1" action="account_bank_statement_import.action_account_bank_statement_import"/>
+
+        <menuitem name="Banks Statments" parent="menu_banks_management" id="menu_banks_bank_stmt" sequence="2" action="account.action_bank_statement_tree"/>
+
+        <menuitem name="Banks Payments Transfers" parent="menu_banks_management" id="menu_banks_payments_transfer" sequence="3" action="action_account_payments_transfer"/>
+
+    </data>
+</odoo>

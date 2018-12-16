@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="account_budget_confirmation_view_form">
+			<field name="name">account.budget.confirmation.view.form</field>
+			<field name="model">account.budget.confirmation</field>
+			<field name="arch" type="xml">
+				<form string="Budget Confirmation" create="false" delete="false" version="7.0">
+					<header>
+						<button string="Complete" name="budget_complete" class="oe_highlight" states="draft"
+							type="object"  />
+						<button string="Check Budget" name="check_budget" class="oe_highlight"
+							states="complete,unvalid" type="object"/>
+						<button string="Cancel" name="budget_cancel" states="draft,complete,unvalid"
+							confirm="Are you sure, you want to cancel this confirmation?" type="object"/>
+						<button string="Reset to Draft" name="action_cancel_draft"
+							states="complete,unvalid,valid,cancel" type="object"  />
+						<field name="state" widget="statusbar" statusbar_visible="draft,valid" />
+					</header>
+					<sheet string="Budget Confirmation">
+					   <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="button_journal_entries" string="Journal Items" type="object" groups="account.group_account_user" attrs="{'invisible':[('line_id','=',[])]}" icon="fa-bars"/>
+                            <field name="line_id" invisible="1"/>
+                        </div>
+                        <div class="oe_title" attrs="{'invisible': [('state', '=', 'draft')]}">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+	                            <field name="partner_id" required="1"/>
+							    <field name="analytic_account_id"
+							    	groups="analytic.group_analytic_accounting" required="1"/>
+								<field name="account_id" required="1" />
+									<field name="reference" />
+						    </group>
+							<group >
+							    <field name="date" required="1" />
+								<field name="amount" />
+								<field name="residual_amount" readonly="True" />
+								<field name="type" readonly="1" />
+							</group>
+						</group>
+						<div>
+                            <field name="note" placeholder="Notes..."/>
+                        </div>
+					</sheet>
+                    <div class="oe_chatter">
+					   <field name="message_follower_ids" widget="mail_followers" />
+					   <field name="message_ids" widget="mail_thread" />
+				  </div>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="account_budget_confirmation_view_tree">
+			<field name="name">account.budget.confirmation.view.tree</field>
+			<field name="model">account.budget.confirmation</field>
+			<field name="arch" type="xml">
+				<tree  decoration-info="state == 'draft'" decoration-danger="state == 'cancel'"
+					decoration-muted="state == 'valid'"
+					string="Budget Confirmation">
+					<field name="name" />
+					<field name="reference" />
+					<field name="partner_id" />
+					<field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+					<field name="account_id" />
+					<field name="amount" sum="Amount" />
+					<field name="state" />
+					<field name="type" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_account_budget_confirmation_search" model="ir.ui.view">
+			<field name="name">account.budget.confirmation.search</field>
+			<field name="model">account.budget.confirmation</field>
+			<field name="arch" type="xml">
+				<search string="Budget Confirmation">
+					<group col="20" colspan="4">
+						<filter string="To Approve" name="submitted"
+							domain="[('state','in',('complete','check'))]" />
+						<separator orientation="vertical" />
+						<field name="analytic_account_id" groups="analytic.group_analytic_accounting"
+						    domain="[('parent_id','!=',False),('type','=','normal')]" />
+						<field name="account_id" />
+						<field name="reference" />
+						<field name="partner_id" />
+						<field name="date" />
+					</group>
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Account" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'account_id'}" />
+						<filter string="Analytic Account" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'analytic_account_id'}" />
+
+						<filter string="Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'type'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="act_account_budget_confirmation_view">
+			<field name="name">Budget Confirmation</field>
+			<field name="res_model">account.budget.confirmation</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[]</field>
+			<field name="context">{'search_default_submitted':True}</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a new budget confirmation.
+				</p>
+				<p>
+					A budget confirmation set aside part of budget amount
+					till the
+					actual expense execute and moves create.
+				</p>
+			</field>
+		</record>
+
+		<menuitem parent="menu_account_budget"
+			name="Budget Confirmation"
+			id="menu_act_account_budget_confirmation_view"
+			sequence="5"
+			action="act_account_budget_confirmation_view"
+			groups="account_budget_custom.group_budget_user,account_budget_custom.group_budget_accountant" />
+
+		<act_window id="act_budget_line_confirmation"
+			domain="[('budget_line_id', '=', active_id)]"
+			name="Budget Confirmation"
+			res_model="account.budget.confirmation"
+			src_model="crossovered.budget.lines" />
+
+	</data>
+</openerp>

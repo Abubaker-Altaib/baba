@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<!-- Activities -->
+		<record id="act_approve2" model="workflow.activity">
+			<field name="wkf_id" ref="hr_training.wkf_hr_employee_training" />
+			<field name="name">approved2</field>
+			<field name="action">write({'state':'approved2'})</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_approve2_new" model="workflow.activity">
+			<field name="wkf_id" ref="hr_training.wkf_hr_employee_training" />
+			<field name="name">approve2</field>
+			<field name="action">approve2()</field>
+			<field name="kind">function</field>
+		</record>
+		<!-- Transactions -->
+		<record model="workflow.transition" id="t40">
+			<field name="act_from" ref="hr_training.act_validate" />
+			<field name="act_to" ref="act_approve2" />
+			<field name="signal">approved2</field>
+		</record>
+		<record model="workflow.transition" id="t60">
+			<field name="act_from" ref="act_approve2" />
+			<field name="act_to" ref="hr_training.act_approve" />
+			<field name="signal">approve</field>
+		</record>
+
+		<!-- Transactions approve -->
+		<record model="workflow.transition" id="t15">
+			<field name="act_from" ref="hr_training.act_request" />
+			<field name="act_to" ref="act_approve2" />
+			<field name="signal">approve1</field>
+		</record>
+		<record model="workflow.transition" id="t17">
+			<field name="act_from" ref="act_approve2" />
+			<field name="act_to" ref="hr_training.act_approve" />
+			<field name="signal">approve</field>
+		</record>
+		<record model="workflow.transition" id="t18">
+			<field name="act_from" ref="hr_training.act_approve" />
+			<field name="act_to" ref="hr_training.act_done" />
+			<field name="signal">done</field>
+		</record>
+		<record model="workflow.transition" id="t19">
+			<field name="act_from" ref="hr_training.act_approve" />
+			<field name="act_to" ref="act_approve2_new" />
+			<field name="signal">approve2</field>
+		</record>
+        
+                <record model="workflow.transition" id="t20">
+			<field name="act_from" ref="hr_training.act_approve" />
+			<field name="act_to" ref="hr_training.act_reject" />
+			<field name="signal">rejected2</field>
+		</record>
+	</data>
+</openerp>

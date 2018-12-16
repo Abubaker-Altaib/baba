@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+         <menuitem name="Access Rights Managment"
+            id="menu_it_access_root"
+            sequence="90" groups="group_it_access_user"/>
+
+        <menuitem name="Users Managment"
+            parent="menu_it_access_root"
+            id="menu_it_user_root"
+            sequence="1" groups="group_it_access_user"/>
+
+        <menuitem name="Groups Managment"
+            parent="menu_it_access_root"
+            id="menu_it_group_root"
+            sequence="2" groups="group_it_access_user"/>
+
+        <menuitem name="Applications Managment"
+            parent="menu_it_access_root"
+            id="menu_it_application_root"
+            sequence="3" groups="group_it_access_manager"/>
+
+
+        <record id="view_module_category_form" model="ir.ui.view">
+            <field name="name">ir.module.category.form</field>
+            <field name="model">ir.module.category</field>
+            <field name='inherit_id' ref='base.view_module_category_form'/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='description']" position='replace'>
+                </xpath>
+                <xpath expr="//group" position='after'>
+                    <notebook>
+                        <page string="Users" >
+                            <field name="users"/>
+                        </page>
+                        <page string="Description" >
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </xpath>
+                <!--form string="Module Category" version="7.0">
+                    <group col="4">
+                        <field name="name"/>
+                        <field name="parent_id"/>
+                        <field name="sequence"/>
+                    </group>
+                    <field name="description"/>
+                </form-->
+            </field>
+        </record>
+
+
+        <!-- res.groups -->
+        <record id="view_groups_search" model="ir.ui.view">
+            <field name="name">res.groups.search</field>
+            <field name="model">res.groups</field>
+            <field name="priority">50</field>
+            <field name="arch" type="xml">
+                <search string="Groups">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('category_id','ilike',self)]" string="Group"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Category" icon="terp-personal" domain="[]" context="{'group_by':'category_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_groups_tree" model="ir.ui.view">
+            <field name="name">res.groups.tree</field>
+            <field name="model">res.groups</field>
+            <field name="priority">50</field>
+            <field name="arch" type="xml">
+                <tree string="Groups" create="false" delete="false">
+                    <field name="full_name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_groups_form" model="ir.ui.view">
+            <field name="name">res.groups.form</field>
+            <field name="model">res.groups</field>
+            <field name="priority">50</field>
+            <field name="arch" type="xml">
+                <form string="Groups" version="7.0" create="false" delete="false">
+                  <sheet>
+                    <group col="4">
+                        <field name="category_id" readonly="1" options="{'no_open':True}"/>
+                        <field name="name" readonly="1" />
+                    </group>
+                    <notebook>
+                        <page string="Users">
+                            <field name="users" /><!-- readonly="1" -->
+                        </page>
+                        <!--page string="Inherited">
+                            <label string="Users added to this group are automatically added in the following groups."/>
+                            <field name="implied_ids" readonly="1" options="{'no_open':True}"/>
+                        </page>
+                        <page string="Menus">
+                            <field name="menu_access" readonly="1" options="{'no_open':True}"/>
+                        </page>
+                        <page string="Views" readonly="1" options="{'no_open':True}">
+                            <field name="view_access" readonly="1" options="{'no_open':True}"/>
+                        </page>
+                        <page string="Access Rights">
+                            <field name="model_access" readonly="1">
+                                <tree string="Access Rules" editable="top">
+                                    <field name="model_id"/>
+                                    <field name="perm_read"/>
+                                    <field name="perm_write"/>
+                                    <field name="perm_create"/>
+                                    <field name="perm_unlink"/>
+                                    <field name="name"/>
+                                </tree>
+                                <form string="Access Controls" version="7.0">
+                                    <group col="4">
+                                        <field name="name"/>
+                                        <field name="active"/>
+                                        <field name="model_id"/>
+                                        <newline/>
+                                        <field name="perm_read"/>
+                                        <field name="perm_write"/>
+                                        <field name="perm_create"/>
+                                        <field name="perm_unlink"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Rules">
+                            <field name="rule_groups" readonly="1" options="{'no_open':True}">
+                                <tree string="Rules">
+                                    <field name="name"/>
+                                    <field name="model_id"/>
+                                    <field name="global"/>
+                                </tree>
+                            </field>
+                        </page--><page string="Notes">
+                            <field name="comment" readonly="1"/>
+                        </page>
+                    </notebook>
+                  </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_res_groups" model="ir.actions.act_window">
+            <field name="name">Groups</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.groups</field>
+            <field name="view_type">form</field>
+            <field name="context">{'it_access':True}</field>
+             <field name="search_view_id" ref="view_groups_search"/>
+            <field name="help">A group is a set of functional areas that will be assigned to the user in order to give them access and rights to specific applications and tasks in the system. You can create custom groups or edit the ones existing by default in order to customize the view of the menu that users will be able to see. Whether they can have a read, write, create and delete access right can be managed from here.</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="groups_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_groups_form"/>
+            <field name="act_window_id" ref="action_res_groups"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="groups_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_groups_tree"/>
+            <field name="act_window_id" ref="action_res_groups"/>
+        </record>
+
+        <menuitem name="Groups" id="menu_it_group" parent="menu_it_group_root"
+            sequence="1" action="action_res_groups"/>
+
+
+        
+        <!-- res_users -->
+        <record id="view_users_form" model="ir.ui.view">
+            <field name="name">res.users.form</field>
+            <field name="model">res.users</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <form string="Users" version="7.0" create="false" delete="false">
+                    <field name="id" invisible="1"/>
+                    <sheet>
+                        <field name="image" widget='image' class="oe_avatar oe_left" options='{"preview_image": "image_medium"}' readonly="1"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1><field name="name" readonly="1"/></h1>
+                            <label for="login" class="oe_edit_only"/>
+                            <h2><field name="login" readonly="1"/></h2>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="company_id" context="{'user_preference': 0}" options="{'no_open':True}" />
+                            </group>
+                            <group>
+                                <field name="active" readonly="1"/>
+                            </group>
+                        </group>
+
+                        <notebook colspan="4">
+                            <page string="Preferences">
+                                <group>
+                                    <group name="preferences">
+                                        <field name="lang" readonly="1"/>
+                                        <field name="tz" readonly="1"/>
+                                    </group>
+                                    <!--group groups="base.group_no_one">
+                                        <field name="action_id"/>
+                                        <field domain="[('usage','=','menu')]" name="menu_id" required="True"/>
+                                    </group-->
+                                </group>
+                                <group>
+                                    <field name="email" widget="email" readonly="1"/>
+                                    <field name="signature" readonly="1"/>
+                                </group>
+                            </page>
+                            <page string="Access Rights">
+                                <group string="Allowed Companies" groups="base.group_multi_company">
+                                    <field name="company_ids" nolabel="1" widget="many2many_tags" readonly="1"/>
+                                </group>
+                                <group col="4">
+                                    <field name="groups_id" context="{'form_view_ref':'access_right_management.view_groups_form', 'tree_view_ref':'access_right_management.view_groups_tree', 'it_access':True}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_users_tree" model="ir.ui.view">
+            <field name="name">res.users.tree</field>
+            <field name="model">res.users</field>
+            <field name="arch" type="xml">
+                <tree string="Users" create="false" delete="false">
+                    <field name="name"/>
+                    <field name="login"/>
+                    <field name="lang"/>
+                    <field name="login_date"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_users_search" model="ir.ui.view">
+            <field name="name">res.users.search</field>
+            <field name="model">res.users</field>
+            <field name="arch" type="xml">
+                <search string="Users">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('login','ilike',self)]" string="User"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Group By Company" icon="terp-personal" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+                    <!--field name="company_ids" string="Company" groups="base.group_multi_company"/-->
+                </search>
+            </field>
+        </record>
+        <record id="user_groups_view" model="ir.ui.view">
+            <field name="name">res.users.groups</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="view_users_form"/>
+            <field name="arch" type="xml">
+                <!-- dummy, will be modified by groups -->
+                <field name="groups_id" context="{'it_access':True}" position="after"/>
+            </field>
+        </record>
+        <record id="action_res_users" model="ir.actions.act_window">
+            <field name="name">Users</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.users</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_users_tree"/>
+            <field name="search_view_id" ref="view_users_search"/>
+            <field name="context">{'it_access':True}</field>
+            <field name="help">Create and manage users that will connect to the system. Users can be deactivated should there be a period of time during which they will/should not connect to the system. You can assign them groups in order to give them specific access to the applications they need to use in the system.</field>
+        </record>
+        <record id="action_res_users_view1" model="ir.actions.act_window.view">
+            <field eval="10" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_users_tree"/>
+            <field name="act_window_id" ref="action_res_users"/>
+        </record>
+        <record id="action_res_users_view2" model="ir.actions.act_window.view">
+            <field eval="20" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_users_form"/>
+            <field name="act_window_id" ref="action_res_users"/>
+        </record>
+        <menuitem action="action_res_users" id="menu_it_user" parent="menu_it_user_root" sequence="1"/>
+
+
+        <!-- Modules Categories -->
+        <record id="view_module_category_form_custom" model="ir.ui.view">
+            <field name="name">ir.module.category.form</field>
+            <field name="model">ir.module.category</field>
+            <field name="priority">50</field>
+            <field name="arch" type="xml">
+                <form string="Applications" version="7.0" create="false" delete="false">
+                    <group col="4">
+                        <field name="name" readonly="1" />
+                        <field name="parent_id" readonly="1" options="{'no_open':True}" />
+                        <field name="sequence" readonly="1" />
+                    </group>
+                    <notebook>
+                        <page string="Users" >
+                            <field name="users"/>
+                        </page>
+                        <page string="Description" >
+                            <field name="description" readonly="1"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_module_category_tree" model="ir.ui.view">
+            <field name="name">ir.module.category.tree</field>
+            <field name="model">ir.module.category</field>
+            <field name="priority">50</field>
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree string="Applications" create="false" delete="false">
+                    <field name="name"/>
+                    <!--field name="module_nr"/-->
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_module_category" model="ir.actions.act_window">
+            <field name="name">Applications</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ir.module.category</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_module_category_tree"/>
+            <field name="context">{'it_access':True}</field>
+        </record>
+        <record id="action_module_category_view1" model="ir.actions.act_window.view">
+            <field eval="10" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_module_category_tree"/>
+            <field name="act_window_id" ref="action_module_category"/>
+        </record>
+        <record id="action_module_category_view2" model="ir.actions.act_window.view">
+            <field eval="20" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_module_category_form_custom"/>
+            <field name="act_window_id" ref="action_module_category"/>
+        </record>
+
+        <record id="action_module_category_base" model="ir.actions.act_window">
+            <field name="name">Applications</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ir.module.category</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_module_category_tree"/>
+        </record>
+
+        <record id="action_module_category_base_view1" model="ir.actions.act_window.view">
+            <field eval="10" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_module_category_tree"/>
+            <field name="act_window_id" ref="action_module_category_base"/>
+        </record>
+        <record id="action_module_category_base_view2" model="ir.actions.act_window.view">
+            <field eval="20" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="base.view_module_category_form"/>
+            <field name="act_window_id" ref="action_module_category_base"/>
+        </record>
+
+        <menuitem action="action_module_category" id="menu_it_aplication" parent="menu_it_application_root" sequence="1"/>
+
+        <menuitem action="action_module_category_base" id="menu_action_module_category" parent="base.menu_users" groups="base.group_no_one" />
+
+    </data>
+</openerp>

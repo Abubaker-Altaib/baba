@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+<!--activity-->
+         
+     
+        <record id="wkf_loan" model="workflow">
+            <field name="name">hr.employee.loan</field>
+            <field name="osv">hr.employee.loan</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="act_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+        </record>
+        <record id="act_router" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan"/>
+            <field name="name">router</field>
+            <field name="split_mode">OR</field>
+            <field name="kind">function</field>
+            <field name="action">request_loan()</field>
+        </record>
+       <record id="act_request" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan"/>
+            <field name="name">request</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'requested'})</field>
+        </record>
+       
+        <record id="act_approve" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan"/>
+            <field name="name">approve</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'approved'})</field>
+        </record>
+
+        <record id="act_reject" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan"/>
+            <field name="name">reject</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'rejected'})</field>
+	        <field name="flow_stop">True</field>
+        </record>
+        
+      <record id="act_suspend" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan"/>
+            <field name="name">suspend</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'suspend'})</field>
+      </record>
+      
+      <record id="act_transfered" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan"/>
+            <field name="name">transfered</field>
+            <field name="kind">function</field>
+            <field name="action">transfer()</field>
+        </record>
+       
+        <record id="act_transfered" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan"/>
+            <field name="name">transfered</field>
+            <field name="kind">subflow</field>
+            <field name="subflow_id" search="[('osv','=','account.voucher')]" type="int"/>
+            <field name="action">transfer()</field>
+        </record>
+        
+         <record id="act_paid" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan"/>
+            <field name="name">paid</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'paid'})</field>
+        </record>
+        
+        <record id="act_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan"/>
+            <field name="name">done</field>
+	        <field name="flow_stop">True</field>
+        </record>
+        
+       <!--transtions-->
+       
+       <record id="tran_draft_router" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_router"/>
+	        <field name="signal">request</field>
+
+        </record> 
+        <record id="tran_router_request" model="workflow.transition">
+            <field name="act_from" ref="act_router"/>
+            <field name="act_to" ref="act_request"/>
+            <field name="condition">check_loan()</field>
+        </record>
+
+        <record id="tran_request_approve" model="workflow.transition">
+            <field name="act_from" ref="act_request"/>
+            <field name="act_to" ref="act_approve"/>
+	        <field name="signal">approve</field>
+        </record>
+
+        <record id="tran_request_reject" model="workflow.transition">
+            <field name="act_from" ref="act_request"/>
+            <field name="act_to" ref="act_reject"/>
+	        <field name="signal">reject</field>
+        </record>
+
+        <record id="tran_router_reject" model="workflow.transition">
+            <field name="act_from" ref="act_router"/>
+            <field name="act_to" ref="act_reject"/>
+            <field name="condition">not check_loan()</field>
+        </record>
+        
+        <record id="tran_approve_transfered" model="workflow.transition">
+            <field name="act_from" ref="act_approve"/>
+            <field name="act_to" ref="act_transfered"/>
+	        <field name="signal">transfered</field>
+        </record>
+        
+        <record id="tran_transfered_paid" model="workflow.transition">
+            <field name="act_from" ref="act_transfered"/>
+            <field name="act_to" ref="act_paid"/>
+	        <field name="signal">subflow.done</field>
+        </record>
+        
+        <record id="tran_paid_suspend" model="workflow.transition">
+            <field name="act_from" ref="act_paid"/>
+            <field name="act_to" ref="act_suspend"/>
+	        <field name="signal">suspend</field>
+        </record>
+        
+        <record id="tran_paid_done" model="workflow.transition">
+            <field name="act_from" ref="act_paid"/>
+            <field name="act_to" ref="act_done"/>
+	        <field name="signal">done</field>
+        </record>
+        
+        <record id="tran_suspend_paid" model="workflow.transition">
+            <field name="act_from" ref="act_suspend"/>
+            <field name="act_to" ref="act_paid"/>
+	    <field name="signal">paid</field>
+        </record>
+
+	<!--Loan Payment Workflow-->
+      
+        <record id="wkf_loan_paid" model="workflow">
+            <field name="name">Loan Payment</field>
+            <field name="osv">hr.employee.loan.paid</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="act_paid_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan_paid"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+        </record>
+       
+       <record id="act_paid_complete" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan_paid"/>
+            <field name="name">complete</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'complete'})</field>
+        </record>
+        <record id="act_paid_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan_paid"/>
+            <field name="name">cancel</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'cancel'})</field>
+        </record>
+        
+        <record id="act_paid_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan_paid"/>
+            <field name="name">confirm</field>
+            <field name="kind">subflow</field>
+            <field name="subflow_id" search="[('osv','=','account.voucher')]" type="int"/>
+            <field name="action">confirm()</field>
+        </record>
+  
+        <record id="act_paid_paid" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_loan_paid"/>
+            <field name="name">paid</field>
+	        <field name="kind">function</field>
+            <field name="action">paid_loan()</field>
+            <field name="flow_stop">True</field>
+        </record>
+        
+        
+       <!--transtions-->
+       
+       <record id="tran_draft_complete" model="workflow.transition">
+            <field name="act_from" ref="act_paid_draft"/>
+            <field name="act_to" ref="act_paid_complete"/>
+	        <field name="signal">complete</field>
+        </record>
+         
+        <record id="tran_complete_confirm" model="workflow.transition">
+            <field name="act_from" ref="act_paid_complete"/>
+            <field name="act_to" ref="act_paid_confirm"/>
+            <field name="signal">confirm</field>
+        </record>
+
+        <record id="tran_confirm_paid" model="workflow.transition">
+            <field name="act_from" ref="act_paid_confirm"/>
+            <field name="act_to" ref="act_paid_paid"/>
+	        <field name="signal">subflow.done</field>
+        </record>
+        
+        <record id="tran_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_paid_confirm"/>
+            <field name="act_to" ref="act_paid_cancel"/>
+	        <field name="signal">subflow.cancel</field>
+        </record>
+
+      </data>
+   </openerp>

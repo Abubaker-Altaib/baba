@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+    <record id="view_production_costs_report_trees" model="ir.ui.view">
+        <field name="name">production.costs.report.tree</field>
+        <field name="model">production.costs.report</field>
+        <field name="arch" type="xml">
+            <tree  create="false" string="التكلفة والانتاج">
+                <field name="production_id" string="أمر الإنتاج" />
+                <field name="product_id" string="المنتج" />
+                <field name="material_cost" string="تكلفة المواد الخام" />
+                <field name="fixed_cost" string="التكلفة الثابته" />
+                <field name="manpower_cost" string="تكلفة العمالة" />
+                <field name="production_cost" string="تكلفة الانتاج"  />
+                <!--field name="responsible"  invisible="True"/-->  
+                <field name="routing_id"/>    
+                <field name="begin" string="تاريخ البداية"/>      
+                <field name="end" string="تاريخ النهاية"/>  
+                <field name="product_state" string="الحالة" />                          
+           </tree>
+        </field>
+    </record>
+
+    <record id="view_production_costs_report_graph" model="ir.ui.view">
+         <field name="name">production.costs.report.graph</field>
+        <field name="model">production.costs.report</field>
+         <field name="arch" type="xml">
+             <graph string="Production And Costs" type="pie">
+                <field name="production_id"  string="أمر الإنتاج"/>
+                <field name="production_cost" string="تكلفة الانتاج" operator="+"/>
+                <field name="manpower_cost" operator="+"/>
+                <field name="material_cost" operator="+"/>
+                <field name="fixed_cost" operator="+"/>
+             </graph>
+         </field>
+    </record>
+    
+    <record id="view_production_costs_report_search" model="ir.ui.view">
+        <field name="name">production.costs.report.search</field>
+        <field name="model">production.costs.report</field>
+        <field name="arch" type="xml">
+            <search string="Production And Costs">
+                <field name="production_id"  string="أمر الإنتاج"/>
+                <field name="product_id"  string="المنتج" />
+                <!--field name="responsible" />  
+                <field name="company_id" /-->  
+                <field name="product_state" string="الحالة"/>   
+                <field name="begin"  string="تاريخ البداية"/>      
+                <field name="end" string="تاريخ النهاية" /> 
+                <filter icon="terp-go-year" string="State" name="product_state" context="{'product_state':'done'}"/>   
+                <filter string="Unposted" icon="terp-document-new" domain="[('product_state','=','draft')]" />
+                <filter string="Posted" icon="terp-camera_test" domain="[('product_state','=','done')]" />
+                <group expand="1" string="Group By...">
+                    <filter string="State" name="product_state" icon="terp-go-month" context="{'group_by':'product_state'}" help=""/>
+                    <!--filter string="Company" name="company_id" icon="terp-go-month" context="{'group_by':'company_id'}" help=""/>
+                    <filter string="Responsible" name="responsible" icon="terp-go-month" context="{'group_by':'responsible'}" help=""/-->
+                 </group>
+            </search>
+        </field>
+    </record>
+
+
+   <menuitem  id="menu_mrp_report" name="Reports" parent="base.menu_mrp_root" sequence="20" />
+   <menuitem   id="menu_action_production_costs"  name="تقارير تكاليف الإنتاج"      parent="menu_mrp_report"/>
+
+    <record id="action_production_costs_report_all1" model="ir.actions.act_window">
+        <field name="name">تكاليف  الامات وسعر البيضة</field>
+        <field name="res_model">production.costs.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,graph</field>
+        <field name="view_id" ref="view_production_costs_report_trees"/>
+        <field name="search_view_id" ref="view_production_costs_report_search"/>
+        <field name="domain">[('routing_id','in',[1,4,5,6,7,8])]</field>
+        <field name="context">{'group_by':[],'search_default_state':1,'search_default_center':1,'routing_id':(1,4,5,6,7,8)}</field>
+    </record>
+
+
+
+    <menuitem action="action_production_costs_report_all1" id="menu_action_production_costs_report_all1"
+        parent="menu_action_production_costs"/>
+
+    <record id="action_production_costs_report_all2" model="ir.actions.act_window">
+        <field name="name">تكاليف الفقسة وسعر الكتكوت</field>
+        <field name="res_model">production.costs.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,graph</field>
+        <field name="view_id" ref="view_production_costs_report_trees"/>
+        <field name="search_view_id" ref="view_production_costs_report_search"/>
+        <field name="domain">[('routing_id','=',2)]</field>
+        <field name="context">{'group_by':[],'search_default_state':1,'search_default_center':1,'routing_id':2}</field>
+    </record>
+
+
+    <menuitem action="action_production_costs_report_all2" id="menu_action_production_costs_report_all2"
+        parent="menu_action_production_costs"/>
+
+    <record id="action_production_costs_report_all3" model="ir.actions.act_window">
+        <field name="name">تكاليف البراري وسعر الفراخ</field>
+        <field name="res_model">production.costs.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,graph</field>
+        <field name="view_id" ref="view_production_costs_report_trees"/>
+        <field name="search_view_id" ref="view_production_costs_report_search"/>
+        <field name="domain">[('routing_id','=',3)]</field>
+        <field name="context">{'group_by':[],'search_default_state':1,'search_default_center':1,'routing_id':3}</field>
+    </record>
+
+
+    <menuitem action="action_production_costs_report_all3" id="menu_action_production_costs_report_all3"
+        parent="menu_action_production_costs"/>
+</data>
+</openerp>

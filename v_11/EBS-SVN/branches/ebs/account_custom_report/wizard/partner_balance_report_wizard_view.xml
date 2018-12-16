@@ -1,0 +1,90 @@
+
+
+
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="view_partner_balance_report_wizard">
+            <field name="name">partner.balance.report.wizard</field>
+            <field name="model">partner.leadger.report.wizard</field>
+            <field name="inherit_id" ref="view_partner_leadger_report_wizard"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='target_moves']" position="after">
+                    <field name="report_type" invisible="1"/>
+                </xpath>
+
+
+                <xpath expr="//button[@name='print_report']" position="attributes">
+
+
+                    <attribute name="attrs">{'invisible':[('report_type','!=','leadger')]}</attribute>
+
+
+                </xpath>
+
+
+
+                <xpath expr="//button[@name='print_report']" position="after">
+
+                    <button  name="print_partner_balance" string="Print" type="object" class="oe_highlight" attrs="{'invisible':[('report_type','!=','balance')]}"/>
+
+                </xpath>
+
+                <!--<xpath expr="//field[@name='init_balance']" position="attributes">-->
+
+
+                <!--<attribute name="attrs">{'invisible':[('report_type','!=','leadger')]}</attribute>-->
+
+
+                <!--</xpath>-->
+
+                <xpath expr="//field[@name='target_moves']" position="after">
+
+
+                <field name="with_balance" attrs="{'invisible':['|',('report_type','=','leadger'),('init_balance','!=',True)]}"/>
+
+
+                </xpath>
+
+            </field>
+        </record>
+
+
+
+
+        <record id="partner_balance_report_wizard_action" model="ir.actions.act_window">
+            <field name="name">Partner Balance Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">partner.leadger.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_partner_balance_report_wizard"/>
+            <field name="target">new</field>
+            <field name="context">{'default_report_type':'balance'}</field>
+        </record>
+
+
+
+
+        <menuitem
+                name="Partner Balance Report"
+                id="partner_balance_report"
+                parent="account.menu_finance_legal_statement"
+                action="partner_balance_report_wizard_action"
+                groups="account.group_account_user"/>
+
+        <report
+                id="action_partner_balance_report"
+                string="Partner Balance Report"
+                model="res.partner"
+                report_type="qweb-pdf"
+                name="account_custom_report.partner_balance_report_tamplate"
+                file="account_custom_report.partner_balance_report_tamplate"
+                menu="False"/>
+
+
+
+
+    </data>
+</odoo>

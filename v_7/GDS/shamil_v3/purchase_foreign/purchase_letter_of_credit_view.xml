@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<record id="purchase_letter_of_credit_form" model="ir.ui.view">
+			<field name="name">purchase.letter.of.credit.form</field>
+			<field name="model">purchase.letter.of.credit</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+			       <form string="Purchase Letter Of Credit" version="7.0">
+                                     <header>
+					  <button name="confirm" states="draft" string="Bank" confirm="Are you sure you want to confirm this Letter Of Credit?" />
+					  <button name="receive" states="confirm" string="Receive" confirm="Are you sure you want to Receive this Letter Of Credit?" />
+					  <button name="done" states="receive" string="Done" confirm="Are you sure you want to confirm this clearance?" />
+					  <button name="cancel" states="confirm,receive" string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to Cancel this Clearance?" />
+					  <button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" />
+                                          <field name="state" widget="statusbar" statusbar_visible=",draft,confirm,receive" />
+                                     </header>
+                                     <sheet>
+				     <group col="6" colspan="6">
+					    <field name="name" colspan="2" />
+					    <field name="source_number" colspan="2"/>
+                                            <field name="source_date" colspan="2"/>
+					    <field name="lc_date" colspan="2" />
+					    <field name="purchase_order_ref" colspan="2" readonly="1"/>
+					    <field name="amount" colspan="2" on_change="onchange_amount(amount)" readonly="1"/>
+					    <field name="amount_in_word" colspan="4" />
+
+				     </group>
+				     <notebook colspan="4">
+					       <page string="Letter Of Credit">
+					    	     <group col="4" colspan="4">
+                        	                            <field name="partner_id" readonly="1"/>
+							    <field name="delivery_date" readonly="1"/>
+							    <field name="bank" required="1"/>
+							    <field name="payment_term" colspan="2" readonly="1"/>
+					                    <field name="currency_id" colspan="2" readonly="1"/>
+						     </group>
+						     <separator string="Products" colspan="4" />
+								<field colspan="4" name="letter_of_credit_line_ids" nolabel="1">
+								       <tree editable="bottom" string="Items Lines">
+									     <field name="product_id" colspan="4" on_change="product_id_change(product_id)" />
+									     <field name="name" colspan="4" />
+									     <field name="product_qty" colspan="2" on_change="subtotal(price_unit,product_qty)"/>
+									     <field name="product_uom" colspan="2" on_change="subtotal(price_unit,product_qty)"/>
+									     <field name="price_unit" />
+							                     <field name="price_subtotal" />
+									</tree>
+								</field>
+
+					       </page>
+					       <page string="notes">
+						     <field name="notes" nolabel="1" />
+					       </page>
+					       </notebook>
+                                      </sheet>
+				</form>
+			</field>
+		</record>
+		
+		
+	        <record id="purchase_letter_of_credit_tree" model="ir.ui.view">
+			<field name="name">purchase.letter.of.credit.tree</field>
+			<field name="model">purchase.letter.of.credit</field>
+			<field name="arch" type="xml">
+			       <tree string="Purchase Letter Of Credit">
+				     <field name="name" colspan="2" />
+				     <field name="lc_date" colspan="2" />
+				     <field name="purchase_order_ref" colspan="2" />
+				     <field name="amount" colspan="2" />
+			   	     <field name="user" colspan="2" />
+					
+				</tree>
+			</field>
+		</record>
+		<record id="letter_of_credit_filter" model="ir.ui.view">
+			<field name="name">letter.of.credit.list.select</field>
+			<field name="model">purchase.letter.of.credit</field>
+			<field name="arch" type="xml">
+			       <search string=" Letter Of Credit Bank">
+				       <field name="name" select="1" />
+			       </search>
+			</field>
+		</record>
+		<record id="purchase_letter_of_credit_filter" model="ir.ui.view">
+			<field name="name">purchase.letter.of.credit.list.select</field>
+			<field name="model">purchase.letter.of.credit</field>
+			<field name="arch" type="xml">
+			       <search string="Purchase Letter Of Credit">
+				       <field name="name" select="1" />
+				       <field name="lc_date" select="1" />
+				       <field name="purchase_order_ref" select="1" />
+				       <field name="state" select="1" />
+				       <field name="user" select="1" />
+			       </search>
+			</field>
+		</record>	
+
+		<record id="letter_of_credit_bankform" model="ir.ui.view">
+			<field name="name">letter.of.credit.bank.form</field>
+			<field name="model">letter.of.credit.bank</field>
+			<field name="arch" type="xml">
+				<form string="Letter Of Credit Bank" version="7.0">
+                                   <sheet>
+                                         <group col="4" colspan="2">
+				                <field name="name" />
+			 	                <field name="active" />
+				                <field name="bank_account_number" />
+				                <field name="bank_account_id" />
+                                         </group>
+                                   </sheet>							
+				</form>
+			</field>
+		</record>
+		<record id="letter_of_credit_bank_tree" model="ir.ui.view">
+			<field name="name">letter.of.credit.bank.tree</field>
+			<field name="model">letter.of.credit.bank</field>
+			<field name="arch" type="xml">
+			       <tree string="Letter Of Credit Banks">
+				     <field name="name" />
+				     <field name="bank_account_number" colspan="2" />
+				     <field name="bank_account_id" colspan="2" />
+			       </tree>
+			</field>
+		</record>
+
+		<record id="letter_of_credit_bank_action" model="ir.actions.act_window">
+			<field name="name">Letter Of Credit Banks</field>
+			<field name="res_model">letter.of.credit.bank</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="letter_of_credit_filter" />
+		</record>
+					
+		<record id="purchase_letter_of_credit_action" model="ir.actions.act_window">
+			<field name="name">Purchase Letter Of Credit</field>
+			<field name="res_model">purchase.letter.of.credit</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="purchase_letter_of_credit_filter" />
+		</record>
+
+		<menuitem id="letter_of_credit_parent_menu" name="Letter Of Credit"
+			parent="base.menu_purchase_root" sequence="6"/>
+					
+		<menuitem action="purchase_letter_of_credit_action" id="menu_purchase_letter_of_credit_action"
+			parent="letter_of_credit_parent_menu" sequence="1"/>	
+		
+		<menuitem action="letter_of_credit_bank_action" id="menu_letter_of_credit_bank_action"
+			parent="letter_of_credit_parent_menu" sequence="1"/>
+    </data>
+</openerp>

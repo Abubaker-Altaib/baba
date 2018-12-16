@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_res_partner_filter_inherit" model="ir.ui.view">
+            <field name="name">res.partner.select.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="code" />
+                    <field name="phone" />
+                    <field name="mobile" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_partner_tree_inherit" model="ir.ui.view">
+            <field name="name">res.partner.tree.inherit</field>
+            <field name="model">res.partner</field>
+            <field eval="8" name="priority"/>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='display_name']" position="after">
+                    <field name="code" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_partner_form_inherit2" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/div[2]/h1" position="after">
+                    <h1>
+                        <field name="code" placeholder="Code"/>
+                    </h1>
+                </xpath>
+                <xpath expr="//field[@name='category_id']" position="attributes">
+                    <attribute name="string">Category</attribute>
+                </xpath>
+                <xpath expr="//field[@name='vat']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//page[@name='sales_purchases']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//group[@name='acc_sale']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//group[@name='acc_purchase']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//group[@name='fiscal_information']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='property_account_receivable_id']" position="attributes">
+                    <attribute name="required">False
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='property_account_payable_id']" position="attributes">
+                    <attribute name="required">False
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="view_partner_view_buttons_inherit2" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.partner_view_buttons"/>
+            <field name="arch" type="xml">
+             <xpath expr="//button[@name='action_view_partner_invoices']" position="replace">
+                    <button type="object" class="oe_stat_button" icon="fa-pencil-square-o" 
+                            name="action_view_partner_invoices" attrs="{'invisible':True}">
+                    </button>
+             </xpath>
+            </field>
+        </record>
+        
+        <record id="view_partner_view_button_contracts_count_inherit2" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.partner_view_button_contracts_count"/>
+            <field name="arch" type="xml">
+             <xpath expr="/form/sheet//div//button[1]" position="replace">
+                <button class="oe_stat_button" type="action" name="203" icon="fa-book" 
+                     groups="analytic.group_analytic_accounting" attrs="{'invisible':True}">
+                <field string="Analytic Accounts" name="contracts_count" widget="statinfo" attrs="{'invisible':True}"/>
+                </button>
+             </xpath>
+            </field>
+        </record>
+        
+        <record id="view_partner_property_form_inherit" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+             <xpath expr="/form/sheet//notebook//page[4]//group//group" position="after">
+               <group>
+                  <field name="customer"/>
+               </group>
+               <group>
+                  <field name="supplier"/>
+               </group>
+               <group>
+                   <button type="action" class="btn btn-sm btn-link" name="base.action_res_partner_bank_account_form">
+                  <span class="o_stat_value">1</span>
+                  <span class="o_stat_text">Bank account(s)</span>
+                  </button>
+             </group>
+             </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
+

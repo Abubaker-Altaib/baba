@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_hr_employee_employee" model="ir.ui.view">
+            <field name="name">hr.employee.report</field>
+            <field name="model">hr.employee.reportt</field>
+            <field name="arch" type="xml" >
+                <form string="Employee" version="7.0">
+                    <group col="4">
+                    <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                <field name="report_type" on_change="onchange_type(report_type)" />
+                            <field name="wizout_sinid" attrs="{'invisible': [('report_type','!=','employee')]}"  />  
+
+                    </group>
+                    <notebook  colspan="4" >
+                        <page string="Employees" >
+                            <field name="employee_ids" />
+                        </page>
+                        <page string="Departments" >
+                            <field name="department_ids" />
+                        </page>
+                        <page string="Jobs" >
+                            <field name="job_ids" />
+                        </page>
+                        <page string="Other">
+                            <group col="4" attrs="{'invisible': [('report_type','!=','employee')]}" >
+                                <separator string="Data" colspan="4"/>
+                                <field name="emp_code"   />  
+                                <field name="birthday"  />  
+                                <field name="location"  />  
+                                <field name="sinid" />  
+                           </group>
+                           <group col="4"  >
+                                <separator string="Group by" colspan="4"/>
+                                <field name="groupby"   /> <newline/>
+                           </group>
+                        </page>
+                    </notebook>
+
+                   <footer>
+                      <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight"/>
+                      or
+                     <button string="Cancel" class="oe_link" special="cancel"/>
+                   </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="wizard_hr_employee_employee" model="ir.actions.act_window">
+            <field name="name">Managers Of Departments/Sections</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee.reportt</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    <menuitem name="Employee Report" parent="menu_hr_employees_reports"
+         action="wizard_hr_employee_employee"
+         id="menu_employee_report"/> 
+
+
+ </data>
+</openerp>

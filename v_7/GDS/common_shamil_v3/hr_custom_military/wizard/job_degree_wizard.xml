@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_job_degree_wizard" model="ir.ui.view">
+            <field name="name">job_degree_wizard.report</field>
+            <field name="model">job_degree_wizard.report</field>
+            <field name="arch" type="xml">
+                <form string="Jobs" version="7.0">
+                    <group>
+                        <field name="type"/>
+                        <field name="jobs" attrs="{'invisible':[('type','not in',('job_degree','depart_job'))]}"/>
+                        <field name="scales" widget="many2many_tags" attrs="{'invisible':[('type','not in',('job_degree','depart_degree'))]}"/>
+                        <field name="departments" attrs="{'invisible':[('type','not in',('depart_job','depart_degree'))]}"/>
+                    </group>
+                    <button name="print_report" string="Print" type="object"/>
+                </form>
+            </field>
+        </record>
+        <record id="action_job_degree_wizard" model="ir.actions.act_window">
+            <field name="name">Jobs Degrees</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">job_degree_wizard.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_job_degree_wizard"/>
+            <field name="target">new</field>
+        </record>
+        <report auto="False" id="job_degree_report_id" menu="False" model="hr.employee" name="hr.job_degree.report" file="hr_custom_military/report/job_degree_report.mako" report_type="webkit" string="Job Degree Report" header="True"/>
+        <report auto="False" id="depart_job_report_id" menu="False" model="hr.employee" name="hr.depart_job.report" file="hr_custom_military/report/depart_job_report.mako" report_type="webkit" string="Department Job Report" header="True"/>
+        <!--report auto="False" id="depart_degree_report_id" menu="False" model="hr.employee" name="hr.depart_degree.report" file="hr_custom_military/report/depart_degree_report.mako" report_type="webkit" string="Department Degree Report" header="True"/-->
+        <menuitem id="job_degree_wizard_menu" name="Jobs Degrees" action="action_job_degree_wizard" parent="hr_custom.menu_hr_employees_reports"/>
+    </data>
+</openerp>

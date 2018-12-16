@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+	    <report auto="False" menu="False" id="account_invoice_payment_voucher" model="account.invoice" 
+               name="account_invoice_payment_voucher.report" rml="addons/account_ntc/report/payment_voucher.rml" 
+               string="customer payment voucher" />
+       
+        <report auto="False" menu="False" id="accountreport_ivoice" model="account.invoice"
+                name="account.invoice.report" rml="addons/account_ntc/report/account_invoice_report.rml"
+                string="Customer Claim" />
+       
+	    <report auto="False" menu="False" id="reports_payments" model="account.invoice"
+                name="report_payment" rml="addons/account_ntc/report/reports_payments.rml"
+                string="Print Payments" />
+
+
+
+<!-- Supplier Voucher -->
+
+		<record model="ir.ui.view" id="view_purchase_receipt_form_ntc">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher_wafi.view_purchase_receipt_form" />
+			<field name="arch" type="xml">
+				
+				<xpath expr="//button[@name='complete_close']" position="attributes">
+					<attribute name="groups">account.group_account_manager</attribute>
+				</xpath>
+				<!--xpath expr="//button[@name='close_confirm']" position="replace"></xpath>
+				<xpath expr="//button[@name='confirm_review']" position="replace"></xpath>
+				<xpath expr="//button[@name='confirm_pay']" position="replace"></xpath>
+				<xpath expr="//button[@name='review_schedule']" position="replace"></xpath>
+				<xpath expr="//button[@name='pay_receive']" position="replace"></xpath>
+				<xpath expr="//button[@name='cancel_voucher']" position="replace"></xpath>
+				<xpath expr="//button[@name='receive_post']" position="replace">
+					<button name="proforma_voucher" string="Receive" states="draft,receive"
+						groups="account_voucher_custom.group_account_expense_pay" invisible="1"/>
+                                       <button name="close_post" string="Pay" states="close"
+						groups="account_voucher_custom.group_account_expense_pay" />
+                                        
+                                 </xpath> 
+				<xpath expr="//button[@name='post_done']" position="replace"></xpath>
+				
+				<xpath expr="//field[@name='state']" position="attributes">
+					<attribute name="statusbar_visible">draft
+					</attribute>
+				</xpath-->
+                <xpath expr="//field[@name='pay_journal_id']" position="replace">
+					<field name="pay_journal_id" widget="selection"
+                                            attrs="{'readonly': [('state','=','posted')],'required': [('state','=','close')]}"
+							domain="[('type','in',('cash','bank'))]"  />
+				</xpath>                      
+                <field name="partner_id" position="replace">
+						<field name="partner_id" domain="[('supplier','=',True)]"
+						 required="False" string="Collector" 
+						 attrs="{'readonly':[('state' , 'not in', ('draft','close'))]}"/>
+
+				</field>
+
+				<field name="account_id" position="replace">
+				       <field name="account_id"  invisible="1"  />
+
+				</field>
+				<field name="pay_journal_id" position="after">
+				       <field name="move_id" attrs="{'invisible':[('state', '!=', 'posted')]}" readonly="1"/>
+
+				</field>
+				<xpath expr="//field[@name='line_dr_ids']" position="replace">
+				       <field name="line_dr_ids" on_change="onchange_price(line_dr_ids, tax_id, partner_id)" context="{'journal_id':journal_id,'partner_id':partner_id}" attrs="{'readonly': [('state','=','posted')]}">
+                                           <tree string="Expense Lines" editable="bottom" attrs="{'readonly': [('state','=','posted')]}">
+
+                                                 <field name="account_id"  domain="[('type','!=','view')]" required="1"/>
+                                                 <field name="name"/>
+                                                 <field name="amount"/>
+						  <field name="account_analytic_id"  domain="[('type','!=','view')]"/>
+						  <field name="state" invisible="1"/>
+                                          </tree>
+                                       </field>
+				</xpath>
+				
+				
+			</field>
+		</record>
+	 
+       <record id="account_invoice_ntc_form_inherit" model="ir.ui.view">
+			<field name="name">account.invoice.ntc.form.inherit</field>
+			<field name="model">account.invoice</field>
+			<field name="inherit_id" ref="account_custom_wafi.invoice_form_inheret" />
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='invoice_open']" position="after">
+					<button name="%(account_invoice_payment_voucher)d" colspan="2"
+							string="Print Payment Voucher" type="action"
+							icon="gtk-print" groups="account.group_account_user"/>
+				</xpath>
+                		<xpath expr="//button[@name='invoice_open']" position="after">
+				    <button name="%(accountreport_ivoice)d" 
+							string="Print Customer Claim" type="action"
+							icon="gtk-print" groups="account.group_account_user"/>
+				</xpath>
+				<field name='product_id' position="attributes">
+					<attribute name="domain">[('sale_ok','=',True)]</attribute>
+				</field>
+				<xpath expr="//field[@name='date_invoice']" position="attributes">
+					<attribute name="required">1</attribute>
+				</xpath>
+			</field>
+        </record>
+
+	 <record id="view_invoice_customer_inherit" model="ir.ui.view">
+			<field name="name">account.invoice.form.inherit</field>
+			<field name="model">account.invoice</field>
+			<field name="inherit_id" ref="account_voucher.view_invoice_customer" />
+			<field name="arch" type="xml">
+                		<xpath expr="//button[@name='invoice_pay_customer'][1]" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//button[@name='invoice_pay_customer'][2]" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//button[@name='action_invoice_sent'][1]" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//button[@name='action_invoice_sent'][2]" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//button[@name='invoice_print'][1]" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//button[@name='invoice_print'][2]" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//button[@string='Refund Invoice']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+                                <xpath expr="//field[@name='partner_id']" position="before">
+				       <field name="internal_sequence" readonly="1"/>
+				</xpath>
+				<xpath expr="//field[@name='partner_id']" position="after">
+                        		<field name="partner_name" required="1"/>
+		 		</xpath>
+				<xpath expr="//field[@name='partner_id']" position="attributes">
+					    <attribute name="attrs">{'required':[('state','!=','draft')]}</attribute>
+		 		</xpath>
+				<xpath expr="//field[@name='amount_untaxed']" position="attributes">
+					    <attribute name="invisible">True</attribute>
+		 		</xpath>
+				<xpath expr="//field[@name='residual']" position="attributes">
+					    <attribute name="invisible">True</attribute>
+		 		</xpath>
+				<xpath expr="////field[@name='uos_id']" position="attributes">
+					    <attribute name="invisible">True</attribute>
+		 		</xpath>
+				<xpath expr="////field[@name='invoice_line_tax_id']" position="attributes">
+					    <attribute name="invisible">True</attribute>
+		 		</xpath>
+				<xpath expr="////field[@name='quantity']" position="attributes">
+					    <attribute name="invisible">True</attribute>
+		 		</xpath>
+				<xpath expr="////field[@name='price_subtotal']" position="attributes">
+					    <attribute name="invisible">True</attribute>
+		 		</xpath>
+				<xpath expr="//field[@name='move_id']" position="replace">
+				</xpath>
+				<xpath expr="//field[@name='account_id']" position="after">
+				       <field name="move_id"/>
+				</xpath>
+				<xpath expr="//field[@name='amount_tax']" position="attributes">
+					    <attribute name="invisible">True</attribute>
+		 		</xpath>
+			</field>
+       </record>
+
+        <record id="invoice_tree" model="ir.ui.view">
+            <field name="name">account.invoice.tree.inherit</field>
+            <field name="model">account.invoice</field>
+	    <field name="inherit_id" ref="account.invoice_tree" />
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='partner_id']" position="before">
+                        <field name="internal_sequence" />
+		 </xpath>
+            </field>
+	</record>
+
+        <record id="view_account_invoice_filter" model="ir.ui.view">
+            <field name="name">account.invoice.select</field>
+            <field name="model">account.invoice</field>
+	    <field name="inherit_id" ref="account.view_account_invoice_filter" />
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='number']" position="before">
+                        <field name="internal_sequence" />
+		 </xpath>
+	     </field>
+	</record>
+
+       <record id="account_invoice_supplier_ntc_form_inherit" model="ir.ui.view">
+			<field name="name">account.invoice.supplier.ntc.form.inherit</field>
+			<field name="model">account.invoice</field>
+			<field name="inherit_id" ref="account_custom_wafi.account_invoice_inheret" />
+			<field name="arch" type="xml">
+                <xpath expr="//button[@name='invoice_open']" position="after">
+				    <button name="%(reports_payments)d" states="open,paid,done"
+							string="Print Payments" type="action"
+							icon="gtk-print" groups="account.group_account_user"/>
+				</xpath>
+				<xpath expr="//field[@name='account_id']" position="attributes">
+					<attribute name="invisible">0</attribute>
+					<attribute name="required">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='move_creation']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+			</field>
+       </record>
+	<record id="account_invoice_form_inheret_ntc" model="ir.ui.view">
+			<field name="name">account.invoice.supplier.ntc.form.inherit</field>
+			<field name="model">account.invoice</field>
+			<field name="inherit_id" ref="account_custom_wafi.account_invoice_form_inheret" />
+			<field name="arch" type="xml">
+                	    <xpath expr="//button[@name='to_review_custom']" position="attributes">
+				<attribute name="groups">account_voucher_custom.group_account_revenue,account.group_account_manager</attribute>
+			    </xpath>
+
+			    <xpath expr="//button[@name='action_cancel']" position="before">
+				<button name="confirm_complete" states="confirm" class="oe_highlight"
+					 		string="Return To Accountant" groups="account.group_account_manager,account_custom.group_account_controller"/>
+			    </xpath>
+			    <xpath expr="//field[@name='state']" position="attributes">
+				<attribute name="statusbar_visible">draft,complete,confirm,review,open</attribute>
+			    </xpath>
+
+			</field>
+       </record>
+       
+	</data>
+</openerp>

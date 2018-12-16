@@ -1,0 +1,552 @@
+<odoo>
+    <!-- This file manage the different views of contract and contract lines -->
+    <data>
+        <record id="purchase_contract_form" model="ir.ui.view">
+            <field name="name">purchase.contract.form</field>
+            <field name="model">purchase.contract</field>
+            <field name="arch" type="xml">
+                <form string="Base Contract" version="7.0">
+                    <header>
+                        <button name="confirmed" states="draft" string="Confirm"
+                                confirm="you want to confirm this Contract?" type="object" class="oe_highlight"/>
+
+                        <button name="done" states="confirmed" string="Done"
+                                confirm="Are you want to approve this Contract?" type="object" class="oe_highlight"/>
+                        <!--/group-->
+                        <button name="cancel" states="confirmed" string="Cancel Request" type="object" class="oe_highlight"
+                                confirm="Are you sure you want to Cancel this Contract?"/>
+                        <button name="action_cancel_draft" states="cancel"
+                                string="Set to Draft" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancel"/>
+                    </header>
+                    <sheet>
+                        <group col="4" colspan="2">
+                            <field name="name" colspan="2"/>
+                            <field name="contract_date" colspan="2"/>
+                            <field name="contract_purpose" colspan="2" required="1"/>
+                            <field name="contract_title" colspan="2"/>
+                            <field name="start_date" colspan="2"/>
+                            <field name="end_date" colspan="2" required="1"/>
+                            <field name="contract_duration" colspan="2"/>
+                            <field name="contract_amount" colspan="2" required="1"/>
+                            <field name="contract_with" colspan="2" required="1"/>
+                            <field name="department_id" colspan="2"
+                                   attrs="{'required':[('contract_purpose','=','other')]}"/>
+                            <field name="contract_no" colspan="2"/>
+                            <field name="payment_method" colspan="2"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="contract_type" colspan="2" invisible="1"/>
+                            <field name="user" colspan="2" invisible="1"/>
+                            <notebook colspan="4">
+                                <page string="Contract">
+                                    <group colspan="4" col="4" name="Supplier infromation">
+                                        <field name="partner_id" colspan="2"/>
+                                        <field name="currency_id" colspan="2" required="1"/>
+                                        <field name="items_types" colspan="2" invisible="1"/>
+                                        <field name="service_type" colspan="2"
+                                               attrs="{'invisible':[('items_types', 'not in', ['service','both'])]}"/>
+                                    </group>
+                                    <separator string="Items Information" colspan="4"/>
+                                    <group colspan="2" col="2" name="Shipment infromation"
+                                           attrs="{'invisible':[('contract_type', '!=', 'open'),('state','=','draft')]}">
+                                        <group>
+                                        <button name="create_shipment" string="Create Shipment" 
+                                                type="object"
+                                                class="oe_highlight"
+                                                attrs="{'invisible':[('state','=','draft')]}"/>
+                                        </group>        
+                                        <group 
+                                               attrs="{'readonly':[('contract_type', 'in', ['open','detail'])]}">
+                                            <field name="shipment_total_amount" />
+                                        </group>
+                                    </group>
+                                    <field colspan="4" name="contract_line_ids" nolabel="1"
+                                           attrs="{'invisible':[('contract_type', '=', 'open')]}">
+                                        <tree editable="top" string="Items Lines">
+                                            <field name="product_id" colspan="4"/>
+                                            <field name="name" colspan="4"/>
+                                            <field name="product_qty" colspan="2"/>
+                                            <field name="product_uom" colspan="2"/>
+                                            <field name="price_unit"/>
+                                            <field name="price_subtotal"/>
+                                        </tree>
+                                    </field>
+                                    <field colspan="4" name="contract_shipment_ids" nolabel="1" >
+
+                                        <tree string="Contract Shipment" create="false" >
+                                            <field name="name" colspan="2"/>
+                                            <field name="bill_of_lading" colspan="2" />
+                                            <field name="final_invoice_no" colspan="2"/>
+                                            <field name="total_amount" colspan="2"/>
+                                            <field name="purchase_id" colspan="2"/>
+                                            <field name="delivery_method" colspan="2"/>
+                                            <field name="state"/>
+                                        </tree>
+                                    </field>
+                                    <newline/>
+                                    <group col="4" colspan="2">
+                                        <field name="amount_untaxed"
+                                               attrs="{'invisible':[('contract_type', '=', 'open')]}"/>
+                                        <field name="amount_tax"
+                                               attrs="{'invisible':[('contract_type', '=', 'open')]}"/>
+                                        <field name="amount_total"
+                                               attrs="{'invisible':[('contract_type', '=', 'open')]}"/>
+                                        <field name="freight" attrs="{'invisible':[('contract_type', '=', 'open')]}"/>
+                                        <field name="packing" attrs="{'invisible':[('contract_type', '=', 'open')]}"/>
+                                        <button name="button_dummy" string="Compute" type="object" invisible="1"/>
+                                    </group>
+                                </page>
+                                <page string="Other Information" invisible="1">
+                                    <group colspan="2" col="4">
+                                        <group colspan="2" col="2" name="terms"
+                                               attrs="{'invisible':[('items_types','=','service')]}">
+                                            <separator string="Terms" colspan="2"/>
+                                            <field name="incoterm"/>
+                                        </group>
+                                        <group colspan="2" col="2" name="delivery infromation"
+                                               attrs="{'invisible':[('contract_type', '=', 'open'),('items_types', '=', 'service')]}">
+                                            <separator string="Delivery Infromation" colspan="2"/>
+                                            <field name="delivery_method"
+                                                   attrs="{'required':[('contract_type', '!=', 'open')]}"/>
+                                            <field name="delivery_period"/>
+                                            <field name="delivery_date"/>
+                                        </group>
+                                        <group colspan="4" name="conditions">
+                                            <separator string="Conditions" colspan="4"/>
+                                            <!--  field name="payment_term" colspan="2"/-->
+
+                                        </group>
+                                        <group colspan="4" col="4" name="conditions">
+                                            <separator colspan="4" string="Other conditions"/>
+                                            <field name="other_conditions" nolabel="1" colspan="4"/>
+                                        </group>
+                                    </group>
+                                </page>
+                                <page string="Duties &amp; Conditions">
+                                    <group colspan="2" col="4">
+                                        <group colspan="2" col="2">
+                                            <separator string="First Party Name" colspan="2"/>
+                                            <field name="first_party_name" colspan="2" nolabel="1"/>
+                                            <separator string="Duties" colspan="2"/>
+                                            <field name="first_party_duties" nolabel="1"/>
+                                            <separator string="Conditions" colspan="2"/>
+                                            <field name="first_party_conditions" nolabel="1"/>
+                                        </group>
+                                        <group colspan="2" col="2">
+                                            <separator string="Second Party Name" colspan="2"/>
+                                            <field name="second_party_name" colspan="2" nolabel="1"/>
+                                            <separator string="Duties" colspan="2"/>
+                                            <field name="second_party_duties" nolabel="1"/>
+                                            <separator string="Conditions" colspan="2"/>
+                                            <field name="second_party_conditions" nolabel="1"/>
+                                        </group>
+                                    </group>
+                                </page>
+                                <page string="Contract Fees">
+                                    <separator string="Contract Account" colspan="2"/>
+                                    <group colspan="2" col="4">
+                                        <field name="journal_id" required="1" colspan="2"/>
+                                        <field name="contract_account" colspan="2"/>
+                                    </group>
+                                    <separator string="Contract Fees" colspan="2"/>
+                                    <newline/>
+                                    <button name="create_fees" string="Create Fees" confirm="Are You Sure" colspan="2"
+                                            type="object" attrs="{'invisible':[('state','=','draft')]}" class="oe_highlight"/>
+                                    <group colspan="2" col="2"
+                                           attrs="{'readonly':[('contract_type', 'in', ['open','detail'])]}">
+                                        <field name="fees_total_amount" colspan="2"/>
+                                    </group>
+                                    <field colspan="2" name="contract_fees_ids" nolabel="1" >
+                                        <tree  create="false" >
+                                            <field name="name"/>
+                                            <field name="fees_date"/>
+                                            <field name="month"/>
+                                            <field name="fees_amount"/>
+                                            <field name="description"/>
+                                            <field name="state"/>
+                                        </tree>
+
+                                    </field>
+                                    <newline/>
+                                    <separator string="Contract Invoices" colspan="2"/>
+                                    <group attrs="{'invisible':[('contract_purpose', '!=', 'other')]}">
+                                        <field name="invoice_ids" groups="" nolabel="1" colspan="2"
+                                               context="{'type':'in_invoice', 'journal_type': 'purchase'}">
+                                            <tree editable="top" string="Invoice" >
+                                                <field name="name" colspan="2" required="1"/>
+                                                <field name="reference" colspan="2"/>
+                                                <field name="amount_total" colspan="2"/>
+                                                <field name="date_invoice" colspan="2"/>
+                                                <field name="partner_id" colspan="2"/>
+                                                <field name="account_id" colspan="2"/>
+                                                <field name="currency_id" colspan="2"/>
+                                                <field name="state" colspan="2"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                    <group attrs="{'invisible':[('contract_purpose', '!=', 'other')]}">
+                                        <!--field name="voucher_ids" groups="" nolabel="1" colspan="2"
+                                                                       >
+                                       <tree editable="top" string="Voucher">
+                                                                   <field name="name" colspan="2" required="1"/>
+                                           <field name="reference" colspan="2"/>
+                                           <field name="amount" colspan="2"/>
+                                           <field name="date" colspan="2"/>
+                                           <field name="currency_id" colspan="2"/>
+                                           <field name="account_id" colspan="2"/>
+                                       </tree>
+                                       </field-->
+                                    </group>
+                                </page>
+                                <page string="Notes">
+                                    <field name="notes" nolabel="1"/>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="purchase_contract_tree" model="ir.ui.view">
+            <field name="name">purchase.contract.tree</field>
+            <field name="model">purchase.contract</field>
+            <field name="arch" type="xml">
+                <tree colors="grey:state=='cancel';blue:state=='confirmed'"
+                      string="Contracts">
+                    <field name="name"/>
+                    <field name="contract_date"/>
+                    <!--field name="contract_type" /-->
+                    <field name="contract_title"/>
+                    <field name="partner_id"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="state"/>
+                    <field name="user"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="purchase_contract_line_form" model="ir.ui.view">
+            <field name="name">purchase.contract.line.form</field>
+            <field name="model">purchase.contract.line</field>
+            <field name="arch" type="xml">
+                <form string="Items" version="7.0">
+                    <sheet>
+                        <notebook colspan="4">
+                            <page string="Items">
+                                <field name="product_id" colspan="4"/>
+                                <field name="name" colspan="4"/>
+                                <field name="vocab" colspan="2"/>
+                                <field name="part_code" colspan="2"/>
+                                <field name="product_qty" colspan="2"/>
+                                <field name="product_uom" colspan="2"/>
+                                <field name="price_unit"/>
+                                <field name="price_subtotal"/>
+                                <field name="product_packaging"/>
+                                <separator string="Taxes" colspan="4"/>
+                                <field name="tax_id" colspan="4" nolabel="1"/>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes" colspan="4" nolabel="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="purchase_contract_line_tree" model="ir.ui.view">
+            <field name="name">purchase.contract.line.tree</field>
+            <field name="model">purchase.contract.line</field>
+            <field name="arch" type="xml">
+                <tree string="Items">
+                    <field name="product_id"/>
+                    <field name="name"/>
+                    <field name="product_uom"/>
+                    <field name="product_qty"/>
+                    <field name="price_unit"/>
+                </tree>
+            </field>
+        </record>
+        <!-- Contract Search Filter -->
+
+        <record id="view_purchase_contract_filter" model="ir.ui.view">
+            <field name="name">purchase.contract.list.select</field>
+            <field name="model">purchase.contract</field>
+            <field name="arch" type="xml">
+                <search string="Search for Contracts">
+                    <field name="name" select="1"/>
+                    <separator orientation="vertical"/>
+                    <field name="contract_date" select="1"/>
+                    <separator orientation="vertical"/>
+                    <field name="contract_type" select="1"/>
+                    <field name="state" select="1"/>
+                    <field name="partner_id" select="1"/>
+                    <newline/>
+                    <group expand="0" string="Group By..." colspan="4" col="10">
+                        <filter string="Responsible" icon="terp-stock_effects-object-colorize"
+                                domain="[]" context="{'group_by':'user'}"/>
+                        <filter string="State" icon="terp-stock_effects-object-colorize"
+                                domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="contract_shipment_form" model="ir.ui.view">
+            <field name="name">contract.shipment.form</field>
+            <field name="model">contract.shipment</field>
+            <field name="arch" type="xml">
+                <form string="Contract Shipment" version="7.0">
+                    <header>
+                        <button name="confirmed" states="draft" string="Confirm" type="object" class="oe_highlight"/>
+                        <button name="done" states="confirmed" string="Create Purchase Order" type="object" class="oe_highlight"/>
+                        <button name="cancel" states="confirmed" string="Cancel Request" type="object" class="oe_highlight"/>
+                        <button name="action_cancel_draft" states="cancel"
+                                string="Set To Draft" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancel"/>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="4" name="Shipment data">
+                            <group colspan="4" col="4">
+                                <field name="name" readonly="1"/>
+                                <field name="product_type" required="1"
+                                       attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+                                <field name="picking_policy" attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+                                <field name="purchase_id" readonly="1"/>
+                                <field name="bill_of_lading" invisible="True"
+                                       attrs="{'readonly':[('state', '!=', 'draft')]}" />
+                                <field name="final_invoice_no" attrs="{'readonly':[('state', '!=', 'draft')]}" invisible="True"/>
+                            </group>
+                            <group colspan="4" col="4">
+                                <field name="delivery_date" attrs="{'readonly':[('state', '!=', 'draft')]}" invisible="True"/>
+                                <field name="final_invoice_date" attrs="{'readonly':[('state', '!=', 'draft')]}" invisible="True"/>
+                                <field name="delivery_method" attrs="{'readonly':[('state', '!=', 'draft')]}" invisible="True"/>
+                            </group>
+                            <group colspan="6" col="6">
+                                <field name="delivery_period" attrs="{'readonly':[('state', '!=', 'draft')]}" invisible="True"/>
+                                <!--field name="product_type" required="1"
+                                       attrs="{'readonly':[('state', '!=', 'draft')]}"/-->
+                                <!--field name="picking_policy" attrs="{'readonly':[('state', '!=', 'draft')]}"/-->
+
+                            </group>
+                            <group colspan="2" col="2">
+                                <!--field name="purchase_id" readonly="1"/-->
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Items">
+                                <separator string="Items" colspan="4"/>
+                                <field colspan="4" name="contract_shipment_line_ids" nolabel="1"
+                                       attrs="{'readonly':[('state', '!=', 'draft')]}">
+                                    <tree editable="top" string="Shipment Lines">
+                                        <field name="product_id" colspan="4" required="1"/>
+                                        <field name="name" colspan="4"/>
+                                        <field name="product_qty" colspan="2"
+                                        />
+                                        <field name="product_uom" colspan="2"
+                                        />
+                                        <field name="price_unit"/>
+                                        <field name="price_subtotal"/>
+                                    </tree>
+                                </field>
+                                <group col="4" colspan="2">
+                                    <field name="total_amount" colspan="2"/>
+                                    <field name="freight" colspan="1" attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+                                    <field name="packing" colspan="1" attrs="{'readonly':[('state', '!=', 'draft')]}"/>
+                                    <button name="button_dummy" states="draft" colspan="2"
+                                            string="Compute" type="object" icon="fa-repeat"/>
+                                </group>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes" colspan="4" nolabel="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="contract_shipment_line_form" model="ir.ui.view">
+            <field name="name">contract.shipment.line.form</field>
+            <field name="model">contract.shipment.line</field>
+            <field name="arch" type="xml">
+                <form string="Items" version="7.0">
+                    <sheet>
+                        <notebook colspan="4">
+                            <page string="Items">
+                                <group>
+                                    <field name="product_id" colspan="4"/>
+                                    <field name="name" colspan="4"/>
+                                    <field name="vocab" colspan="2"/>
+                                    <field name="part_code" colspan="2"/>
+                                    <field name="product_qty" colspan="2"/>
+                                    <field name="product_uom" colspan="2"/>
+                                    <field name="price_unit"/>
+                                    <field name="price_subtotal"/>
+                                    <field name="product_packaging"/>
+                                </group>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes" colspan="4" nolabel="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="contract_fees_form" model="ir.ui.view">
+            <field name="name">contract.fees.form</field>
+            <field name="model">contract.fees</field>
+            <field name="arch" type="xml">
+                <form string="Contract Fees" version="7.0">
+                    <header>
+                        <button name="confirm" string="Confirm" confirm="Confirm Fees htis fees"
+                                states="draft" type="object" class="oe_highlight"/>
+                        <!--group -->
+                        <button name="create_invoice" string="Create Invoice"
+                                confirm="Are You Sure You Want To Create An Invoice for this Fees?"
+                                states="confirm" type="object" class="oe_highlight"
+                                attrs="{'invisible' : ['|',('purpose','=','other'),('state','!=','draft')]}"/>
+                        <!--/group-->
+                        <!--group  attrs="{'invisible' : [('purpose','=','purchase')]}"-->
+                        <button name="create_voucher" string="Create Voucher"
+                                confirm="Are You Sure You Want To Create An Invoice for this Fees"
+                                states="confirm" type="object" class="oe_highlight"
+                                attrs="{'invisible' : [('purpose','=','purchase')]}"/>
+                        <!--/group-->
+                        <button name="cancel" string="Cancel" confirm="Are You Sure You Want To Confirm Fees"
+                                states="confirm" type="workflow" class="oe_highlight" />
+                        <button name="action_cancel_draft" states="cancel" string="Set To Draft"
+                                type="object" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done,cancel"/>
+                    </header>
+                    <sheet>
+                        <notebook colspan="4">
+                            <page string="Contract Fees">
+                                <group col="4" colspan="2">
+                                    <field name="name"/>
+                                    <field name="fees_date" colspan="2" required="1"
+                                           attrs="{'readonly' : [('state','in',('confirm','cancel','done'))]}"/>
+                                    <field name="month" colspan="2" required="1"
+                                           attrs="{'readonly' : [('state','in',('confirm','cancel','done'))]}"/>
+                                    <!--field name="year" colspan="2" required="1"
+                           attrs="{'readonly' : [('state','in',['cancel','done'])]}"/-->
+                                    <field name="fees_amount" colspan="2" required="1"
+                                           attrs="{'readonly' : [('state','in',('confirm','cancel','done'))]}"/>
+                                    <!--field name="fees_amount_in_euro" readonly="1"/-->
+                                    <field name="purpose" colspan="2" readonly="1"/>
+                                    <newline/>
+                                    <separator string="Description" colspan="4"/>
+                                    <field name="description" colspan="4" nolabel="1"
+                                           attrs="{'readonly' : [('state','in',('cancel','done'))]}"/>
+                                </group>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes" colspan="4" nolabel="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="contract_fees_tree" model="ir.ui.view">
+            <field name="name">contract.fees.tree</field>
+            <field name="model">contract.fees</field>
+            <field name="arch" type="xml">
+                <tree colors="grey:state=='cancel';blue:state=='confirmed'"
+                      string="Contract Fees">
+                    <field name="name"/>
+                    <field name="fees_date"/>
+                    <!--field name="year" -->
+                    <field name="month"/>
+                    <field name="fees_amount"/>
+                    <!--field name="fees_amount_in_euro"/-->
+                    <field name="description"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="purchase_contract_form_action" model="ir.actions.act_window">
+            <field name="name">Contracts</field>
+            <field name="res_model">purchase.contract</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('contract_purpose','in',('purchase','other'))]</field>
+            <field name="context">{"contract_purpose":'purchase'}</field>
+            <field name="search_view_id" ref="view_purchase_contract_filter"/>
+        </record>
+
+        <menuitem id="id_purchase_contract_menu1" name="Purchase Contract"
+                  parent="purchase.menu_purchase_root" sequence="2"/>
+        <!--menuitem id="menu_purchase_contracts_reports_id" name="Purchase Contracts Reports"
+                  parent="purchase_report.menu_purchase_advance_reports" icon="STOCK_PRINT" /-->
+        <menuitem action="purchase_contract_form_action" id="menu_purchase_contract_form_action"
+                  parent="purchase.menu_purchase_root" name="Contracts"/>
+
+        <act_window domain="[('contract_id', '=', active_id)]" id="act_internal_requstion_pos"
+                    name="Purchase Orders" res_model="purchase.order" src_model="purchase.contract"/>
+
+        <act_window
+                domain="[('contract_id', '=', active_id)]"
+                id="act_contract_fees"
+                name="Contract Fees"
+                res_model="contract.fees"
+                groups=""
+                src_model="purchase.contract"/>
+
+        <act_window
+                domain="[('contract_id', '=', active_id)]"
+                context="{'type':'in_invoice', 'journal_type': 'purchase'}"
+                id="act_contract_invoice"
+                name="Contract Invoices"
+                res_model="account.invoice"
+                groups=""
+                src_model="purchase.contract"/>
+
+        <act_window
+                domain="[('contract_id', '=', active_id)]"
+                id="act_contract_voucher"
+                name="Contract Voucher"
+                res_model="account.voucher"
+                groups=""
+                src_model="purchase.contract"/>
+
+        <act_window
+                domain="[('contract_id', '=', active_id)]"
+                context="{'contract_type':'open',}"
+                id="act_contract_shipment"
+                name="Contract Shipment"
+                res_model="contract.shipment"
+                groups=""
+                src_model="purchase.contract"/>
+
+        <record id="seq_purchase_ccontract" model="ir.sequence">
+            <field name="name">Contract</field>
+            <field name="code">purchase.contract</field>
+            <field name="prefix">C/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_purchase_contract_fees" model="ir.sequence">
+            <field name="name">Contract Fees</field>
+            <field name="code">contract.fees</field>
+            <field name="prefix">CF/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_purchase_contract_shipment" model="ir.sequence">
+            <field name="name">Contract Shipment</field>
+            <field name="code">contract.shipment</field>
+            <field name="prefix">CS/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

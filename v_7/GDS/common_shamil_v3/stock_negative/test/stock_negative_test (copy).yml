@@ -1,0 +1,144 @@
+-
+  I confirm outgoing shipment of 130 kgm Ice-cream.
+-
+  !workflow {model: stock.picking, action: button_confirm, ref: stock.outgoing_shipment}
+-
+  I check shipment details after confirmed.
+-
+  !python {model: stock.picking}: |
+    shipment = self.browse(cr, uid, ref("stock.outgoing_shipment"))
+    assert shipment.state == "confirmed", "Shipment should be confirmed."
+    for move_line in shipment.move_lines:
+        assert move_line.state == "confirmed", "Move should be confirmed."
+
+-
+  Now I check vitual stock of Ice-cream after confirmed outgoing shipment.
+-
+  !python {model: product.product}: |
+    product = self.browse(cr, uid, ref('stock.product_icecream'), context=context)
+    product.virtual_available == -30, "Vitual stock is not updated."
+
+-
+  I confirm incomming shipment of 50 kgm Ice-cream.
+-
+  !workflow {model: stock.picking, action: button_confirm, ref: stock.incomming_shipment}
+-
+  I receive 40kgm Ice-cream so I make backorder of incomming shipment for 40 kgm.
+-
+  !python {model: stock.partial.picking}: |
+    context.update({'active_model': 'stock.picking', 'active_id': ref('stock.incomming_shipment'), 'active_ids': [ref('stock.incomming_shipment')]})
+-
+  !record {model: stock.partial.picking, id: partial_incomming}:
+    move_ids:
+        - quantity: 40
+          product_id: product_icecream
+          product_uom: product.product_uom_kgm
+          move_id: stock.incomming_shipment_icecream
+          location_id: stock.location_convenience_shop
+          location_dest_id: stock.location_refrigerator
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_incomming')], context=context)
+-
+  I check backorder shipment after received partial shipment.
+-
+  !python {model: stock.picking}: |
+    shipment = self.browse(cr, uid, ref("stock.incomming_shipment"))
+    backorder = shipment.backorder_id
+    assert backorder, "Backorder should be created after partial shipment."
+    assert backorder.state == 'done', "Backorder should be close after received."
+    for move_line in backorder.move_lines:
+        assert move_line.product_qty == 40, "Qty in backorder does not correspond."
+        assert move_line.state == 'done', "Move line of backorder should be closed."
+-
+  I receive another 10kgm Ice-cream.
+-
+  !record {model: stock.partial.picking, id: partial_incomming}:
+    move_ids:
+        - quantity: 10
+          product_id: product_icecream
+          product_uom: product.product_uom_kgm
+          move_id: stock.incomming_shipment_icecream
+          location_id: stock.location_convenience_shop
+          location_dest_id: stock.location_refrigerator
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_incomming')], context=context)
+
+-
+  I check incomming shipment after received.
+-
+  !python {model: stock.picking}: |
+    shipment = self.browse(cr, uid, ref("stock.incomming_shipment"))
+    assert shipment.state == 'done', "shipment should be close after received."
+    for move_line in shipment.move_lines:
+        assert move_line.product_qty == 10, "Qty does not correspond."
+        assert move_line.state == 'done', "Move line should be closed."
+
+-
+  I return last incomming shipment for 10 kgm Ice-cream.
+-
+  !record {model: stock.return.picking, id: return_incomming}:
+    invoice_state: none
+-
+  !python {model: stock.return.picking }: |
+    self.create_returns(cr, uid, [ref('stock.return_incomming')], context=context)
+-
+  I cancel incomming shipment after return it.
+-
+  !python {model: stock.picking}: |
+    self.action_cancel(cr, uid, [ref("stock.incomming_shipment")], context=context)
+-
+  I make invoice of backorder of incomming shipment.
+-
+  !python {model: stock.invoice.onshipping}: |
+    shipment = self.pool.get('stock.picking').browse(cr, uid, ref("stock.incomming_shipment"))
+    context.update({'active_model': 'stock.picking', 'active_id': shipment.backorder_id.id, 'active_ids': [shipment.backorder_id.id]})
+-
+  !record {model: stock.invoice.onshipping, id: invoice_incomming}:
+    group: False
+-
+  !python {model: stock.invoice.onshipping }: |
+    self.create_invoice(cr, uid, [ref('invoice_incomming')], context=context)
+-
+  I check invoice state of backorder of incomming shipment.
+-
+  !python {model: stock.picking}: |
+    shipment = self.browse(cr, uid, ref("stock.incomming_shipment"))
+    assert shipment.backorder_id.invoice_state == 'invoiced', 'Invoice state is not upadted.'
+-
+  I check availabile stock after received incomming shipping.
+-
+  !python {model: product.product}: |
+    product = self.browse(cr, uid, ref('stock.product_icecream'), context=context)
+    assert product.qty_available == 140, "Stock does not correspond."
+    assert product.virtual_available == 10, "Vitual stock does not correspond."
+
+
+-
+  I deliver outgoing shipment.
+-
+  !python {model: stock.partial.picking}: |
+    context.update({'active_model': 'stock.picking', 'active_id': ref('stock.outgoing_shipment'), 'active_ids': [ref('outgoing_shipment')]})
+-
+  !record {model: stock.partial.picking, id: partial_outgoing}:
+    picking_id: outgoing_shipment
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_outgoing')], context=context)
+
+-
+  I check outgoing shipment after deliver.
+-
+  !python {model: stock.picking}: |
+    shipment = self.browse(cr, uid, ref("stock.outgoing_shipment"), context=context)
+    assert shipment.state == "done", "Shipment should be closed."
+    for move_line in shipment.move_lines:
+        assert move_line.state == "done", "Move should be closed."
+-
+  I check availabile stock after deliver.
+-
+  !python {model: product.product}: |
+    product = self.browse(cr, uid, ref('stock.product_icecream'), context=context)
+    assert round(product.qty_available, 2) == 5.96, "Stock does not correspond."
+    assert round(product.virtual_available, 2) == 5.96, "Vitual stock does not correspond."

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+<!--  Account Cost Type  -->
+        <record id="view_account_cost_type_search" model="ir.ui.view">
+            <field name="name">account.cost.type.search</field>
+            <field name="model">account.cost.type</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Account Cost Type">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Account Type"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_account_cost_type_tree" model="ir.ui.view">
+            <field name="name">account.cost.type.tree</field>
+            <field name="model">account.cost.type</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Account Cost Type">
+                    <field name="name"/>
+                    <field name="code"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_cost_type_form" model="ir.ui.view">
+            <field name="name">account.cost.type.form</field>
+            <field name="model">account.cost.type</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Account Cost Type" version="7.0">
+                    <group >
+                        <field name="name" select="1"/>
+                        <field name="code" select="1"/>
+                    </group>
+                   
+                    <separator string="Description" colspan="4"/>
+                    <field name="note" colspan="4" nolabel="1"/>
+                </form>
+            </field>
+        </record>
+        <record id="action_account_cost_type_form" model="ir.actions.act_window">
+            <field name="name">Account Cost Types</field>
+            <field name="res_model">account.cost.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_cost_type_search"/>
+
+        </record>
+        <menuitem action="action_account_cost_type_form" sequence="6" id="menu_action_account_cost_type_form" parent="account.account_account_menu"/>
+
+
+
+<!--  Supplier Voucher  -->
+        <record model="ir.ui.view" id="view_purchase_receipt_form_custom">
+            <field name="name">account.voucher.purchase.form.custom</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher_custom.view_purchase_receipt_form"/>
+            <field name="type">form</field>	
+            <field name="arch" type="xml">
+                <!--xpath expr="/form/notebook/page/field[@name='line_dr_ids']/tree/field[@name='analytic_account_id']"       position="after">
+               		<field name="cost_type_id" />
+                </xpath-->
+               	<field name="amount" position="after" >
+               		<field name="cost_type_id" />
+                </field>
+            </field>
+        </record>
+
+<!--  Account Move  -->
+        <record model="ir.ui.view" id="view_move_form_custom">
+	    <field name="name">account.move.form.custom</field>
+	    <field name="model">account.move</field>
+	    <field name="inherit_id" ref="account_custom.view_move_form1"/>
+	    <field name="type">form</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='line_id']/tree/field[@name='analytic_account_id']" position="before">
+               		<field name="cost_type_id" />
+                </xpath>
+                <!--<field name="analytic_account_id" position="before" >
+               		<field name="cost_type_id" />
+                </field>-->
+
+
+            </field>
+        </record>
+
+<!--  Account Move line -->
+		<record id="view_move_line_tree_custom" model="ir.ui.view">
+			<field name="name">account.move.line.tree</field>
+			<field name="model">account.move.line</field>
+			<field name="inherit_id" ref="account.view_move_line_tree" />
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<field name="partner_id" position="after">
+					<field name="cost_type_id"  />
+				</field>
+			</field>
+		</record>
+
+<!--  Account   -->
+        <record id="view_account_form_custom" model="ir.ui.view">
+            <field name="name">account.account.form.custom</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <!--<xpath expr="/form/notebook/page/field[@name='active']" position="after">-->
+                <field name="active" position="after" >
+                              <newline/>
+                            <group col="2" colspan="2">
+                                <separator string="Devolopment Project" colspan="2" attrs="{'invisible':[('type','=', ('view'))], 'readonly':[('type','=', ('view'))]}"/>
+                                <field name="devolopment_projects"  attrs="{'invisible':[('type','=', ('view'))], 'readonly':[('type','=', ('view'))]}"/>
+                                <field name="cost_type_id"  attrs="{'invisible':[('type','=', ('view'))], 'readonly':[('type','=', ('view'))]}"/>
+
+                            </group>
+                              <newline/>
+                </field>
+               <!-- </xpath>-->
+            </field>
+        </record>
+
+	</data>
+</openerp>

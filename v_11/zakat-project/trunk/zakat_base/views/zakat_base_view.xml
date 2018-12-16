@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <!-- Search view for zakat partner  -->
+        <record id="zakat_partner_search" model="ir.ui.view">
+            <field name="name">res.partner.search.expand</field>
+            <field name="model">res.partner</field>
+             <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search"  position="replace">
+                    <search>
+                    <field name="name" filter_domain="[('display_name','ilike',self)]"/>
+                    <field name="national_number"/>
+                    </search>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Form View For Custom res.partner -->
+        <record id="zakat_res_partner_form_view" model="ir.ui.view">
+            <field name="name">Zakat Partner</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group col="4" colspan="2">
+                        <field name="code" style="width:5%;" readonly="1"/>
+                        <field name="date" style="width:45%;" required="1"/>
+                        </group>
+                        <group col="2" colspan="2">
+                            <div>
+                            <h1>
+                            <field name="nationality" required="1"/>
+                            </h1>
+                            <h2>
+                                <!--<field placeholder="E.g P" name="passport_char" style="width:5%; margin-right:2%;" attrs="{'invisible':[('nationality', '=', 'sd')], 'required':[('nationality', '=', 'other')]}"/>-->
+                                <field style="width:35%; margin-right:2%;" placeholder="Passport No"  name="passport" attrs="{'invisible':[('nationality', '=', 'sd')], 'required':[('nationality', '=', 'other')]}"/>
+                            </h2>
+                            </div>
+                        </group>
+
+                        <group col="2" colspan="2">
+                        <div>
+                            <h1>
+                                 <field name="national_number" attrs="{'invisible':[('nationality', '!=', 'sd')], 'required':[('nationality', '=', 'sd')]}" placeholder="National Number" style="width:30%; margin-right:2%;"/>
+                                <div class="oe_button_box" name="button_box">
+                                    <button name="get_data"
+                                        string="Get Data" type="object"
+                                        class="oe_stat_button" attrs="{'invisible':[('nationality', '!=', 'sd')]}"/>
+                            </div>
+                            </h1>
+                            <h2>
+                                <field name="first_name"  placeholder="First Name" required="1" style="width:15%; margin-right:2%;" />
+                                <field name="second_name" placeholder="Second Name" required="1" style="width:19%; margin-right:2%;" />
+                                <field name="third_name"  placeholder="Third Name" required="1" style="width:15%; margin-right:2%;" />
+                                <field name="forth_name"  placeholder="Forth Name" required="1" style="width:15%; margin-right:2%;" />
+                            </h2>
+                            
+                            
+                        </div>
+                        </group>
+
+                        <group string="Personal Information" col="4" colspan="2">
+                            <field name="job" required="1"/>
+                            <field name="phone" required="1"/>
+                            <field name="gender" required="1" widget="radio" options="{'horizontal': true}"/>
+                            <field name="birth_date" required="1"/>
+                            <field name="zakat_state" required="1" domain="[('company_id','=',company_id)]"/>
+                            <!--<field name="sectors" required="1" domain="[('sector_state' , '=' , zakat_state)]"/>-->
+                            <field name="local_state_id" required="1" domain="[('state_id','=',zakat_state)]"/>
+                            <field name="admin_unit" required="1" domain="[('local_state_id','=',local_state_id)]"/>
+                            <field name="city" required="1"/>
+                            <field name="Village" required="1"/>
+                            <field name="house_no" required="1"/>
+                        </group>
+                    <group>
+                        <field name="company_id"  readonly="1" invisible="1"/>
+                        <field name="user_id"  readonly="1" invisible="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="zakat_partner_tree_view" model="ir.ui.view">
+            <field name="name">zakat partner</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="national_number"/>
+                    <field name="phone"/>
+                    <field name="gender"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="zakat_partner_action" model="ir.actions.act_window">
+            <field name="name">zakat partner</field>
+            <field name="res_model">res.partner</field>
+            <field name="domain">[('zakat_partner','=',1)]</field>
+            <field name="context">{'default_customer':1,'default_zakat_partner':1,}</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="action_zakat_partner_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="zakat_partner_tree_view" />
+            <field name="act_window_id" ref="zakat_partner_action" />
+        </record>
+
+        <record id="action_zakat_partner_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="zakat_res_partner_form_view" />
+            <field name="act_window_id" ref="zakat_partner_action" />
+        </record>
+
+
+        <!-- General Setting Menu -->
+       <menuitem id="dzc_config_menu"
+        name="General Setting"
+          sequence="1"/>
+
+        <!-- this is the configuration menu  -->
+        <menuitem id="configuration_zakat"
+                  name="Configuration"
+                  parent="dzc_config_menu"
+                  sequence="6"
+        />
+
+        <!-- Account Voucher Custom View -->
+          <record id="view_purchase_receipt_form_inherit" model="ir.ui.view">
+            <field name="name">account.voucher.inherit</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_purchase_receipt_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='account_id']" position="attributes">
+                     <attribute name="required">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='journal_id']" position="attributes">
+                     <attribute name="required">1</attribute>
+                </xpath>
+            </field>
+        </record> 
+    <!-- company form adding catogary field  -->
+    <record id="form_view_inherit_res_company" model="ir.ui.view">
+        <field name="name">res.company.inherited.view</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <data>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="category" required="1"/>
+                </xpath>
+            </data>
+        </field>
+    </record>
+
+
+
+
+    </data>
+</odoo>

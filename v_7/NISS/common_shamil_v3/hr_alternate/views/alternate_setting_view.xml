@@ -1,0 +1,41 @@
+<openerp>
+    <data>
+        <record model='ir.ui.view' id='hr_alternative_setting_form'>
+            <field name='name'>alternative setting Form</field>
+            <field name='model'>hr.alternative.setting</field>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <form string="alternative setting Form" version="7.0">
+                    <sheet>
+                        <group>
+                        <group>
+                            <field name="name" required="True"/>
+                            <field name="degrees_ids" required="True"/>
+                            <field name="departments_ids"/>
+                            <field name="employees_ids" domain="[('state','=','approved'), ('degree_id','in',degrees_ids[0][2])]"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        
+                        <notebook colspan="4">
+                                <page string="Report setting">
+                                    <group>
+                                    <field name="report_alerts"/>
+                                    </group>
+                                </page>
+                            </notebook>
+                        
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_hr_alternative_setting_form" model="ir.actions.act_window">
+            <field name="name">alternative setting</field>
+            <field name="res_model">hr.alternative.setting</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem name="Alternative" id="menu_hr_alternative_setting_main" parent="hr.menu_hr_configuration" groups="hr_alternative_setting"/>
+        <menuitem name="Alternative Setting" action="action_hr_alternative_setting_form" id="menu_action_hr_alternative_setting_form" parent="menu_hr_alternative_setting_main"/>
+    </data>
+</openerp>

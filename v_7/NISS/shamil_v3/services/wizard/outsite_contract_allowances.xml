@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	<record id="view_outsite_contract_allowances_archive_wiz" model="ir.ui.view">
+            <field name="name">outsite.contract.allowances.archive.wiz.form</field>
+            <field name="model">outsite.contract.allowances.archive.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Compute Outsite Contract Allowances" version="7.0">
+                   <group col="4">
+		     <field name="company_id"  />
+                     <field name="department_id"  />
+		     <field name="month"  />
+                     <field name="year"/>
+                     <field name="action_type" />
+		 </group>   
+
+                <footer>
+	            <button name="main_arch" string="Compute" type="object" 
+                         attrs="{'invisible':[('action_type','!=','compute')]}" class="oe_highlight"/>
+                   <button name="create_ratification" string="create ratification" class="oe_highlight"
+                          type="object" attrs="{'invisible':[('action_type','!=','transfer')]}"/>
+		    or    
+                   <button special="cancel" string="Close" class="oe_link"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="outsite_contract_allowances_archive_action" model="ir.actions.act_window">
+            <field name="name">Compute Outsite Contact Payroll Allowances</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">outsite.contract.allowances.archive.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+		
+	<menuitem
+            action="outsite_contract_allowances_archive_action"
+            id="outsite_contract_allowances_archive_wiz_action_menu"
+            parent="menu_outsite_contract" sequence="3"/>
+
+    </data>
+</openerp>
+

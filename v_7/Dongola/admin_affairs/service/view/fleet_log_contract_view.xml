@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<report 
+		header="True" 
+		auto="False" id="cars_maint_noti" model="fleet.vehicle.log.contract" 
+		name="maint_noti" string="Cars Maintenance Notification" 
+		rml="service/report/cars_maint_noti.rml"
+		menu="False"/>
+
+		<record id="fleet_vehicle_log_contract_form_custom" model="ir.ui.view">
+			<field name="name">fleet.vehicle.log.contract.form.custom</field>
+			<field name="model">fleet.vehicle.log.contract</field>
+			<field eval="7" name="priority" />
+			<field name="arch" type="xml">
+				<form string="Vehicle Services" version="7.0">
+					<header>
+						<div class="oe_button_box oe_left" attrs="{'invisible':[('state','not in',('open','toclose','closed'))]}">
+                                <button type="object" name="transfer" string="Transfer"
+                                        attrs="{'invisible':['|',('amount','&lt;=',0),
+                                        ('payment_method','!=','voucher')]}"  
+                                        help="Vehicle rent contract transfer" class=" oe_highlight oe_left" />
+                                <button type="object" name="extend_action" string="Extend"
+                                    attrs="{'invisible':[('payment_method','!=','voucher')]}"
+                                    class="oe_button oe_highlight" />
+
+                                <button type="object" name="renew_action" string="Renew"
+                                    attrs="{'invisible':[('payment_method','!=','voucher')]}"
+                                    class="oe_button oe_highlight" />
+                        </div>
+						<button icon="terp-gtk-go-back-rtl" type="object" name="confirm_sm"
+							states="draft" string="Request" 
+							roups="admin_affairs.group_section_manager,base_custom.group_general_department_manager,base_custom.group_department_manager" />
+
+						<button icon="terp-gtk-go-back-rtl" type="object" name="open"
+							states="confirm_sm" string="Confirm" groups="admin_affairs.group_section_manager" />
+
+						<!--button icon="terp-gtk-go-back-rtl" type="object" name="confirm_so"
+							states="confirm_ss" string="Validate"
+							groups="service.group_service_section_manager" />
+						<button icon="terp-gtk-go-back-rtl" type="object" name="open"
+							states="confirm_so" string="Approve" groups="admin_affairs.group_service_officer" /-->
+						<button modifiers="{'invisible': [['state', '=', 'closed']]}"
+							icon="gtk-cancel" name="contract_close" states="open" type="object"
+							class="oe_highlight" string="Terminate" />
+						<button icon="gtk-cancel" type="object" name="draft"
+							states="cancel" string="Set to Draft" class="oe_highlight" />
+						<button icon="gtk-cancel" type="object" name="cancel"
+							states="draft" string="Cancel Request" class="oe_highlight" />
+						<button icon="gtk-cancel" type="object" name="cancel"
+							states="confirm_so" string="Cancel Request" class="oe_highlight"
+							groups="admin_affairs.group_service_officer"/>
+						<button icon="gtk-cancel" type="object" name="cancel"
+							states="confirm_ss" string="Cancel Request" class="oe_highlight"
+							groups="service.group_service_section_manager" />
+						<button icon="gtk-cancel" type="object" name="cancel"
+							states="confirm_sm" string="Cancel Request" class="oe_highlight"
+							groups="admin_affairs.group_section_manager" />
+
+						<button type="object" name="affairs_mg" groups="service.group_service_section_manager"
+							states="affairs_mg" string="Admin Affairs Manager" class="oe_highlight" />
+
+						<button type="object" name="human_financial"
+							states="human_financial" string="human resources and financial Manager" class="oe_highlight" />
+
+						<button type="object" name="general_mg"
+							states="general_mg" string="General Manager" class="oe_highlight" />
+
+						<button icon="gtk-cancel" type="object" name="cancel"
+                        states="affairs_mg" string="Cancel Request" class="oe_highlight" />
+
+                    
+                        <button icon="gtk-cancel" type="object" name="cancel"
+                        states="human_financial" string="Cancel Request" class="oe_highlight" />
+
+                        <button icon="gtk-cancel" type="object" name="cancel"
+                        states="request" string="Cancel Request" class="oe_highlight" />
+
+                        <button icon="gtk-cancel" type="object" name="cancel"
+                        states="confirm" string="Cancel Request" class="oe_highlight" />
+
+						<button name="%(cars_maint_noti)d" colspan="2" string="Cars Maintenance Notification"
+						type="action" icon="gtk-print" groups="service.group_service_section_manager"/>
+
+
+						<button icon="gtk-cancel" type="object" name="cancel"
+                        states="confirm" string="Cancel Request" class="oe_highlight" />
+
+						<field name="state" widget="statusbar" statusbar_visible="draft,toclose,closed" />
+					</header>
+
+					<sheet>
+					<h1>
+			               <label for="name" string="Reference"/>
+				           <field name="name" class="oe_inline" readonly="1"/>
+				       </h1>
+						<group>
+							<group>
+								
+								<field name="car_type" readonly="1"  invisible="1"/>
+								<field name="cost_subtype_id" required="1" class="oe_inline" domain="[('category','in',('contract','both'))]"
+									attrs="{'readonly':[('state','not in',('draft'))]}" on_change="onchange_cost(cost_subtype_id)" 
+									context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}"/>
+							   <field name="department_id" required="1" class="oe_inline"
+									attrs="{'readonly':[('state','not in',('draft'))]}" />
+								<field name="cat_subtype" readonly="1" invisible="1"/>
+								<field name="vehicle_id" class="oe_inline"
+									on_change="onchange_car_type(vehicle_id,cost_subtype_id,car_type)"
+									attrs="{'required':[('state','=','confirm_sm')],
+											'readonly':[('state','not in',('draft','confirm_sm'))]}" />
+								
+								<field name="company_id" readonly="1" groups="base.group_multi_company" />
+								<field name="purchase_requisition" readonly="1" attrs="{'invisible':[('purchase_requisition','=',False)]}"/>
+							</group>
+
+							<group >
+							<field name="date" string="Invoice Date"
+									attrs="{'readonly':[('state','not in',('draft'))]}" required="1" />
+								
+								<field name="driver_id" class="oe_inline" invisible="1"
+									attrs="{'readonly':[('state','in',('open','cancel','toclose','closed'))]}" />
+								<field name="payment_method"   on_change="on_change_pay_method(payment_method)"
+		                                attrs="{'readonly':[('state','not in',('confirm_sm','draft'))],
+                                                'required':[('state','=','confirm_sm')],
+												'invisible':[('state','in',('draft'))]}"/>
+                                                
+		                            <field name="enrich_id"  domain="['|',('service_id','=',cost_subtype_id),('service_id','=',False),('type','=','enrich'),('state','=','done'),('residual_amount','&gt;=',sum_cost)]"  
+		                                attrs="{'required':[('payment_method','==','enrich')],
+		                                'invisible':['|',('payment_method','!=','enrich')],
+		                                'readonly':[('state','not in',('draft','confirm_sm'))],}" 
+										context="{'form_view_ref': 'admin_affairs.view_payment_enrich_view_form', 'default_type':'enrich'}"/>
+		                        
+                                
+                                <label for="cost_generated" attrs="{'invisible':[('payment_method','!=','voucher')]}"/>
+                                <div attrs="{'invisible':[('payment_method','!=','voucher')]}">
+                                    <field name="cost_generated"  class="oe_inline" 
+                                    	attrs="{'invisible': [('cost_frequency','=','no')],
+                                    			'readonly':['|',('state','not in',('draft','confirm_sm'))],}" />
+                                    			
+                                    <field name="cost_frequency"  class="oe_inline"  on_change="emptyinstallment()"
+                                            	attrs="{'readonly':['|',('state','not in',('draft','confirm_sm'))],}"/>
+                                </div>
+								<field name="installment"  attrs="{'invisible': [('cost_frequency','=','no')]}"/>
+								
+							</group>
+						</group>
+
+						<group  string="Contract details">
+                            <group>
+                                <field name="insurer_id" class="oe_inline"
+									attrs="{'readonly':[('state','not in',('confirm_sm'))], 'required':[('payment_method','=','voucher'),('state','in',('confirm_sm'))]}" />
+								<field name="purchaser_id" class="oe_inline"
+									attrs="{'readonly':[('state','not in',('confirm_sm') )]}" />
+                          </group>
+                           <group>
+                                <field name="start_date"
+										attrs="{'required': [('car_type','=','rented')], 
+												'readonly':[('state','not in',('draft','confirm_ss'))]}" />
+                                <field name="expiration_date"
+										attrs="{'required': [('car_type','=','rented')], 
+												'readonly':[('state','not in',('draft','confirm_ss'))]}" />
+                            </group>
+                             
+							</group>
+						<notebook>
+							<page string="Included Services" groups="service.group_vehicle_maintenace">
+								<group>
+									<field name="cost_ids" context="{'vehicle_id': vehicle_id}"
+										nolabel="1" on_change="onchange_value()" attrs="{'readonly':[('state','!=','draft')]}">
+										<tree version="7.0" editable='top'>
+											<field name="cost_subtype_id" string="Service"
+												domain="[('parent_id','=',parent.cost_subtype_id),('category','=','service')]" on_change="onchange_service(cost_subtype_id)" context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}"/>
+											<field name="amount" string="Indicative Cost" />
+											<field name="product_id"  invisible="1"/>
+											<field name="quantity" string="Quantity" />
+											<field name="total" string="Total" sum="Price"/>
+										</tree>
+									</field>
+								</group>
+								<group>
+                        		<field name="notes" nolabel="1" placeholder="Notes" />
+                                <group class="oe_subtotal_footer oe_right">
+	                                <field name="sum_cost" string="Total Costs"/>
+	                                <field name="amount" string="Activation Cost" 
+	                                attrs="{'readonly':['|',('state','not in',('draft','confirm_sm'))], 'invisible':[('payment_method','!=','voucher')]}"/>
+	                                <field name="paid" />
+	                                <field name="residual" class="oe_subtotal_footer_separator" />
+                                </group>
+                                 </group>
+							</page>
+							<page string="Included Products" groups="service.group_vehicle_maintenace"
+							attrs="{'invisible':[('cat_subtype','!=','contract')]}">
+								<div class="oe_left" states="confirm_sm">
+									<button type="object" name="create_purchase" string="Purchase" 
+									attrs="{'invisible':[('purchase_requisition','!=',False)]}"/>
+								</div>
+								<group>
+									<field name="product_ids" context="{'vehicle_id': vehicle_id}"
+										nolabel="1" attrs="{'readonly':[('state','not in',('draft','confirm_sm') )]}"
+										widget="one2many">
+										<tree version="7.0" editable='top'>
+											<field name="product_id"  string="Product"
+											context="{'maintenance_products': parent.product_ids}"/>
+											<field name="quantity" string="Quantity" />
+										</tree>
+									</field>
+								</group>
+							</page>
+							<page string="Payments" attrs="{'invisible':['|',('payment_method','in',('enrich','nothing')),('state','not in',('open','toclose','closed'))]}">
+								<group>
+									<field name="generated_cost_ids" context="{'vehicle_id': vehicle_id}"
+										nolabel="1" sum="total">
+										<tree version="7.0" editable="bottom" create="false">
+											<field name="date" />
+											<field name="voucher_id" colspan="4" nolabel="1"
+												context="{'form_view_ref': 'account_voucher.view_purchase_receipt_form'}" readonly="1"/>
+											<field name="amount" sum="total"/>
+										</tree>
+									</field>
+								</group>
+							</page>
+							<page string="Odometer details" invisible="1">
+							<group >
+								<label for="odometer" />
+								<div>
+									<field name="odometer" class="oe_inline"
+										attrs="{'readonly':[('state','not in',('confirm_sm','confirm_sm'))]}" />
+									<field name="odometer_unit" class="oe_inline" />
+								</div>
+								<field name="expected_odometer"
+									attrs="{'readonly':[('state','in',('cancel','closed','open'))]}"
+									groups="service.group_vehicle_maintenace" />
+								<field name="next_maintenance_date"
+									attrs="{'readonly':[('state','in',('cancel','closed','open'))]}"
+									groups="service.group_vehicle_maintenace" />
+							</group>
+							</page>
+							<page string="Taxes" groups="admin_affairs.group_section_manager" invisible="1">
+								<field name="tax_ids" attrs="{'readonly':[('state','not in',('confirm_sm'))]}" 
+								/>
+							</page>
+							
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model='ir.actions.act_window' id='fleet.fleet_vehicle_log_contract_act'>
+			<field name="name">Vehicle Services</field>
+			<field name="domain">[('cost_subtype_id.category','in',('contract','both'))]</field>
+		</record>
+
+		<act_window id="maintenance_purchase_action" key2="client_action_multi"
+			name="Purchase Products" res_model="vehicle.maintenance.purchase.wizard"
+			src_model="fleet.vehicle.log.contract" view_id="vehicle_maintenance_purchase_form"
+			view_mode="form" target="new"
+			view_type="form" 
+			context="{'search_default_line_id':[active_id]}"/>
+
+
+	</data>
+</openerp>

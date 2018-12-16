@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_generate_stmt_journal_entries_form" model="ir.ui.view">
+            <field name="name">generate.stmt.journal.entries.form</field>
+            <field name="model">generate.stmt.journal.entries</field>
+            <field name="arch" type="xml">
+                <form string="Generate Stmt Journal Entries">
+                    <group>
+                        <field name="analytic_account_id" domain="[('type', '=', 'normal')]"/>
+                        <field name="account_id" domain="[('deprecated', '=', False)]"/>
+                    </group>
+                    <field name="stmt_line_ids" domain="[('statement_id', '=', active_id),('journal_entry_ids','=',False)]" widget="many2many_tag">
+                        <tree > 
+                            <field name="date"/>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="ref"/>
+                            <field name="amount"/>
+                        </tree>
+                    </field> 
+                    <footer>
+                        <button string="Generate Journal Entries" name="generate_journal_entries" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_generate_stmt_journal_entries" model="ir.actions.act_window">
+            <field name="name">Generate Stmt Journal Entries</field>
+            <field name="res_model">generate.stmt.journal.entries</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_generate_stmt_journal_entries_form"/>
+            <field name="binding_model_id" ref="account.model_account_bank_statement" />
+        </record>
+
+    </data>
+</odoo>

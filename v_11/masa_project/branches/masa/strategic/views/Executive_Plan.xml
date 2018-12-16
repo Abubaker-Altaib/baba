@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+      <record id="strategic_plan" model="ir.ui.view">
+            <field name="name">strategic.plan.form</field>
+            <field name="model">strategic.plan</field>
+            <field name="arch" type="xml">
+                <form string="Strategic Plan">
+                <header>
+                        <button string="Done" name="set_done" class="oe_highlight" states="inprogress" 
+                            type="object"/>
+                        <button string="InProgress" name="set_inprogress" class="oe_highlight" states="draft,done" 
+                            type="object"/>                         
+                        <button string="Reset to Draft" name="set_draft"
+                            states="inprogress" type="object"/> 
+                        <field name="state" widget="statusbar" statusbar_visible="draft,inprogress,done"/>
+                </header>
+                <sheet string="Strategic Plan">
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Strategic Plan Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                      <group>
+                        <field name="vision"/>
+                        <field name="value"/>
+                        <field name="target_value"/>
+                        <field name="actual_value"/>
+                        <field name="percentage" widget="progressbar"/>
+                      </group>
+                      <group>
+                        <field name="mission"/>
+                        <field name="partnerships_ids" widget="many2many_tags"/>
+                        <field name="initiatives_ids" widget="many2many_tags"/>
+                        <field name="sequence"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                      </group>
+                    </group>
+                </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_strategic_plan_tree">
+            <field name="name">strategic.plan.tree</field>
+            <field name="model">strategic.plan</field>
+            <field name="arch" type="xml">
+                <tree string="Excutive plan">
+                    <field name="name"/>
+                    <field name="sequence"/>
+                    <field name="target_value"/>
+                    <field name="actual_value"/>
+                    <field name="percentage" widget='progressbar'/>
+                    <field name="partnerships_ids"/>
+                    <field name="initiatives_ids"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="vision"/>
+                    <field name="value"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="open_strategic_plan" model="ir.actions.act_window">
+            <field name="name">Strategic Plan</field>
+            <field name="res_model">strategic.plan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_strategic_plan_tree"/>
+        </record>
+        <menuitem name="Strategic Plan"
+            id="menu_strategic_plan"
+            parent="menu_strategic_view"
+            sequence="1"/>
+        <menuitem parent="menu_strategic_plan"
+            id="menu_strategic_plan_view"
+            name="Strategic Plan"
+            action="open_strategic_plan"
+            sequence="1"/>
+
+        <record id="plan_excutive" model="ir.ui.view">
+            <field name="name">plan.excutive.form</field>
+            <field name="model">plan.excutive</field>
+            <field name="arch" type="xml">
+                <form string="Plan Excutive">
+                  <header>
+                    <button string="Confirmed" name="set_confirmed" class="oe_highlight" states="draft,Approved" 
+                      type="object"/>
+                    <button string="Approve" name="set_approved" class="oe_highlight" states="confirmed" 
+                      type="object"/>             
+                    <button string="Reset To Draft" name="set_draft" class="oe_highlight" 
+                      states="confirm" type="object"/> 
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,approved"/>  
+                  </header>
+                <sheet string="Plan Excutive">
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                            <button name="get_request" type="object" class="oe_stat_button" icon="fa-tasks">
+                            <field string="Request" name="request_count" widget="statinfo"/>
+                            </button>
+                        </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Executive Plan Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                      <group>
+                        <field name="strategic_plan_id"/>
+                        <field name="user_id" string="Executive Plan Manager"
+                                        attrs="{'readonly':[('active','=',False)]}"/>
+                        <field name="analytic_account_id" required="1"/>
+                      </group>
+                      <group>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                      </group>
+                    </group>
+                    <notebook>
+                        <page string="defnition">
+                        <sheet>
+                         <group>
+                              <group>
+                                  <field name="target_value"/>
+                                  <field name="actual_value"/>
+                                  <field name="percentage" widget="progressbar"/>
+                                  <field name="plan_amount"/>
+                                  <field name="approve_amount"/>
+                              </group>
+                              <group>
+                                  <field name="objective_ids"/>
+                                  <field name="department_id"/>
+                              </group>
+                          </group>
+                          <field name="description"/>
+                           <saprator></saprator>
+                          <field name="note"/>
+                       </sheet>
+                    </page>
+                    <page string="Strategic Kpi">
+                        <field name="kpi_ids">
+                            <tree string="Strategic" editable="top">
+                                <field name="code"/>
+                                <field name="name"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                                <field name="measuring_unit"/>
+                                <field name="target_value"/>
+                                <field name="actual_value"/>
+                                <field name="percentage"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Budget">
+                        <sheet>
+                         <field name="budget_ids" widget="many2many_tags" String="Budget"/>
+                       </sheet>
+                    </page>
+                    <page string="Tasks">
+                        <field name="task_ids">
+                            <tree string="Task" editable="top">
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                                <field name="user_id"/>
+                                <field name="weight"/>
+                                <field name="verified"/>
+                                <field name="progress"/>  
+                            </tree>
+                        </field>
+                    </page>
+                    </notebook>
+                </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_plan_excutive_tree">
+            <field name="name">plan.excutive.tree</field>
+            <field name="model">plan.excutive</field>
+            <field name="arch" type="xml">
+                <tree string="Excutive plan">
+                    <field name="name"/>
+                    <field name="sequence"/>
+                    <field name="user_id"/>
+                    <field name="objective_ids"/>
+                    <field name="target_value"/>
+                    <field name="actual_value"/>
+                    <field name="percentage" widget='progressbar'/>
+                    <field name="plan_amount"/>
+                    <field name="approve_amount"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_plan_task_tree2" model="ir.ui.view">
+            <field name="name">plan.task.tree</field>
+            <field name="model">plan.task</field>
+            <field eval="2" name="priority"/>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="sequence" invisible="not context.get('seq_visible', False)"/>
+                    <field name="name"/>
+                    <field name="user_id" invisible="context.get('user_invisible', False)"/>
+                    <field name="date_deadline" invisible="context.get('deadline_visible',True)"/>
+                </tree>
+            </field>
+        </record>
+        <record id="plan_task_action" model="ir.actions.act_window">
+            <field name="name">tasks</field>
+            <field name="res_model">plan.task</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('id', 'child_of', active_id),('id','!=', active_id)]</field>
+            <field name="context">
+            {
+                "default_parent_id" : active_id,
+                "default_name" : name + ':',
+                "default_partner_id" : partner_id,
+                "default_main" : False
+            }
+            </field>
+            <field name="view_id" ref="view_plan_task_tree2"/>
+      </record>
+        <record id="view_plan_task_form2" model="ir.ui.view">
+            <field name="name">plan.task.form</field>
+            <field name="model">plan.task</field>
+            <field eval="2" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Task" class="o_form_project_tasks">
+                <sheet string="Task">
+                    <field name="main" invisible="1" />
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(plan_task_action)d" type="action" class="oe_stat_button" icon="fa-tasks"
+                            context="{'name': name, 'partner_id': partner_id}" attrs="{'invisible' : [('main', '=', False)]}">
+                            <field string="tasks" name="task_count" widget="statinfo"/>
+                        </button>
+                        <button name="action_get_attachment_view"
+                              class="oe_stat_button"
+                              icon="fa-book"
+                              type="object" attrs="{'invisible' : [('main', '=', False)]}">
+                              <field name="attachment_number" widget="statinfo" string="Documents"/>
+                        </button>
+                        <button name="action_assign_to_me" string="Assign to Me" type="object" class="oe_highlight"
+                            attrs="{'invisible' : [('user_id', '!=', False)]}"/>
+                        <button name="toggle_active" type="object" groups="base.group_user"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1 class="o_row">
+                            <field name="priority" widget="priority"/>
+                            <field name="name" placeholder="Task Title..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="user_id"
+                                class="o_task_user_field"
+                                options='{"no_open": True}'/>
+                            <field name="plan_excutive_id"/>
+                            <field name="date_start"/>        
+                            <field name="date_end"/>   
+                        </group>
+                        <group>
+                            <field name="date_deadline"/>
+                            <field name="weight"/>
+                            <field name="verified"/>
+                            <field name="progress"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Task Lines" attrs="{'invisible' : [('main', '!=', False)]}">
+                                <field name="line_ids" widget='one2many_list'>
+                                    <tree string="Task Lines" editable="top">
+                                        <field name="name"/>
+                                        <field name="sequence"/>
+                                        <field name="user_id"/>
+                                    </tree>
+                                    <form string="Task Lines">
+                                        <group>
+                                            <group>
+                                                <div>
+                                                    <field name="name" class="sequence"/> - 
+                                                    <field name="user_id" class="oe_inline"/>
+                                                </div>
+                                            </group>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        <page name="description_page" string="Description">
+                            <field name="description" type="html"/>
+                            <div class="oe_clear"/>
+                        </page>
+                        <page string="Extra Info">
+                            <group>
+                                <group>
+                                    <field name="sequence" groups="base.group_no_one"/>
+                                    <field name="partner_id"/>
+                                    <field name="parent_id" string="Step" attrs="{'invisible' : [('main', '=', True)]}"/>
+                                    <field name="child_ids" invisible="1"/>
+                                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                                </group>
+                                <group>
+                                    <field name="date_assign" groups="base.group_no_one"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="open_plan_excutive" model="ir.actions.act_window">
+            <field name="name">Create Executive Plan</field>
+            <field name="res_model">plan.excutive</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_plan_excutive_tree"/>
+        </record>
+        <menuitem name="Executive Plan"
+            id="menu_executive_plan"
+            parent="menu_strategic_view"
+            sequence="2"/>
+        <menuitem parent="menu_executive_plan"
+            id="menu_Executive_Plan_view"
+            name="Executive Plan"
+            action="open_plan_excutive"
+            sequence="1"/>
+  <record id="action_view_task_step" model="ir.actions.act_window">
+            <field name="name">Tasks</field>
+            <field name="res_model">plan.task</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('main', '=', True)]</field>
+            <field name="context">{"default_main":True}</field>
+            <field name="view_id" ref="view_plan_task_tree2"/>
+  </record>
+  <record id="action_view_task" model="ir.actions.act_window">
+            <field name="name">Tasks</field>
+            <field name="res_model">plan.task</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('main', '=', False)]</field>
+            <field name="context">{"default_main":False}</field>
+            <field name="view_id" ref="view_plan_task_tree2"/>
+  </record>
+<menuitem  name="Steps" action="action_view_task_step" id="menu_view_task_step" parent="menu_executive_plan" sequence="2"/>
+<menuitem  name="tasks" action="action_view_task" id="menu_view_task" parent="menu_executive_plan" sequence="3"/>
+
+
+   <record id="analytic_account_inherites_form" model="ir.ui.view">
+        <field name="name">account.analytic.account.form.inherits</field>
+        <field name="model">account.analytic.account</field>
+        <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
+        <field name="arch" type="xml">
+        <xpath expr="//sheet/group/group/field[@name='company_id']" position="after">
+            <field name="project"/>
+        </xpath>
+        </field>
+    </record>
+</data>
+</odoo>

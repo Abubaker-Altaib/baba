@@ -1,0 +1,584 @@
+<?xml version="1.0" ?>
+<openerp>
+	<data>
+
+		<!-- Account Type -->
+		<record id="account_analytic_required_account_type_form" model="ir.ui.view">
+			<field name="name">account.type.form</field>
+			<field name="model">account.account.type</field>
+			<field name="inherit_id" ref="account.view_account_type_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<data>
+					<xpath expr="//field[@name='report_type']" position="after">
+						<field name="analytic_wk" />
+					</xpath>
+				</data>
+			</field>
+		</record>
+		<!-- Budgets -->
+		<menuitem id="budget_menu" name="Budgets" parent="account.menu_finance"
+			sequence="6" groups="group_budget_user"/>
+
+		<record model="ir.ui.view" id="account_budget_view_form">
+			<field name="name">account.budget.view.form</field>
+			<field name="model">account.budget</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Budget" version="7.0">
+					<header>
+						<button string="Cancel" name="cancel" states="confirm,validate"
+							type="workflow" icon="gtk-cancel" />
+						<button string="Confirm" name="confirm" states="draft"
+							type="workflow" class="oe_highlight" />
+						<button string="Approve" name="validate" states="confirm"
+							type="workflow" class="oe_highlight" />
+						<button string="Done" name="done" states="validate" type="workflow"
+							class="oe_highlight" confirm="Are you sure, you want to close this budget?" />
+						<button name="draft" states="cancel" string="Reset to Draft"
+							type="workflow" icon="terp-stock_effects-object-colorize" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate,done" />
+					</header>
+
+					<sheet string="Budget">
+						<div class="oe_title">
+							<label for="name" class="oe_edit_only" />
+							<h1>
+								<field name="name" />
+							</h1>
+						</div>
+						<group>
+							<group>
+								<field name="period_id" domain="[('company_id','=',company_id)]" />
+								<field name="analytic_account_id" required="True"
+									groups="analytic.group_analytic_accounting"
+									domain="[('company_id','=',company_id),('parent_id','!=',False),('type','=','normal')]" />
+							</group>
+							<group>
+								<field name="code" />
+								<field name="company_id" groups="base.group_multi_company"
+									widget="selection" />
+							</group>
+							<group>
+								<field name="creating_user_id" />
+								<field name="validating_user_id" />
+							</group>
+						</group>
+
+						<notebook colspan="4">
+							<page string="Planned Budget">
+								<field name="account_budget_line" colspan="4" nolabel="1"
+									attrs="{'readonly':[('state','!=','draft')]}">
+									<tree string="Budget Lines" editable="top">
+										<field name="general_account_id"
+											domain="[('company_id','=',parent.company_id),('type','=','other')]" />
+										<field name="total_operation" readonly="True" />
+										<field name="planned_amount" sum="Planned Amount" />
+										<field name="balance" sum="Balance" />
+										<field name="residual_balance" sum="Residual Balance" />
+									</tree>
+								</field>
+							</page>
+							<page string="Cash Budget" groups="account_budget_custom.group_cash_budget">
+							    <field name="account_cash_budget_line" colspan="4" nolabel="1"
+							           attrs="{'readonly':[('state','!=','draft')]}">
+								    <tree string="Budget Lines" editable="top">                                 
+									    <field name="general_account_id"
+									           domain="[('company_id','=',parent.company_id),('type','=','other')]"/>
+									    <field name="cash_total_operation" readonly="True"/>
+									    <field name="balance" sum="Balance"/>
+									    <field name="cash_residual_balance" sum="Residual Balance"/>    		         
+								    </tree>
+							    </field>						
+						    </page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="account_budget_view_tree">
+			<field name="name">account.budget.view.tree</field>
+			<field name="model">account.budget</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree
+					colors="blue:state in ('draft');gray:state in ('done','cancel');black:state in ('confirm','validate')"
+					string="Budget">
+					<field name="name" colspan="1" />
+					<field name="code" colspan="1" />
+					<field name="analytic_account_id" groups="analytic.group_analytic_accounting"
+						domain="[('parent_id','!=',False),('type','=','normal')]" />
+					<field name="period_id" />
+					<field name="company_id" widget="selection" groups="base.group_multi_company" />
+					<field name="creating_user_id" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="account_budget_graph" model="ir.ui.view">
+			<field name="name">account.budget.line.graph</field>
+			<field name="model">account.budget.lines</field>
+			<field name="type">graph</field>
+			<field name="arch" type="xml">
+				<graph string="budget Statistics" type="bar">
+					<field name="analytic_account_id" />
+					<field name="planned_amount" operator="+" />
+					<field name="balance" operator="+" />
+				</graph>
+			</field>
+		</record>
+
+		<record id="view_account_budget_search" model="ir.ui.view">
+			<field name="name">account.budget.search</field>
+			<field name="model">account.budget</field>
+			<field name="arch" type="xml">
+				<search string="Budget">
+					<group col="20" colspan="4">
+						<field name="name" />
+						<field name="code" />
+						<field name="period_id" />
+						<field name="analytic_account_id" groups="analytic.group_analytic_accounting"
+							domain="[('parent_id','!=',False),('type','=','normal')]" />
+						<field name="state" />
+						<field name="company_id" widget="selection" groups="base.group_multi_company" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="act_account_budget_view">
+			<field name="name">Period's Budgets</field>
+			<field name="res_model">account.budget</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="account_budget_view_tree" />
+			<field name="search_view_id" ref="view_account_budget_search" />
+
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a new Period's Budget.
+				</p>
+				<p>
+					A budget is a forecast of your company's income and expenses
+					expected for
+					a period in the future.
+				</p>
+				<p>
+					By keeping track of where your money goes, you may be less likely
+					to
+					overspend,
+					and more likely to meet your financial goals. Forecast
+					a budget by
+					detailing the
+					expected revenue per analytic account and
+					monitor its evolution based on
+					the actuals
+					realised during that
+					period.
+				</p>
+			</field>
+		</record>
+
+		<menuitem parent="budget_menu" id="menu_act_account_budget_view"
+			action="act_account_budget_view" sequence="2" groups="group_budget_user" />
+
+		<!-- FiscalYear Budgets -->
+		<record model="ir.ui.view" id="account_fiscalyear_budget_view_form">
+			<field name="name">account.fiscalyear.budget.view.form</field>
+			<field name="model">account.fiscalyear.budget</field>
+			<field name="arch" type="xml">
+				<form string="FiscalYear Budget" version="7.0">
+					<header>
+						<button string="Cancel" name="cancel" states="confirm"
+							type="workflow" icon="gtk-cancel" />
+						<button string="Confirm" name="confirm" states="draft"
+							type="workflow" icon="gtk-apply" groups="account_budget_custom.group_budget_user"/>
+						<button string="Generate Periods Budget" name="validate"
+							states="confirm" type="object" icon="gtk-ok" groups="account_budget_custom.group_budget_manager"/>
+						<button name="draft" states="cancel" string="Reset to Draft"
+							type="workflow" icon="terp-stock_effects-object-colorize" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate,done" />
+					</header>
+					<sheet string="FiscalYear Budget">
+						<div class="oe_title">
+							<label for="name" class="oe_edit_only" />
+							<h1>
+								<field name="name" />
+							</h1>
+						</div>
+						<div class="oe_right oe_button_box">
+							<button name="%(action_account_budget_import)d" string="Import Budget"
+								states="draft" type="action" />
+						</div>
+						<group>
+							<group>
+								<field name="analytic_account_id" required="True"
+									groups="analytic.group_analytic_accounting"
+									domain="[('company_id','=',company_id),('parent_id','!=',False),('type','=','normal')]" />
+								<field name="fiscalyear_id" options='{"no_open":True}'
+									domain="[('company_id','=',company_id)]" />
+							</group>
+
+							<group>
+								<field name="code" />
+								<field name="company_id" groups="base.group_multi_company"
+									widget="selection" />
+							</group>
+							<group>
+								<field name="creating_user_id" />
+								<field name="validating_user_id" />
+							</group>
+						</group>
+
+						<field name="account_fiscalyear_budget_line" colspan="4"
+							nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+							<tree string="Budget Lines" editable="top">
+								<field name="general_account_id"
+									domain="[('company_id','=',parent.company_id),('type','=','other'),('budget_classification','!=',False)]" />
+								<field name="planned_amount" sum="Total" />
+								<field name="devided" invisible="True" />
+								<field name="note" />
+							</tree>
+						</field>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"/>
+						<field name="message_ids" widget="mail_thread"/>
+					</div>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="account_fiscalyear_budget_view_tree">
+			<field name="name">account.fiscalyear.budget.view.tree</field>
+			<field name="model">account.fiscalyear.budget</field>
+			<field name="arch" type="xml">
+				<tree
+					colors="blue:state in ('draft');gray:state in ('done','cancel');black:state in ('confirm','validate')"
+					string="Budget">
+					<field name="name" colspan="1" />
+					<field name="code" colspan="1" />
+					<field name="analytic_account_id" groups="analytic.group_analytic_accounting"
+						domain="[('parent_id','!=',False),('type','=','normal')]" />
+					<field name="fiscalyear_id" />
+					<field name="company_id" widget="selection" groups="base.group_multi_company" />
+					<field name="creating_user_id" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_account_fiscalyear_budget_search" model="ir.ui.view">
+			<field name="name">account.fiscalyear.budget.search</field>
+			<field name="model">account.fiscalyear.budget</field>
+			<field name="arch" type="xml">
+				<search string="FiscalYear Budget">
+					<group col="20" colspan="4">
+						<field name="name" />
+						<field name="code" />
+						<field name="fiscalyear_id" />
+						<field name="analytic_account_id" groups="analytic.group_analytic_accounting"
+							domain="[('parent_id','!=',False),('type','=','normal')]" />
+						<field name="state" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="act_account_fiscalyear_budget_view">
+			<field name="name">FiscalYear's Budgets</field>
+			<field name="res_model">account.fiscalyear.budget</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="account_fiscalyear_budget_view_tree" />
+			<field name="search_view_id" ref="view_account_fiscalyear_budget_search" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a new FiscalYear's Budget.
+				</p>
+				<p>
+					A budget is a forecast of your company's income and expenses
+					expected for
+					a fiscalyear in the future. With a budget, a company is
+					able to
+					carefully look
+					at how much money they are taking in during a
+					given fiscalyear, and
+					figure out
+					the best way to divide it among
+					various categories.
+				</p>
+				<p>
+					By keeping track of where your money goes, you may be less likely
+					to
+					overspend,
+					and more likely to meet your financial goals. Forecast
+					a budget by
+					detailing the
+					expected revenue per analytic account and
+					monitor its evolution based on
+					the actuals
+					realised during that
+					fiscalyear.
+				</p>
+			</field>
+		</record>
+
+		<menuitem parent="budget_menu" id="menu_act_account_fiscalyear_budget_view"
+			action="act_account_fiscalyear_budget_view" sequence="1"
+			groups="group_budget_user" />
+
+		<!-- history -->
+		<menuitem name="Budget Reporting" parent="account.menu_finance_reports"
+			id="menu_budget_reporting" groups="group_budget_user" />
+
+		<record model="ir.ui.view" id="account_budget_operation_history_view_search">
+			<field name="name">account.budget.operation.history.search</field>
+			<field name="model">account.budget.operation.history</field>
+			<field name="arch" type="xml">
+				<search string="Budget Operation History">
+					<field name="date" />
+					<field name="budget_line_id_from" />
+					<field name="budget_line_id_to" />
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Type" name="name"
+							icon="terp-stock_effects-object-colorize" domain="[]"
+							context="{'group_by':'name'}" />
+						<filter string="Budget Type" name="type" icon="terp-stock_effects-object-colorize" 
+							groups="account_budget_custom.group_cash_budget" domain="[]" context="{'group_by':'type'}"/>
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="account_budget_operation_history_view_tree">
+			<field name="name">account.budget.operation.history.tree</field>
+			<field name="model">account.budget.operation.history</field>
+			<field name="arch" type="xml">
+				<tree string="Budget Operation History" >
+					<field name="budget_line_id_from" />
+					<field name="budget_line_id_to" />
+					<field name="amount" sum="Total" />
+					<field name="name" />
+					<field name="type" groups="account_budget_custom.group_cash_budget"/>
+					<field name="date" />
+					<field name="reference" />
+					<field name="user_id"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="act_account_budget_operation_history_view">
+			<field name="name">Budget operation history</field>
+			<field name="res_model">account.budget.operation.history</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+			<field name="context">{}</field>
+			<field name="view_id" ref="account_budget_operation_history_view_tree" />
+			<field name="search_view_id" ref="account_budget_operation_history_view_search" />
+		</record>
+
+		<menuitem parent="menu_budget_reporting" id="menu_account_budget_operation_history_view"
+			sequence="20" action="act_account_budget_operation_history_view"
+			groups="group_budget_manager" />
+
+		<!-- Budget Lines -->
+		<record model="ir.ui.view" id="account_budget_lines_view_search">
+			<field name="name">account.budget.lines.search</field>
+			<field name="model">account.budget.lines</field>
+			<field name="arch" type="xml">
+				<search string="Search Budget">
+					<field name="analytic_account_id" />
+					<field name="general_account_id" />
+					<field name="period_id" />
+					<field name="company_id" widget="selection" groups="base.group_multi_company" />
+					<newline />
+					<group expand="0" string="Group By...">
+						<filter string="Company" name="company" domain="[]"
+							context="{'group_by': 'company_id'}" icon="terp-stock_effects-object-colorize" />
+						<filter string="Analyatic account" name="analytic"
+							context="{'group_by': 'analytic_account_id'}" domain="[]"
+							icon="terp-stock_effects-object-colorize" />
+						<filter string="Account" domain="[]"
+							context="{'group_by': 'general_account_id'}" icon="terp-stock_effects-object-colorize" />
+						<filter string="Period" domain="[]" name="period"
+							context="{'group_by': 'period_id'}" icon="terp-stock_effects-object-colorize" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="account_budget_lines_view_tree">
+			<field name="name">account.budget.lines.tree</field>
+			<field name="model">account.budget.lines</field>
+			<field name="arch" type="xml">
+				<tree string="Budget lines" delete="false">
+					<field name="name" readonly="True" />
+					<field name="analytic_account_id" invisible="1" />
+					<field name="general_account_id" readonly="True" invisible="1" />
+					<field name="period_id" invisible="1" />
+					<field name="total_operation" readonly="True" sum="Total Operation" />
+					<field name="cash_total_operation" readonly="True" sum="Cash Total Operation" 
+					       groups="account_budget_custom.group_cash_budget"/> 
+					<field name="planned_amount" readonly="True" sum="Planned Amount" />
+					<field name="balance" readonly="True" sum="Balance" />
+					<field name="residual_balance" readonly="True" sum="Residual Amount" />
+					<field name="cash_residual_balance" readonly="True" sum="Cash Residual Amount"
+					       groups="account_budget_custom.group_cash_budget"/>
+					<field name="state" readonly="True" invisible="1" />
+					<field name="account_budget_id" readonly="True" invisible="1" />
+					<field name="company_id" groups="base.group_multi_company" />
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="account_budget_lines_transfer_tree">
+			<field name="name">account.budget.lines.transfer.tree</field>
+			<field name="model">account.budget.lines</field>
+			<field name="arch" type="xml">
+				<tree string="Budget lines">
+					<field name="name" />
+					<field name="analytic_account_id" invisible="1" />
+					<field name="general_account_id" invisible="1" />
+					<field name="period_id" invisible="1" />
+					<field name="residual_balance" />
+					<field name="company_id" groups="base.group_multi_company" />
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="act_account_budget_lines_view">
+			<field name="name">Budgets Lines</field>
+			<field name="res_model">account.budget.lines</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,graph</field>
+			<field name="view_id" ref="account_budget_lines_view_tree" />
+			<field name="context">{'search_default_analytic':True,'search_default_period':True}
+			</field>
+			<field name="search_view_id" ref="account_budget_lines_view_search" />
+		</record>
+
+		<menuitem parent="menu_budget_reporting" id="menu_account_budget_lines_view"
+			sequence="20" action="act_account_budget_lines_view" groups="group_budget_user" />
+
+		<!-- Budget Classification -->
+		<record model="ir.ui.view" id="account_budget_classification_view_search">
+			<field name="name">account.budget.classification.search</field>
+			<field name="model">account.budget.classification</field>
+			<field name="arch" type="xml">
+				<search string="Search Budget">
+					<field name="code" />
+					<field name="name" />
+				</search>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="account_budget_classification_view_tree">
+			<field name="name">account.budget.classification.tree</field>
+			<field name="model">account.budget.classification</field>
+			<field name="arch" type="xml">
+				<tree string="Budget Classification">
+					<field name="code" />
+					<field name="name" />
+					<field name="sequence" />
+					<field name="company_id" groups="base.group_multi_company"
+						widget="selection" />
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="account_budget_classification_form_tree">
+			<field name="name">account.budget.classification.form</field>
+			<field name="model">account.budget.classification</field>
+			<field name="arch" type="xml">
+				<form string="Budget Classification" version="7.0">
+					<group col="4">
+					    <field name="name" />
+						<field name="code" />
+						<field name="sequence" />
+						<field name="allow_budget_overdraw" />
+						<field name="company_id" groups="base.group_multi_company"
+							widget="selection" invisible="1" />
+					</group>
+					<notebook colspan="4">
+						<page string="Accounts">
+							<field name="account_ids" nolabel="1" colspan="3"
+								domain="[('type','=','other')]" />
+						</page>
+					</notebook>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="act_account_budget_classification_view">
+			<field name="name">Budgets Classification</field>
+			<field name="res_model">account.budget.classification</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="account_budget_classification_view_tree" />
+			<field name="search_view_id" ref="account_budget_classification_view_search" />
+		</record>
+
+		<menuitem parent="account.account_account_menu" id="menu_account_budget_classification_view"
+			action="act_account_budget_classification_view" sequence="20"
+			groups="group_budget_user" />
+
+		<!-- add budget field to the analytic account view -->
+		<record id="view_account_analytic_account_form1" model="ir.ui.view">
+			<field name="name">account.analytic.account.form</field>
+			<field name="model">account.analytic.account</field>
+			<field name="inherit_id" ref="analytic.view_account_analytic_account_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<field name="parent_id" position="after">
+					<field name="budget" />
+				</field>
+
+			</field>
+		</record>
+
+		<!-- Main Department -->
+		<record id="view_account_analytic_account_form" model="ir.ui.view">
+			<field name="name">account.analytic.account.form</field>
+			<field name="model">account.analytic.account</field>
+			<field name="inherit_id" ref="analytic.view_account_analytic_account_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<field name="company_id" position="before">
+					<field name="main_dept" />
+				</field>
+			</field>
+		</record>
+
+
+
+
+		<record model="ir.ui.view" id="view_move_form1">
+			<field name="name">account.move.form</field>
+			<field name="model">account.move</field>
+			<field name="inherit_id" ref="account_custom.view_move_form1" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='completed']" position="replace">
+					<button name="completed" states="draft,analytic" string="Complete"
+						groups="account.group_account_user" type="object"/>
+					<button name="analytic" states="draft" string="analytic Complete" type="object"/>
+				</xpath>
+				<xpath expr="//button[@name='check_analytic']" position="replace">
+					<button name="check_analytic" states="analytic" string="Check" type="object"/>
+				</xpath>
+				<xpath expr="//field[@name='state']" position="attributes">
+					<attribute name="statusbar_visible">"draft ,completed ,posted ,reversed"</attribute>
+				
+				</xpath>
+			</field>
+		</record>
+
+
+	</data>
+</openerp>
+
+

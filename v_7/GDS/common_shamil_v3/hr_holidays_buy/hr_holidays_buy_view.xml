@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+ <!--inherit add to holiday.status check default-->
+
+<record id="hr_inherit_holidays_status" model="ir.ui.view">
+            <field name="name">hr.holidays.status.form.inherit</field>
+            <field name="model">hr.holidays.status</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_holidays_custom.hr_inherit_holidays_status"/>
+            <field name="arch" type="xml">
+	    <xpath expr="//group[@string='Leave Details']" position="after">
+	       <newline />
+               <group >
+               		<field name="buy_leave"/> 
+            	        <field name="continous_buy_leave" attrs="{'invisible':[('buy_leave','=',False)]}"/>
+               </group>
+            </xpath>
+	    <xpath expr="//page[@string='Categories']" position="after">
+               <page string="Buying Settings" attrs="{'invisible':[('buy_leave','=',False)]}"> 
+                    <group>
+                    <field name="pay_buying" attrs="{'required':[('buy_leave','=',True)]}"/>
+                    <field name="buy_allowance_id" attrs="{'required':[('buy_leave','=',True)]}" />
+                    </group>
+                    <group String="End of Service Allowance Settings">
+                    <field name="pay_end_service" attrs="{'required':[('end_service_allowance_id','!=',False)]}"/>
+                    <field name="end_service_allowance_id" />
+                    </group>
+                    <newline/> 
+                     <group>
+                    <field colspan="4" name="buying_comments"  placeholder="Other Information ..."/>
+                    </group>
+               </page>
+            </xpath>
+           </field>
+          
+</record>
+
+
+       <!--inherit add to hr.holidays -->
+       <record id="hr_holidays_inherit_buy" model="ir.ui.view">
+            <field name="name">hr.holidays.form.inherit.buy</field>
+            <field name="model">hr.holidays</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_holidays.edit_holiday_new"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="/form/sheet/group" position="after">
+                    <notebook>
+                        <page string="Buying Leave Details" attrs="{'invisible':[('state','not in',('holiday_buying','holiday_end_service','paid'))]}" >
+                            <group>
+                            <field name="amount" />
+                            <field name="acc_number" />
+                            </group>
+                        </page>
+                    </notebook>
+                </xpath>
+                <xpath expr="/form/header/field" position="before"> 
+                        <button string="Buying Leave" name="buying_holiday" states="confirm_buying" type="workflow" icon="gtk-apply" colspan="2"/>
+                        <button string="Pay Leave" name="paid" states="holiday_buying,holiday_end_service"  type="workflow" icon="gtk-apply" colspan="2"/>
+                       <button string="End of service allowance " name="end_service_holiday" states="confirm_buying" type="workflow" icon="gtk-apply" colspan="2"/>
+                        
+                        
+                </xpath>
+                <xpath expr="//button[@name='validate']"
+					position="replace">
+                                        <button  string="Approve" name="validate" states="confirm_buying,confirm"  type="workflow" icon="gtk-apply" />
+                </xpath>   
+                <xpath expr="//button[@name='refuse']"
+					position="replace">
+                                        <button  string="Refuse" name="refuse" states="confirm,validate1,validate,confirm_buying"
+						type="worflow" icon="gtk-no" />
+                </xpath>
+                <xpath expr="//field[@name='state']"
+					position="replace">
+                                        <field name="state" widget="statusbar" statusbar_visible="draft" statusbar_colors='{"confirm":"blue","validate1":"blue","refuse":"red"}'/>
+                </xpath>    
+            </field>
+       </record>
+    </data>
+</openerp>

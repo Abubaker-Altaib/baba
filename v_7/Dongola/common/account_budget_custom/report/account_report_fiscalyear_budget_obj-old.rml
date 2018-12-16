@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<document filename="Account Budget.pdf">
+	<template pageSize="(595.0,842.0)" title="Voucher"
+		author="OpenERP S.A.(sales@openerp.com)" allowSplitting="20">
+		<pageTemplate>
+			<frame id="first" x1="1.3cm" y1="2.0cm" height="22.5cm" width="19cm" />
+		</pageTemplate>
+	</template>
+
+	<stylesheet>
+
+		<blockTableStyle id="Content_Table">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+
+		<paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0"
+			alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0" />
+		<paraStyle name="Sub_Tilte" fontName="Helvetica-Bold" fontSize="12.0"
+			alignment="RIGHT" spaceBefore="12" spaceAfter="6.0" />
+		<paraStyle name="Content_Table_Detail" fontName="Helvetica"
+			fontSize="9.0" alignment="RIGHT" rightIndent="8" />
+		<paraStyle name="Content_Table_Header" fontName="Helvetica-Bold"
+			fontSize="9.0" alignment="CENTER" />
+
+		<images />
+	</stylesheet>
+
+	<story>
+
+		<para style="Tilte">[[repeatIn(objects, 'budget')]]تقرير الموازنة المعدة
+		</para>
+		<para style="Tilte">[[budget.fiscalyear_id.name]] - [[budget.analytic_account_id.name]]</para>
+		<section>
+			<para style="Tilte">[[budget.company_id.currency_id.name]] [[formatLang(total) ]]
+				[[repeatIn(budget_total(budget), 'total')]]
+			</para>
+		</section>
+		<section>
+			[[repeatIn(classification(), 'c')]]
+			<para style="Sub_Tilte"> [[ c.name ]] </para>
+			<blockTable colWidths="160.0,300" style="Content_Table"
+				repeatRows="1">
+				<tr>
+					<td>
+						<para style="Content_Table_Header">المبلغ المُخطط</para>
+					</td>
+					<td>
+						<para style="Content_Table_Header">الحساب</para>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<para style="Content_Table_Detail"> [[ formatLang(l[1]) ]] </para>
+					</td>
+					<td>
+						<para style="Content_Table_Detail">
+							[[repeatIn(line(budget.id,c.id),'l')]]
+							[[ l[0] ]]
+						</para>
+					</td>
+				</tr>
+			</blockTable>
+		</section>
+	</story>
+</document>

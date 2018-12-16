@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+			<report  header="True" auto="False"  menu="True" id="emp_training_list" model="hr.employee" name="emp_training_list_report.report" string="training card" rml="hr_ntc_custom/report/emp_training_list_report.rml"/>
+    		
+			<record model="ir.ui.view" id="hr_training_course_form_view_inherit">
+			<field name="name">hr.training.course.form_iherit</field>
+			<field name="model">hr.training.course</field>
+			<field name="inherit_id" ref="hr_training.hr_training_course_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="general_experience_year"]' position="replace">
+					<field name="general_experience_year" invisible="1" />
+				</xpath>
+				<xpath expr='//field[@name="objective"]' position="replace">
+					<field name="objective" placeholder="Filtering Reasons..." nolabel="1" />
+				</xpath>
+				<xpath expr='//field[@name="qualification_ids"]' position="replace">
+					<field name="qualification_ids" nolabel="1" >
+						<tree >
+							<field name="code" />
+							<field name="name" />
+							<field name="parent_id" />
+						</tree>
+					</field>
+				</xpath>
+
+				<xpath expr='//notebook/page[3]' position="replace">
+					<page string="Departments">
+						<field name="departments_ids" nolabel="1" />
+					</page>
+					<page string=" Jobs">
+						<field name="job_ids" nolabel="1" ></field>
+					</page>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_training_plan_form_view_ntc">
+			<field name="name">hr.training.plan.for.ntc</field>
+			<field name="model">hr.training.plan</field>
+			<field name="inherit_id" ref="hr_training_wafi.hr_training_plan_form_view_inherit" />
+			<field name="arch" type="xml">
+				<xpath expr='//sheet/group/group[4]' position="replace">
+					
+				</xpath>
+				<xpath expr='//sheet/group/group[2]' position="replace">
+					
+				</xpath>
+				<xpath expr='//field[@name="start_date"]' position="replace">
+					<field name="start_date" string="Plan Implementation Start Date" />
+					<field name="end_date" string="Plan Implementation End Date"/>
+				</xpath>
+				<xpath expr='//field[@name="type"]' position="replace">
+					<field name="type_plan" required="0" invisible="1"/>
+				</xpath>
+
+				
+				<xpath expr='//field[@name="type_plan"]' position="after">
+					<field name="plan_cost" />
+					<field name="net_amo" />
+				</xpath>
+
+				<xpath expr='//field[@name="active"]' position="after">
+					<field name="fees_currency_id" invisible="1"/>
+
+				</xpath>
+				<xpath expr='//field[@name="suggested_course_ids"]' position="replace">
+					<field name="suggested_course_ids" nolabel="1" >
+
+						<tree >
+							<field name="name" />
+							<!--field name="plan_id" /-->
+							<field name="course_id" />
+							<field name="cost" sum="Total" />
+							<field name="state" />
+							<button string="To General Manager Approve" name="approved_gen" states="approved"
+								type="object" attrs="{'invisible':[('state','!=','draft')]}" icon="terp-camera_test"
+								groups="base.group_training_manager,base.group_training_user" />
+								
+							<button string="To Approved" name="approved2" states="approved_gen" type="object"
+								attrs="{'invisible':[('state','!=','approved_gen')]}" icon="terp-camera_test"
+								groups="base.group_training_manager,base.group_training_user" />
+
+							<button string="To Reject" name="action_cancel_draft" states="approved"
+								attrs="{'invisible':[('state','!=','draft')]}" icon="gtk-cancel"
+								groups="base.group_training_manager,base.group_training_user" 
+								type="object"/>
+
+							<button string="To Reject" name="action_cancel_draft" states="approved_gen"
+								attrs="{'invisible':[('state','!=','approved_gen')]}" icon="gtk-cancel"
+								groups="base.group_training_manager,base.group_training_user"
+								type="object" />
+							
+						</tree>
+					</field>
+				</xpath>
+			</field>
+		</record>
+
+		
+
+		<record model="ir.ui.view" id="hr_training_category_form_view_ntc_inherits">
+			<field name="name">hr.training.category.form.inherit</field>
+			<field name="model">hr.training.category</field>
+			<field name="inherit_id" ref="hr_training.hr_training_category_form_view" />
+			<field name="arch" type="xml">	
+			<xpath expr='//field[@name="active"]' position="after">
+			   <group string="guidelines" colspan="2" col="4">
+			     <field name="guidelines" nolabel="1"  placeholder = "Trainig Guidelines"/>
+			   </group>
+			       </xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_training_suggested_form_view_inheritst">
+			<field name="name">hr.employee.training.suggested.form.inheritss</field>
+			<field name="model">hr.employee.training.suggested</field>
+			<field name="inherit_id" ref="hr_training_wafi.hr_suggested_course_form_view_inherit" />
+			<field name="arch" type="xml">	
+			<xpath expr='//button[@name="request"]' position="before">
+                             	
+				<button string="Cancel" name="action_cancel" type="object"
+				      states="requested,confirmed,validated,approved," /> 
+				</xpath>
+
+			<xpath expr='//button[@name="approve"]' position="replace">
+				<button string="Training Manager" name="training_manager_aprove" type="object"
+							states="validated" />
+			</xpath>
+			<xpath expr='//button[@name="set_to_draft"]' position="replace">
+                             	
+					<button string="Set to Draft" name="action_cancel_draft" type="object"
+				              states="cancel" icon="gtk-convert" />
+				</xpath>
+			<xpath expr='//field[@name="course_id"]' position='replace'>
+				<field name="course_id" on_change="onchange_course(course_id)"/>
+			</xpath>
+
+			<xpath expr='//field[@name="training_place"]' position="attributes">
+					<attribute name="required">False</attribute>
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr='//field[@name="code"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+			<xpath expr="//page[@string='Employees'] " position ='after'>
+						<page string="Cousre Terms">
+							<field name="terms" />
+								
+						</page>
+
+			</xpath>
+				
+
+			<xpath expr="//page[@string='Cousre Terms'] " position ='after'>
+				<page string="Rejection Reasons">
+	                                     <field name="comments" nolabel="1" string="Rejection Reasons"   
+                                             attrs="{'readonly':[('state','!=', 'cancel')],'required':[('state','=', 'cancel')]}" />
+								
+				</page>
+
+			         </xpath>
+			<xpath expr='//field[@name="course_id"]' position="after">
+					<field name="training_date" required ="0"/>
+				</xpath>
+			<xpath expr='//field[@name="start_date"]' position="replace">
+				<field name="start_date" required="0"/>
+				<field name="partner_id" attrs="{'invisible':[('state','!=','approved')],'required':[('state','=','approved')]}" context="{'default_trainer':True, 'default_supplier':True, 'default_customer':False}" />
+				<field name="cost" attrs="{'readonly':[('state','!=','approved')]}"/>
+
+			</xpath>
+			<xpath expr='//field[@name="end_date"]' position="replace">
+					<field name="end_date" required="0"/>
+					<field name="fees_currency_id" attrs="{'readonly':[('state','!=','approved')]}"/>
+			</xpath>
+			
+
+			</field>
+
+		</record>
+		
+		<record model="ir.ui.view" id="hr_training_suggested_tree_inherit">
+			<field name="name">hr.training.suggest.form.inherit</field>
+			<field name="model">hr.employee.training.suggested</field>
+			<field name="inherit_id" ref="hr_training.hr_suggested_course_tree_view" />
+			<field name="arch" type="xml">	
+
+			<xpath expr='/tree/field[@name="state"]' position="after">
+				<field name="cost"  />       			 
+ 				<field name="fees_currency_id"/>
+
+ 			</xpath>
+			
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_training_wafi.hr_approved_course_form_view_inherit">
+			<field name="name">hr.approved.course.form.inherit</field>
+			<field name="model">hr.employee.training.approved</field>
+			<!--field name="inherit_id" ref="hr_training.hr_approved_course_form_view" /-->
+			<field name="arch" type="xml">
+				<field name="plan_id" position="attributes">
+				<attribute name="required">False</attribute>
+				<attribute name="invisible">True</attribute>
+				</field>
+				<xpath expr='//field[@name="code"]' position="after">
+					<field name="course_type"/>
+				</xpath>
+				<xpath expr='//field[@name="training_place"]' position="after">
+					<field name="country_id" attrs="{'invisible':[('training_place','!=','outside')]}"/>
+					<field name="eva_template_id" states="approved" attrs="{'required': [('state','=','approved')]}"
+					domain="[('template','=',True)]"
+					context="{'form_view_ref': 'hr_ntc_custom.training_eva_template_form','default_template':True}}"
+					groups="base.group_training_manager"/>
+
+					<!--<field name="eva_template_id" states="approved"
+					domain="[('template','=',True)]"
+					context="{'form_view_ref': 'hr_ntc_custom.training_eva_template_form','default_template':True}}"
+					groups="base.group_training_manager"/>-->
+				</xpath>
+
+				<xpath expr='//form/sheet' position="inside">
+					<group>
+						<field name="comments"
+						groups="base.group_training_manager"/>
+					</group>
+				</xpath>
+				
+				<xpath expr='//field[@name="code"]' position="attributes">
+				<attribute name="invisible">True</attribute>
+				</xpath>
+
+				<xpath expr='//field[@name="department_id"]' position="replace">
+				</xpath>
+
+				<xpath expr='//button[@name="approve"]' position="replace">
+				</xpath>
+
+				<xpath expr='//form/header' position="replace">
+					<header>
+						<button name="request" string="Request" states="draft"
+							groups="base.group_training_manager" />
+
+						<button name="confirm" string="Confirm" states="requested"
+							groups="base.group_hr_manager" />
+						
+						<button name="validate" string="General Department Manager" states="confirmed"
+							groups="base_custom.group_general_hr_manager" />
+
+						<button name="training_validate2" string="General Manager" states="validated"
+							groups="base_custom.group_account_general_manager" />
+
+						<button name="validate2_approve" string="Approve" states="approved2"
+							groups="base.group_training_manager" />
+						
+						<button name="done" string="Done" states="approved"
+							groups="base.group_training_manager" />
+
+						<!--<button name="custom_done" string="custom done" type="object"
+							/>-->
+
+						<button name="rejected2" string="Reject" states="requested"
+							groups="base.group_training_manager,base.group_training_user" />
+						<button string="Set to Draft" name="set_to_draft" states="rejected"
+							type="object" groups="base.group_hr_user"/>
+						<field name="state" widget="statusbar" statusbar_visible="requested,approved,done" />
+
+					</header>
+
+					<!--<header>
+						<button name="request" string="Request" states="draft"
+							 />
+
+						<button name="confirm" string="Confirm" states="requested"
+							 />
+						
+						<button name="validate" string="General Department Manager" states="confirmed"
+							 />
+
+						<button name="training_validate2" string="General Manager" states="validated"
+							 />
+
+						<button name="validate2_approve" string="Approve" states="approved2"
+							 />
+						
+						<button name="done" string="Done" states="approved"
+							 />
+
+						<button name="rejected2" string="Reject" states="requested"
+							 />
+						<button string="Set to Draft" name="set_to_draft" states="rejected"
+							type="object" />
+						<field name="state" widget="statusbar" statusbar_visible="requested,approved,done" />
+
+					</header>-->
+
+				</xpath>
+				
+			</field>
+		</record>
+
+
+		
+		
+		
+
+
+	</data>
+</openerp>

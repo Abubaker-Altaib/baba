@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RTL have problem with ODOO v11  so we gonna use additional styles + IF-->
+<odoo>
+    <template id="template_invoice_details_report">
+        <t t-call="web.html_container">
+            <t t-set="data_report_margin_top" t-value="5"/>
+            <t t-set="data_report_dpi" t-value="140"/>
+            <t t-call="web.basic_layout">
+                <div class="page">
+                     <html>
+                        <body>
+
+                            <!-- add style to change font type -->
+                            <style type="text/css">
+                                /* Declare fonts */
+                                @font-face {
+                                    font-family:KacstLetter ;
+                                    src: url(/sale_custom/static/font/KacstLetter.ttf);
+                                }
+                            </style>
+
+                                <!-- add table for header -->
+                                <table>
+                                    <tbody>
+                                        <tr width="100%">
+                                            <td style="background:white;border-right:0px solid #C1C3D1;" width="18%">
+
+                                                <img src="/purchase_custom/static/src/img/index.jpeg" style="height: 160px;width: 200;"/>
+                                            </td>
+                        
+                                            <td width="82%">
+                                                <strong>
+
+                                                    <center style="color:#00008B;font-size:30;font-family:KacstLetter">
+                                                        <b> 
+                                                            بسم الله الرحمن الرحيم 
+                                                        </b>
+                                                    </center>
+
+                                                    <center style="color:#00008B; font-size:35;font-family:KacstLetter">
+                                                            Electronic Banking Services company
+                                                    </center><br></br>
+                                                        
+                                                    <center style="color:#00008B; font-size:30;font-family:KacstLetter">
+                                                        <u>
+                                                        Customer Relationship Management
+                                                        </u>
+                                                    </center><br></br>
+
+                                                    <center style="color:#00008B;  font-size:30;font-family:KacstLetter">
+                                                        Invoice 
+                                                    </center>
+
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <!-- end header table -->
+
+                              <!-- add table for content1  -->
+                                <table style="padding-top:0px; border-collapse:separate;border-spacing:0px 40px;font-size:25;color:#00008B">
+
+                                    <tr>
+                                        <td>
+                                            <b style="font-family:KacstLetter">
+                                                Date : 
+                                            </b>
+                                        </td>
+
+                                        <td>
+                                            <span t-esc="docs.date_order" style="font-family:KacstLetter"/>
+                                        </td> 
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <b style="font-family:KacstLetter">
+                                                Number: 
+                                            </b>
+                                        </td>
+
+                                        <td>
+                                            <span t-esc="docs.name" style="font-family:KacstLetter"/>
+                                        </td>
+
+                                        <td width="35%"> 
+                                        </td>
+
+                                        <td>
+                                            <b style="font-family:KacstLetter">
+                                                Tax Identification Number   
+                                            </b>
+                                        </td>
+
+                                        <td>
+                                            <b style="font-family:KacstLetter"> 
+                                                110009676400‬‬ 
+                                            </b>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <b style="font-family:KacstLetter">
+                                                Name : 
+                                            </b>
+                                        </td>
+
+                                        <td>
+                                            <span t-esc="docs.partner_id.name" style="font-family:KacstLetter"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <b style="font-family:KacstLetter">
+                                                Subject: 
+                                            </b>
+                                        </td>
+
+                                        <td>
+                                            <span t-esc="docs.subject" style="font-family:KacstLetter"/>
+                                        </td>
+                                    </tr>
+
+                                     <tr>
+                                        <td>
+                                            <b style="font-family:KacstLetter">
+                                                Center : 
+                                            </b>
+                                        </td>
+
+                                        <td>
+                                            <span t-esc="docs.center_id.name" style="font-family:KacstLetter"/>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                                <!-- end content1 table -->
+
+                             <br></br>
+
+                             <!-- add table for content2  -->  
+                            <table class="table table-hover o_portal_my_doc_table"
+                                   style="border:1px solid black;overflow: visible !important;">
+                                <thead>
+                                        <tr style="font-weight:bold;font-size:20px;width: 80%">
+
+                                            <th class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width: 16%">
+                                                <b>Number</b>
+                                             </th>
+
+
+                                            <th class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width: 16%">
+                                                <b>Service name</b>
+                                            </th>
+
+                                             <th  class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width: 16%">
+                                                <b>Quantity</b>
+                                            </th>
+
+                                            <th  class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width: 16%">
+                                                <b>Fees</b>
+                                            </th>
+
+                                            <th  class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width: 16%">
+                                                <b>Cost</b>
+                                            </th>
+                                         </tr>
+                                </thead>
+
+                                    <t t-set='num' t-value='1'/>
+                                    <!--if the user choces a service-->
+                                    <t t-foreach="docs.order_line" t-as="d">
+                                        <tr style="border-width: thick;font-size:20px;width: 80%;text-align:center">
+
+                                                <td style="border:1px solid black">
+                                                    <span t-esc="num"  style="font-family:KacstLetter;width: 16%"/>
+                                                </td>
+
+
+                                                <td style="border:1px solid black">
+                                                    <span t-esc="d.product_id.name"  style="font-family:KacstLetter;width: 16%"/>
+                                                </td>
+
+                                                <td style="border:1px solid black">
+                                                    <span t-esc="d.product_uom_qty"  style="font-family:KacstLetter;width: 16%"/>
+                                                </td>
+
+                                                 <td style="border:1px solid black">
+                                                    <span t-esc="d.price_unit"  style="font-family:KacstLetter;width: 16%"/>
+                                                </td>
+
+
+                                                <td style="border:1px solid black">
+                                                    <span t-esc="d.price_subtotal" style="font-family:KacstLetter;width: 16%"/>
+                                                </td>
+                                        </tr>
+                                        <t t-set='num' t-value='num+1'/>
+                                   </t>
+                            </table>
+                            <!-- end content2 table -->
+
+                              <br></br>
+
+                            <!-- add description --> 
+                                <span t-esc="docs.note" style="color:red;font-size:30;font-family:KacstLetter"/>
+                                
+
+                            <br></br><br></br><br></br><br></br><br></br><br></br><br></br>
+
+                            <!-- table for content3 -->
+                            <table width="1000" style="font-size:20">
+                                    <tr>
+                                        <td>
+                                            <b style="font-family:KacstLetter">
+                                                Signature : 
+                                            </b>
+                             
+                                        </td>
+
+                                        <td>
+                                            <b style="font-family:KacstLetter">
+                                                Signature : 
+                                            </b>
+                             
+                                         </td>
+                                    </tr>  
+                            </table> 
+                            <!-- end table content3  -->
+                           
+                           <!-- add footer -->
+                            <div class="footer">
+
+                                <center>
+                                    <b style="font-family:KacstLetter ; font-size:15">
+                                        The stamp duty has been paid for the financial receipt number FK‬‬ ‫‪9738901‬‬ Issued by the unified tax center of the central companies
+                                    </b>
+                                </center>
+
+                                <div class="text-center" style="border-top: 5px solid black;">
+
+                                    <table>
+
+                                        <tr>
+                                            <td style="font-family:KacstLetter;font-size:15">
+                                                Customer Relationship Management
+                                            </td>
+
+                                            <td style="font-family:KacstLetter;font-size:15">
+                                                -Customer Relationship Department
+                                            </td>
+                                    
+
+                                            <td width="20%">
+                                            </td>
+
+                                            <td style="font-family:KacstLetter;font-size:15">
+                                                Tel :‫‪
+                                            </td>
+                                           
+                                            <td style="font-family:KacstLetter;font-size:15">
+                                                83749575‬‬
+                                            </td>
+
+
+                                            <td style="font-family:KacstLetter;font-size:15">
+                                                Fax :‫‪
+                                            </td>
+
+                                            <td style="font-family:KacstLetter;font-size:15">
+                                                83749575‬‬
+                                            </td>
+                                        
+                                        </tr>
+
+                                        <tr style="font-size:15">
+                                                <td style="text-align:center;font-family:KacstLetter;color:#00008B">
+                                                    Posted date :‫‪
+                                                </td>
+
+                                                <td style="font-family:KacstLetter;color:#00008B">
+                                                    <span t-esc="docs.date_order"/>
+                                                </td>
+
+                                                <td width="20">
+                                                </td>
+
+                                                <td style="text-align: center;font-family:KacstLetter;color:#00008B">
+                                                    Posted by :‫
+                                                </td>
+
+                                                <td>
+                                                    <span t-esc="docs.user_id.name" style="font-family:KacstLetter;color:#00008B"/>
+                                                </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div><!-- end footer -->
+                        </body>
+                    </html>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,36 @@
+-
+  I create a purchase order.
+-
+  !record {model: purchase.order, id: purchase_order5}:
+    partner_id: base.res_partner_asus
+    invoice_method: order
+    order_line:
+      - product_id: product.product_product_pc2
+        price_unit: 150.50
+        product_qty: 5.0
+      - product_id: product.product_product_pc1
+        price_unit: 450.20
+        product_qty: 2.0
+
+
+-
+  I create another purchase order.
+-
+  !record {model: purchase.order, id: purchase_order6}:
+    partner_id: base.res_partner_3
+    invoice_method: picking
+    order_line:
+      - product_id: product.product_product_pc3
+        price_unit: 900
+
+
+-
+  I using allredy created purchase order in purchase/purchase_order_demo.yml
+-
+  I print Purchase Order report
+-
+  !python {model: purchase.order}: |
+    import netsvc, tools, os
+    (data, format) = netsvc.LocalService('report.purchase.order.report').create(cr, uid, [ref('purchase_order5'),ref('purchase_order6')], {}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'purchase_report-report_purchase_order_report'+format), 'wb+').write(data)

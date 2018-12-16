@@ -1,0 +1,1007 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<!--menuitem id="menu_administrative_affairs_root" icon="terp-partner"
+			name="Admin Affairs" sequence="3" web_icon="images/pos.png"
+			web_icon_hover="images/pos-hover.png" 
+			/>
+
+		<menuitem id="admin_affairs_configuration_menu" parent="menu_administrative_affairs_root"
+			name="Configuration" sequence="5" />
+
+		<menuitem name="Reports" parent="menu_administrative_affairs_root"
+			id="main_menu_report" sequence="4" /-->
+
+
+		<!-- Vehicle Out Department -->
+        <record id="view_vehicle_out_department_form" model="ir.ui.view">
+            <field name="name">vehicle.out.department.form</field>
+            <field name="model">vehicle.out.department</field>
+            <field name="arch" type="xml">
+                <form string="Vehicle department" version="7.0">
+                    <sheet>
+                        <group col="4">
+                            <field name="name"/>
+                            <field name="parent_id"/>
+                            <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_vehicle_out_department_tree" model="ir.ui.view">
+            <field name="name">vehicle.out.department.tree</field>
+            <field name="model">vehicle.out.department</field>
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree string="Vehicle department">
+                    <field name="complete_name"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_vehicle_out_department_filter" model="ir.ui.view">
+            <field name="name">Vehicle department</field>
+            <field name="model">vehicle.out.department</field>
+            <field name="arch" type="xml">
+                <search string="Vehicle Departments">
+                    <field name="name" string="Department"/>
+                </search>
+             </field>
+        </record>
+
+        <record id="open_module_tree_vehicle_out_department" model="ir.actions.act_window">
+            <field name="name">Vehicle Departments</field>
+            <field name="res_model">vehicle.out.department</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="view_vehicle_out_department_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a Vehicle Out department.
+              </p>
+            </field>
+        </record>
+
+       
+
+
+
+		<!-- vehicle driving -->
+		<record id="driving_license_form" model="ir.ui.view">
+			<field name="name">driving.license.form</field>
+			<field name="model">driving.license</field>
+			<field name="arch" type="xml">
+				<form string="Driving License" version="7.0">
+					<header>
+						<button string="Confirm" name="confirm" states="draft"  type="object"
+						icon="gtk-apply" colspan="2" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+						
+						<button string="Set To Draft" name="set_to_draft" states="confirm" type="object"
+						icon="gtk-apply" colspan="2" groups="admin_affairs.group_fleet_set_to_draft"/>
+
+						<field name="state" widget="statusbar" statusbar_visible="draft,confirm" statusbar_colors='{"confirm":"gray","draft":"blue"}'/>
+					</header>
+					<sheet>
+						<group col="4" colspan="2" >
+						<group>
+							<field name="employee_id" attrs="{'readonly':[('state','!=','draft')]}" domain="[('state','=','approved')]" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}"/>
+							<field name="degree_id" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}"/>
+							<field name="company_id" groups="base.group_multi_company"/>
+						</group>
+						<group>
+							<field name="license_no" attrs="{'required':True,'readonly':[('state','!=','draft')]}"/>
+							<field name="license_type" attrs="{'required':True,'readonly':[('state','!=','draft')]}"/>
+							<field name="license_date" attrs="{'required':True,'readonly':[('state','!=','draft')]}"/>
+							<field name="end_date" attrs="{'required':True,'readonly':[('state','!=','draft')]}"/>
+							
+							
+						</group>
+						</group>
+						
+						<notebook colspan="4">
+							<page string="Notes">
+								<field name="notes" attrs="{'readonly':[('state','!=','draft')]}"/>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="driving_license_tree" model="ir.ui.view">
+			<field name="name">driving.license.tree</field>
+			<field name="model">driving.license</field>
+			<field name="arch" type="xml">
+				<tree string="Driving License">
+					<field name="employee_id"/>
+					<field name="license_no" />
+					<field name="license_type"/>
+					<field name="license_date"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="driving_license_filter" model="ir.ui.view">
+			<field name="name">driving_license_filter</field>
+			<field name="model">driving.license</field>
+			<field name="arch" type="xml">
+				<search string="Driving License">
+					<field name="license_type" />
+					<field name="license_date" />
+					<field name="employee_id" />
+					<field name="degree_id" />
+					<field name="state" />
+					<field name="company_id" />
+					<separator orientation="vertical" />
+					<newline/>
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'license_type'}" />
+						<separator orientation="vertical" />
+						<filter icon="terp-go-year" string="End In Current Year" name="year" domain="[('end_date','&lt;=', time.strftime('%%Y-%%m-%%d')),('end_date','&gt;=',time.strftime('%%Y-01-01'))]" help="End In Current Year"/>
+
+						
+						<separator orientation="vertical" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+						<separator orientation="vertical" />
+						<filter string="Degree" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'degree_id'}" />
+						<separator orientation="vertical" />
+						<filter string="Company" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'company_id'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="driving_license_action" model="ir.actions.act_window">
+			<field name="name">Driving License</field>
+			<field name="res_model">driving.license</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="driving_license_filter" />
+		</record>
+
+		<menuitem id="driving_license_menu" name="Driving License"
+			parent="fleet.fleet_vehicles" action="driving_license_action" groups="fleet.group_fleet_manager,fleet.group_fleet_user,admin_affairs.group_fleet_user_hq,admin_affairs.group_fleet_manager_hq,admin_affairs.group_fleet_employee,admin_affairs.group_fleet_set_to_draft"/>
+		<!-- driving license Shortcuts -->
+
+		<act_window domain="[('employee_id','=',active_id)]" id="act_emp_driving_license"
+			 name="Driving License" res_model="driving.license" src_model="hr.employee" />
+
+
+		<!-- edit menu to include new admin affairs groups -->
+		<record id="fleet.menu_root" model="ir.ui.menu">
+			<field name="groups_id" eval="[(4,ref('admin_affairs.group_fleet_user_hq'))]"/>
+		</record>
+		<record id="fleet.fleet_configuration" model="ir.ui.menu">
+			<field name="groups_id" eval="[(4,ref('admin_affairs.group_fleet_user_hq'))]"/>
+		</record>
+		<record id="fleet.fleet_vehicles" model="ir.ui.menu">
+			<field name="groups_id" eval="[(4,ref('admin_affairs.group_fleet_user_hq'),ref('admin_affairs.group_fleet_employee'))]"/>
+		</record>
+		<record id="fleet.fleet_vehicle_menu" model="ir.ui.menu">
+			<field name="groups_id" eval="[(4,ref('admin_affairs.group_fleet_user_hq'))]"/>
+		</record>
+
+
+		<record id="admin_affairs_account_form" model="ir.ui.view">
+			<field name="name">admin_affairs.account.form</field>
+			<field name="model">admin_affairs.account</field>
+			<field name="arch" type="xml">
+				<form string="Accounting configuration" version="7.0">
+					<sheet>
+						<group col="4" colspan="2">
+							<field name="model_id" />
+							<field name="journal_id" domain="[('type','in',('purchase','sale'))]"/>
+							<field name="account_id" domain="['|',('user_type.report_type','=','expense'),('user_type.report_type','=','income')]"/>
+							<field name="analytic_id" domain="[('parent_id','!=',False),('type','=','normal')]"/>
+						</group>
+						<notebook colspan="4">
+							<page string="Notes">
+								<field name="notes" colspan="4" nolabel="1" />
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="admin_affairs_account_tree" model="ir.ui.view">
+			<field name="name">admin_affairs.account.tree</field>
+			<field name="model">admin_affairs.account</field>
+			<field name="arch" type="xml">
+				<tree string="Accounting configuration">
+					<field name="model_id" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="admin_affairs_account_filter" model="ir.ui.view">
+			<field name="name">admin_affairs.account.list.select</field>
+			<field name="model">admin_affairs.account</field>
+			<field name="arch" type="xml">
+				<search string="Search for configuration record">
+					<field name="model_id" />
+					<separator orientation="vertical" />
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Model" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'model_id'}" />
+						<separator orientation="vertical" />
+						<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="admin_affairs_account_action" model="ir.actions.act_window">
+			<field name="name">Accounting configuration</field>
+			<field name="res_model">admin_affairs.account</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="admin_affairs_account_filter" />
+		</record>
+
+		<!--menuitem id="accounting_configuration_menu" name="Accounting Configuration"
+			parent="admin_affairs_configuration_menu" action="admin_affairs_account_action" /-->
+
+		<!-- Vehicle Category -->
+		<record id="vehicle_category_form" model="ir.ui.view">
+			<field name="name">vehicle.category.form</field>
+			<field name="model">vehicle.category</field>
+			<field name="arch" type="xml">
+           		 <form string="Vehicle Category" version="7.0">
+           		 	    <sheet>
+                        	<group col="2">
+                            	<group>
+									<field name="company_id" required="1" groups="base.group_multi_company"/>
+                            		<field name="name" />
+                            		<field name="vehicle_model_id" />
+									<field name="share" />
+                            	</group>
+                            </group>
+                        </sheet>
+           		 </form>
+           	</field>
+		</record>
+		<record id='vehicle_category_tree' model='ir.ui.view'>
+            <field name="name">vehicle.category.tree</field>
+            <field name="model">vehicle.category</field>
+            <field name="arch" type="xml">
+                <tree string="Vehicle Category" version="7.0">
+                        <field name="name" />
+                        <field name="vehicle_model_id" /> 
+						<field name="share" />                   
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vehicle_category">
+            <field name="name">Vehicle Category</field>
+            <field name="res_model">vehicle.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new category. 
+              </p>
+              <p>
+              		Add a new category to vehicle and the cost of it's license
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="vehicle_categry_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vehicle_category_form"/>
+            <field name="act_window_id" ref="action_vehicle_category"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="vehicle_categry_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="vehicle_category_tree"/>
+            <field name="act_window_id" ref="action_vehicle_category"/>
+        </record>
+
+		<!-- Vehicle Place -->
+		<record id="vehicle_place_form" model="ir.ui.view">
+			<field name="name">vehicle.place.form</field>
+			<field name="model">vehicle.place</field>
+			<field name="arch" type="xml">
+           		 <form string="Vehicle Place" version="7.0">
+           		 	    <sheet>
+                        	<group col="2">
+                            	<group>
+									<field name="company_id" required="1" groups="base.group_multi_company" />
+                            		<field name="name" />
+									<field name="share" />
+                            	</group>
+                            </group>
+                        </sheet>
+           		 </form>
+           	</field>
+		</record>
+		<record id='vehicle_place_tree' model='ir.ui.view'>
+            <field name="name">vehicle.place.tree</field>
+            <field name="model">vehicle.place</field>
+            <field name="arch" type="xml">
+                <tree string="Vehicle Place" version="7.0">
+                        <field name="name" />
+						<field name="share" />                   
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vehicle_place">
+            <field name="name">Vehicle place</field>
+            <field name="res_model">vehicle.place</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new place. 
+              </p>
+              <p>
+              		Add a new place to vehicle
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="vehicle_place_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vehicle_place_form"/>
+            <field name="act_window_id" ref="action_vehicle_place"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="vehicle_place_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="vehicle_place_tree"/>
+            <field name="act_window_id" ref="action_vehicle_place"/>
+        </record>
+
+		<menuitem name="Vehicles" parent="fleet.fleet_configuration" 
+			id="vehicle_config_menu" sequence="1" groups="group_fleet_config"/>
+
+		<menuitem action="open_module_tree_vehicle_out_department" id="menu_vehicle_out_department_tree" parent="vehicle_config_menu" sequence="10" groups="admin_affairs.group_fleet_config"/>
+
+		<menuitem action="fleet.fleet_vehicle_model_act" parent="vehicle_config_menu" 
+			id="fleet.fleet_vehicle_model_menu" sequence="1" groups="admin_affairs.group_fleet_config"/>
+
+        <menuitem action="fleet.fleet_vehicle_model_brand_act" parent="vehicle_config_menu" 
+			id="fleet.fleet_vehicle_model_brand_menu" sequence="2" groups="admin_affairs.group_fleet_config"/>
+
+        <menuitem action="fleet.fleet_vehicle_state_act" parent="vehicle_config_menu" 
+			id="fleet.fleet_vehicle_state_menu" sequence="5" groups="admin_affairs.group_fleet_config"/>
+
+		<!--menuitem id="fleet.fleet_vehicle_log_contract_menu" name="Vehicle Services"
+			parent="fleet.fleet_vehicles" action="fleet.fleet_vehicle_log_contract_act"/-->
+		
+		<menuitem  id="vehicle_category_menu" name="Vehicle Category" parent="vehicle_config_menu" 
+             action="action_vehicle_category" sequence="3" groups="admin_affairs.group_fleet_config"/>
+		
+		<menuitem  id="vehicle_place_menu" name="Vehicle Place" parent="vehicle_config_menu" 
+             action="action_vehicle_place" sequence="4" groups="admin_affairs.group_fleet_config"/>
+
+		<menuitem id="fleet_report" name="Reports" parent="fleet.menu_root" sequence="4"/>
+		<!-- Vehicle report menu -->
+		<menuitem name="Vehicles Reports" parent="fleet_report" 
+                id="fleet_report_menu" sequence="1" groups="group_fleet_report"/>
+
+
+
+		<!-- Vehicle Accident -->
+		<record id="vehicle_accident_form" model="ir.ui.view">
+			<field name="name">vehicle.accident.form</field>
+			<field name="model">vehicle.accident</field>
+			<field name="arch" type="xml">
+				<form string="Vehicle Accident" version="7.0">
+					<header>
+						<button string="Confirm" name="confirm" states="draft"  type="workflow"
+						icon="gtk-apply" colspan="2"/>
+
+						<button string="To maintenace Dept"  name="maintenace" type="workflow"
+						icon="gtk-apply" colspan="2" attrs="{'invisible':['|',('wrong','=',True),('state','!=','vehicle_dept')]}" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+
+						<button string="To maintenace Dept" states="committee" name="maintenace" type="workflow"
+						icon="gtk-apply" colspan="2" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+
+
+						<button string="To committee"  name="committee" type="workflow"
+						icon="gtk-apply" colspan="2" attrs="{'invisible':['|',('wrong','=',False),('state','!=','vehicle_dept')]}" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+						
+						<button string="Done" name="done" states="maintenace_dept" type="workflow"
+						icon="gtk-apply" colspan="2" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+
+						<field name="state" widget="statusbar" statusbar_visible="draft" statusbar_colors='{"confirm":"gray","draft":"blue"}'/>
+					</header>
+					<sheet>
+						<group col="4" colspan="2" >
+						<group>
+							<field name="vehicle_id" attrs="{'readonly':[('state','!=','draft')]}" domain="[('state','=','confirm'),('status','=','active')]" on_change="onchange_vehicle_id(vehicle_id)" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}"/>
+							<field name="driver_id" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}" attrs="{'readonly':[('state','!=','draft')],'invisible':[('out','=',True)]}" on_change="onchange_driver_id(driver_id)"/>
+							<field name="out_driver" attrs="{'readonly':[('state','!=','draft')],'invisible':[('out','!=',True)]}"/>
+
+							<field name="license_no" attrs="{'readonly':True,'invisible':[('out','=',True)]}"/>
+							<field name="license_type" attrs="{'readonly':True,'invisible':[('out','=',True)]}"/>
+							<field name="license_end_date" attrs="{'readonly':True,'invisible':[('out','=',True)]}"/>
+							<field name="license_id" invisible="1"/>
+							<field name="company_id" groups="base.group_multi_company" attrs="{'readonly':[('state','!=','draft')],'required':True}"/>
+							<field name="out" invisible="1"/>
+						</group>
+						<group>
+							<field name="accident_date" attrs="{'readonly':[('state','!=','draft')]}"/>
+							<field name="accident_place" attrs="{'readonly':[('state','!=','draft')]}"/>
+							<field name="accident_type" attrs="{'readonly':[('state','!=','draft')]}"/>
+							<!--field name="insurance_report" attrs="{'readonly':[('state','!=','draft')],'invisible':[('accident_type','!=','criminal')]}"/-->
+							<field name="wrong" attrs="{'readonly':[('state','not in',['vehicle_dept','committee'])],'invisible':[('state','in',['draft'])]}"/>
+							<field name="traffic_report" attrs="{'readonly':[('state','!=','vehicle_dept')],'invisible':[('state','!=','vehicle_dept')]}"/>
+							<field name="court_attach" attrs="{'readonly':[('state','!=','committee')],'invisible':['|',('wrong','=',False),('state','!=','committee')]}"/>
+							
+						</group>
+						</group>
+						<group>
+						<field name="members_ids" attrs="{'required':[('state','=','committee')],'readonly':[('state','!=','committee')],'invisible':['|',('wrong','=',False),('state','!=','committee')]}" widget="many2many_tags"/>
+					    </group>
+						<notebook colspan="4">
+							<page string="Decision" attrs="{'required':[('state','=','committee')],'readonly':[('state','!=','committee')],'invisible':['|',('wrong','=',False),('state','!=','committee')]}">
+								<field name="decision" attrs="{'readonly':[('state','not in',('committee'))]}" />
+							</page>
+							<page string="Notes">
+								<field name="notes" attrs="{'readonly':[('state','!=','draft')]}"/>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="vehicle_accident_tree" model="ir.ui.view">
+			<field name="name">vehicle.accident.tree</field>
+			<field name="model">vehicle.accident</field>
+			<field name="arch" type="xml">
+				<tree string="Vehicle Accident">
+					<field name="accident_date"/>
+					<field name="accident_type" />
+					<field name="vehicle_id"/>
+					<field name="driver_id"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="vehicle_accident_filter" model="ir.ui.view">
+			<field name="name">vehicle_accident_filter</field>
+			<field name="model">vehicle.accident</field>
+			<field name="arch" type="xml">
+				<search string="Vehicle Accident">
+					<field name="accident_type" />
+					<field name="accident_date" />
+					<field name="driver_id" />
+					<field name="vehicle_id" />
+					<separator orientation="vertical" />
+					<newline/>
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'accident_type'}" />
+						<separator orientation="vertical" />
+						<filter icon="terp-go-year" string="Current Year" name="year" domain="[('accident_date','&lt;=', time.strftime('%%Y-%%m-%%d')),('accident_date','&gt;=',time.strftime('%%Y-01-01'))]" help="Current Year"/>
+						<separator orientation="vertical" />
+						<filter icon="terp-go-month" 
+						        string="Current Month"
+						        name="month"
+						        domain="[('accident_date','&lt;=',(context_today()+relativedelta(day=31)).strftime('%%Y-%%m-%%d')),('accident_date','&gt;=',(context_today()-relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"
+						        help="Current Month"/>
+						<separator orientation="vertical" />
+						<filter string="Driver" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'driver_id'}" />
+						<separator orientation="vertical" />
+						<filter string="vehicle" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'vehicle_id'}" />
+						<separator orientation="vertical" />
+						<filter string="Company" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'company_id'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="vehicle_accident_action" model="ir.actions.act_window">
+			<field name="name">Vehicle Accident</field>
+			<field name="res_model">vehicle.accident</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="vehicle_accident_filter" />
+		</record>
+
+		<menuitem id="vehicle_accident_menu" name="Vehicle Accident"
+			parent="fleet.fleet_vehicles" action="vehicle_accident_action" groups="fleet.group_fleet_manager,fleet.group_fleet_user,admin_affairs.group_fleet_user_hq,admin_affairs.group_fleet_manager_hq,admin_affairs.group_fleet_employee"/>
+		<!-- Vehicle Accident Shortcuts -->
+
+		<act_window domain="[('vehicle_id','=',active_id)]" id="act_vehicle_accident"
+			name="Vehicle Accident Archive" res_model="vehicle.accident" src_model="fleet.vehicle" />
+
+
+
+
+		<!-- vehicle custody move -->
+
+		<record id="vehicle_custody_move_form" model="ir.ui.view">
+			<field name="name">vehicle.custody.move.form</field>
+			<field name="model">vehicle.custody.move</field>
+			<field name="arch" type="xml">
+				<form string="Custody Move" version="7.0">
+					<sheet>
+						<group >
+							<field name="vehicle_id" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}" domain="[('state','=','confirm'),('status','=','active')]"/>
+							<field name="move_id"/>
+						</group>
+						<group>
+							<field name="after_custody_ids" widget="many2many_tags"/>
+							<field name="before_custody_ids" widget="many2many_tags"/>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="vehicle_custody_move_tree" model="ir.ui.view">
+			<field name="name">vehicle.custody.move.tree</field>
+			<field name="model">vehicle.custody.move</field>
+			<field name="arch" type="xml">
+				<tree string="Custody Move">
+					<field name="vehicle_id"/>
+					<field name="move_id"/>
+					<field name="after_custody_ids"/>
+					<field name="before_custody_ids"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="vehicle_custody_move_filter" model="ir.ui.view">
+			<field name="name">custody_move_filter</field>
+			<field name="model">vehicle.custody.move</field>
+			<field name="arch" type="xml">
+				<search string="Vehicle Ownership">
+					<field name="vehicle_id" />
+					<separator orientation="vertical" />
+					<newline />
+				</search>
+			</field>
+		</record>
+
+		
+		<!-- report 12c move -->
+
+		<report id="report_12c_move" menu="False"  model="vehicle.move" name="report_12c_move" string="12 C Report" rml="addons/admin_affairs/report/report_12c_move.rml" />
+
+		<!-- Vehicle Move -->
+		<record id="vehicle_move_form" model="ir.ui.view">
+			<field name="name">vehicle.move.form</field>
+			<field name="model">vehicle.move</field>
+			<field name="arch" type="xml">
+				<form string="Vehicle Move" version="7.0">
+					<header>
+						<button name="%(report_12c_move)d"  string="Print 12C" states="done" type="action" icon="gtk-print" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+						<button string="Assign" name="assign" type="workflow"
+						icon="gtk-apply" colspan="2" attrs="{'invisible':['|',('move_type','not in',['assign','assign_oc']),('state','!=','draft')]}" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+
+						<button string="Return" name="return" type="workflow"
+						icon="gtk-apply" colspan="2" attrs="{'invisible':['|',('move_type','not in',['return','return_oc']),('state','!=','draft')]}" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+						
+						<button string="Set To Draft" name="set_to_draft" states="refuse"  type="workflow" icon="gtk-apply" colspan="2" groups="admin_affairs.group_fleet_set_to_draft"/>
+
+						<button string="Done" name="done" type="workflow"
+						icon="gtk-apply" colspan="2"
+						attrs="{'invisible':[('state','not in',['receipt','delivery'])]}" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+
+						<!--button string="Done" name="done" type="workflow"
+						icon="gtk-apply" colspan="2" 
+						attrs="{'invisible':['|',('move_type','!=','return'),('state','!=','receipt')]}"/-->
+
+						<button string="Refuse" name="refuse" type="workflow"
+						icon="gtk-apply" colspan="2" 
+						attrs="{'invisible':[('state','not in',['receipt','delivery'])]}" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+
+						<!--button string="Refuse" name="refuse" type="workflow"
+						icon="gtk-apply" colspan="2" 
+						attrs="{'invisible':['|',('move_type','!=','return'),('state','!=','receipt')]}"/-->
+
+						<button string="Confirm" name="confirm" type="workflow"
+						icon="gtk-apply" colspan="2" attrs="{'invisible':['|',('move_type','!=','other'),('state','!=','draft')]}" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft" statusbar_colors='{"done":"gray","draft":"blue"}'/>
+					</header>
+					<sheet>
+						<div class="oe_title">
+                            <h1>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+						<group col="4" colspan="2" >
+						<group>
+							<field name="vehicle_id" attrs="{'readonly':[('state','!=','draft')]}"  domain="[('state','=','confirm'),('status','=','active')]" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}" />
+							<field name="body_id"/>
+							<field name="license_plate"/>
+							<field name="vehicle_place" readonly="1"/>
+							<field name="department_id" attrs="{'required':[('use_type','in',['management','dedicated_managemnet']),('out','!=',True)],'readonly':[('state','!=','draft')]}" options="{'no_open':True,'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}"/>
+							<field name="out_department" attrs="{'readonly':[('state','!=','draft')],'invisible':[('out','!=',True)]}"/>
+							<field name="move_type" attrs="{'readonly':[('state','!=','draft')],'required':True}"/>
+							<!--field name="assign_type" attrs="{'readonly':[('state','!=','draft')],'invisible':[('hq','=',False)],'required':[('move_type','=','assign'),('hq','=',True)]}"/-->
+							<field name="move_date" attrs="{'readonly':[('state','!=','draft')]}"/>
+							<field name="company_id" groups="base.group_multi_company" attrs="{'readonly':[('state','!=','draft')],'required':True}"/>
+							<field name="hq" invisible="1"/>
+							<field name="out" invisible="1"/>
+						</group>
+<!-- stop on change in use 
+on_change="onchange_vehicle_use(use,hq, department_id, employee_id)" -->
+
+<!-- stop on change in vehicle , department , employee 
+on_change="onchange_vehicle_id(vehicle_id,hq,use,employee_id,department_id)" -->
+						<group>
+							<field name="employee_id" attrs="{'required':[('use_type','in',['dedicated','dedicated_managemnet']),('out','!=',True)],'readonly':[('state','!=','draft')],'invisible':[('hq','=',False),('use_type','in',['management'])]}" domain="[('state','=','approved')]" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}"/>
+							<field name="out_driver" attrs="{'readonly':[('state','!=','draft')],'invisible':[('out','!=',True)]}" on_change="onchange_out_driver(out_driver)"/>
+							<field name="degree_id" attrs="{'invisible':[('hq','=',False),('use_type','in',['management'])]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}"/>
+							<field name="driver_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}"/>
+							<field name="use" attrs="{'readonly':[('state','!=','draft')]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}"/>
+							<field name="use_type" invisible="1"/>
+							<field name="share" invisible="1"/>
+							<field name="vehicle_status" attrs="{'readonly':[('state','!=','draft')]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}"/>
+							<field name="custody_ids" attrs="{'readonly':[('state','!=','draft')]}" widget="many2many_tags" on_change="onchange_custody_ids(custody_ids)" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+							<field name="place_id" attrs="{'required':[('state','in',['receipt','delivery'])],'readonly':[('state','not in',['draft','receipt','delivery'])]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True}"/>
+						</group>
+						</group>
+						<group>
+						<field name="responser" readonly="1"/>
+					    </group>
+						<notebook colspan="4">
+							<page string="Notes">
+								<field name="comment" attrs="{'readonly':[('state','!=','draft')]}"/>
+							</page>
+							<page string="Archive">
+								<group>
+									<field name="previous_employee_id" attrs="{'invisible':[('previous_employee_id','=',False)],'readonly':True}"/>
+									<field name="previous_old_system_driver" attrs="{'invisible':[('previous_old_system_driver','=',False)],'readonly':True}"/>
+									<field name="previous_department_id" readonly="1"/>
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="vehicle_move_tree" model="ir.ui.view">
+			<field name="name">vehicle.move.tree</field>
+			<field name="model">vehicle.move</field>
+			<field name="arch" type="xml">
+				<tree string="Vehicle Move">
+					<field name="name"/>
+					<field name="move_date"/>
+					<field name="move_type" />
+					<field name="vehicle_id"/>
+					<field name="employee_id" string="Current Employee"/>
+					<field name="previous_employee_id"/>
+					<field name="responser"/>
+					<field name="department_id" string="Current Department"/>
+					<field name="previous_department_id"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="vehicle_move_filter" model="ir.ui.view">
+			<field name="name">vehicle_move_filter</field>
+			<field name="model">vehicle.move</field>
+			<field name="arch" type="xml">
+				<search string="Vehicle Move">
+					<field name="move_type" />
+					<field name="move_date" />
+					<field name="employee_id" />
+					<field name="vehicle_id" />
+					<field name="state" />
+					<field name="vehicle_status" />
+					<field name="department_id"/>
+					<field name="company_id"/>
+					<field name="place_id" />
+					<separator orientation="vertical" />
+					<newline/>
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Move Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'move_type'}" />
+						<separator orientation="vertical" />
+						<filter string="Move Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'move_date'}" />
+						<separator orientation="vertical" />
+						<filter string="Employee" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'employee_id'}" />
+							<separator orientation="vertical" />
+						<filter string="Department" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'department_id'}" />
+						<separator orientation="vertical" />
+						<filter string="vehicle" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'vehicle_id'}" />
+						<separator orientation="vertical" />
+						<filter string="Vehicle Status" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'vehicle_status'}" />
+						<separator orientation="vertical" />
+						<filter string="Vehicle Place" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'place_id'}" />
+						<separator orientation="vertical" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+						<separator orientation="vertical" />
+						<filter string="Company" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'company_id'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="vehicle_move_action" model="ir.actions.act_window">
+			<field name="name">Vehicle Move</field>
+			<field name="res_model">vehicle.move</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="vehicle_move_filter" />
+		</record>
+
+		<menuitem id="vehicle_move_menu" name="Vehicle Move"
+			parent="fleet.fleet_vehicles" action="vehicle_move_action" groups="fleet.group_fleet_manager,fleet.group_fleet_user,admin_affairs.group_fleet_user_hq,admin_affairs.group_fleet_manager_hq,admin_affairs.group_fleet_set_to_draft"/>
+		<!-- Vehicle Move Shortcuts -->
+
+		<act_window domain="[('vehicle_id','=',active_id)]" id="act_vehicle_move"
+			name="Vehicle Moves Archive" res_model="vehicle.move" src_model="fleet.vehicle" />
+
+		<!-- Vehicle custody Move Shortcuts -->
+
+		<act_window domain="[('vehicle_id','=',active_id)]" id="act_vehicle_custody_move"
+			name="Vehicle Custody Moves Archive" res_model="vehicle.custody.move" src_model="fleet.vehicle" />
+
+
+
+
+		<!-- Vehicle Sale -->
+
+		<record id="vehicle_sale_form" model="ir.ui.view">
+			<field name="name">vehicle.sale.form</field>
+			<field name="model">vehicle.sale</field>
+			<field name="arch" type="xml">
+				<form string="Vehicle Sale" version="7.0">
+					<header>
+						<button string="Confirm" name="confirm" states="draft" type="object"
+						icon="gtk-apply" colspan="2"/>
+						<button string="Set To Draft" name="set_to_draft" states="confirm"  type="object" icon="gtk-apply" colspan="2" invisible="1"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft" statusbar_colors='{"confirm":"gray","draft":"blue"}'/>
+						</header>
+					<sheet>
+						<div class="oe_title">
+                            <h1>
+                                <field name="reference" class="oe_inline"/>
+                            </h1>
+                        </div>
+						<group col="4" colspan="2" >
+							<group>
+							<field name="name" attrs="{'readonly':[('state','=','confirm')],'required':True}"/>
+							<field name="sale_date" attrs="{'readonly':[('state','=','confirm')]}"/>
+							<field name="sale_type" attrs="{'readonly':[('state','=','confirm')],'required':True}"/>
+							<field name="comment" attrs="{'readonly':[('state','=','confirm')]}"/>
+							<field name="company_id" groups="base.group_multi_company" attrs="{'readonly':[('state','=','confirm')]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+						</group>
+						</group>
+						<notebook colspan="4">
+							<page string="Vehicle Sale Lines">
+								<field name="line_id" colspan="4" nolabel="1" attrs="{'readonly':[('state','=','confirm')]}" context="{'model':'vehicle.sale','line_id':line_id}" >
+									<tree editable="top">
+									<field name="vehicle_id" domain="[('status','=','active'),('state','=','confirm')]" context="{'model':'vehicle.sale','line_id':parent.line_id}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+									<field name="model_id" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+									<field name="body_id" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+									<field name="vehicle_sale_type" invisible="1"/>
+									<field name="company_assess" attrs="{'invisible':[('vehicle_sale_type','=','pension')]}" />
+									<field name="committee_assess"/>
+									<field name="agreed_amount" />
+									<field name="actual_sale_amount" />
+									<field name="purchaser"/>
+									<field name="card_no"/>
+								</tree>
+							</field>
+							 <group class="oe_subtotal_footer">
+                                <div class="oe_subtotal_footer_separator oe_inline">
+                                    <label for="amount_total"/>
+                                </div>
+                                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary"/>
+
+								<div class="oe_subtotal_footer_separator oe_inline">
+                                    <label for="actual_sale_amount_total"/>
+                                </div>
+                                <field name="actual_sale_amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary"/>
+
+                            </group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="vehicle_sale_tree" model="ir.ui.view">
+			<field name="name">vehicle.sale.tree</field>
+			<field name="model">vehicle.sale</field>
+			<field name="arch" type="xml">
+				<tree string="Vehicle Sale">
+					<field name="reference" />
+					<field name="name" />
+					<field name="sale_date"/>
+					<field name="sale_type" />
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="vehicle_sale_filter" model="ir.ui.view">
+			<field name="name">vehicle_sale_filter</field>
+			<field name="model">vehicle.sale</field>
+			<field name="arch" type="xml">
+				<search string="Vehicle Sale">
+					<field name="reference" />
+					<field name="name" />
+					<field name="sale_type" />
+					<field name="sale_date" />
+					<field name="state" />
+					<field name="comment" />
+					<separator orientation="vertical" />
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="sale Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'sale_type'}" />
+						<separator orientation="vertical" />
+						<filter string="Sale Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'sale_date'}" />
+						<separator orientation="vertical" />
+						<filter string="Company" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'company_id'}" />
+						<separator orientation="vertical" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="vehicle_sale_action" model="ir.actions.act_window">
+			<field name="name">Vehicle Sale</field>
+			<field name="res_model">vehicle.sale</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="vehicle_sale_filter" />
+		</record>
+
+		<menuitem id="vehicle_sale_menu" name="Vehicle Sale"
+			parent="fleet.fleet_vehicles" action="vehicle_sale_action" groups="fleet.group_fleet_manager,fleet.group_fleet_user,admin_affairs.group_fleet_user_hq,admin_affairs.group_fleet_manager_hq"/>
+
+		<!-- Vehicle theft -->
+
+		<record id="vehicle_theft_form" model="ir.ui.view">
+			<field name="name">vehicle.theft.form</field>
+			<field name="model">vehicle.theft</field>
+			<field name="arch" type="xml">
+				<form string="Vehicle Theft" version="7.0">
+					<header>
+						<button string="Confirm" name="confirm" states="draft" type="object"
+						icon="gtk-apply" colspan="2"/>
+						<button string="Done" name="done" states="confirm" type="object"
+						icon="gtk-apply" colspan="2" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user"/>
+						<button string="Set To Draft" name="set_to_draft" states="confirm"  type="object" icon="gtk-apply" colspan="2" groups="admin_affairs.group_fleet_set_to_draft"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,confirm,done" statusbar_colors='{"confirm":"gray","draft":"blue"}'/>
+						</header>
+					<sheet>
+						<div class="oe_title">
+                            <h1>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+						<group col="4" colspan="2">
+						<group >
+							<field name="vehicle_id" attrs="{'readonly':[('state','in',['confirm','done'])]}" domain="[('state','=','confirm'),('status','=',('active'))]" on_change="onchange_vehicle_id(vehicle_id)" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+							<field name="employee_id" attrs="{'readonly':True,'invisible':[('out','=',True)]}"/>
+							<field name="out_driver" attrs="{'readonly':True,'invisible':[('out','!=',True)]}" on_change="onchange_out_driver(out_driver)"/>
+							<field name="out" invisible="1"/>
+							<field name="body_id"/>
+							<field name="model_id"/>
+							<field name="vehicle_type"/>
+							<field name="company_id" groups="base.group_multi_company" attrs="{'readonly':[('state','in',['confirm','done'])]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+						</group>
+						<group >
+							<field name="theft_date" attrs="{'readonly':[('state','in',['confirm','done'])]}"/>
+							<field name="place" attrs="{'readonly':[('state','in',['confirm','done'])],'required':True}"/>
+
+							<field name="police_department" attrs="{'readonly':[('state','in',['confirm','done'])],'required':True}"/>
+							<field name="report_no" attrs="{'readonly':[('state','in',['confirm','done'])],'required':True}"/>
+
+							<field name="remove_custody" attrs="{'readonly':[('state','in',['confirm','done'])]}"/>
+							<field name="committee_attach" attrs="{'readonly':[('state','in',['done'])]}"/>
+							<field name="gm_attach" attrs="{'readonly':[('state','in',['done'])]}"/>
+							<field name="user_id" invisible="1"/>
+						</group>
+					</group>
+						<notebook colspan="4">
+							<page string="Committee Comment">
+								<field name="comment" attrs="{'readonly':[('state','=','done')],'required':[('state','=','confirm')]}"/>
+							</page>
+							<page string="Committee Members">
+								<field colspan="4" name="members_ids" nolabel="1" attrs="{'readonly':[('state','=','done')],'required':[('state','=','confirm')]}" domain="[('state','=','approved')]"/>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="vehicle_theft_tree" model="ir.ui.view">
+			<field name="name">vehicle.theft.tree</field>
+			<field name="model">vehicle.theft</field>
+			<field name="arch" type="xml">
+				<tree string="Vehicle Theft">
+					<field name="name" />
+					<field name="employee_id" />
+					<field name="theft_date"/>
+					<field name="place" />
+					<field name="vehicle_id" />
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="vehicle_theft_filter" model="ir.ui.view">
+			<field name="name">vehicle_theft_filter</field>
+			<field name="model">vehicle.theft</field>
+			<field name="arch" type="xml">
+				<search string="Vehicle Theft">
+					<field name="name" />
+					<field name="employee_id" />
+					<field name="vehicle_id" />
+					<field name="comment" />
+					<field name="state"/>
+					<field name="theft_date"/>
+					<field name="company_id"/>
+					<separator orientation="vertical" />
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Vehicle" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'vehicle_id'}" />
+						<separator orientation="vertical" />
+						<filter string="Employee" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'employee_id'}" />
+						<separator orientation="vertical" />
+						<filter string="Model" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'model_id'}" />
+						<separator orientation="vertical" />
+						<filter string="Theft Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'theft_date'}" />
+						<separator orientation="vertical" />
+						<filter string="Company" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'company_id'}" />
+						<separator orientation="vertical" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="vehicle_theft_action" model="ir.actions.act_window">
+			<field name="name">Vehicle Theft</field>
+			<field name="res_model">vehicle.theft</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="vehicle_theft_filter" />
+		</record>
+
+		<menuitem id="vehicle_theft_menu" name="Vehicle Theft"
+			parent="fleet.fleet_vehicles" action="vehicle_theft_action" groups="admin_affairs.group_fleet_user_hq,fleet.group_fleet_user,admin_affairs.group_fleet_employee"/>
+
+		<!-- Vehicle Theft Shortcuts -->
+		<act_window domain="[('vehicle_id','=',active_id)]" id="act_vehicle_theft"
+			name="Vehicle Theft Archive" res_model="vehicle.theft" src_model="fleet.vehicle" />
+
+
+
+
+	</data>
+</openerp>

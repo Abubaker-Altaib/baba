@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+     <record id="job_transfer_view" model="ir.ui.view">
+        <field name="name">Job Transfer</field>
+        <field name="model">job.transfer.wiz</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="job_id" options="{'no_create': True, 'no_open': True}" invisible="True"/>
+                        <field name="from_department_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="to_department_id" options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                    <group>
+                        <field name="type" widget="radio"/>
+                        <field name="date" />
+                    </group>
+                </group>
+                <group>
+                    <field name="reason" placeholder="Reason..."/>
+                </group>
+                <footer>
+                    <button name="transfer_job" string="Transfer Job" type="object" class="oe_highlight"/>
+                    <button string="Discard" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <act_window id="transfer_job_wiz_action"
+    name="Transfer Job"
+    src_model="hr.job"
+    res_model="job.transfer.wiz"
+    view_type="form" view_mode="form"
+    context="{'default_job_id': active_id}"
+    target="new"/>
+</odoo>

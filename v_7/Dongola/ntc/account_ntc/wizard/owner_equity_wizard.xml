@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record id="owner_equity_line_form" model="ir.ui.view">
+            <field name="name">owner.equity.line</field>
+            <field name="model">owner.equity.line</field>
+            <field name="arch" type="xml">
+                <form string="Owner Equity Line" version="7.0">
+                    <group>
+                        <field name="opening" />
+                        <field name="opening_journal" attrs="{'invisible':[('opening','=',False)],'required':[('opening','=',True)]}"/>
+                        <field name="name" />
+                        <field name="value1" />
+                        <field name="value2" />
+                        <field name="value3" />
+                        <field name="value4" />
+                    </group>
+                </form>
+            </field>
+        </record>
+
+
+
+
+
+        <record id="owner_equity_report_form33" model="ir.ui.view">
+            <field name="name">owner.equity</field>
+            <field name="model">owner.equity</field>
+            <field name="arch" type="xml">
+                <form string="Owner Equity" version="7.0">
+                    <group>
+                        <field name="year0" widget="selection"/>
+                        <field name="year" widget="selection"/>
+                    </group>
+                    <button name="print_report" string="Print" type="object" class="oe_highlight"/>  
+                    <notebook>
+                        <page string="Lines">
+                            <field name="line_ids" widget="one2many">
+                                <tree>
+                                    <field name="opening" />
+                                    <field name="opening_journal"/>
+                                    <field name="name" />
+                                    <field name="value1" />
+                                    <field name="value2" />
+                                    <field name="value3" />
+                                    <field name="value4" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        <record id="owner_equity_report2" model="ir.actions.act_window">
+            <field name="name">Owner Equity</field>
+            <field name="res_model">owner.equity</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+        <menuitem name="Owner Equity" action="owner_equity_report2" id="owner_equity_report_menu2" parent="account_balance_reporting.menu_account_balance_reporting" />
+    </data>
+</openerp>

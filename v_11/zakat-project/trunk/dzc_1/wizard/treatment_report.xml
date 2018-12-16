@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+		 <record id="treatment_wizard_form" model="ir.ui.view">
+      <field name="name">Treatment Report</field>
+      <field name="model">treatment.wizard</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml" >
+        <form >
+        <group colspan="2">
+	      <group>
+		<field name="date_from" required="1" />
+		<field name="report_type" required="1" />
+		<field name="sectors_ids"  widget="many2many_tags" attrs="{'invisible':[('catigory' , 'not in' , ('sector','sc','ss'))]}"/>
+		<field name="state" attrs="{'invisible':[('catigory' , 'not in' , ['state','ss'])]}" widget="many2many_tags"/>
+	      </group>
+	    <group>
+			<field name="date_to" required="1" />
+			<field name="treatment_type" required="1" />
+			<field name="catigory" required="1"/>
+		  	<field name="countries_ids"  widget="many2many_tags"  attrs="{'invisible':['|',('treatment_type' , '!=' , 'at'),('catigory' , 'not in' , ('country','sc'))]}"/>
+	     </group>
+            </group>
+          	<footer>
+                <button  name="print_report" string="Print" type="object" class="btn-primary" />
+                <button string="Cancel" class="btn-default" special="cancel" />
+            </footer>
+        </form>
+      </field>
+    </record>
+    <act_window id="treatment_report_action"
+      target="new"
+      name="Treatment Report"
+      res_model="treatment.wizard"
+      view_mode="form"/>
+      
+      <menuitem id="reports_menu"
+        parent="dzc1_menu"
+        name="Reports"
+        sequence="5"
+	action="treatment_report_action"
+       />
+       
+       <menuitem id="treatment2_reports_menu"
+        parent="reports_menu"
+        name="Treatment Report"
+        sequence="2"
+	action="treatment_report_action"
+       />
+    </data>
+    
+</odoo>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+  <data>
+    <!-- Renew Order-->
+
+    <record model='ir.ui.view' id='renew_order_tree'>
+
+      <field name='name'> Renew Support Order Tree</field>
+      <field name='model'>dzc1.organization.renew.order</field>
+      <field name='arch' type='xml'>
+        <tree string='Organization Renew Order Tree'>
+
+          <field name="name"/>
+
+          <field name="program_name"/>
+          <field name="oragnaztion_id" />
+
+          <field name="date"/>
+
+          <field name="approved_amount"/>
+          <field name="state" />
+
+        </tree>
+      </field>
+    </record>
+
+    <!-- Search View For d model -->
+    <record id="organization_renew_order_search" model="ir.ui.view">
+      <field name="name">Renew Order Search</field>
+      <field name="model">dzc1.organization.renew.order</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="program_name"/>
+          <field name="name"/>
+          <field name="oragnaztion_id"/>
+
+        </search>
+      </field>
+    </record>
+
+
+    <record id="view_renew_support_form" model="ir.ui.view">
+      <field name="name">Renew Support Order</field>
+      <field name="model">dzc1.organization.renew.order</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml" >
+        <form >
+          <header>
+            <button name="confirm_action" states="draft," string="Confirm" type="object" class="oe_highlight" />
+            <button name="approve_action" states="confirm," string="Approve" type="object" class="oe_highlight" />
+            <button name="done_action" states="approve," string="Done" type="object" class="oe_highlight" />
+            <button name="cancel_action" states="draft,approve,confirm" string="Cancel" type="object" class="oe_highlight" />
+            <button name="set_to_draft_action" states="cancel," string="Set To Draft" type="object" class="oe_highlight" />
+
+
+            <field name="state" widget="statusbar"/>
+          </header>
+          <sheet>
+
+            <group col="2" colspan="2">
+              <group>
+                <field name="name" readonly="1"/>
+
+                <field name="oragnaztion_id" required="1" domain="['&amp;',('channel_type' , '=' ,'fageer'),('support_type','=','periodic'),('company_id','=',company_id)]" attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+                <field name="approved_amount" required="1"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+              </group>
+              <group>
+                <field name="date" required="1"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+                <field name="program_name" required="1"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+                <field name="company_id" required="1" readonly="1"/>
+
+              </group>
+            </group>
+
+            <!-- zakat_state -->
+            <notebook>
+
+             <page string="Executed programs">
+              <field name="executed_programs_ids"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}">
+                <tree editable="bottom">
+                  <field name="name" required="1" domain="[('id' ,'=' ,parent.oragnaztion_id)]"/>
+                  <field name="no_of_people"/>
+                  <field name="cost"/>
+                </tree>
+              </field>
+            </page>
+
+            <page string="Researcher Report" >
+              
+                <field name="researcher_report" attrs="{'readonly':[('state', '!=', 'draft')], 'required': [('state', '=', 'draft')]}"/>
+              
+            </page>
+
+            <page string="Almasaref Manager Comment" attrs="{'invisible':[('state', '=', 'draft')]}">
+              
+                <field name="almasaref_manager_comment" attrs="{'readonly':[('state', '!=', 'confirm')], 'required': [('state', '=', 'confirm')],}" />
+               
+            </page>
+
+            <page string="Secretary of State Decision" attrs="{'invisible':['|',('state', '=', 'draft'),('state', '=', 'confirm')]}">
+              
+                <field name="secretary_of_state_decision" attrs="{'readonly':[('state', '!=', 'approve')],'required':[('state', '=', 'approve')]}"/>
+              
+            </page>
+             <page string="Voucher" attrs="{'invisible':[('state','!=','done')]}">
+                        <group>
+                        <field name="vaucher_id" readonly="1"/>
+                      </group>
+                      </page>
+          </notebook>
+
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Organization Renew Order action -->
+  <record id="renew_order_action" model="ir.actions.act_window">
+    <field name="name">Renew Organization Support</field>
+    <field name="res_model">dzc1.organization.renew.order</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+
+  <!--dzc1.organization.renew.order menu -->
+  <menuitem id="renew_support_menu"
+    parent="orgnization_menu"
+    name="Organization Renew Support Order"
+    action="renew_order_action"
+    sequence="3"
+
+    />
+  </data>
+</odoo>

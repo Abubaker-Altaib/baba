@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data noupdate="0">
+    		<record id="base.group_loan_user" model="res.groups">
+        		<field name="name">Loan / user</field>
+        		<!--field name="category_id" ref="hr_custom.category_hr" /-->
+    		</record>
+
+    		<record id="base.group_loan_manager" model="res.groups">
+				<field name="name">Loan / manager</field>
+				<!--field name="category_id" ref="hr_custom.category_hr" /-->
+	        </record>
+	</data>
+	<data noupdate="1">  
+		<!-- ###############HR Employee #####################-->
+        <record id="hr_employee_loan_user_rule" model="ir.rule">
+			<field name="name">HR employee loan user</field>
+			<field  name="model_id" ref="hr.model_hr_employee"/>
+			<field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_user'))]"/>
+		 </record> 
+
+		 <record id="hr_employee_user_rule" model="ir.rule">
+		 	<field name="name">HR Employee User Rule</field>
+		 	<field name="model_id" ref="hr.model_hr_employee"/>
+		 	<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="0"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[('user_id','=',user.id)]</field>
+			<field name="groups" eval="[(4,ref('base.group_user'))]"/>
+		 </record>
+
+		 <!--record id="manager_employee_user_rule" model="ir.rule">
+		 	<field name="name">HR Employee Manager Rule</field>
+		 	<field name="model_id" ref="hr.model_hr_employee"/>
+		 	<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">['|',('user_id','=',user.id),('parent_id.user_id','=',user.id)]</field>
+			<field name="groups" eval="[(4,ref('hr_custom.group_manager'))]"/>
+		 </record-->
+
+		 <!--record id="department_manager_employee_user_rule" model="ir.rule">
+		 	<field name="name">HR Employee Department Manager Rule</field>
+		 	<field name="model_id" ref="hr.model_hr_employee"/>
+		 	<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[('department_id','child_of',user.department_id.id)]</field>
+			<field name="groups" eval="[(4,ref('hr_custom.group_department_manager'))]"/>
+		 </record-->
+
+		 <!--record id="general_manager_employee_user_rule" model="ir.rule">
+		 	<field name="name">HR Employee General Manager Rule</field>
+		 	<field name="model_id" ref="hr.model_hr_employee"/>
+		 	<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[]</field>
+			<field name="groups" eval="[(4,ref('hr_custom.group_general_manager'))]"/>
+		 </record-->
+
+		 <record id="hr_manager_employee_user_rule" model="ir.rule">
+		 	<field name="name">HR Employee HR Manager Rule</field>
+		 	<field name="model_id" ref="hr.model_hr_employee"/>
+		 	<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="1"/>
+			<field name="perm_unlink" eval="1"/>
+			<field name="domain_force">[]</field>
+			<field name="groups" eval="[(4,ref('hr.group_hr_manager'))]"/>
+		 </record>
+
+		<!-- ################HR Loan Archive ###########################-->
+		
+		<record id="rule_loan_archive_manager" model="ir.rule">
+			<field name="model_id" ref="model_hr_loan_archive"/>
+			<field name="domain_force">[(1,'=',1)]</field>
+			<field name="name">HR loan archive manager</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_manager'))]"/>
+		</record>
+		
+		<record id="rule_loan_archive_user" model="ir.rule">
+			<field name="model_id" ref="model_hr_loan_archive"/>
+                        <field name="domain_force">['|',('employee_id.company_id','child_of',[user.company_id.id]),('employee_id.company_id','=',False)]</field>
+			<field name="name">HR loan archive user</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_user'))]"/>
+		</record>
+
+		<record id="loan_archive_user_rule" model="ir.rule">
+			<field name="name">HR loan archive User</field>
+			<field name="model_id" ref="model_hr_loan_archive"/>
+			<field name="domain_force">[('employee_id.user_id','=',user.id)]</field>
+			<field name="groups" eval="[(4,ref('base.group_user'))]"/>
+		</record>
+
+
+
+		<!-- ################# HR Loan Request ###################-->
+		<record id="rule_loan_manager" model="ir.rule">
+			<field name="model_id" ref="model_hr_loan_request"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[(1,'=',1)]</field>
+			<field name="name">HR loan manager</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_manager'))]"/>
+		</record>
+
+		<record id="rule_loan_user" model="ir.rule">
+			<field name="model_id" ref="model_hr_loan_request"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="1"/>
+			<field name="perm_unlink" eval="1"/>
+            <field name="domain_force">['|',('employee_id.company_id','child_of',[user.company_id.id]),('employee_id.company_id','=',False)]</field>
+			<field name="name">HR loan user</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_user'))]"/>
+		</record>
+
+		<record id="employee_loan_user_rule" model="ir.rule">
+			<field name="name">Employee Loan user</field>
+			<field name="model_id" ref="model_hr_loan_request"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="1"/>
+			<field name="perm_unlink" eval="1"/>
+			<field name="domain_force">[('employee_id.user_id','=',user.id)]</field>
+			<field name="groups" eval="[(4,ref('base.group_user'))]"/>
+		</record>
+
+		<!--record id="employee_loan_manager_rule" model="ir.rule">
+			<field name="name">Employee Loan Manager Rule</field>
+			<field name="model_id" ref="model_hr_loan_request"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[('employee_id.parent_id.user_id','=',user.id)]</field>
+			<field name="groups" eval="[(4,ref('hr_custom.group_manager'))]"/>
+		</record>
+
+		<record id="employee_loan_department_manager_rule" model="ir.rule">
+			<field name="name">Employee Loan Department Manager Rule</field>
+			<field name="model_id" ref="model_hr_loan_request"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[('employee_id.department_id','child_of',user.department_id.id)]</field>
+			<field name="groups" eval="[(4,ref('hr_custom.group_department_manager'))]"/>
+		</record>
+
+		<record id="employee_loan_general_manager_rule" model="ir.rule">
+			<field name="name">Employee Loan General Manager Rule</field>
+			<field name="model_id" ref="model_hr_loan_request"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[]</field>
+			<field name="groups" eval="[(4,ref('hr_custom.group_general_manager'))]"/>
+		</record-->
+
+		<record id="employee_loan_hr_manager_rule" model="ir.rule">
+			<field name="name">Employee Loan HR Manager Rule</field>
+			<field name="model_id" ref="model_hr_loan_request"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">['|',('employee_id.company_id','child_of',[user.company_id.id]),('employee_id.company_id','=',False)]</field>
+			<field name="groups" eval="[(4,ref('hr.group_hr_manager')),(4,ref('hr.group_hr_user'))]"/>
+		</record>
+
+		<!-- #####################HR Loan Suspend############################-->
+		<record id="employee_loan_suspend_user_rule" model="ir.rule">
+			<field name="name">Employee Loan Suspend user</field>
+			<field name="model_id" ref="model_hr_loan_suspend"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="0"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[('employee_id.user_id','=',user.id)]</field>
+			<field name="groups" eval="[(4,ref('base.group_user'))]"/>
+		</record>
+
+		<record id="employee_loan_suspend_loan_manager_rule" model="ir.rule">
+			<field name="name">Employee Loan Suspend Loan Manager</field>
+			<field name="model_id" ref="model_hr_loan_suspend"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="0"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[]</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_manager'))]"/>
+		</record>
+
+		<record id="employee_loan_suspend_loan_user_rule" model="ir.rule">
+			<field name="name">Employee Loan Suspend Loan User</field>
+			<field name="model_id" ref="model_hr_loan_suspend"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="1"/>
+			<field name="perm_unlink" eval="1"/>
+			<field name="domain_force">[]</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_user'))]"/>
+		</record>
+
+		<record id="employee_loan_suspend_HR_manager_rule" model="ir.rule">
+			<field name="name">Employee Loan Suspend HR Manager</field>
+			<field name="model_id" ref="model_hr_loan_suspend"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[]</field>
+			<field name="groups" eval="[(4,ref('hr.group_hr_manager'))]"/>
+		</record>
+
+		<!-- ##################Loan Payment ####################-->
+		<record id="loan_payment_user_rule" model="ir.rule">
+			<field name="name">Loan Payment user</field>
+			<field name="model_id" ref="model_hr_employee_loan_paid"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="1"/>
+			<field name="perm_unlink" eval="1"/>
+			<field name="domain_force">[('employee_id.user_id','=',user.id)]</field>
+			<field name="groups" eval="[(4,ref('base.group_user'))]"/>
+		</record>
+
+		<record id="loan_payment_loan_manager_rule" model="ir.rule">
+			<field name="name">Loan Payment Loan Manager</field>
+			<field name="model_id" ref="model_hr_employee_loan_paid"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="0"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[]</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_manager'))]"/>
+		</record>
+		<record id="loan_payment_loan_user_rule" model="ir.rule">
+			<field name="name">Loan Payment Loan User</field>
+			<field name="model_id" ref="model_hr_employee_loan_paid"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="1"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[]</field>
+			<field name="groups" eval="[(4,ref('base.group_loan_user'))]"/>
+		</record>
+
+		<record id="loan_payment_hr_manager_rule" model="ir.rule">
+			<field name="name">Loan Payment HR Manager</field>
+			<field name="model_id" ref="model_hr_employee_loan_paid"/>
+			<field name="perm_read" eval="1"/>
+			<field name="perm_write" eval="1"/>
+			<field name="perm_create" eval="0"/>
+			<field name="perm_unlink" eval="0"/>
+			<field name="domain_force">[]</field>
+			<field name="groups" eval="[(4,ref('hr.group_hr_manager'))]"/>
+		</record>
+
+
+	</data>
+</openerp>

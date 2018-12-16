@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+
+            <record model="ir.ui.view" id="view_vendor_receipt_form">
+            <field name="name">account.voucher.receipt.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">	
+		<field name="date" position="replace">
+                    <field name="date" required="1"/>
+		</field>
+                <xpath expr="//field[@name='currency_id']" position="replace"/>
+                <xpath expr="//field[@name='journal_id']" position="replace">
+                     <field  name="journal_id" domain="[('type','in',['bank', 'cash'])]" widget="selection" select="1"
+                    	on_change="onchange_partner_id(partner_id, journal_id, amount, currency_id, type, date)" />
+                     <field name="currency_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="replace">
+                    <field name="pay_now" attrs="{'readonly':[('state','!=','draft')]}" invisible="1" />
+                    <field name="partner_id" domain="[('customer','=',1)]" on_change="onchange_partner_id(partner_id, journal_id, amount, currency_id, type, date)"  string="Customer" required="1"/>
+                            </xpath>	
+            	<field name="amount" position="replace">
+		    <field name="amount" on_change="onchange_partner_id(partner_id, journal_id, amount, currency_id, type,date)"/>
+                    <field name="pay_now" invisible="1" attrs="{'readonly':[('state','!=','draft')]}"/>                                                   
+		</field>
+		<field name="line_cr_ids" position="replace">
+		     <field name="line_cr_ids" context="{'journal_id':journal_id, 'type':type, 'partner_id':partner_id}" colspan="4" nolabel="1" height="140" on_change="onchange_line_ids(line_dr_ids, line_cr_ids, amount, currency_id, context)">
+		<tree string="Invoices and outstanding transactions" editable="bottom" colors="gray:amount==0">
+			<field name="move_line_id" context="{'journal_id':parent.journal_id, 'partner_id':parent.partner_id}"
+                                   on_change="onchange_move_line_id(move_line_id)"
+                                   domain="[('account_id.type','in',('receivable','payable')), ('reconcile_id','=', False), ('partner_id','=',parent.partner_id)]"
+                                   required="1" />              
+			<field name="account_id"  groups="base.group_no_one" domain="[('type','=','receivable')]"/>
+			<field name="date_original" readonly="1"/>
+			<field name="date_due" readonly="1"/>
+			<field name="amount_original" readonly="1"/>
+			<field name="amount_unreconciled" readonly="1"/>
+			<field name="partial_reconcile" on_change="onchange_reconcile(reconcile, partial_reconcile, amount, amount_unreconciled, move_line_id, context)"/>
+			<field name="reconcile" on_change="onchange_reconcile(reconcile, partial_reconcile, amount, amount_unreconciled, move_line_id, context)"/>
+			<field name="amount" sum="Total Allocation" on_change="onchange_amount(amount, amount_unreconciled, context)" string="Allocation"/>
+		</tree>
+	      </field>
+           </field>
+				
+	   <field name="line_dr_ids" position="replace">
+	       <field name="line_dr_ids" colspan="4" nolabel="1" attrs="{'invisible': [('pre_line','=',False)]}" context="{'journal_id':journal_id, 'partner_id':partner_id}" on_change="onchange_line_ids(line_dr_ids, line_cr_ids, amount, currency_id, context)">
+		<tree string="Credits" editable="bottom" colors="gray:amount==0">
+			<field name="move_line_id" context="{'journal_id':parent.journal_id, 'partner_id':parent.partner_id}"
+			       on_change="onchange_move_line_id(move_line_id)"
+			       domain="[('account_id.type','in',('receivable','payable')), ('reconcile_id','=', False), ('partner_id','=',parent.partner_id)]"
+			       required="1"/>
+			<field name="account_id"  groups="base.group_no_one" domain="[('type','=','receivable')]"/>
+			<field name="date_original" readonly="1"/>
+			<field name="date_due" readonly="1"/>
+			<field name="amount_original" readonly="1"/>
+			<field name="amount_unreconciled" readonly="1"/>
+			<field name="partial_reconcile" on_change="onchange_reconcile(reconcile, partial_reconcile, amount, amount_unreconciled, move_line_id, context)"/>
+			<field name="reconcile" on_change="onchange_reconcile(reconcile, partial_reconcile, amount, amount_unreconciled, move_line_id, context)"/>
+                        <field name="amount" sum="Total Allocation" on_change="onchange_amount(amount, amount_unreconciled, context)" string="Allocation"/>
+                 </tree>
+               </field>
+            </field>
+            <xpath expr="//field[@name='statement_id']" position="replace"/>
+            <xpath expr="//field[@name='ref']" position="replace"/>
+         </field>
+       </record>
+	
+      </data>
+</openerp>

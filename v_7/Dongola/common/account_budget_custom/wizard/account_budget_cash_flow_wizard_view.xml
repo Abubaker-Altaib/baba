@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Budget Flow -->
+		<record id="account_budget_flow_view" model="ir.ui.view">
+			<field name="name">Budget Flow</field>
+			<field name="model">account.budget.cash.flow.wizard</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Budget Flow" version="7.0">
+					<label
+						string="This wizard allow you to generate budget flow from FiscalYear budget." />
+					<group col="4">
+						<field name="company_id" invisible="1" />
+						<field name="chart_analytic_account_id" readonly="1" />
+						<field name="fiscalyear_id" readonly="1" options='{"no_open": True}' />
+					</group>
+					<notebook>
+						<page string="Details">
+							<field name="analytic_account_ids" groups="analytic.group_analytic_accounting"/>
+							<field name="period_ids" nolabel="1"
+								domain="[('fiscalyear_id','=',fiscalyear_id),('special','=',False)]"
+								colspan="3" />
+							<field name="account_ids" invisible="1" />
+						</page>
+					</notebook>
+					<footer>
+						<button special="cancel" string="Cancel" colspan="2" class="oe_link" />
+						or
+						<button name="compute" string="Compute" type="object"
+							colspan="2" class="oe_highlight" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="account_budget_cash_flow_view" model="ir.ui.view">
+			<field name="name">Budget Flow</field>
+			<field name="model">account.budget.cash.flow.wizard</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Budget Flow" version="7.0">
+					<separator string="Budget Flow" colspan="4" />
+					<label string="This wizard allow you to generate budget flow from FiscalYear budget." />
+					<group col="4">
+						<field name="company_id" widget="selection" groups="base.group_multi_company"
+							on_change="onchange_company_id(company_id)" />
+						<field name="chart_analytic_account_id" groups="analytic.group_analytic_accounting" domain="[('company_id','=',company_id)]" />
+						<field name="fiscalyear_id" domain="[('company_id','=',company_id)]"
+							options='{"no_open": True}' />
+					</group>
+					<notebook colspan="4">
+						<page string="Cost Centers">
+							<field name="analytic_account_ids"
+								domain="[('type','=','normal'),('company_id','=',company_id)]"
+								nolabel="1" colspan="3" />
+						</page>
+						<page string="Periods">
+							<field name="period_ids" nolabel="1"
+								domain="[('fiscalyear_id','=',fiscalyear_id),('special','=',False)]"
+								colspan="3" />
+						</page>
+						<page string="Accounts">
+							<field name="account_ids"
+								domain="[('type','=','other'),('company_id','=',company_id)]"
+								nolabel="1" colspan="3" />
+						</page>
+					</notebook>
+					<footer>
+						<button special="cancel" string="Cancel" colspan="2"
+							class="oe_link" />
+						or
+						<button name="compute" string="Compute" type="object"
+							colspan="2" class="oe_highlight" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_account_budget_cash_flow_menu" model="ir.actions.act_window">
+			<field name="name">Budget Flow</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.budget.cash.flow.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="account_budget_cash_flow_view" />
+			<field name="target">new</field>
+		</record>
+
+		<menuitem name="Budget Flow" parent="account_budget_custom.menu_budget_operations"
+			action="action_account_budget_cash_flow_menu" id="menu_account_budget_cash_flow" />
+	</data>
+</openerp>

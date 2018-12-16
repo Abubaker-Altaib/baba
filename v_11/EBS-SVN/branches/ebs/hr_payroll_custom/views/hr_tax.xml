@@ -1,0 +1,58 @@
+<odoo>
+  <data>
+
+	<record model="ir.ui.view" id="view_tax_form">
+				<field name="name">hr.tax.form</field>
+				<field name="model">hr.tax</field>
+				<field name="arch" type="xml">
+					<form string="Taxes">
+					<sheet>
+	                  <group col="4">
+	                    <field name="name"/>
+	                    <field name="active" />
+					</group>
+	                <group string="Tax Info" col="4">
+					    <field name="taxset_age" />
+					    <field name="no_years_service" />
+					    <field name="taxset_min" />
+					    <field name="taxset_max" />
+					    <field name="percent" />
+					    <field name="previous_tax" />
+					    <field name="income_tax_percentage" />
+	                </group>	
+					</sheet>
+				  </form>
+			    </field>
+			</record>
+
+			<record model="ir.ui.view" id="view_tax_tree">
+				<field name="name">hr.tax.tree</field>
+				<field name="model">hr.tax</field>
+				<field name="arch" type="xml">
+					<tree string="Taxes">
+						<field name="name" />
+						<field name="taxset_min" />
+						<field name="taxset_max" />
+						<field name="percent" />
+						<field name="previous_tax" />
+						<field name="taxset_age" />
+						<field name="no_years_service" />
+						<field name="income_tax_percentage" />
+					</tree>
+				</field>
+			</record>
+
+			<record id="action_tax" model="ir.actions.act_window">
+				<field name="name">Taxes</field>
+				<field name="res_model">hr.tax</field>
+				<field name="view_type">form</field>
+				<field name="view_mode">tree,form</field>
+				<field name="view_id" ref="view_tax_tree" />
+			</record>
+
+			<menuitem id="tax_menu_item" name="Taxes Configration"
+				parent="hr_payroll.menu_hr_payroll_configuration" action='action_tax'/>
+
+
+</data>
+</odoo>			

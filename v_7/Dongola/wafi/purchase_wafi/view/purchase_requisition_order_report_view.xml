@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Service Wizard View-->
+
+    	<record id="purchase_requisition_order_report_wizard" model="ir.ui.view">
+            <field name="name">Purchase Requisition Report</field>
+            <field name="model">purchase.requisition.order.wiz</field>
+            <field name="arch" type="xml">
+            	<form string="Purchase Requisition Report" version="7.0">
+        		<separator string="Purchase Requisition Report" colspan="4"/>
+    			<group col="4" colspan="6">           				
+               			<field name="date_from" colspan="2"/>
+                		<field name="date_to"   colspan="2"/>
+                		<field name="category_id"  colspan="2" />
+                		<field name="department_id" colspan="2"/>       		
+    	    			<field name="partner_id" colspan="2" />				 
+    			</group>
+    			<footer>
+               	    		<button name="print_report" string="Print" type="object"  default_focus="1" class="oe_highlight" />
+                                 or   
+                      		<button string="Cancel" class="oe_link" special="cancel"/>
+    			</footer>
+        		</form>
+            </field>
+	</record>
+	
+<!-- Service Report Wiz  -->	
+	<record id="action_purchase_requisition_order_report" model="ir.actions.act_window">
+            <field name="name">Purchase Requisition Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.requisition.order.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="purchase_requisition_order_report_wizard"/>
+            <field name="target">new</field>
+   </record>
+
+        <menuitem name="Purchase Reports" parent="base.menu_purchase_root"
+            id="purchase_menu_report" sequence="40" />
+        <menuitem id="purchase_requisition_order_report_menu" name="Purchase Requisition Report" parent="purchase_menu_report" action="action_purchase_requisition_order_report"/>
+
+    </data>
+</openerp>

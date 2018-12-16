@@ -1,0 +1,230 @@
+<odoo>
+    <data>
+
+        <template id="partner_ledger_report_tamplate">
+            <t t-call="web.html_container">
+                <t t-set="data_report_margin_top" t-value="12"/>
+                <t t-set="data_report_header_spacing" t-value="9"/>
+                <t t-set="data_report_dpi" t-value="110"/>
+
+
+
+                        <t t-foreach="data['get_partner_ids']" t-as="partner">
+                            <t t-call="web.basic_layout">
+
+
+                                   <html>
+                    <body>
+
+
+
+
+                       <center>
+                                    <h1>شركة الخدمات المصرفية الإلكترونية المحدودة</h1>
+
+
+
+                                </center>
+                                <center>
+                                    <h3>
+                                        الخرطوم شارع عثمان دقنة عمارة بنك السودان
+                                    </h3>
+                                </center>
+                                <center>
+                                    <h3>
+                                        Tel: (249)83 790840 - Fax: (249)83 790864
+                                    </h3>
+                                    <h3>
+                                        Partner Ledger
+                                    </h3>
+                                </center>
+
+                                <hr/>
+
+
+                        <table>
+
+                            <tr>
+                                <th style="width:20%;">With Intial Balance</th>
+                                <th style="width:20%;">Date From</th>
+                                <th style="width:20%">Date To</th>
+                                <!--<t t-if="data['is_parent_only']">-->
+                                <!--<th style="width:20%">Parent Account</th>-->
+                                <!--</t>-->
+                                <!--<t t-else="">-->
+                                    <!--<th style="width:20%">Account</th>-->
+                                <!--</t>-->
+                            </tr>
+                            <tr>
+                                <td style="width:20%;"><t t-esc="data['init_balance']"/></td>
+
+
+                                <td style="width:20%;"><t t-esc="data['date_from']"/></td>
+
+                                <td style="width:20%"><t t-esc="data['date_to']"/></td>
+
+                                <!--<td style="width:20%"><t t-esc="data['parent_account']"/> </td>-->
+                            </tr>
+
+                        </table>
+                        <br/>
+                        <br/>
+
+
+
+
+
+                                <div class="page">
+
+
+
+
+
+                                    <h3> Partner : <t t-esc="get.get_partner_info(partner).name"/> </h3>
+
+
+                                    <!--<t t-foreach="data['get_account_ids']" t-as="account">-->
+                                    <t t-foreach="get.get_partner_real_accounts(partner,data['get_account_ids'],data)" t-as="account">
+                                        Account : <t t-esc="get.get_account_info(account['acc_id']).code"/> <t t-esc="get.get_account_info(account['acc_id']).name"/>
+
+                                        <table>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Desc</th>
+                                                <th>Reference</th>
+                                                <th>Number</th>
+                                                <th>Debit</th>
+                                                <th>Credit</th>
+                                                <th>Balance</th>
+                                            </tr>
+
+
+
+                                            <t t-if="data['init_balance']">
+                                                <t t-foreach="get.get_partner_move_line_init(partner,account['acc_id'],data)" t-as="total">
+                                                    <tr>
+
+                                                        <td colspan="4"><center>Initial Balance</center></td>
+                                                        <td><t t-esc="'{:,}'.format(round(total['debit'],2))"/></td>
+                                                        <td><t t-esc="'{:,}'.format(round(total['credit'],2))"/></td>
+                                                        <td><t t-esc="'{:,}'.format(round(total['balance'],2))"/></td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+
+
+
+
+                                            <t t-foreach="get.get_partner_move_line(partner,account['acc_id'],data)" t-as="line">
+
+
+
+                                                <tr>
+                                                    <td><t t-esc="line['date']"/></td>
+                                                    <td><t t-esc="line['name']"/></td>
+                                                    <td><t t-esc="line['ref']"/></td>
+                                                    <td><t t-esc="line['move_name']"/></td>
+                                                    <td><t t-esc="'{:,}'.format(round(line['debit']),2)"/></td>
+                                                    <td><t t-esc="'{:,}'.format(round(line['credit']),2)"/></td>
+                                                    <td><t t-esc="'{:,}'.format(round(line['balance']),2)"/></td>
+                                                </tr>
+
+
+                                            </t>
+                                            <t t-foreach="get.get_partner_move_line_total(partner,account['acc_id'],data)" t-as="total">
+                                                <tr>
+
+                                                    <td colspan="4"><center>Total</center></td>
+                                                    <td><t t-esc="'{:,}'.format(round(total['debit'],2))"/></td>
+                                                    <td><t t-esc="'{:,}'.format(round(total['credit'],2))"/></td>
+                                                    <td><t t-esc="'{:,}'.format(round(total['balance'],2))"/></td>
+                                                </tr>
+                                            </t>
+
+                                        </table>
+                                        <br/>
+                                        <br/>
+
+                                    </t>
+
+
+
+                                </div>
+
+                        <head>
+                            <style>
+
+
+
+
+
+                                td {
+                                width:20%;
+                                align:center;
+
+                                }
+                                th {
+                                width:20%;
+                                align:center;
+
+                                }
+
+
+                                table, td, th {
+                                border: 1px solid #ddd;
+                                text-align: center;
+                                }
+
+                                table {
+                                border-collapse: collapse;
+                                width: 100%;
+                                }
+
+                                th, td {
+                                padding: 15px;
+                                }
+                                th {
+                                background-color:#cccccc;#E7D9D9
+                                font-weight: bold;
+                                }
+                                td {
+                                background-color:#E7D9D9;
+                                font-weight: bold;
+
+
+
+                                }
+                                td, th {
+                                border: 3px solid black;
+                                padding: 3px 10px;
+                                }
+
+                                td,th,h1,h3,h4 { font-family: "Geeza Pro", "Nadeem",
+                                "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                                "STFangsong", "STHeiti", "STKaiti", "STSong",
+                                "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                                "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                                "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                                "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                                "Arial", serif;
+                                }
+
+
+
+                            </style>
+                            <!--Font Name Helvetica-Bold-->
+                        </head>
+
+
+                    </body>
+                </html>
+                            </t>
+
+                        </t>
+
+
+
+            </t>
+        </template>
+    </data>
+</odoo>

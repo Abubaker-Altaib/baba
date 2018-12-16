@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      
+      <record id="hr_attendance_wizard_form" model="ir.ui.view">
+            <field name="name">attendance wizard</field>
+            <field name="model">attendance.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Update/Create Attendance Record">
+                  <group>
+                    <group>
+                           <field name="start_date" required="True"/>
+                           <field name="end_date" required="True"/>
+                    </group>
+                  </group>
+                  <notebook>
+                    <page string="Employees">
+                        <field name="employees_ids"/>
+                    </page>
+                  </notebook>
+                  <footer>
+                    <button name="create_attendance_record" string="Update" type="object"  class="oe_highlight"/>
+                             or
+                    <button special="cancel" string="Cancel"  class="oe_link"/>
+                  </footer>
+                </form>
+            </field>
+      </record>
+
+        <record id="action_hr_attendance_wizard" model="ir.actions.act_window">
+            <field name="name">attendance wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">attendance.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_attendance_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+      
+        <menuitem sequence="55"
+                name="Update Attendance"
+                action="action_hr_attendance_wizard"
+                id="action_hr_attendance_wizard_menu"
+                parent="hr_attendance.menu_hr_attendance_manage_attendances"
+                groups="hr_attendance.group_hr_attendance_user"
+                />
+
+    </data>
+</openerp>

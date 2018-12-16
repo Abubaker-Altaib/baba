@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- News Papers Configuration-->
+		<record id="news_papers_no_1" model="news.papers">
+			<field name="code">1</field>
+			<field name="name">أخبــــار اليـــوم</field>
+		</record>
+		<record id="news_papers_no_2" model="news.papers">
+			<field name="code">2</field>
+			<field name="name">الرآى العـــــام</field>
+		</record>
+		<record id="news_papers_no_3" model="news.papers">
+			<field name="code">3</field>
+			<field name="name">الإنتـــــباه</field>
+		</record>
+		<record id="news_papers_no_4" model="news.papers">
+			<field name="code">4</field>
+			<field name="name">الــــــوطن</field>
+		</record>
+		<record id="news_papers_no_5" model="news.papers">
+			<field name="code">5</field>
+			<field name="name">آخــــر لحــــظة</field>
+		</record>
+		<!--  News paper-->
+
+		<record id="monitoring_press_no_1" model="monitoring.press">
+			<field name="date" eval="time.strftime('%Y')+'-11-11'"/>
+			<field name="state">draft</field>
+			<field name="description">الـــــرصد الصــحفي</field>
+		</record>
+		<record id="monitoring_press_lines_no_1" model="monitoring.press.lines">
+			<field name="p_name" ref="news_papers_no_1"/>
+			<field name="paper_number">5</field>
+			<field name="no_page">1</field>
+			<field name="release_date" eval="time.strftime('%Y')+'-11-11'"/>
+			<field name="writer">أحمـــد البلال</field>
+                        <field name="press_id" ref="monitoring_press_no_1"/>
+			<field name="subject">اليـــوم العالمي للإتصالات</field>
+			<field name="evaluation">positive</field>
+		</record>
+		<!--record id="monitoring_press_lines_no_2" model="monitoring.press.lines">
+			<field name="p_name" ref="news_papers_no_5"/>
+			<field name="paper_number">1</field>
+			<field name="no_page">1</field>
+			<field name="release_date" eval="time.strftime('%Y')+'-11-11'"/>
+			<field name="writer">إسحـــاق أحمد فضل الله</field>
+                        <field name="press_id" ref="monitoring_press_no_1"/>
+			<field name="subject">الهيئــــة القومية للإتصالات</field>
+			<field name="evaluation">negative</field>>
+		</record-->
+
+		<!-- Media order Configuration-->
+		<record id="media_service_category_no_1" model="media.service.category">
+			<field name="name">تــصويـــر</field>
+		</record>
+		<record id="media_service_category_no_2" model="media.service.category">
+			<field name="name">إذاعـــــة</field>
+		</record>
+
+		<record id="media_service_type_no_1" model="media.service.type">
+			<field name="name">كاميـــرا</field>
+                        <field name="category_id" ref="media_service_category_no_1"/>
+		</record>
+		<record id="media_service_type_no_2" model="media.service.type">
+			<field name="name">أشرطة فيديـــــو</field>
+                        <field name="category_id" ref="media_service_category_no_1"/>
+		</record>
+
+		<record id="media_order_no_1" model="media.order">
+			<field name="date" eval="time.strftime('%Y')+'-11-15'"/>
+                        <field name="department_id" ref="hr.dep_sales"/>
+			<field name="create_date" eval="time.strftime('%Y')+'-11-01'"/>
+			<field name="execution_type">internal</field>
+                        <field name="category_id" ref="media_service_category_no_1"/>
+			<field name="state">draft</field>
+		</record>
+
+		<record id="media_order_no_2" model="media.order">
+			<field name="date" eval="time.strftime('%Y')+'-01-05'"/>
+                        <field name="department_id" ref="hr.dep_management"/>
+			<field name="create_date" eval="time.strftime('%Y')+'-01-01'"/>
+			<field name="execution_type">internal</field>
+                        <field name="category_id" ref="media_service_category_no_1"/>
+			<field name="state">draft</field>
+		</record>
+
+		<record id="media_order_line_1" model="media.order.line">
+                        <field name="type_id" ref="media_service_type_no_1"/>
+                        <field name="order_id" ref="media_order_no_2"/>
+		</record>
+		<record id="media_order_line_2" model="media.order.line">
+                        <field name="type_id" ref="media_service_type_no_2"/>
+                        <field name="order_id" ref="media_order_no_2"/>
+		</record>
+
+
+
+
+
+
+	</data>
+</openerp>

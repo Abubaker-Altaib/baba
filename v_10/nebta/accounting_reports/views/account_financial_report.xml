@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+      
+
+  <!-- Account -->
+
+        <record id="view_account_form_customized" model="ir.ui.view">
+            <field name="name">account.account</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+            
+                <field name="deprecated" position="after">
+                	<field name="cash_flow"/>
+                	<field name="cashflow_type" attrs="{'invisible': [('cash_flow', '!=', True)]}"/>
+                	<field name="returned_value" attrs="{'invisible': [('cash_flow', '!=', True)]}"/>
+
+
+
+            	</field>
+            </field>
+        </record>
+
+
+  <!-- Company -->
+        <record id="view_company_form1" model="ir.ui.view">
+            <field name="name">res.company.form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+           	 <field name="parent_id"  position="after">
+			<field name="identical_chart_of_account"/>
+            	</field>
+            </field>
+        </record>
+
+  <!-- Account Financial Report -->
+
+        <record id="view_account_financial_report_form" model="ir.ui.view">
+            <field name="name">account.financial.report.form</field>
+            <field name="model">account.financial.report</field>
+            <field name="inherit_id" ref="account.view_account_financial_report_form"/>
+            <field name="arch" type="xml">
+            
+                <field name="style_overwrite" position="after">
+                	<field name="detail_number"/>
+                	<field name="cash_flow"/>
+                	<field name="returned_value" attrs="{'invisible': [('cash_flow', '!=', True)]}"/>
+                        <button name="prepare_cash_flow" string="Prepare Cash Flow"  type="object" class="oe_highlight" attrs="{'invisible': [('cash_flow', '!=', True)]}"/>
+
+            	</field>
+
+                <field name="account_ids" position="replace">
+                	<field name="account_ids" attrs="{'invisible': [('type', '!=', 'accounts')]}">
+                                            <tree editable="bottom">
+                                                <field name="code" placeholder="code" readonly="1"/>
+                                                <field name="name" readonly="1"/>
+                                                <field name="user_type_id" widget="selection" readonly="1"/>
+                                                <field name="returned_value"/>
+
+                                            </tree>
+                        </field>
+
+            	</field>
+
+            </field>
+        </record>
+
+
+                                   
+
+  </data>
+</odoo>
+               

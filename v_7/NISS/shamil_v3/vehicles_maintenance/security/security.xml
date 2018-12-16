@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+	<data noupdate="0">
+		<record id="vehicles_maintenance_category" model="ir.module.category">
+			<field name="name">Vehicles Maintenance</field>
+		</record>
+
+		<record id="group_maintenance_set_to_draft" model="res.groups">
+            <field name="name">Maintenance Set To Draft</field>
+            <field name="implied_ids" eval="[(4, ref('admin_affairs.group_fleet_employee'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="category_id" ref="vehicles_maintenance_category"/>
+        </record>
+
+        <record id="group_maintenance_config" model="res.groups">
+			<field name="name">Maintenance Configuration</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root'),ref('fleet.fleet_configuration')])]"/>
+		</record>
+
+		<record id="maintenance_manager" model="res.groups">
+			<field name="name">maintenance manager</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+			<field name="implied_ids" eval="[(4, ref('stock_inventory.group_inventory_manager')),(4, ref('purchase.group_purchase_user'))]"/>
+		</record>
+
+		<record id="maintenance_user" model="res.groups">
+			<field name="name">maintenance user</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+			<field name="implied_ids" eval="[(4, ref('stock_inventory.group_inventory_user'))]"/>
+		</record>
+
+		<record id="group_maintenance_financial" model="res.groups">
+			<field name="name">Maintenance Financial Officer</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+			<field name="implied_ids" eval="[(4, ref('maintenance_user')),(4, ref('purchase.group_purchase_user'))]"/>
+		</record>
+
+		<record id="group_maintenance_purchase_officer" model="res.groups">
+			<field name="name">Maintenance Purchase Officer</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+			<field name="implied_ids" eval="[(4, ref('maintenance_user')),(4, ref('purchase.group_purchase_user'))]"/>
+		</record>
+
+		<record id="maintenance_engineer" model="res.groups">
+			<field name="name">maintenance engineer</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+			<field name="implied_ids" eval="[(4, ref('maintenance_user'))]"/>
+		</record>
+
+		<record id="division_manager" model="res.groups">
+			<field name="name">Division Manager</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+			<field name="implied_ids" eval="[(4, ref('maintenance_user'))]"/>
+		</record>
+
+		<!--record id="group_maintenance_stock" model="res.groups">
+			<field name="name">Stock Maintenance Officer</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+		</record-->
+
+		<record id="group_maintenance_stock_hq" model="res.groups">
+			<field name="name">Stock Maintenance Officer/HQ</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+		</record>
+
+		<record id="group_maintenance_stock_oc" model="res.groups">
+			<field name="name">Stock Maintenance Officer/OC</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+		</record>
+
+		<record id="group_maintenance_report" model="res.groups">
+			<field name="name">Maintenance Report</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root')])]"/>
+		</record>
+
+		<record id="admin_it_maintenance" model="res.groups">
+			<field name="name">Admin IT/Maintenance</field>
+			<field name="category_id" ref="vehicles_maintenance_category" />
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<field name="implied_ids" eval="[(4, ref('maintenance_manager')),(4, ref('maintenance_engineer')),(4, ref('group_maintenance_set_to_draft')),(4, ref('group_maintenance_config')),(4, ref('group_maintenance_financial')),(4, ref('group_maintenance_purchase_officer')),(4, ref('group_maintenance_stock_hq')),(4, ref('group_maintenance_stock_oc')),(4, ref('group_maintenance_report'))]"/>
+		</record>
+
+		<!-- product.product  -->
+		<record id="product_product_spare_user" model="ir.rule">
+			<field name="name">Product Spare user</field>
+			<field model="ir.model" name="model_id" ref="product.model_product_product"/>
+			<field name="domain_force">[('spare_ok','=',1)]</field>
+			<field name="groups" eval="[(4, ref('group_maintenance_config')),(4, ref('group_maintenance_stock_oc')),(4, ref('group_maintenance_stock_hq')),(4, ref('maintenance_manager')),(4, ref('maintenance_user')),(4, ref('group_maintenance_set_to_draft'))]"/>
+		</record>
+
+		<!-- spare constraints  -->
+		<record id="spare_constraints_user" model="ir.rule">
+			<field name="name">spare constraints rule</field>
+			<field model="ir.model" name="model_id" ref="model_spare_constraints"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<!-- maintenance department  -->
+		<record id="maintenance_department_user" model="ir.rule">
+			<field name="name">maintenance department rule</field>
+			<field model="ir.model" name="model_id" ref="model_maintenance_department"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<!-- maintenance damage -->
+		<record id="maintenance_damage_user" model="ir.rule">
+			<field name="name">maintenance damage rule</field>
+			<field model="ir.model" name="model_id" ref="model_maintenance_damage"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<!-- maintenance job-->
+		<record id="maintenance_job_user" model="ir.rule">
+			<field name="name">maintenance job rule</field>
+			<field model="ir.model" name="model_id" ref="model_maintenance_job"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<!-- maintenance request-->
+		<record id="maintenance_request_user" model="ir.rule">
+			<field name="name">maintenance request rule</field>
+			<field model="ir.model" name="model_id" ref="model_maintenance_request"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<record id="maintenance_request_employee" model="ir.rule">
+			<field name="name">maintenance request employee rule</field>
+			<field model="ir.model" name="model_id" ref="model_maintenance_request"/>
+			<field name="domain_force">[('employee_id.user_id','=',user.id)]</field>
+			<field name="groups" eval="[(4,ref('admin_affairs.group_fleet_employee'))]"/>
+		</record>
+
+		<!-- exchange order  -->
+		<record id="exchange_order_user" model="ir.rule">
+			<field name="name">exchange order user</field>
+			<field model="ir.model" name="model_id" ref="stock_exchange.model_exchange_order"/>
+			<field name="domain_force">[('maintenance','=',1)]</field>
+			<field name="groups" eval="[(4, ref('group_maintenance_stock_oc')),(4, ref('group_maintenance_stock_hq')),(4, ref('maintenance_manager')),(4, ref('maintenance_user')),(4, ref('group_maintenance_set_to_draft'))]"/>
+		</record>
+
+		<!-- stock.location  -->
+		<record id="maintenance_manager_stock_location" model="ir.rule">
+            <field name="name">maintenance manager stock location</field>
+            <field model="ir.model" name="model_id" ref="stock.model_stock_location"/>
+            <field name="domain_force">[('is_maintenance_location','=',True)]</field>
+			<field eval="0" name="global"/>
+			<field name="groups" eval="[(4, ref('maintenance_manager')),(4, ref('maintenance_user')),(4, ref('group_maintenance_purchase_officer'))]"/>
+			<field eval="0" name="perm_unlink"/>
+			<field eval="0" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="0" name="perm_create"/>
+        </record>
+
+        <record id="maintenance_config_stock_location" model="ir.rule">
+            <field name="name">maintenance config stock location</field>
+            <field model="ir.model" name="model_id" ref="stock.model_stock_location"/>
+            <field name="domain_force">[('is_maintenance_location','=',True)]</field>
+			<field name="groups" eval="[(4,ref('group_maintenance_config'))]" />
+        </record>
+
+        <!--record id="purchase_officer_stock_location" model="ir.rule">
+            <field name="name">purchase officer stock location</field>
+            <field model="ir.model" name="model_id" ref="stock.model_stock_location"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_maintenance_purchase_officer')])]" name="groups"/>
+			<field eval="0" name="perm_unlink"/>
+			<field eval="0" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="0" name="perm_create"/>
+        </record-->
+
+        <!-- stock.inventory  
+		<record id="maintenance_manager_stock_inventory" model="ir.rule">
+            <field name="name">maintenance manager stock inventory</field>
+            <field model="ir.model" name="model_id" ref="stock.model_stock_inventory"/>
+            <field name="domain_force">[('location_id.is_maintenance_location','=',True)]</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('maintenance_manager'),ref('maintenance_user')])]" name="groups"/>
+			<field eval="1" name="perm_unlink"/>
+			<field eval="1" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="1" name="perm_create"/>
+        </record>-->
+
+        <!-- stock.inventory -->
+		<record id="maintenance_manager_stock_inventory" model="ir.rule">
+            <field name="name">maintenance stock inventory</field>
+            <field model="ir.model" name="model_id" ref="stock.model_stock_inventory"/>
+            <field name="domain_force">[('maintenance','=',True)]</field>
+			<field name="groups" eval="[(4, ref('group_maintenance_stock_oc')),(4, ref('group_maintenance_stock_hq')),(4, ref('maintenance_manager')),(4, ref('maintenance_user')),(4, ref('group_maintenance_set_to_draft'))]"/>
+        </record>
+
+        <!-- ireq.m  -->
+        <record id="emergency_spare_purchase_rule" model="ir.rule">
+			<field name="name">emergency spare purchase</field>
+			<field model="ir.model" name="model_id" ref="model_ireq_m"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+			<field name="groups" eval="[(4,ref('vehicles_maintenance.group_maintenance_purchase_officer')), (4,ref('vehicles_maintenance.group_maintenance_financial')), (4,ref('vehicles_maintenance.maintenance_manager')),(4, ref('maintenance_manager')),(4, ref('group_maintenance_set_to_draft'))]"/>
+		</record>
+
+		<record id="emergency_spare_purchase_rule2" model="ir.rule">
+			<field name="name">Emergency Spare Purchase Rule</field>
+			<field model="ir.model" name="model_id" ref="model_ireq_m"/>
+			<field name="domain_force">[('spare_order','=',True)]</field>
+			<field name="groups" eval="[(4,ref('vehicles_maintenance.group_maintenance_purchase_officer')), (4,ref('vehicles_maintenance.group_maintenance_financial')), (4,ref('vehicles_maintenance.maintenance_manager')),(4, ref('maintenance_manager')),(4, ref('group_maintenance_set_to_draft'))]"/>
+		</record>
+
+		<!-- stock.picking  -->
+		<record id="stock_picking_maintenance_user" model="ir.rule">
+			<field name="name">Stock Picking maintenance user</field>
+			<field model="ir.model" name="model_id" ref="stock.model_stock_picking"/>
+			<field name="domain_force">[('maintenance','=',True)]</field>
+			<field name="groups" eval="[(4, ref('group_maintenance_stock_oc')),(4, ref('group_maintenance_stock_hq')),(4, ref('maintenance_manager')),(4, ref('maintenance_user')),(4, ref('group_maintenance_set_to_draft'))]"/>
+		</record>
+
+		<!-- stock.picking.in  -->
+		<record id="stock_picking_in_maintenance_user" model="ir.rule">
+			<field name="name">Stock Picking IN maintenance user</field>
+			<field model="ir.model" name="model_id" ref="stock.model_stock_picking_in"/>
+			<field name="domain_force">[('maintenance','=',True)]</field>
+			<field name="groups" eval="[(4, ref('group_maintenance_stock_oc')),(4, ref('group_maintenance_stock_hq')),(4, ref('maintenance_manager')),(4, ref('maintenance_user')),(4, ref('group_maintenance_set_to_draft'))]"/>
+		</record>
+
+		<!-- stock.picking.out  -->
+		<record id="stock_picking_out_maintenance_user" model="ir.rule">
+			<field name="name">Stock Picking OUT maintenance user</field>
+			<field model="ir.model" name="model_id" ref="stock.model_stock_picking_out"/>
+			<field name="domain_force">[('maintenance','=',True)]</field>
+			<field name="groups" eval="[(4, ref('group_maintenance_stock_oc')),(4, ref('group_maintenance_stock_hq')),(4, ref('maintenance_manager')),(4, ref('maintenance_user')),(4, ref('group_maintenance_set_to_draft'))]"/>
+		</record>
+
+		<!-- stock.move  -->
+		<record id="stock_move_maintenance_user" model="ir.rule">
+			<field name="name">Stock Move OUT maintenance user</field>
+			<field model="ir.model" name="model_id" ref="stock.model_stock_move"/>
+			<field name="domain_force">[('maintenance','=',True)]</field>
+			<field name="groups" eval="[(4, ref('group_maintenance_stock_oc')),(4, ref('group_maintenance_stock_hq')),(4, ref('maintenance_manager')),(4, ref('maintenance_user')),(4, ref('group_maintenance_set_to_draft'))]"/>
+		</record>
+		
+	</data>
+</openerp>  

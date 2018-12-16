@@ -1,0 +1,51 @@
+-
+  created a product 
+-
+ !record {model: product.product, id: product_test}:
+    default_code: 001
+    name: Test Stock Negative
+    type: product
+    categ_id: product.cat1
+    supply_method: buy
+    list_price: 100.0
+    standard_price: 70.0
+    uom_id: product.product_uom_kgm
+    uom_po_id: product.product_uom_kgm
+    procure_method: make_to_stock
+    property_stock_inventory: stock.location_opening
+    valuation: manual_periodic
+ 
+-
+  Created a Delivery Order
+-
+ !record {model: stock.picking, id: outgoing_shipment_test}:
+    type: out
+    location_dest_id: stock.location_delivery_counter
+-
+  Created a Outgoing Stock Move for Deliver Order
+-
+ !record {model: stock.move, id: outgoing_move_test}:
+    picking_id: outgoing_shipment_test
+    product_id: product_test
+    product_uom: product.product_uom_kgm
+    product_qty: 50.0
+    location_id: stock.location_refrigerator
+    location_dest_id: stock.location_delivery_counter
+-
+  Created an Incoming Shipment
+-
+ !record {model: stock.picking, id: incoming_ship_test}:
+    type: in
+    invoice_state: 2binvoiced
+    address_id: base.res_partner_address_9
+    location_dest_id: stock.location_refrigerator
+-
+  Created an incoming stock move for Incoming Shipment!
+-
+ !record {model: stock.move, id: incoming_move_test}:
+    picking_id: incoming_ship_test
+    product_id: product_test
+    product_uom: product.product_uom_kgm
+    product_qty: 50.0
+    location_id: stock.location_convenience_shop
+    location_dest_id: stock.location_refrigerator

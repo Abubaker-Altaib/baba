@@ -1,0 +1,88 @@
+-
+ !record {model: res.company, id: base.main_company}:
+  name: Your Company
+  partner_id: base.main_partner
+  rml_footer1: Web:www.companyname.com - Tel:+1-212-555-12345</field
+  rml_footer2: IBAN:XX12 3456 7890 1234 5678 - SWIFT:SWIFTCODE - VAT:Company vat number
+  currency_id: base.EUR
+  stock_journal: stock.stock_journal       
+-
+ !record {model: stock.location, id: location_customer}:
+    name: Customer
+    usage: customer
+-
+  Create transit location 
+-
+ !record {model: stock.location, id: location_transit}:
+    name: transit Store
+    chained_auto_packing: auto
+    chained_location_type: fixed
+    usage: transit
+    chained_location_id: stock.location_refrigerator
+    valuation_account_id:   account.a_recv
+
+-
+  create internal-customer  picking.      
+-
+ !record {model: stock.picking, id: shipment1}:
+    type: out
+    move_lines:
+      - product_id: stock.product_icecream
+        product_uom: product.product_uom_kgm
+        product_qty: 2.0
+        location_id: stock.location_refrigerator
+        location_dest_id: location_customer
+-
+   Create internal-internal  picking.      
+-
+ !record {model: stock.picking, id: shipment2}:
+    type: internal
+    move_lines:
+      - product_id: stock.product_icecream
+        product_uom: product.product_uom_kgm
+        product_qty: 2.0
+        location_id: stock.location_refrigerator
+        location_dest_id:  stock.location_delivery_counter
+-
+  create suppliers- internal picking.
+-
+ !record {model: stock.picking, id: shipment3}:
+    type: in
+    move_lines:
+      - product_id: stock.product_icecream
+        product_uom: product.product_uom_kgm
+        product_qty: 60.0
+        location_id: stock.location_convenience_shop
+        location_dest_id: stock.location_refrigerator
+-
+   create internal-transit  picking.      
+-
+ !record {model: stock.picking, id: shipment4}:
+    type: out
+    move_lines:
+      - product_id: stock.product_icecream
+        product_uom: product.product_uom_kgm
+        product_qty: 2.0
+        location_id: stock.location_refrigerator
+        location_dest_id: location_transit
+-
+   create transit-internal  picking.      
+-
+ !record {model: stock.picking, id: shipment5}:
+    type: in
+    move_lines:
+      - product_id: stock.product_icecream
+        product_uom: product.product_uom_kgm
+        product_qty: 2.0
+        location_id: location_transit
+        location_dest_id: stock.location_refrigerator 
+        
+-
+ !record {model: stock.inventory, id: stock_inventory_account}:
+    name: Inventory for account
+    inventory_line_id:
+      - product_id: stock.product_icecream
+        product_uom: product.product_uom_kgm
+        product_qty: 50.0
+        location_id: stock.location_refrigerator
+        

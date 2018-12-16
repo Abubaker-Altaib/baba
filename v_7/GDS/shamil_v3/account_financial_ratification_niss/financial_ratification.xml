@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+       <record model="ir.ui.view" id="view_company_form">
+		<field name="name">res.company.form.inherit1</field>
+		<field name="inherit_id" ref="account_financial_ratification.view_company_form" />
+		<field name="model">res.company</field>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<data>
+				<xpath expr="//field[@name='ratification_journal_id']" position="after">
+					<field name="vice_max_amount" colspan="4" />
+					<field name="gen_max_amount" colspan="4" />
+				</xpath>
+			</data>
+			</field>
+	</record>
+       <record model="ir.ui.view" id="view_financial_ratification_form_inherit">
+            <field name="name">account.financial.ratification.form.inherit</field>
+            <field name="model">account.voucher</field>
+	    <field name="inherit_id" ref="account_financial_ratification.view_financial_ratification_form" />
+            <field name="arch" type="xml">
+ 		   <xpath expr="//field[@name='state']" position="replace">	
+                     	<field name="state"  widget="statusbar"  statusbar_visible="draft" />
+                   </xpath>
+ 		   <xpath expr="//button[@string='Cancel']" position="replace">	
+                     <button name="cancel_voucher" string="Cancel" type="object" states="precomplete,precomplete1,precomplete2,precomplete3,precomplete4,precomplete5,precomplete6,preclose,preapprove,prepost,complete,close" icon="gtk-cancel" confirm="Are you sure to confirm this record ?"/>
+                   </xpath>
+ 		   <xpath expr="//button[@string='post']" position="replace">
+                   </xpath>	
+ 		   <xpath expr="//button[@string='Close']" position="replace">	
+                     	<button name="precomplete1" string="Complete11" states="precomplete" groups="account_financial_ratification_niss.group_account_ratification_complete1"/>
+                     	<button name="precomplete2" string="Complete21" states="precomplete1" groups="account_financial_ratification_niss.group_account_ratification_complete2"/>
+                     	<button name="precomplete3" string="Complete31" states="precomplete2" groups="account_financial_ratification_niss.group_account_ratification_complete3"/>
+                     	<button name="precomplete4" string="Complete41" states="precomplete3" groups="account_financial_ratification_niss.group_account_ratification_complete4"/>
+                     	<button name="preclose" string="Close1" states="precomplete4" groups="account_financial_ratification.group_account_ratification_close" />	
+                     	<button name="prepost" string="Complete5" states="precomplete5" groups="account_financial_ratification.group_account_ratification_post"/>
+                     	<button name="prepost" string="Complete6" states="precomplete6" groups="account_financial_ratification.group_account_ratification_post"/>
+                     	<button name="router" string="router" states="preclose" groups="account_financial_ratification_niss.group_account_ratification_router"/>
+                   </xpath>
+                  <xpath expr="//button[@string='Complete']" position="replace">
+                     <button name="precomplete" string="Complete" states="draft" groups="account_financial_ratification.group_account_ratification_complete"/>
+                   </xpath>	
+                  <xpath expr="//button[@string='Approve']" position="replace">
+                     	<button name="preapprove" string="Approve" states="prepost" groups="account_financial_ratification.group_account_ratification_approve" />
+                   </xpath>	
+ 		   <xpath expr="//page[@string='Note']" position="after">
+               		<page string="Voucher Line">
+                              <field name="line_ids" colspan="8" nolabel="1">
+                                       <tree string="Sales Lines" editable="bottom">
+                                                <field name="res_partner_id"/>
+						<field name="name"/>
+					        <field name="amount" sum="Total" required="1"/>
+                                        </tree>
+                             </field>
+                        </page>
+                   </xpath>	
+            </field>
+         </record>	
+		
+    </data>
+</openerp>

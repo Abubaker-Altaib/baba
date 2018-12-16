@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+	<record id="fuel_search_form_view" model="ir.ui.view">
+            <field name="name">fuel.search.form</field>
+            <field name="model">product.product</field>
+	    <field name="inherit_id" ref="admin_affairs.fuel_search_form_view" />
+            <field name="arch" type="xml"> 
+		    <xpath expr="//field[@name='location_id']" position="attributes">
+			<attribute name="domain">[('fuel_location','=',True)]</attribute>
+		    </xpath>
+		    <xpath expr="//field[@name='location_id']" position="after">
+		   	<field name="fuel_ok"/>
+		   	<field name="fuel_type"/>
+		    </xpath>
+		    <xpath expr="//filter[@string='Category']" position="after">
+                        <separator orientation="vertical"/>
+                        <filter string='Spare type' icon="terp-mrp" domain="[]" context="{'group_by' : 'spare_type'}" />
+		    </xpath>
+            </field>
+        </record>
+
+        <record id="fuel_normal_form_view" model="ir.ui.view">
+            <field name="name">fuel.normal.form</field>
+            <field name="model">product.product</field>
+	    <field name="inherit_id" ref="admin_affairs.fuel_normal_form_view" />
+            <field eval="7" name="priority"/>
+            <field name="arch" type="xml">
+		    <xpath expr="//field[@name='name']" position="after">
+		            <separator string = "Fuel information" colspan="2"/>
+		            <field name="fuel_ok" colspan="2" />
+		            <field name="fuel_type" colspan="2" attrs="{'invisible':[('fuel_ok','!=',True)],'required':[('fuel_ok','=',True)]}"/>
+
+		    </xpath>
+		    <xpath expr="//group[@name='store']" position="after">
+            		<group col="2" colspan="2">
+                            <separator string="Fuel Locations Properties" colspan="2"/>
+            		    <field name="property_fuel_fixed" />
+                	    <field name="property_fuel_extra"/>
+                	    <field name="property_fuel_customer"/>
+            		</group>
+		    </xpath>
+            </field>
+        </record>
+
+              <!-- Product Action View -->
+		<record id="admin_affairs.fuel_normal_action" model="ir.actions.act_window">
+        		<field name="domain">[('fuel_ok','=',True)]</field>
+ 			<field name="context">{'fuel_ok':True}</field>
+        	</record>
+
+
+
+
+
+    </data>
+</openerp>

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="hr_mission_category_form_view_inherit">
+			<field name="name">hr.mission.category.form.inherit</field>
+			<field name="model">hr.mission.category</field>
+			<field name="inherit_id" ref="hr_mission.hr_mission_category_form_view" />
+			<field name="arch" type="xml">
+				
+				<xpath expr='//field[@name="name"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+					<attribute name="required">False</attribute>
+			    </xpath>
+			    
+			    <xpath expr='//h1' position="attributes">
+					<attribute name="invisible">True</attribute>
+			    </xpath>
+				
+				<xpath expr='//group[1]' position="before">
+					<group>
+					    <group>
+				            <field name="type_miss" required="1" on_change="onchange_currancy(type_miss)"/>
+				            <field name="name_state" on_change="change_name(name_state, country)" string="Destination" attrs="{'required':[('type_miss','=','internal')],'invisible':[('type_miss','!=','internal')]}"/>
+				            <field name="country" on_change="change_name(name_state, country)" attrs="{'required':[('type_miss','=','external')],'invisible':[('type_miss','!=','external')]}"/>
+					    </group>
+					</group>
+				</xpath>
+				<xpath expr='//field[@name="code"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				
+				<xpath expr='//field[@name="parent_id"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				
+				<xpath expr='//field[@name="type"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				
+				<xpath expr='//field[@name="company_id"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr='//field[@name="destination"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+					<attribute name="required">False</attribute>
+				</xpath>
+				
+				<!--xpath expr='//group/group[@string="Accounts"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath-->
+				
+				<!--<xpath expr='//field[@name="journal_id"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath-->
+				<xpath expr='//field[@name="mission_account_id"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr='//field[@name="limit_exceed"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				
+				<xpath expr='//group/group[@string="Destination"]' position="replace">
+				    <group string="Currency">
+				        <field name="fees_currency_id" />
+				    </group>
+				</xpath>
+				
+				<xpath expr='//field[@name="allowance_id"]' position="attributes">
+					<attribute name="required">True</attribute>
+					<attribute name="domain">[('mission','=','mission')]</attribute>
+				</xpath>
+				<xpath expr='//field[@name="validate"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				
+			</field>
+		</record>
+		
+		<menuitem id="hr_mission.hr_mission_tree_menu" name="Destinations"
+			parent="hr_mission.hr_mission_menu" action="hr_mission.hr_mission_category_tree" />
+			
+		
+		<record model="ir.ui.view" id="hr_mission_category_tree_view_inherit">
+			<field name="name">hr.mission.category.tree.inherit</field>
+			<field name="model">hr.mission.category</field>
+			<field name="inherit_id" ref="hr_mission.hr_mission_category_tree_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="code"]' position="after">
+					<field name="type_miss"/>
+				</xpath>
+				
+				<!--<xpath expr='//field[@name="name"]' position="replace">
+					<field name="name_state"/>
+		            <field name="country"/>
+				</xpath>-->
+				
+				<xpath expr='//field[@name="code"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				
+				<xpath expr='//field[@name="parent_id"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				
+				<xpath expr='//field[@name="type"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		
+		<record model="ir.ui.view" id="hr_mission_employee_form_view_inherit">
+			<field name="name">hr.mission.employee.form.inherit</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_mission_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="confirm_mission"]' position="attributes">
+				    <attribute name="string">General Department Manager</attribute>
+				    <attribute name="groups">base_custom.group_general_department_manager</attribute>
+				</xpath>
+				<xpath expr='//button[@name="approve_mission"]' position="attributes">
+				    <attribute name="string">Financial and Hummans Manager</attribute>
+				    <attribute name="groups">base_custom.group_general_hr_manager</attribute>
+				</xpath>
+				<xpath expr='//button[@name="complete_mission"]' position="attributes">
+				    <attribute name="string">Request</attribute>
+				    <attribute name="groups">base.group_hr_user,base.group_department_manager</attribute>
+				    <attribute name="attrs">{'invisible':['|',('type_mission','!=','internal'),('state','!=','draft')]}</attribute>
+				</xpath>
+				<xpath expr='//button[@name="reject_mission"]' position="attributes">
+				    <attribute name="states">completed</attribute>
+				    <attribute name="groups">base_custom.group_general_department_manager</attribute>
+
+				</xpath>
+				<xpath expr='//button[@name="set_to_draft_mission"]' position="attributes">
+				    <attribute name="groups">base.group_hr_manager,base.group_hr_user,base_custom.group_general_department_manager</attribute>
+				</xpath>
+				<xpath expr='//form/header/button[@name="approve_mission"]' position="after">
+					<button string="HR Approve" name="hr_approve_mission" states="approved"
+						icon="gtk-apply" groups="base.group_hr_user"/>
+					<button string="Review Approve" name="review_mission" states="hr_approved" 
+						icon="gtk-apply" groups="purchase_ntc.group_internal_auditor"/>
+					<button string="HR Manager Approve" name="done_mission" states="reviewed" 
+						icon="gtk-apply" groups="base.group_hr_manager"/>
+						<button string="Set to Enrich Transfered" name="set_to_approved" states="reviewed"
+							groups="base.group_hr_manager" />
+						<button string="Set to Enrich Transfered" name="set_to_approved_review" states="hr_approved"
+							groups="purchase_ntc.group_internal_auditor" />
+						<button string="Reject" name="reject_mission_general_manag" states="validated"
+							groups="base_custom.group_general_hr_manager" />
+						<button string="External Mission" name="external_mission" attrs="{'invisible':['|',('type_mission','!=','external'),('state','!=','draft')]}" groups="base.group_hr_user" />
+						<button string="Transefer to Mission Allownce Calculation" name="mission_allownce" attrs="{'invisible':['|',('type_mission','!=','internal'),('state','!=','draft')]}" groups="base.group_hr_user" />
+			    	</xpath>
+			    	
+				<xpath expr='//field[@name="mission_id"]' position="before">
+					<field name="type_mission" on_change="onchange_mission()" attrs="{'readonly':[('state','not in',('draft','approved'))]}" />
+					<field name="external_mission_type" attrs="{'invisible':[('type_mission','!=','external')], 'required':[('type_mission','=','external')]}" />
+				</xpath>
+                <xpath expr='//field[@name="travel_path"]' position="attributes">
+					<attribute name="required">True</attribute>
+					<attribute name="attrs">{'readonly':[('state','not in',('draft','approved'))]}</attribute>
+
+				</xpath>
+                <xpath expr='//field[@name="transport"]' position="attributes">
+					<attribute name="required">True</attribute>
+					<attribute name="attrs">{'readonly':[('state','not in',('draft','approved'))]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="start_date"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in',('draft','approved'))]}</attribute>
+					<attribute name="on_change">onchange_date_from(start_date,end_date,days,'date_from')</attribute>
+				</xpath>
+				<xpath expr='//field[@name="end_date"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in',('draft','approved'))]}</attribute>
+					<attribute name="on_change">onchange_date_from(start_date,end_date,days,'date_to')</attribute>
+				</xpath>
+				<xpath expr='//field[@name="days"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in',('draft','approved'))]}</attribute>
+					<attribute name="on_change">onchange_date_from(start_date,end_date,days,'days')</attribute>
+				</xpath>
+				<xpath expr='//field[@name="mission_fee"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="percentage"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in',('draft','approved'))]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="department_id"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in',('draft','approved'))]}</attribute>
+					<attribute name="on_change">onchange_department(department_id)</attribute>
+				</xpath>
+				<xpath expr='//field[@name="notes"]' position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in',('draft','approved'))]}</attribute>
+				</xpath>
+				<!--xpath expr='//field[@name="percentage"]' position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath-->
+				<xpath expr='//field[@name="voucher_number"]' position="after">
+					<field name="allow_state" attrs="{'readonly':[('state','not in',('draft','approved'))],'required':[('type_mission','=','internal')],'invisible':[('type_mission','=','external')]}"/>
+				</xpath>
+				<xpath expr='//field[@name="mission_id"]' position="replace">
+				    <field name="mission_id" attrs="{'readonly':[('state','not in',('draft','approved'))], 'invisible':[('type_mission','=','external')], 'required':[('type_mission','!=','external')]}" domain="[('type_miss','=',type_mission)]"/>
+				    <field name="country_id" attrs="{'readonly':[('state','not in',('draft','approved'))], 'invisible':[('type_mission','!=','external')], 'required':[('type_mission','=','external')]}"/>
+				</xpath>
+				<xpath expr='//button[@name="recalcuate_days"]' position="before">
+					<button type="object" icon="terp-stock_format-scientific"
+							name="create_lines" class="oe_link oe_edit_only" string="(Add Item)" attrs="{'invisible':[('state','not in',('draft','approved'))]}"/>
+				</xpath>
+
+				<xpath expr='//button[@name="recalcuate_days"]' position="attributes">
+					<attribute name="attrs">{'invisible':[('state','not in',('draft','approved'))]}</attribute>
+				</xpath>
+				
+				<xpath expr='//field[@name="mission_line"]' position="replace">
+					<field colspan="4" name="mission_line" context="{'default_days':days, 'default_allow_account':allow_state,'default_department_id':department_id}"
+						nolabel="1" attrs="{'readonly':[('state','not in',('draft','approved'))]}">
+						<form string="Employee mission" version="7.0">
+							<group>
+								<group> <!-- context="{'line_ids':parent.mission_line,'model':'hr.employee.mission.line'}" /-->
+									<field name="employee_id" required="1"
+										
+										on_change="onchange_employee(employee_id,days,allow_state,parent.mission_id,parent.department_id,parent.allow_state,parent.type_mission)" domain="[('department_id','child_of',[department_id])]"/>
+									<field name="alternative_emp_id"
+										 domain="[('department_id','child_of',[department_id])]" />
+									<field name="department_id" invisible="1"/>
+									<field name="allow_account" invisible="1"/>
+									<field name="days"
+										on_change="onchange_days(days,employee_id,allow_state,parent.mission_id, parent.allow_state, parent.type_mission)" />
+									<field name="day_diff" invisible="1"/>
+								</group>
+								<group>
+									<field name="amount" />
+									<field name="mission_amounts" />
+									<field name="stamp" />
+									<field name="tax" />
+									<field name="gross_amount" />
+								</group>
+							</group>	
+							<group>
+								<field name="allow_state" context="{'default_alloww_idss':allow_account,'default_day_state':days}">
+								   <form>
+								   	<field name="alloww_idss" />
+								        <field name="day_state" on_change="on_change_day(day_state, parent.days,parent.day_diff)"/>
+								   </form>
+								   <tree  >
+								        <field name="alloww_idss" />
+								        <field name="day_state" on_change="on_change_day(day_state, parent.days,parent.day_diff)"/>
+								    </tree>
+								</field>
+							</group>
+						</form>
+						<tree string="Employee mission" create="false" colors="red:mission_amounts &lt; 0">
+							<field name="employee_id" colspan="4" />
+							<field name="alternative_emp_id"  />
+							<field name="allow_account" invisible="1"/>
+							<field name="days" />
+							<field name="amount" />
+							<field name="day_diff" invisible="1"/>
+							<field name="allow_state" context="{'default_alloww_idss':allow_account,'default_day_state':days}">
+							    <form string="Allowance State" version="7.0">
+							    	<field name="alloww_idss" />
+							        <field name="day_state" />
+							    </form>
+							    <tree >
+							        <field name="alloww_idss" />
+							        <field name="day_state" />
+							    </tree>
+							</field>
+							<field name="mission_amounts" />
+							<field name="stamp" />
+							<field name="tax" />
+							<field name="gross_amount" />
+						</tree>
+					</field>
+				</xpath>
+				<xpath expr='//page[@string="Notes"]' position="after">
+					<page string="Mission Purposes">
+								<group>
+									<field name="purpose" placeholder="Mission Purposes ..." nolabel="1"
+										colspan="4" attrs="{'readonly':[('state','==','done')]}" />
+								</group>
+							</page>
+				</xpath>
+				<xpath expr='//field[@name="voucher_number"]' position="attributes">
+					<attribute name="readonly">1</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<report auto="False" id="mission_allowance_id"
+         model="hr.employee.mission" 
+         name="mission_allowance"
+         rml="hr_ntc_custom/report/mission_allowance.rml" 
+         string="Mission Allowance Notification"
+         header="True"/>
+
+         <report auto="False" id="mission_bank"
+         model="hr.employee.mission" 
+         name="mission_bank"
+         rml="hr_ntc_custom/report/mission_report_bank.rml" 
+         string="Mission Allowance Bank report"
+         header="True"/>
+
+		
+	</data>
+</openerp>

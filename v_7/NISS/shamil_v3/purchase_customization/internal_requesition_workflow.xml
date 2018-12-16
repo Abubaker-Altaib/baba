@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="wkf_ireq_in_progress" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">in_progress</field>
+            <field name="kind">function</field>
+            <field name="action">in_progress()</field>
+        </record>
+        <record id="wkf_ireq_completed" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">completed</field>
+            <field name="kind">function</field>
+            <field name="action">completed()</field>
+        </record>
+        <record id="wkf_ireq_closed" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">closed</field>
+            <field name="kind">function</field>
+            <field name="action">closed()</field>
+        </record>
+        <record id="wkf_ireq_in_progress_quote" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">in_progress_quote</field>
+            <field name="kind">function</field>
+            <field name="action">in_progress_quote()</field>
+        </record>
+        <record id="wkf_ireq_completed_quote" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">completed_quote</field>
+            <field name="kind">function</field>
+            <field name="action">completed_quote()</field>
+        </record>
+        <record id="wkf_ireq_closed_quote" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">closed_quote</field>
+            <field name="kind">function</field>
+            <field name="action">closed_quote()</field>
+        </record>
+        <record id="wkf_ireq_in_progress_fin_request" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">in_progress_fin_request</field>
+            <field name="kind">function</field>
+            <field name="action">in_progress_fin_request()</field>
+        </record>
+        <record id="wkf_ireq_completed_fin_request" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">completed_fin_request</field>
+            <field name="kind">function</field>
+            <field name="action">completed_fin_request()</field>
+        </record>
+        <record id="wkf_ireq_closed_fin_request" model="workflow.activity">
+            <field name="wkf_id" ref="purchase_custom.wkf_ireq_m"/>
+            <field name="name">closed_fin_request</field>
+            <field name="kind">function</field>
+            <field name="action">closed_fin_request()</field>
+        </record>
+<!-- -->
+        <record id="wkf_ireq_draft_inprogress" model="workflow.transition">
+            <field name="act_from" ref="purchase_custom.wkf_ireq_m_draft"/>
+            <field name="act_to" ref="wkf_ireq_in_progress"/>
+            <field name="signal">in_progress</field>
+        </record>
+
+        <record id="wkf_ireq_inprogress_complete" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_in_progress"/>
+            <field name="act_to" ref="wkf_ireq_completed"/>
+            <field name="signal">completed</field>
+        </record>
+
+        <record id="wkf_ireq_complete_close" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_completed"/>
+            <field name="act_to" ref="wkf_ireq_closed"/>
+            <field name="signal">closed</field>
+        </record>
+
+        <record id="wkf_ireq_draft_inprogress_2" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_completed"/>
+            <field name="act_to" ref="wkf_ireq_in_progress_quote"/>
+            <field name="signal">in_progress_quote</field>
+        </record>
+
+        <record id="wkf_ireq_inprogress_complet_quote" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_in_progress_quote"/>
+            <field name="act_to" ref="wkf_ireq_completed_quote"/>
+            <field name="signal">completed_quote</field>
+        </record>
+
+        <record id="wkf_ireq_complet_close_quote" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_completed_quote"/>
+            <field name="act_to" ref="wkf_ireq_closed_quote"/>
+            <field name="signal">closed_quote</field>
+        </record>
+        <record id="wkf_ireq_complet_entry_quote_" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_completed_quote"/>
+            <field name="act_to" ref="wkf_ireq_in_progress_quote"/>
+            <field name="signal">back_to_quotes</field>
+        </record>
+         <record id="wkf_ireq_in_progress_fin_request_entry_quote_" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_in_progress_fin_request"/>
+            <field name="act_to" ref="wkf_ireq_in_progress_quote"/>
+            <field name="signal">back_to_quotes</field>
+        </record>
+        <record id="wkf_ireq_close_quote_in_progress_fin_request" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_closed_quote"/>
+            <field name="act_to" ref="wkf_ireq_in_progress_fin_request"/>
+            <field name="signal">in_progress_fin_request</field>
+        </record>
+        <record id="wkf_ireq_in_progress_fin_request_completed_fin_request" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_in_progress_fin_request"/>
+            <field name="act_to" ref="wkf_ireq_completed_fin_request"/>
+            <field name="signal">completed_fin_request</field>
+        </record>
+        <record id="wkf_ireq_completed_fin_request_closed_fin_request" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_completed_fin_request"/>
+            <field name="act_to" ref="wkf_ireq_closed_fin_request"/>
+            <field name="signal">closed_fin_request</field>
+        </record>
+        <record id="wkf_ireq_close_done_quote" model="workflow.transition">
+            <field name="act_from" ref="wkf_ireq_closed_fin_request"/>
+            <field name="act_to" ref="purchase_custom.wkf_ireq_m_done"/>
+            <field name="signal">done</field>
+        </record>
+    </data>
+</openerp>

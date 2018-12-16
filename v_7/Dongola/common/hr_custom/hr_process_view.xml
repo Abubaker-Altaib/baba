@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Process Main Menu -->
+		<menuitem id="menu_hr_process_report" name="Process Reports"
+			parent="menu_hr_reports" groups="base.group_hr_manager" sequence="41" />
+		<!-- Promotion Type -->
+		<record model="ir.ui.view" id="promotion_type_form_view">
+			<field name="name">promotion.type.form</field>
+			<field name="model">hr.promotion.type</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Promotion Types" version="7.0">
+					<sheet>
+						<h1>
+							<label string="Promotion Types" />
+						</h1>
+						<group>
+							<field name="code" />
+							<field name="name" />
+							<field name="margin_time" />
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_promotion_type_tree_view">
+			<field name="name">hr.promotion.type.tree</field>
+			<field name="model">hr.promotion.type</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Promotions Types">
+					<field name="code" select="1" />
+					<field name="name" />
+					<field name="margin_time" />
+				</tree>
+			</field>
+		</record>
+		<record id="open_hr_promotion_type_action" model="ir.actions.act_window">
+			<field name="name">Promotions Types</field>
+			<field name="res_model">hr.promotion.type</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_promotion_type_tree_view" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to define a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+		<menuitem id="hr_promotion_type_menu" name="Promotion Types"
+			parent="menu_hr_main_configuration" action="open_hr_promotion_type_action" />
+
+		<!-- End -->
+
+		<!-- Hr Process Archive -->
+
+		<record model="ir.ui.view" id="hr_process_archive_form_view">
+			<field name="name">hr.process.archive.form</field>
+			<field name="model">hr.process.archive</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Transfer Archive" version="7.0">
+					<header>
+						<button string="Approved" name="approve" states="draft"
+							class="oe_highlight" groups="base.group_hr_manager" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,approved" />
+					</header>
+					<sheet>
+						<group>
+							<group>
+								<field name="employee_id" on_change="onchange_employee(employee_id)" />
+								<field name="reference" on_change="onchange_reference(reference,employee_id)"
+									context="{'model':'hr.process','employee_id':employee_id}" select="1"/>
+								<field name="previous" on_change="onchange_reference(reference,employee_id)" />
+								<field name="approve_date" />
+							</group>
+							<group>
+								<field name="date" />
+								<field name="code" />
+								<field name="days" /> <!-- attrs="{'invisible':[('reference','!=', 'hr.salary.bonuses')]}" -->
+								<field name="promotion_type" /> <!--attrs="{'invisible':[('reference','!=', 'hr.salary.degree')]}" -->
+								<field name="company_id" groups="base.group_multi_company"
+									readonly="1" />
+							</group>
+							<notebook colspan="4">
+								<page string="Associated Processes">
+									<field name="associated_ids">
+										<tree string="Associated Processes" editable="top">
+											<field name="employee_id" invisible="1"
+												context="{'default_employee_id':parent.employee_id}" />
+											<field name="reference"
+												on_change="onchange_reference(reference,parent.employee_id)"
+												select="1" />
+											<field name="previous"
+												on_change="onchange_reference(reference,parent.employee_id)" />
+											<field name="approve_date" />
+											<field name="date" />
+											<field name="state" invisible='1' />
+										</tree>
+									</field>
+								</page>
+								<page string="Comments">
+									<field name="comments" />
+								</page>
+							</notebook>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_process_archive_tree_view">
+			<field name="name">hr.process.archive.tree</field>
+			<field name="model">hr.process.archive</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Transfer Archive">
+					<field name="employee_id" select="1" />
+					<field name="reference" select="1" />
+					<field name="previous" />
+					<field name="approve_date" />
+					<field name="date" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- transfer archive search -->
+		<record id="hr_process_archive_filter" model="ir.ui.view">
+			<field name="name">hr.process.archive.filter</field>
+			<field name="model">hr.process.archive</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search transfer archive">
+					<group expand="0" string="Group By...">
+						<filter string="Event Ref" icon="terp-personal" domain="[]"
+							context="{'group_by':'reference'}" />
+						<filter string="Employee" icon="terp-gtk-select-all"
+							domain="[]" context="{'group_by':'employee_id'}" />
+						<filter string="Status" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+						<filter string="Company" icon="terp-go-home" domain="[]"
+							context="{'group_by':'company_id'}" groups="base.group_multi_company" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="hr_process_archive_action" model="ir.actions.act_window">
+			<field name="name">HR Process</field>
+			<field name="res_model">hr.process.archive</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_process_archive_tree_view" />
+			<field name="search_view_id" ref="hr_process_archive_filter" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to define a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+
+		<act_window
+			context="{'search_default_partner_id':[active_id], 'default_partner_id': active_id}"
+			id="act_employee_all_processes" name="Employee Processes" res_model="hr.process.archive"
+			src_model="hr.employee" domain="[('employee_id','=', active_id)]"
+			view_type="form" view_mode="tree,form" />
+
+		<menuitem id="menu_hr_payroll_processes" name="Human Resources Processes"
+			parent="hr.menu_hr_root" sequence="3"
+			groups="base.group_hr_overview,base.group_hr_manager,base.group_hr_user" />
+		<!-- <menuitem id="hr_process_archive" name="Archive" -->
+		<!-- parent="menu_hr_payroll_processes" sequence="14" -->
+		<!-- groups="base.group_hr_overview,base.group_hr_manager,base.group_hr_user" 
+			/> -->
+		<menuitem id="hr_transfer_archive_tree_menu" name="HR Process"
+			parent="menu_hr_payroll_processes" action="hr_process_archive_action" />
+
+
+		<!--Employee Delegation -->
+
+		<record model="ir.ui.view" id="hr_employee_delegation_form_view">
+			<field name="name">hr.employee.delegation.form</field>
+			<field name="model">hr.employee.delegation</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Employee Delegation" version="7.0">
+					<header>
+                                                <button string="Draft" name="draft" states="complete,confirm,approve" />
+						<button string="Cancel" name="cancel" states="confirm,complete" />
+						<button string="Complete" name="complete" states="draft"
+							class="oe_highlight" />
+						<button string="Confirm" name="confirm" states="complete"
+							class="oe_highlight" />
+						<button string="Approve" name="approve" states="confirm"
+							class="oe_highlight" />
+						<button string="Delegation Done" name="done" states="approve" class="oe_highlight"
+							type="workflow" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,complete,confirm,approve,done" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<label for="employee_id" class="oe_edit_only" />
+							<h1>
+								<field name="employee_id"
+									domain="[('state','=', 'approved'),('delegation','=', False)]" />
+							</h1>
+						</div>
+						<group>
+							<group>
+								<field name="type" />
+								<field name="company_id" groups="base.group_multi_company"
+									widget="selection" />
+								<label for="days" string="Duration" />
+								<div>
+									<group col="3">
+										<field name="start_date" nolabel="1" class="oe_inline"
+											required="1" />
+										<label string="-" class="oe_inline" />
+										<field name="end_date" nolabel="1" class="oe_inline"
+											 />
+									</group>
+
+								</div>
+							</group>
+							<group>
+								<field name="destination" />
+
+							</group>
+						</group>
+						<field name="message" />
+						<field name="comments" placeholder="Note..." />
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_employee_delegation_tree_view">
+			<field name="name">hr.employee.delegation.tree</field>
+			<field name="model">hr.employee.delegation</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Delegation">
+					<field name="employee_id" />
+					<field name="type" />
+					<field name="destination" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+		<record id="hr_employee_delegation_action" model="ir.actions.act_window">
+			<field name="name">Delegation</field>
+			<field name="res_model">hr.employee.delegation</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_employee_delegation_tree_view" />
+		</record>
+
+
+		<record id="hr_employee_delegation_filter" model="ir.ui.view">
+			<field name="name">hr.employee.delegation.filter</field>
+			<field name="model">hr.employee.delegation</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Delegation">
+					<group col='8' colspan='4'>
+						<field name="employee_id" widget="selection">
+							<filter icon="terp-personal" name="my_qualification"
+								domain="[('employee_id.user_id','=', uid)]" help="My Delegation" />
+						</field>
+						<separator orientation="vertical" />
+						<field name="type" />
+						<separator orientation="vertical" />
+						<field name="start_date">
+						</field>
+						<separator orientation="vertical" />
+						<field name="end_date">
+						</field>
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<menuitem id="hr_employee_delegation_menu" name="Delegation"
+			parent="menu_hr_payroll_processes" action="hr_employee_delegation_action" />
+
+
+		<!--RE-Employment -->
+
+		<record id="view_reemployment_form" model="ir.ui.view">
+			<field name="name">Employee Reemployment Form</field>
+			<field name="model">hr.employee.reemployment</field>
+			<field name="arch" type="xml">
+				<form string="Emlpoyee Reemployment " version="7.0">
+					<header>
+						<button string="Done" name="action_done" states="draft"
+							type="object" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,done" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<label for="employee_id" class="oe_edit_only" />
+							<h1>
+								<field name="employee_id" domain="[('state','=','refuse')]"
+									on_change="onchange_employee_id(employee_id)" />
+							</h1>
+						</div>
+						<group>
+							<group>
+								<field name="company_id" groups="base.group_multi_company"
+									widget="selection" />
+								<field name="department_id" />
+								<field name="job_id" />
+							</group>
+							<group>
+								<field name="reemployment_date" />
+							</group>
+
+						</group>
+						<notebook colspan="4">
+							<page string="New Qualifications">
+								<field name="qualification_ids" context="{'default_employee_id':employee_id}"
+									nolabel="1">
+									<tree string="Employee Qualifications" editable="top">
+										<field name="employee_id" invisible='1' />
+										<field name="emp_qual_id" />
+										<field name="qual_date" />
+										<field name="organization" />
+										<field name="specialization" />
+										<field name="state" />
+										<button string="Complete" name="complete_quali" states="draft"
+											type="object" icon="gtk-apply" />
+										<button string="Approve" name="approve_quali" states="complete"
+											type="object" icon="gtk-apply" />
+										<button string="Reject" name="reject_quali" states="approved"
+											type="object" icon="gtk-cancel" />
+										<button string="Set to Draft" name="set_to_draft"
+											states="approved,rejected" type="object" icon="gtk-convert" />
+									</tree>
+								</field>
+							</page>
+							<page string="Associated Processes">
+								<field name="process_ids" nolabel="1">
+									<tree string="Associated Processes" editable="top">
+										<field name="reference" />
+										<field name="previous" />
+										<field name="approve_date" />
+										<field name="date" />
+									</tree>
+								</field>
+							</page>
+							<page string="Notes">
+								<field name="comments" nolabel="1" />
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_emp_reemp_tree" model="ir.ui.view">
+			<field name="name">Employee Reemployment Tree </field>
+			<field name="model">hr.employee.reemployment</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Reemployment">
+					<field name="employee_id" />
+					<field name="reemployment_date" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+
+		<record id="open_view_reemployment_action" model="ir.actions.act_window">
+			<field name="name">Reemployment</field>
+			<field name="res_model">hr.employee.reemployment</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_emp_reemp_tree" />
+		</record>
+
+		<record id="hr_employee_reemployment_filter" model="ir.ui.view">
+			<field name="name">Reemployment</field>
+			<field name="model">hr.employee.reemployment</field>
+			<field name="arch" type="xml">
+				<search string="Search Reemployment">
+					<field name="employee_id" />
+					<field name="reemployment_date" />
+				</search>
+			</field>
+		</record>
+
+
+		<menuitem action="open_view_reemployment_action" id="menu_view_reemployment_form"
+			parent="menu_hr_payroll_processes" sequence="41" />
+
+		<!-- Hr dismissal -->
+		<record model="ir.ui.view" id="hr_dismissal_form_view">
+			<field name="name">hr.dismissal.form</field>
+			<field name="model">hr.dismissal</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Termination Causes" version="7.0">
+					<sheet>
+						<group col="1" colspan="4">
+							<div class="oe_title" colspan="4">
+								<label for="name" />
+								<h1>
+									<field name="name" colspan="4" />
+								</h1>
+								<label for="code" />
+								<field name="code" colspan="4" />
+							</div>
+						</group>
+						<notebook>
+							<page string="Info">
+								<group>
+									<field name="active" />
+									<field name="reemployment" />
+									<label for="period" />
+									<div>
+										<field name="period" attrs="{'readonly':[('reemployment','=',False)]}"
+											class="oe_inline" />
+										Months
+									</div>
+								</group>
+							</page>
+						</notebook>
+
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_dismissal_tree_view">
+			<field name="name">hr.dismissal.tree</field>
+			<field name="model">hr.dismissal</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Employment Termination Causes">
+					<field name="code" />
+					<field name="name" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="hr_dismissal_tree" model="ir.actions.act_window">
+			<field name="name">Employment Termination Causes</field>
+			<field name="res_model">hr.dismissal</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_dismissal_tree_view" />
+		</record>
+
+
+		<menuitem id="hr_dismissal_menu" name="Employment Termination Causes"
+			parent="menu_hr_main_configuration" action="hr_dismissal_tree"
+			sequence="19" />
+
+		<!-- Employment Termination -->
+
+		<record model="ir.ui.view" id="view_employment_termination_form">
+			<field name="name">employment.termination.form</field>
+			<field name="model">hr.employment.termination</field>
+			<field name="arch" type="xml">
+				<form string="Termination" version="7.0">
+					<header>
+						<button name="termination" string="Terminate" states="draft"
+							type="object" class="oe_highlight" groups="base.group_user" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,refuse" />
+					</header>
+					<sheet>
+						<label for="employee_id" class="oe_edit_only" />
+						<h1>
+							<field name="employee_id" class="oe_inline" />
+							<field name="dismissal_date" class="oe_inline" />
+						</h1>
+						<label for="dismissal_type" />
+						<field name="dismissal_type" />
+						<label for="comments" class="oe_edit_only" />
+						<field name="comments" placeholder="Note..." />
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="employment_termination_tree_view">
+			<field name="name">employment.termination.tree</field>
+			<field name="model">hr.employment.termination</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Termination">
+					<field name="employee_id" />
+					<field name="dismissal_type" />
+					<field name="dismissal_date" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="employment_termination_tree" model="ir.actions.act_window">
+			<field name="name">Termination</field>
+			<field name="res_model">hr.employment.termination</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form,tree</field>
+			<field name="view_id" ref="employment_termination_tree_view" />
+		</record>
+
+		<record id="employment_termination_filter" model="ir.ui.view">
+			<field name="name">hr.employment.termination.filter</field>
+			<field name="model">hr.employment.termination</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Termination">
+					<group col='8' colspan='4'>
+						<field name="employee_id" widget="selection">
+						</field>
+						<field name="dismissal_type" widget="selection">
+						</field>
+					</group>
+				</search>
+			</field>
+		</record>
+		
+	    <act_window
+			context="{'search_default_partner_id':[active_id], 'default_partner_id': active_id}"
+			id="act_employment_termination" name="Termination"
+			res_model="hr.employment.termination" src_model="hr.employee" domain="[('employee_id','=', active_id)]"
+			view_type="form" view_mode="tree" />
+			
+		<menuitem id="employment_termination_tree_menu" name="Termination"
+			parent="menu_hr_payroll_processes" action="employment_termination_tree"
+			sequence="40" />
+
+	</data>
+</openerp>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="project_journal_items_id_hijri" inherit_id="account_finance_reporting.project_journal_items_id">
+            <xpath expr="//td[@name='date_maturity_odd']" position="replace">
+            <td  name="date_maturity_odd" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.date_maturity"/> Corresponding <span t-esc="doc.gregorian_to_hijri(line.date_maturity)"/>
+        	</td>
+            </xpath>
+
+            <xpath expr="//td[@name='date_maturity_even']" position="replace">
+            <td  name="date_maturity_even" t-attf-style="border:1px solid #{doc.company_id.report_style_id.border_color};"><span t-field="line.date_maturity"/><span t-esc="doc.gregorian_to_hijri(line.date_maturity)"/>
+        	</td>
+            </xpath>
+
+            <xpath expr="//tr[@name='date_row']" position="replace">
+            <tr name="date_row">
+                            <td><strong>Date:</strong></td>
+                            <td> <span t-field="doc.date"/> <strong>Corresponding:</strong> <span t-esc="doc.gregorian_to_hijri(doc.date)"/></td>
+                            <td><strong>Journal:</strong></td>
+                            <td><span t-field="doc.journal_id"/></td>
+            </tr>
+            </xpath>
+        </template>
+       
+    </data>
+</openerp>

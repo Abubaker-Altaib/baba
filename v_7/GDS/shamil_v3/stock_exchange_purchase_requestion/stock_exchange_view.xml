@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+	<record model="ir.ui.view" id="view_inherit_stock_exchang">
+        <field name="name">Exchange Order Inherit</field>
+        <field name="model">exchange.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="stock_exchange.exchange_order_form"/>
+        <field name="arch" type="xml">
+
+	    <xpath expr="//button[@string='Set to Draft']" position="after">
+                <button name="%(stock_exchange_purchase_requestion.action_create_purchase_requestion)d"
+                                                     string="Create Purchase Requestion" type="action" states="approved" groups="stock_exchange.group_exchange_information"/>
+            </xpath >
+
+	    <xpath expr="//button[@string='Set to Draft']" position="after">
+                <button name="approve_exchange" string="Approve" type="object" states="goods_in_stock"/>
+            </xpath >
+
+            <!--field name="req_no" position="after">
+	           <field name="category_id" on_change="onchange_category_check_products_line(category_id, order_line)" required="1" />
+            </field-->
+        </field>
+    </record>
+
+
+
+    <record model="ir.ui.view" id="inherit_stock_exchang_order_tree">
+        <field name="name">Exchange Order TREE Inherit</field>
+        <field name="model">exchange.order</field>
+        <field name="inherit_id" ref="stock_exchange.exchange_order_tree"/>
+        <field name="arch" type="xml">
+                
+           <xpath expr="//tree[@string='Exchange Order']" position="replace">
+             <tree colors="grey:state in ('cancel','done');red:state in ('wait_purchase');green:state in ('goods_in_stock')" string="Exchange Order">
+                   <field name="name" string="Reference" readonly="1"/>
+                    <field name="date_order" string="Order Date"/>
+                    <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                    <field name="department_id"/>
+                    <field name="stock_journal_id" />
+                     <field name="req_no"/>
+                    <field name="progress_rate" widget="progressbar"/>
+                    <field name="total_amount" sum="Total Amount"  groups="analytic.group_analytic_accounting"/>
+                    <field name="state"/>
+                  </tree>
+
+
+           </xpath>
+
+
+        </field>
+    </record>
+
+
+
+
+    </data>
+</openerp>

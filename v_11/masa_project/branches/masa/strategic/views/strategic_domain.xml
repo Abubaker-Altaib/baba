@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="strategic_domain_view_form">
+            <field name="name">strategic.domain.view.form</field>
+            <field name="model">strategic.domain</field>
+            <field name="arch" type="xml">
+                <form string="Strategic Domain">
+                    <sheet string="Strategic Domain">
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"  placeholder="Strategic Domain Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code"/>
+                            </group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>    
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_strategic_domain_tree">
+            <field name="name">strategic.domain.tree</field>
+            <field name="model">strategic.domain</field>
+            <field name="arch" type="xml">
+                <tree string="Strategic Domain">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_strategic_domain_view">
+            <field name="name">Strategic Domain</field>
+            <field name="res_model">strategic.domain</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_strategic_domain_tree"/>
+        </record>
+
+        <record id="view_strategic_domain_search" model="ir.ui.view">
+           <field name="name">strategic.domain.search</field>
+           <field name="model">strategic.domain</field>
+           <field name="arch" type="xml">
+               <search string="Strategic Domain">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="domain name"/>
+                    <field name="code"/>
+                    <field name="company_id"/>
+                </search>
+            </field>
+        </record>
+        <menuitem parent="menu_strategic_configuration_view"
+                  id="menu_strategic_domain_view"
+                  name="Strategic Domain"
+                  action="act_strategic_domain_view"/>
+    </data>
+</odoo>

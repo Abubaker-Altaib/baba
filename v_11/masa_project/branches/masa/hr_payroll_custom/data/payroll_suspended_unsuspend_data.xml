@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+       <record id="seq_bonus_slip" model="ir.sequence">
+            <field name="name">bonus Slip</field>
+            <field name="code">bonus.slip</field>
+            <field name="prefix">BONUS/</field>
+            <field name="padding">3</field>
+        </record>
+       
+        <!--
+       payroll suspended unsuspend Sequences
+        -->
+        <record id="sequence_payroll_suspended_unsuspend" model="ir.sequence">
+            <field name="name">Payroll Suspended Unsuspend</field>
+            <field name="code">payroll.suspended.unsuspend</field>
+            <field name="prefix">SUS</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record> 
+        <record id="sequence_salary_expectation_lines" model="ir.sequence">
+            <field name="name">Salary Expectation</field>
+            <field name="code">salary.expectation.lines</field>
+            <field name="prefix">SE</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+         <record id="sequence_hr_promotions" model="ir.sequence">
+            <field name="name">Hr Promotions</field>
+            <field name="code">hr.promotions</field>
+            <field name="prefix">PROM</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+         <record id="sequence_hr_bonus" model="ir.sequence">
+            <field name="name">Hr Bonus</field>
+            <field name="code">hr.bonus</field>
+            <field name="prefix">BOU </field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        <delete id="hr_payroll.hr_rule_basic" model="hr.salary.rule"/>
+        <record id="hr_rules_basic" model="hr.salary.rule">
+            <field name="name">Basic Salary</field>
+            <field name="sequence" eval="1"/>
+            <field name="code">BASIC</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.wage</field>
+        </record>
+        <delete id="hr_payroll.hr_rule_taxable" model="hr.salary.rule"/>
+        <delete id="hr_payroll.hr_rule_net" model="hr.salary.rule"/>
+
+
+        <delete id="hr_payroll.COMP" model="hr.salary.rule.category"/>
+
+        <delete id="hr_payroll.NET" model="hr.salary.rule.category"/>
+
+        <delete id="hr_payroll.GROSS" model="hr.salary.rule.category"/>
+
+        <delete id="hr_payroll.BASIC" model="hr.salary.rule.category"/>
+
+        <record id="Bouns" model="hr.salary.rule.category">
+            <field name="name">Bouns</field>
+            <field name="code">Bouns</field>
+        </record>
+
+        
+          <!-- Expired Soon -->
+        <!-- <record id="ir_cron_scheduler_salary_expectation_stop" model="ir.cron">
+            <field name="name">Salary Expectation Expired </field>
+            <field name="model_id" ref="model_salary_expectation_lines"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">model.sechduler_method()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+        </record>     -->
+    </data>
+</odoo>

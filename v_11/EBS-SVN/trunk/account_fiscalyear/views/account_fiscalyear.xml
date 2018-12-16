@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+		<!-- Fiscal Year -->
+        <record id="view_account_fiscalyear_form" model="ir.ui.view">
+            <field name="name">account.fiscalyear.form</field>
+            <field name="model">account.fiscalyear</field>
+            <field name="arch" type="xml">
+                <form string="Fiscal year" version="7.0">
+                <header>
+                    <button name="create_period1" states="draft" string="Create Monthly Periods" type="object" class="oe_highlight"/>
+                    <button name="create_period3" states="draft" string="Create 3 Months Periods" type="object" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" nolabel="1" />
+                </header>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <!--field name="end_journal_period_id"/-->
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_stop"/>
+                        </group>
+                    </group>
+                    <field colspan="4" name="period_ids" nolabel="1" widget="one2many_list" attrs="{'readonly':[('state', '=', 'done')]}">
+                        <form string="Period" version="7.0">
+                            <group col="4">
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="date_start"/>
+                                <field name="date_stop"/>
+                                <field name="special"/>
+                                <field name="state" invisible="1"/>
+                            </group>
+                        </form>
+                    </field>
+                </form>
+            </field>
+        </record>
+        <record id="view_account_fiscalyear_tree" model="ir.ui.view">
+            <field name="name">account.fiscalyear.tree</field>
+            <field name="model">account.fiscalyear</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:state == 'draft';gray:state == 'done' " string="Fiscalyear">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_account_fiscalyear_search" model="ir.ui.view">
+            <field name="name">account.fiscalyear.search</field>
+            <field name="model">account.fiscalyear</field>
+            <field name="arch" type="xml">
+                <search string="Search Fiscalyear">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Fiscal Year"/>
+                    <filter string="Open" domain="[('state','=','draft')]" icon="terp-camera_test"/>
+                    <filter string="Closed" domain="[('state','=','done')]" icon="terp-dialog-close"/>
+                    <field name="state"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Status" context="{'group_by': 'state'}" icon="terp-stock_effects-object-colorize"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="action_account_fiscalyear" model="ir.actions.act_window">
+            <field name="name">Fiscal Years</field>
+            <field name="res_model">account.fiscalyear</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start a new fiscal year.
+              </p><p>
+                Define your company's financial year according to your needs. A
+                financial year is a period at the end of which a company's
+                accounts are made up (usually 12 months). The financial year is
+                usually referred to by the date in which it ends. For example,
+                if a company's financial year ends November 30, 2011, then
+                everything between December 1, 2010 and November 30, 2011
+                would be referred to as FY 2011.
+              </p>
+            </field>
+        </record>
+        <menuitem id="next_id_23" name="Periods" parent="account.menu_finance_configuration" sequence="5" />
+        <menuitem id="menu_action_account_fiscalyear" action="action_account_fiscalyear" parent="next_id_23"/>
+
+        <!-- Period -->
+        <record id="view_account_period_form" model="ir.ui.view">
+            <field name="name">account.period.form</field>
+            <field name="model">account.period</field>
+            <field name="arch" type="xml">
+                <form string="Account Period" version="7.0">
+                    <header>
+                        <button string="Close Period" name="%(account_fiscalyear.action_account_period_close)d" type="action" class="oe_highlight" states="draft"/>
+                        <button name="action_draft" states="done" string="Re-Open Period" type="object" groups="account.group_account_manager"/>
+                        <field name="state" widget="statusbar" nolabel="1"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="fiscalyear_id" widget="selection"/>
+                                <label for="date_start" string="Duration"/>
+                                <div>
+                                    <field name="date_start" class="oe_inline" nolabel="1"/> -
+                                    <field name="date_stop" nolabel="1" class="oe_inline"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="code"/>
+                                <field name="special"/>
+                                <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_account_period_tree" model="ir.ui.view">
+            <field name="name">account.period.tree</field>
+            <field name="model">account.period</field>
+            <field name="arch" type="xml">
+              <tree colors="blue:state == 'draft';gray:state == 'done' " string="Period">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="date_start"/>
+                    <field name="date_stop"/>
+                    <field name="special"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_account_period_search" model="ir.ui.view">
+            <field name="name">account.period.search</field>
+            <field name="model">account.period</field>
+            <field name="arch" type="xml">
+                <search string="Search Period">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Period"/>
+                    <filter string="To Close" name="draft" domain="[('state','=','draft')]" icon="terp-dialog-close"/>
+                </search>
+            </field>
+        </record>
+        <record id="action_account_period" model="ir.actions.act_window">
+            <field name="name">Periods</field>
+            <field name="res_model">account.period</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_draft': 1}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a fiscal period.
+              </p><p>
+                An accounting period typically is a month or a quarter. It
+                usually corresponds to the periods of the tax declaration.
+              </p>
+            </field>
+        </record>
+
+        <!-- form of inherit Account Invoice view for Purchase  -->
+        <record model="ir.ui.view" id="Accountinvoice_purchase_inherit_view">
+            <field name="name">Account.Invoice.inherit.view</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='reference']" position="after">
+                <field name="period_id" attrs="{'readonly':[('state','!=','draft')]}" />
+               </xpath>
+             </field>
+        </record>
+
+        <!-- form of inherit Account Invoice view sale -->
+        <record model="ir.ui.view" id="Accountinvoice_inherit_view">
+            <field name="name">Account.Invoice.inherit.view</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="before">
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="button_payment_lines"
+                                string="Payment" type="object"
+                                groups="account.group_account_user"
+                                attrs="{'invisible':[('state','=','draft')]}" icon="fa-bars"/>
+                    </div>
+                </xpath>
+               <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="period_id" required='1' attrs="{'readonly':[('state','!=','draft')]}" />
+               </xpath>
+             </field>
+        </record>
+
+        <!-- form of inherit Account payment view -->
+        <record model="ir.ui.view" id="account_payment_inherit_view">
+            <field name="name">account.payment.inherit.view</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='payment_date']" position="after">
+                <field name="period_id" required='1'  attrs="{'readonly':[('state','!=','draft')]}" />
+               </xpath>
+             </field>
+        </record>
+
+        <!-- form of inherit Accounting Voucher Purchase view -->
+        <record model="ir.ui.view" id="Account_Voucher_Purchase_inherit_view">
+            <field name="name">Account.Voucher.Purchase.inherit.view</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_purchase_receipt_form"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='pay_now']" position="after">
+                <field name="period_id" required='1'  attrs="{'readonly':[('state','!=','draft')]}" />
+               </xpath>
+             </field>
+        </record>
+
+       <!-- form of inherit Accounting Voucher sale view -->
+        <record model="ir.ui.view" id="Accounting_Voucher_sale_inherit_view">
+            <field name="name">Account.Voucher.sale.inherit.view</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_sale_receipt_form"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='pay_now']" position="after">
+                <field name="period_id" required='1'  attrs="{'readonly':[('state','!=','draft')]}" />
+               </xpath>
+             </field>
+        </record>
+        <menuitem id="menu_action_account_period" action="action_account_period" parent="account_fiscalyear.next_id_23"/>
+        <menuitem id="menu_account_end_year" name="End of Year" sequence="25" parent="account_fiscalyear.next_id_23"/>
+
+</data>
+</odoo>

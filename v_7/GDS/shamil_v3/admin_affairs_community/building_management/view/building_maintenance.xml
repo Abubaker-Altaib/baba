@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+	<!-- Building maintenance type Form,Tree View & Action -->
+       <record id="view_building_maintenance_type_form" model="ir.ui.view">
+			<field name="name">building.maintenance.type.form</field>
+			<field name="model">building.maintenance.type</field>
+			<field name="arch" type="xml">
+				<form string="Building maintenance type">
+						<field name="name" select="1"/>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_building_maintenance_type" model="ir.ui.view">
+			<field name="name">building.maintenance.type.tree</field>
+			<field name="model">building.maintenance.type</field>
+			<field name="arch" type="xml">
+				<tree string="Building maintenance type">
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="building_maintenance_type_action" model="ir.actions.act_window">
+			<field name="res_model">building.maintenance.type</field>
+			<field name="domain">[]</field>
+		</record>
+
+		<!-- building maintenance order Record Form,Tree View & Action -->
+		<record id="view_building_maintenance_tree" model="ir.ui.view">
+			<field name="name">building.maintenance.tree</field>
+			<field name="model">building.maintenance</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Building maintenance order">
+						<field name="name" colspan="2" />				
+						<field name="date" colspan="2" />
+						<field name="maintenance_type"/>
+						<field name="partner_id" colspan="2"/>
+						<field name="cost"/>
+						<field name="building_id" colspan="2" on_change="onchange_building_id(building_id)"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+						<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_building_maintenance_form" model="ir.ui.view">
+			<field name="name">building.maintenance.form</field>
+			<field name="model">building.maintenance</field>
+			<field name="arch" type="xml">
+				<form string="Building maintenance order" version="7.0">
+                                    <header>
+                                        <button name="confirmed" states="draft" string="Confirm" class="oe_highlight"
+                                       		confirm="Are you sure you want to Confirm this request?" 
+                                        	groups="building_management.group_building_user"/>
+								
+					<button name="done" states="confirmed" string="Done" class="oe_highlight"
+						confirm="Are you sure you want to approve this request?"  
+                                        	groups="building_management.group_building_manager"/>
+									
+					<button name="cancel" states="draft,confirmed" string="Cancel Request"
+						icon="gtk-cancel" confirm="Are you sure you want to Cancel this request?" 
+                                        	groups="building_management.group_building_user,building_management.group_building_manager"/>
+									
+					<button name="ir_action_cancel_draft" states="cancel"
+						string="Set to Draft" type="object" icon="gtk-convert"
+                                        	groups="building_management.group_building_user,building_management.group_building_manager" />
+
+                                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done,cancel"/>
+                                    </header>    
+				    <sheet>
+                                        <group col="4">
+					<field name="name"  />				
+					<field name="date" />
+					<field name="maintenance_type"/>
+					<field name="partner_id"/>
+					<field name="building_id" colspan="1" on_change="onchange_building_id(building_id)"/>
+					<field name="cost"/>
+					<field name="warranty_end_date" />
+                                        </group>
+					<notebook colspan="4">
+                                        	<page string ="Maintenance lines">
+						<field colspan="4" name="maintenance_lines" nolabel="1" mode="tree"> 
+                                			<tree editable="bottom" string="Maintenance lines">
+                                    				<field name="item_id" on_change="onchange_item_id(item_id)" />
+                                    				<field name="qty" on_change="onchange_qty(parent.building_id,item_id)" />
+                                    				<field name="name" />
+                                			</tree>
+                        			</field>   
+                       			        </page>  
+                                        	<page string="Other informations">
+                                                    <group col="4">
+                                                        <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                                                        <field name="user_id"/>
+                                                     </group>
+				     		        <separator string="notes" colspan="4"/>
+							<field name="notes" colspan="4" nolabel="1" />
+						
+						</page>
+					</notebook>					
+				     </sheet>
+				</form>
+			</field>
+		</record>
+
+		<!-- Building maintenance order Search Filter -->
+
+		<record id="view_building_maintenance_filter" model="ir.ui.view">
+			<field name="name">building.maintenance.list.select</field>
+			<field name="model">building.maintenance</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search for building maintenance record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="maintenance_type" widget="selection"/>	
+					<field name="building_id" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="date" colspan="1"/>
+					<newline />
+					<group expand="0" string="Extended Filters..." colspan="4" col="20" >
+                    <field name="partner_id" />
+					<field name="state" />
+					<field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                    </group>
+                    <newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Partner" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'partner_id'}" />
+						<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					    <separator orientation="vertical"/>
+					    <filter string="Building" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'building_id'}" />
+					    <separator orientation="vertical"/>
+					    <filter string="Maintenance Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'maintenance_type'}" />
+					    <separator orientation="vertical"/>
+					    <filter string="state" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />														
+					</group>
+
+				</search>
+			</field>
+		</record>
+
+		<!-- Menu -->
+
+		<record id="building_maintenance_action" model="ir.actions.act_window">
+                        <field name="name">Building maintenance</field>
+			<field name="res_model">building.maintenance</field>	
+                        <field name="view_type">form</field>
+                        <field name="search_view_id" ref="view_building_maintenance_filter"/>
+		</record>
+
+       <menuitem id="building_maintenance_order_menu" name="Building maintenance" sequence="1"
+			parent="menu_building_management_operations" action="building_maintenance_action"/>
+
+ 	 <menuitem id="maintenance_type_configuration_menu" name="Maintenance type"
+			parent="menu_building_management_config" action="building_maintenance_type_action"/>
+
+	</data>
+</openerp>

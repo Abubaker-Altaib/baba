@@ -1,0 +1,97 @@
+<odoo>
+    <data>
+
+
+
+        <!-- Account Payment -->
+        <record model="ir.ui.view" id="view_account_payment_form">
+        <field name="name">view.account.payment.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="journal_bank" invisible="1"/>
+                    <field name="journal_balance" attrs="{'invisible':[('journal_bank','!=','bank')]}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='destination_journal_id']" position="after">
+                    <field name="journal_bank_internal" invisible="1" />
+                    <field name="journal_balance_internal" attrs="{ 'invisible': ['|',('journal_bank_internal','!=','bank'),('payment_type', '!=', 'transfer')]}"/>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="account_id" attrs="{'invisible':[('payment_type','=','transfer')],'readonly':[('state','!=','draft')]}" />
+                </xpath>
+
+                <xpath expr="//field[@name='payment_date']" position="after">
+    
+                   <!-- <field name='invoice_id' attrs="{'readonly':[('state','!=','draft')]}"/>-->
+
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <!-- Account Register Payment -->
+        <record model="ir.ui.view" id="view_account_register_payment_inherit_form">
+            <field name="name">view.account.payment.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_invoice_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="account_id" />
+                </xpath>
+
+
+
+            </field>
+        </record>
+
+        <!-- Payment Method -->
+        <record id="view_account_payment_method_tree" model="ir.ui.view">
+            <field name="name">account.payment.method.tree</field>
+            <field name="model">account.payment.method</field>
+            <field name="arch" type="xml">
+                <tree string="Payment Method">
+                    <field name="name" />
+                    <field name="code" />
+                    <field name="payment_type" string="Payment Type" />
+                </tree>
+            </field>
+        </record>
+        <record id="view_account_payment_method_form" model="ir.ui.view">
+            <field name="name">account.payment.method.form</field>
+            <field name="model">account.payment.method</field>
+            <field name="arch" type="xml">
+                <form string="Payment Method">
+                    <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="code" />
+                        </group>
+                        <group>
+                            <field name="payment_type" />
+                        </group>
+                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- Payment Method action -->
+        <record id="action_payment_method_form" model="ir.actions.act_window">
+            <field name="name">Payment Method</field>
+            <field name="res_model">account.payment.method</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!-- Payment Method menuitem -->
+        <menuitem id="menu_action_payment_method_form" name="Payment Method" parent="account.account_management_menu" sequence="1" action="action_payment_method_form" />
+
+
+        
+    </data>
+</odoo>

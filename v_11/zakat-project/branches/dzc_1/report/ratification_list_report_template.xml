@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+    <template id="ratification_list_report">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="docs" t-as="o">
+                <div class="page" style="border-width:5px;  border-style:double;">
+                    <body>
+                        <t t-if="o.ratification_list == 'as'">
+                            <center>
+                                <p><h3>بسم الله الرحمن الرحيم</h3></p>
+                                <p><h3>دائرة تخطيط المصارف - إدارة العلاج الأتحادي</h3></p>
+                                <p><h3><u>قسم العلاج بالخارج</u></h3></p>
+                            </center>
+                            <center>
+                                <p><u>سقف دعم العلاج بالخارج</u></p>
+                                <p><u><h1><t t-esc="dict(o.fields_get(allfields=['AS_type'])['AS_type']['selection'])[o.AS_type]"/></h1></u></p>
+                            </center>
+                            <br/>
+                            <br/>
+                            <center>
+                                <div dir="rtl">
+                                    <table class="minimalistBlack">
+                            <thead>
+                                <tr>
+                                <th>من</th>
+                                <th>إلى</th>
+                                <th>الزكاة</th>
+                                <th>المالية</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.ceiling_ids_as" t-as="oc">
+                                <tr>
+                                    <td><t t-esc="oc.From"/></td>
+                                    <td><t t-esc="oc.To"/></td>
+                                    <td><t t-esc="oc.zakat_amount"/></td>
+                                    <td><t t-esc="oc.financial_amount"/></td>
+
+                                </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                                </div>
+                            </center>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </t>
+                        <t t-if="o.ratification_list == 'dtt'">
+                        <center>
+                        <p><h1>الأمانة العامة</h1></p>
+                        <p><h1>دائرة تخطيط المصارف - إدارة العلاج الإتحادي</h1></p>
+                        </center>
+                           <center>
+                        <h2><t t-esc="dict(o.fields_get(allfields=['ratification_list'])['ratification_list']['selection'])[o.ratification_list]"/></h2>
+                        </center>
+                      <hr width="100%" color="black"/>
+                        <br/>
+                        <br/>
+                            <div dir="rtl">
+                            <center>
+                        <table class="minimalistBlack">
+                            <thead>
+                                <tr>
+                                <th>من</th>
+                                <th>إلى</th>
+                                <th>الزكاة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.ceiling_ids" t-as="oc">
+                                <tr>
+                                    <td><t t-esc="oc.From"/></td>
+                                    <td><t t-esc="oc.To"/></td>
+                                    <td><t t-esc="oc.zakat_pre"/> %</td>
+
+                                </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                            </center>
+                            </div>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </t>
+
+                        <t t-if="o.ratification_list == 'is'">
+                            <center>
+                                <p><h3>بسم الله الرحمن الرحيم</h3></p>
+                                <p><h3>دائرة تخطيط المصارف - إدارة العلاج الأتحادي</h3></p>
+                                <p><h3><u>قسم العلاج بالداخل</u></h3></p>
+                            </center>
+                            <center>
+                                <p><u>سقف دعم العلاج بالداخل</u></p>
+                                <p><u><h1><t t-esc="dict(o.fields_get(allfields=['IS_type'])['IS_type']['selection'])[o.IS_type]"/></h1></u></p>
+                            </center>
+                            <br/>
+                            <br/>
+                            <center>
+                                <div dir="rtl">
+                                    <table class="minimalistBlack">
+                            <thead>
+                                <tr>
+                                <th>من</th>
+                                <th>إلى</th>
+                                <th>الزكاة</th>
+                                <th>المالية</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.ceiling_ids_as" t-as="oc">
+                                <tr>
+                                    <td><t t-esc="oc.From"/></td>
+                                    <td><t t-esc="oc.To"/></td>
+                                    <td>
+                                        <t t-if="IS_type == 'kck'"><t t-esc="oc.zakat_amount"/></t>
+                                        <t t-if="IS_type != 'kck'"><t t-esc="oc.zakat_pre"/></t>
+                                    </td>
+                                    <td>
+                                        <t t-if="IS_type == 'kck'"><t t-esc="oc.financial_amount"/></t>
+                                        <t t-if="IS_type != 'kck'"><t t-esc="oc.financial_pre"/></t>
+                                    </td>
+                                </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                                </div>
+                            </center>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                        </t>
+
+
+                    </body>
+
+                    <style type="text/css">
+
+                        table.minimalistBlack {
+                        width: 100%;
+                        text-align: center;
+                        border-collapse: collapse;
+                        }
+                        table.minimalistBlack td, table.minimalistBlack th {
+                        border: 1px solid #000000;
+                        text-align: center;
+                        padding: 5px 4px;
+                        }
+                        table.minimalistBlack tbody td {
+                        font-size: 15px;
+                        }
+                        table.minimalistBlack thead {
+                        background: #919191;
+                        background: -moz-linear-gradient(top, #acacac 0%, #9c9c9c 66%, #919191 100%);
+                        background: -webkit-linear-gradient(top, #acacac 0%, #9c9c9c 66%, #919191 100%);
+                        background: linear-gradient(to bottom, #acacac 0%, #9c9c9c 66%, #919191 100%);
+                        border-bottom: 3px solid #000000;
+                        }
+                        table.minimalistBlack thead th {
+                        font-size: 18px;
+                        font-weight: bold;
+                        color: #000000;
+                        text-align: center;
+                        }
+                        table.minimalistBlack tfoot {
+                        font-size: 14px;
+                        font-weight: bold;
+                        color: #000000;
+                        border-top: 3px solid #000000;
+                        }
+                        table.minimalistBlack tfoot td {
+                        font-size: 14px;
+                        }
+
+
+                 body {
+
+ font-family: "Arial", "serif","Times New Roman","Traditional Arabic", "Arabic Typesetting",
+                "Geeza Pro", "Nadeem",
+        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+        "STFangsong", "STHeiti", "STKaiti", "STSong",
+        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+         "Urdu Typesetting",
+        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma" ;
+  font-style: normal;
+  font-weight: 70px;
+  bottom: 10px;
+  top: 1px;
+                 font-size: 180%;
+
+                }
+
+                        table
+                        {
+                        font-size: 100%;
+                        }
+
+                p{
+                 white-space: pre;
+
+                }
+  div.dou {
+
+    border-width:5px;
+    border-style:double;
+}
+hr.douh
+       {
+     display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-width: 1px
+                        color:black;
+                        }
+
+
+
+            </style>
+
+
+                </div>
+                </t>
+            </t>
+        </t>
+              </template>
+    </data>
+</odoo>

@@ -1,0 +1,312 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+		
+		
+		
+		
+		<record model="ir.ui.view" id="plan_form_view">
+            <field name="name">Strategic Plans</field>
+            <field name="model">strategic.plan</field>
+            <field name="arch" type="xml">
+		    <form string="Plan Form"   version="7.0">
+		<sheet>
+			<group colspan="2" col="4">
+				<field name="name" colspan="4" />	
+				<field name="date_start"/>
+			<field name="expected" widget="progressbar"/>
+				<field name="date_end" />
+
+			<field name="actual"  widget="progressbar"/>
+			</group>
+			<notebook colspan="4">
+				<page string="Goals">
+					<field name="goal_line_ids" colspan="4" nolabel="1" >
+						<tree string="Goals" editable="top">
+							<field name="goal_id" />
+							<field name="weight" />
+							<field name="expected"  />
+							<field name="actual"   />
+						</tree>
+					</field>
+				</page>
+				<page string="Description">
+					<field name="description"   nolabel="1" />
+				</page>
+			</notebook>
+		</sheet>
+		       </form>
+            </field>
+        </record>	
+	<record model="ir.ui.view" id="plan_tree_view">
+            <field name="name">Strategic Plans Tree</field>
+            <field name="model">strategic.plan</field>
+            <field name="arch" type="xml">
+		    <tree string="Plan">
+				<field name="name"/>							
+				<field name="date_start"/>
+				<field name="date_end" />
+				<!--field name="case_default"/-->
+				<!--field name="fold"/-->
+		       </tree>
+            </field>
+        </record>		
+		
+	<record model="ir.actions.act_window" id="plan_list_action">
+            <field name="name">Plan</field>
+            <field name="res_model">strategic.plan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+	    <field name="view_id" ref="plan_tree_view"/>
+            <field name="help"   eval="0" />
+        </record>				
+
+		
+		
+	<record model="ir.ui.view" id="goal_form_view">
+            <field name="name">Strategic Goals</field>
+            <field name="model">strategic.goal</field>
+            <field name="arch" type="xml">
+            <form string="Goal Form"  version="7.0">
+		<sheet>
+			<group colspan="2" col="4">
+				<field name="name"/>	
+				<field name="responsible"/>
+				<field name="date_start"/>
+				<field name="expected" widget="progressbar"/>
+				<field name="date_end" />
+
+				<field name="actual"  widget="progressbar" />	
+
+
+			</group>
+			<notebook colspan="4">
+				<page string="Objectives">
+					<field name="objective_line_ids" colspan="4" nolabel="1" >
+						<tree string="Objective" editable="top">
+							<field name="objective_plan_id" />
+							<field name="weight"/>
+							<field name="expected"  />
+							<field name="actual"   />
+						</tree>
+					</field>
+				</page>
+				<page string="Description">
+					<field name="description"   nolabel="1" />
+				</page>
+			</notebook>
+		</sheet>
+                </form>
+            </field>
+        </record>	
+
+	<record model="ir.ui.view" id="goal_tree_view">
+            <field name="name">Strategic Goals Tree</field>
+            <field name="model">strategic.goal</field>
+            <field name="arch" type="xml">
+            <tree string="Goal Tree" >
+				<field name="name"/>	
+				<field name="plan_id"/>	
+				<field name="date_start"/>
+				<field name="date_end" />
+				<field name="expected" widget="progressbar"/>
+				<field name="actual"  widget="progressbar" />	
+                </tree>
+            </field>
+        </record>
+		<record model="ir.actions.act_window" id="goal_list_action">
+            <field name="name">Goal</field>
+            <field name="res_model">strategic.goal</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+	    <field name="view_id" ref="goal_tree_view"/>
+            <field name="help"   eval="0" />
+        </record>
+
+	<record model="ir.ui.view" id="objective_form_view">
+            <field name="name">Strategic Objective</field>
+            <field name="model">strategic.objective</field>
+            <field name="arch" type="xml">
+            <form string="Objective Form"  version="7.0">
+		<sheet>
+		<group colspan="2" col="4">
+			<field name="name"/>	
+				<field name="responsible"/>
+			<field name="date_start"/>
+			<field name="expected" widget="progressbar"/>
+			<field name="date_end" />
+
+			<field name="actual"  widget="progressbar"  />
+
+		</group>
+		<notebook colspan="4">
+			<page string="Projects">
+				<field name="project_line_ids" colspan="4" nolabel="1" >
+					<tree string="Projects" editable="top">
+						<field name="project_id" />
+						<field name="weight" />
+						<field name="expected"  />
+						<field name="actual"   />
+					</tree>
+				</field>
+			</page>
+			<page string="KPI">
+				<field name="kpi_line_ids" colspan="4" nolabel="1" >
+					<tree string="KPIs" editable="top">
+						<field name="name" />
+						<field name="weight" />
+
+						<field name="expected"  />
+						<field name="actual"   />
+					</tree>
+				</field>
+			</page>
+			<page string="Description">
+				<field name="description"   nolabel="1" />
+			</page>
+		</notebook>
+		</sheet>
+                </form>
+            </field>
+        </record>
+
+	<record model="ir.ui.view" id="objective_tree_view">
+            <field name="name">Strategic Objective</field>
+            <field name="model">strategic.objective</field>
+            <field name="arch" type="xml">
+            <tree string="Objective Tree">
+			<field name="name"/>	
+				<field name="responsible"/>
+			<field name="date_start"/>
+			<field name="date_end" />
+				<field name="expected" widget="progressbar"/>
+			<field name="actual"  widget="progressbar"  />
+                </tree>
+            </field>
+        </record>
+	<record model="ir.actions.act_window" id="objective_list_action">
+            <field name="name">Objective</field>
+            <field name="res_model">strategic.objective</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+	    <field name="view_id" ref="objective_tree_view" />
+        </record>
+
+	<record model="ir.ui.view" id="kpi_form_view">
+            <field name="name">KPI</field>
+            <field name="model">kpi</field>
+            <field name="arch" type="xml">
+            <form string="KPI Form"  version="7.0">
+		<sheet>
+		<group colspan="2" col="4">
+			<field name="name"/>	
+			<field name="sequence"/>	
+			<field name="expected" widget="progressbar"/>
+			<field name="actual"  widget="progressbar"/>
+		</group>
+
+		<notebook colspan="4">
+			<page string="Project Measure">
+				<field name="kpi_line_ids" colspan="4" nolabel="1" >
+					<tree string="KPI measures" editable="top">
+						<field name="date_start" />
+						<field name="date_end" />
+						<field name="expected"  />
+						<field name="actual"   />
+					</tree>
+				</field>
+			</page>
+			<page string="KPI Measure">
+				<field name="kpi_line_ids" colspan="4" nolabel="1" >
+					<tree string="KPI measures" editable="top">
+						<field name="date_start" />
+						<field name="date_end" />
+						<field name="expected"  />
+						<field name="actual"   />
+					</tree>
+				</field>
+			</page>
+			<page string="Description">
+				<field name="description"   nolabel="1" />
+			</page>
+		</notebook>
+		</sheet>
+                </form>
+            </field>
+        </record>
+		
+	<record model="ir.actions.act_window" id="kpi_list_action">
+            <field name="name">KPI</field>
+            <field name="res_model">kpi</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>	
+
+	<record model="ir.ui.view" id="project_form_view">
+            <field name="name">project</field>
+            <field name="model">project</field>
+            <field name="arch" type="xml">
+            <form string="Project Form"  version="7.0">
+		<sheet>
+		<group colspan="2" col="4">
+			<field name="name"/>	
+			<field name="expected" widget="progressbar"/>
+			<field name="sequence"/>	
+
+			<field name="actual"  widget="progressbar"/>
+
+
+		</group>
+
+		<notebook colspan="4">
+			<page string="Project Measure">
+				<field name="project_line_ids" colspan="4" nolabel="1" >
+					<tree string="Project measures" editable="top">
+						<field name="name"  />
+						<field name="date_start"  />
+						<field name="date_end" />
+						<field name="weight" />
+						<field name="actual"   />
+					</tree>
+				</field>
+			</page>
+			<page string="Description">
+				<field name="description"   nolabel="1" />
+			</page>
+		</notebook>
+		</sheet>
+                </form>
+            </field>
+        </record>
+		
+	<record model="ir.ui.view" id="project_tree_view">
+            <field name="name">project</field>
+            <field name="model">project</field>
+            <field name="arch" type="xml">
+            <tree string="Project Tree" >
+			<field name="name"/>	
+			<field name="expected" widget="progressbar"/>
+			<field name="actual"  widget="progressbar"/>
+				<field name="responsible"/>
+              </tree>
+            </field>
+        </record>
+	<record model="ir.actions.act_window" id="project_list_action">
+            <field name="name">project</field>
+            <field name="res_model">project</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+	    <field name="view_id" ref="project_tree_view"/>
+        </record>	
+
+	<menuitem    name="Strategic Plan"  id="menu_main_strategic"     sequence="5"/>		
+	<menuitem   action="plan_list_action" name="Strategic Plan"  id="menu_strategic"  parent="menu_main_strategic"   sequence="5"/>
+	<menuitem   action="project_list_action" name="Projects"  id="menu_strategic_project"  parent="menu_strategic"   sequence="8"/>
+	<menuitem   action="plan_list_action" name="Strategic Plans"  id="menu_strategic_plan"  parent="menu_strategic"   sequence="5"/>
+	<menuitem   action="goal_list_action" name="Strategic Goals"  id="menu_strategic_goal"  parent="menu_strategic"   sequence="6"/>
+	<menuitem   action="objective_list_action" name="Strategic Objective"  id="menu_strategic_objective"  parent="menu_strategic"   sequence="7"/>
+	<!--menuitem   action="kpi_list_action" name="KPI"  id="menu_strategic_kpi"  parent="menu_strategic"   sequence="8"/-->
+
+    </data>
+</openerp>
+		

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+	<!-- Building maintenance Wizard View-->
+
+    	<record id="view_building_maintenance_wizard" model="ir.ui.view">
+            <field name="name">Building maintenance wizard</field>
+            <field name="model">building.maintenance.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Building maintenances report" version="7.0">
+        	       <separator string="Building maintenance report" colspan="4"/>
+            		<group>
+            		<field name="date_from" colspan="2"/>
+            		<field name="date_to" colspan="2"/>
+            		<field name="wizard_type" invisible = "1"/>
+            		<field name="building_id"/>
+            		<field name="maintenance_type" colspan="2" widget="selection"/>
+            		<field name="partner_id" />
+            		<field name="state" colspan="2"/>
+    			</group>
+			<footer>
+           	    	<button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight" colspan="2"/>
+                        or
+			<button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link" colspan="2"/>
+                        </footer>
+    			</form>
+            </field>
+		</record>
+		
+	<!-- Building maintenance Wizard Action-->
+        <record id="action_building_maintenance_wizard" model="ir.actions.act_window">
+            <field name="name">Building maintenance wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">building.maintenance.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+	    <field name="domain">[('wizard_type','=','by_building')]</field>
+            <field name="context">{'wizard_type':'by_building'}</field>           
+	    <field name="view_id" ref="view_building_maintenance_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+	<!-- Building maintenance Wizard Menu-->
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Building maintenance report"
+                parent="menu_building_management_report"
+                action="action_building_maintenance_wizard"
+                id="menu_building_maintenance_report"
+                />
+
+    </data>
+</openerp>

@@ -1,0 +1,12 @@
+-
+  I confirm the RFQ.
+-
+  !workflow {model: purchase.order, action: purchase_confirm, ref: order_purchase_test}
+-
+  I check that Reception details after confirmed RFQ.
+-
+  !python {model: purchase.order}: |
+    purchase_order = self.browse(cr, uid, ref("order_purchase_test"))
+    for picking in purchase_order.picking_ids:
+      assert picking.type == "quality", "Reception type should be quality"
+     

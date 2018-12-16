@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<document filename="Account Budget.pdf">
+  <template pageSize="(842.0,595.0)" title="Account Budget" author="NCTR" allowSplitting="20">
+    <pageTemplate id="first">
+	<frame id="first" x1="1.3cm" y1="0.9cm" width="786" height="440"/>
+    </pageTemplate>
+  </template>
+
+  <stylesheet>
+
+    <blockTableStyle id="Content_Table">
+	<blockValign value="CENTER"/>
+	<blockAlignment value="CENTER"/>
+	<blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+	<lineStyle kind="GRID" colorName="#e6e6e6"/>
+	<blockTopPadding length="8"/>
+	<blockBottomPadding length="4"/>
+    </blockTableStyle>
+
+    <blockTableStyle id="Header_Table">
+	<blockAlignment value="CENTER"/>
+	<blockValign value="CENTER"/>
+      <blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+      <lineStyle kind="GRID" colorName="#e6e6e6"/>
+    </blockTableStyle>
+
+    <initialize>
+	<paraStyle name="all" alignment="justify"/>
+    </initialize>
+
+    <paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0" alignment="CENTER" spaceBefore="12.0" spaceAfter="12.0"/>
+    <paraStyle name="Header_Table_Header_Centre" fontName="Helvetica-Bold" fontSize="9.0" alignment="CENTER"/>
+    <paraStyle name="Header_Table_Detail_Centre" fontName="Helvetica" fontSize="9.0" alignment="CENTER"/>
+    <paraStyle name="Content_Table_Detail" fontName="Helvetica-Bold" fontSize="9.0" alignment="RIGHT" rightIndent="3"/>
+    <paraStyle name="Content_Table_Header" fontName="Helvetica-Bold" fontSize="9.0" alignment="CENTER"/>
+
+    <images/>
+  </stylesheet>
+
+  <story>
+
+    <para> <font color="white"> </font> </para>
+    <para style="Tilte">الموازنة التخطيطية</para>
+    <para style="Tilte">تقرير الصرف على موازنة [[ analytic_account and analytic_account.name or ' / ' ]] </para>
+    <para style="Tilte">[[ stop_period or ' / ' ]] :الى  [[ start_period or ' / ' ]] :من </para>
+    <para>[[ repeatIn(cost_center, 'analytic_account') ]]</para>
+
+    <section>[[ data['form']['type_selection'] == 'detail' or removeParentNode('section') ]]
+    <para style="Tilte">تقرير تفصيلي - المبالغ بـ [[ accuracy ]] [[ company.currency_id.units_name ]]</para>
+    	<para> <font color="white"> </font> </para>
+    	<para> <font color="white"> </font> </para>
+	<blockTable colWidths="60.0,100.0,100.0,100.0,100.0,100.0,170.0,70.0" style="Content_Table" repeatRows="1">
+	    <tr>
+		<td>
+		   <para style="Content_Table_Header">النسـبة</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">المـتبقي</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">الصرف الفعلي</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">الاجمـالي</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">الدعومات/ التحويل</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">المبـلغ المصدق</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">البيـــان</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">البند</para>
+		</td>
+	    </tr>
+	    <tr>	
+		<td>
+		   <para style="Content_Table_Detail"> [[ (line['confirm'] + line['balance']) &lt;&gt; 0 and formatLang((line['confirm'] + line['balance'])*100/(line['planned_amount']+line['total_operation'])) or formatLang(0.0) ]] %
+			<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+		   </para>
+		</td>	
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ formatLang(line['residual_balance']/data['form'].get('accuracy',1)) ]] 
+		    	<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or (line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0",'background':"#e6e6e6"})) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ formatLang((line['confirm'] + line['balance'])/data['form'].get('accuracy',1)) ]]
+		    	<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or (line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0",'background':"#e6e6e6"})) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ formatLang((line['planned_amount'] + line['total_operation'])/data['form'].get('accuracy',1)) ]] 
+			<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or (line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0",'background':"#e6e6e6"})) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ formatLang((line['total_operation'])/data['form'].get('accuracy',1)) ]]
+			<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or (line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0",'background':"#e6e6e6"})) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>        
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ formatLang(line['planned_amount']/data['form'].get('accuracy',1)) ]] 
+			<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or (line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0",'background':"#e6e6e6"})) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>	     
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ line['name'] ]] 
+			<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or (line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0",'background':"#e6e6e6"})) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>	
+	    	<td>
+		   <para style="Content_Table_Detail">[[ repeatIn(company_detail(data['form'],analytic_account.id), 'line') ]] 
+			[[ line['code']  &lt;&gt; '*' and line['code'] or '']]
+			<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or (line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0",'background':"#e6e6e6"})) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>
+	    </tr>  
+    	</blockTable>
+  </section>
+
+    <section>[[ data['form']['type_selection'] == 'total' or removeParentNode('section') ]]
+    	
+    <para style="Tilte">تقرير إجمالي - المبالغ بـ [[ accuracy ]] [[ company.currency_id.units_name ]]</para>
+    	<para> <font color="white"> </font> </para>
+    	<para> <font color="white"> </font> </para>
+	<blockTable colWidths="70.0,110.0,110.0,110.0,110.0,110.0,180.0" style="Content_Table" repeatRows="1">
+	    <tr>
+		<td>
+		   <para style="Content_Table_Header">النسـبة</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">المـتبقي</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">الصرف الفعلي</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">الاجمـالي</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">الدعومات/ التحويل</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">المبـلغ المصدق</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">البيـــان</para>
+		</td>
+	    </tr>
+	    <tr>
+			<td>
+			   <para style="Content_Table_Detail"> [[ (line['confirm'] + line['balance']) &lt;&gt; 0 and formatLang((line['confirm'] + line['balance'])*100/(line['planned_amount']+line['total_operation'])) or formatLang(0.0) ]] %
+				<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"}) or removeParentNode('font')) ]]</font>
+			   </para>
+			</td>	
+	    	<td>
+			   <para style="Content_Table_Detail"> [[ formatLang(line['residual_balance']/data['form'].get('accuracy',1)) ]] 
+				<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or removeParentNode('font') ]]</font>
+			   </para>
+	    	</td>
+	    	<td>
+			   <para style="Content_Table_Detail"> [[ formatLang((line['balance'] + line['confirm'])/data['form'].get('accuracy',1)) ]]
+				<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or removeParentNode('font') ]]</font>
+			   </para>
+	    	</td>
+	    	<td>
+			   <para style="Content_Table_Detail"> [[ formatLang((line['total_operation'] + line['planned_amount'])/data['form'].get('accuracy',1)) ]] 
+				<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or removeParentNode('font') ]]</font>
+			   </para>
+	    	</td>
+	    	<td>
+			   <para style="Content_Table_Detail"> [[ formatLang((line['total_operation'])/data['form'].get('accuracy',1)) ]]
+				<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or removeParentNode('font') ]]</font>
+			   </para>
+	    	</td>          
+	    	<td>
+			   <para style="Content_Table_Detail"> [[ formatLang(line['planned_amount']/data['form'].get('accuracy',1)) ]] 
+				<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or removeParentNode('font') ]]</font>
+			   </para>
+	    	</td>  
+	    	<td>
+			   <para style="Content_Table_Detail"> [[ repeatIn(company_detail_total(data['form'],analytic_account.id), 'line') ]] [[ line['code'] ]] [[ line['name'] ]] 
+				<font>[[ (line['residual_balance']  &lt; 0 and setTag('para','para',{'textColor':"red"})) or removeParentNode('font') ]]</font>
+			   </para>
+	    	</td>
+	    </tr>  
+    </blockTable>
+  </section>
+  </story>
+</document>

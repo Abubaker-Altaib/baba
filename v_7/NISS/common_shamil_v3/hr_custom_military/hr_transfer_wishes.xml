@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<!-- hr transfer wishes -->
+		<record model="ir.ui.view" id="hr_transfer_wishes_form_view">
+			<field name="name">hr.transfer.wishes.form</field>
+			<field name="model">hr.transfer.wishes</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Transfer Wishes" version="7.0">
+				<header>
+						<button string="Approved" name="confirm" states="draft"  type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_data_entery"/>
+						<button string="Set To Draft" name="set_to_draft" states="confirm"  type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_data_entery"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,confirm"/> 
+					</header>
+					<sheet>
+						<group>
+						<group>
+							<field name="reference" required="1"/>
+							<field name="date" required="1"/>
+							<field name="reason_id" required="1"/>
+							<field name="medical_date"/>
+						</group>
+						<group>
+							<field name="employee_id" domain="[('state','=','approved')]" attrs="{'readonly':[('state','=', 'confirm')]}" required="1"/>
+							<field name="department_id"/>
+							<field name="company_id" groups="base.group_multi_company" readonly="True"/>
+						</group>
+						<notebook colspan="4">
+							<page string="Comments">
+								<field name="description" required="1"/>
+							</page>
+						</notebook>
+						</group>
+					
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_transfer_wishes_tree_view">
+			<field name="name">hr.transfer.wishes.tree</field>
+			<field name="model">hr.transfer.wishes</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Transfer Wishes">
+					<field name="reference"/>
+					<field name="date" />
+					<field name="employee_id" domain="[('state','=','approved')]" />
+					<field name="department_id"/>
+					<field name="reason_id" />
+					<field name="medical_date"/>
+					<field name="description"/>
+					<field name="state"/>
+
+				</tree>
+			</field>
+		</record>
+
+		<record id="hr_transfer_wishes_filter" model="ir.ui.view">
+			<field name="name">hr.transfer.wishes.filter</field>
+			<field name="model">hr.transfer.wishes</field>
+			<field name="arch" type="xml">
+				<search string="Transfer Wishes">
+					<field name="reference" />
+					<field name="employee_id" />
+					<field name="department_id"/>
+					<separator orientation="vertical" />
+					<field name="reason_id" />
+					<field name="description"/>
+
+					<newline/>
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Employee" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'employee_id'}" />
+						<filter string="Transfer Reason" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'reason_id'}" />
+						<filter string="Description" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'description'}" />
+						<separator orientation="vertical" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+
+		<record id="hr_transfer_wishes_action" model="ir.actions.act_window">
+			<field name="name">hr.transfer.wishes.action</field>
+			<field name="res_model">hr.transfer.wishes</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_transfer_wishes_tree_view" />
+			<field name="search_view_id" ref="hr_transfer_wishes_filter" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+		<menuitem id="hr_transfer_wishes_menu" name="Transfer Wishes"
+			parent="hr_custom.menu_hr_payroll_processes" action="hr_transfer_wishes_action" sequence="2" groups="hr_custom_military.hr_emp_data_entery"/>
+
+	</data>
+</openerp>

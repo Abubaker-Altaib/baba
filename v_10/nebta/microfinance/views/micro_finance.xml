@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!-- Search view for Group order -->
+        <record id="finance_group_order_search" model="ir.ui.view">
+            <field name="name">finance.group.order.search</field>
+            <field name="model">finance.group.order</field>
+            <field name="arch" type="xml">
+                <search string="Search Group Order">
+                    <field name="name" />
+                    <field name="group_id" />
+                    <field name="user_id" />
+                    <field name="company_id" />
+                    <filter help="My Customers" domain="[('user_id','=',uid)]" />
+                    <separator />
+                </search>
+            </field>
+        </record>
+
+        <record id="view_finance_group_order_form" model="ir.ui.view">
+            <field name="name">finance.group.order.form</field>
+            <field name="model">finance.group.order</field>
+            <field name="arch" type="xml">
+                <form string="Finance Group Order">
+                    <header>
+                        <field name="company_id" invisible="1" groups="base.group_multi_company" />
+                        <button name="act_visit_confirm" string="Confirm" states="draft" type="object" class="oe_highlight" groups="microfinance.group_officer"/>
+                        <button name="act_su_recommend" string="Recommend" states="visit_complete" type="object"
+                            class="oe_highlight" groups="microfinance.group_supervisor"/>
+                        <button name="act_br_recommend" string="Recommend" type="object" class="oe_read_only"
+                            attrs="{'invisible':[('status','!=','br_recommend')]}" groups="microfinance.group_branch_manager"/>
+                        <button name="act_op_recommend" string="Recommend" type="object" class="oe_read_only"
+                            attrs="{'invisible':[('status','!=','op_recommend')]}" groups="microfinance.group_operation_manager"/>
+                        <button name="act_approved" string="Approve" type="object" class="oe_read_only"
+                            attrs="{'invisible':[('status','!=','approved')]}" groups="microfinance.group_general_manager, microfinance.group_branch_manager, microfinance.group_operation_manager"/>
+                        <button name="act_re_visit" string="Re-Visit" type="object"
+                            attrs="{'invisible':[('status','!=','approved')]}" class="oe_read_only" groups="microfinance.group_general_manager, microfinance.group_branch_manager, microfinance.group_operation_manager"/>
+                        <button name="act_cancel" string="Cancel order" class="oe_read_only" confirm="Are You Sure You Want To Cancel the Request?" states="waiting_visit,visit_complete,su_recommend,br_recommend,op_recommend" type="object"/>
+                        <button name="act_approve_cancel" string="Cancel order" class="oe_read_only" type="object" states="approved" groups="microfinance.group_general_manager, microfinance.group_branch_manager, microfinance.group_operation_manager" confirm="Are You Sure You Want To Cancel the Request?"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,visit_confirm,visit_complete,su_recommend,approved" />
+                        <field name="status" invisible="1" />
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" />
+                                <field name="group_id" attrs="{'readonly':[('state','!=','draft')]}" />
+                                <field name="visit_id" />
+                                <field name="formula_forbidden" invisible="1" />                                
+                                <field name="portfolio_id" attrs="{'readonly':[('status','!=','approved')],'required':[('status','=','approved')], 'invisible':[('status','!=','approved'),('state','!=','approved')]}"
+                                    domain="[('group','!=',True),('company_ids','not in',[company_id])
+                                       ,('sectors_ids','not in',[sector_id]),('formula','!=',formula_forbidden)]" />
+                                <field name="partner_id" invisible="1" />
+                            </group>
+                            <group>
+                                <field name="date" readonly="1" />
+                                <field name="user_id" />
+                                <field name="company_id" groups="base.group_multi_company" />
+                                <field name="type" invisible="1" />
+                            </group>
+                        </group>
+                        <group string="Group Info.">
+                            <group>
+                                <label string="Phones" />
+                                <div>
+                                    <field name="phone1" attrs="{'readonly':[('state','!=','draft')]}" />
+                                    <br />
+                                    <field name="phone2" attrs="{'readonly':[('state','!=','draft')]}" />
+                                    <br />
+                                    <field name="phone3" attrs="{'readonly':[('state','!=','draft')]}" />
+                                </div>
+                            </group>
+                            <group>
+                                <label string="Members" />
+                                <div>
+                                    <field name="male" style="width:60%" attrs="{'readonly':[('state','!=','draft')]}" />
+                                    Male
+                                    <field name="female" style="width:60%" attrs="{'readonly':[('state','!=','draft')]}" />
+                                    Female
+                                    <field name="all_member" style="width:60%" />
+                                    Member
+                                </div>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Guarantees">
+                                <field name="guarantee_line_ids" widget="one2many_list" attrs="{'readonly':[('state','!=','draft')]}" >
+                                    <tree string="Guarantees" editable="bottom">
+                                        <field name="guarantee_type" />
+                                        <field name="guarantee_value" />
+                                        <field name="document_number" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Project Info.">
+                                <group>
+                                    <group>
+                                        <field name="project_status" attrs="{'readonly':[('state','!=','draft')]}" />
+                                        <field name="project_name" attrs="{'readonly':[('state','!=','draft')]}" />
+                                        <field name="sector_id" attrs="{'readonly':[('state','!=','draft')]}" />
+                                        <field name="project_address" attrs="{'readonly':[('state','!=','draft')]}" />
+                                    </group>
+                                    <group>
+                                        <field name="state_id" attrs="{'readonly':[('state','!=','draft')]}" />
+
+                                        <field name="local_state_id" domain="[('parent_id','!=',False),('parent_id','=',state_id)]"
+                                            context="{'form_view_ref':'microfinance.view_simple_state_form', 'default_parent_id':state_id}"
+                                            attrs="{'readonly':[('state','!=','draft')]}" />
+                                        <field name="zone_id" domain="[('parent_id','!=',False), ('parent_id','=',local_state_id)]"
+                                            context="{'form_view_ref':'microfinance.view_simple_state_form', 'default_parent_id':local_state_id}"
+                                            attrs="{'readonly':[('state','!=','draft')]}" />
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Financing Details">
+                                <group>
+                                    <group col="4" colspan="2">
+                                        <field name="amount" attrs="{'readonly':[('state','!=','draft')]}" widget="monetary"
+                                            options="{'currency_field': 'company_currency_id'}" />
+                                        <field name="formula" attrs="{'readonly':[('state','!=','draft')]}"  invisible="1"/>
+                                        <field name="formula_clone" attrs="{'readonly':[('state','not in',['draft'])]}" />
+                                        <field name="murabaha_selection" widget="radio" attrs="{'invisible': [('formula_clone', 'not in',['murabaha','buying_murabaha'])],'required': [('formula_clone', 'in',['murabaha','buying_murabaha'])]}"></field>
+
+                                        <label for="payment_period" string="Payment Period"
+                                            attrs="{'invisible':[('formula','not in',['salam','mudarba','muzaraa','musharka'])],'required':[('formula','in',['salam','mudarba','muzaraa','musharka'])]}" />
+                                        <div class="o_row"
+                                            attrs="{'invisible':[('formula','not in',['salam','mudarba','muzaraa','musharka'])]}">
+                                            <field name="payment_period" style="width:30%"
+                                                attrs="{'invisible':[('formula','not in',['salam','mudarba','muzaraa','musharka'])],'required':[('formula','in',['salam','mudarba','muzaraa','musharka'])],'readonly':[('state','!=','draft')]}" />
+                                            Month
+                                        </div>
+                                        <field name="company_currency_id" invisible="1" />
+                                    </group>
+                                    <group col="4" colspan="2"
+                                        attrs="{'invisible':[('formula','in',[False,'salam','mudarba','muzaraa','musharka'])]}">
+                                        <field name="installments_number" attrs="{'readonly':[('state','!=','draft')]}" />
+                                        <field name="payment_method_ids"
+                                            attrs="{'required':[('formula','not in',['salam','mudarba','muzaraa','musharka'])],'readonly':[('state','!=','draft')]}" />
+                                        <label for="funding_period" />
+                                        <div>
+
+                                            <field name="funding_period" class="oe_inline" />
+                                            Months
+                                            <field name="funding_period_day" />
+                                            Days
+                                        </div>
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <field name="allocation" widget="radio"
+                                            attrs="{'readonly':[('state','!=','draft')],'invisible':[('formula','in',False)]}" />
+                                    </group>
+                                </group>
+                                <field name="order_member_ids" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}">
+                                    <tree string="Members" editable="bottom" create="false">
+                                        <field name="group_member_id" domain="[('group_id','=',parent.group_id)]"
+                                            context="{'order_member_ids':parent.order_member_ids}" />
+                                        <field name="title" />
+                                        <field name="amount" attrs="{'readonly':[('alc','=','collective')]}" sum="Total" />
+                                        <field name="project_status" />
+                                        <field name="alc" invisible="1"/>
+                                    </tree>
+                                </field>
+                                <field name="note" placeholder="Note..." nolabel="1" />
+                            </page>
+                            <page string="Approvals" attrs="{'invisible':[('state','in',['draft','waiting_visit'])]}">
+                                <field name="approve_ids" attrs="{'readonly':[('state', '=', 'approved')]}">
+                                    <tree>
+                                        <field name="project_id" />
+                                        <field name="formula" />
+                                        <field name="amount" sum="Total" />
+                                        <field name="state" />
+                                    </tree>
+                                </field>
+                            </page>
+			    <page string="Notes">
+                                <field name="description" placeholder="Notes..."/>                          
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" />
+                        <field name="message_ids" widget="mail_thread" />
+                    </div>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="view_finance_group_order_tree" model="ir.ui.view">
+            <field name="name">finance.group.order.tree</field>
+            <field name="model">finance.group.order</field>
+            <field name="arch" type="xml">
+                <tree string="Finance Group Order">
+                    <field name="name" />
+                    <field name="date" />
+                    <field name="partner_id" />
+                    <field name="project_name" />
+                    <field name="project_address" />
+                    <field name="amount" />
+                    <field name="formula" />
+                    <field name="sector_id" />
+                    <field name="user_id" />
+                    <field name="company_id" groups="base.group_multi_company" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="finance_group_order_action" model="ir.actions.act_window">
+            <field name="name">Finance Group Order</field>
+            <field name="res_model">finance.group.order</field>
+            <field name="context">{'default_type':'group'}</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_finance_goup_order" name="Group Order" sequence="2" parent="menu_finance_operation"
+            action="finance_group_order_action" />
+
+        <!-- Search view for Group -->
+        <record id="finance_group_search" model="ir.ui.view">
+            <field name="name">finance.group.search</field>
+            <field name="model">finance.group</field>
+            <field name="arch" type="xml">
+                <search string="Search Group Order">
+                    <field name="name" filter_domain="[('display_name','ilike',self)]" />
+                    <field name="partner_code" />
+                    <field name="company_id" />
+                    <field name="user_id" />
+                    <filter string="My Customer"  name="my_customer"  domain="[('user_id','=',uid)]" />
+                </search>
+            </field>
+        </record>
+
+
+        <record id="view_finance_group_form" model="ir.ui.view">
+            <field name="name">finance.group.form</field>
+            <field name="model">finance.group</field>
+            <field name="arch" type="xml">
+                <form string="Finance Group Order">
+                    <header>
+                        <button name="action_group_transfer" string="Transfer Group" type="object" class="oe_highlight" groups="microfinance.group_operation_manager,microfinance.group_branch_manager"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="partner_code" readonly="1" placeholder="partner code..." class="oe_inline" />
+                            -
+                            <field name="name" placeholder="Name..." class="oe_inline" />
+                        </h1>
+                        <notebook>
+                            <page string="Members">
+                                <field name="member_ids" nolabel="1">
+                                    <tree string="Members" editable="bottom">
+                                        <field name="name" />
+                                        <field name="identity_type_id" />
+                                        <field name="identity_number" />
+                                        <field name="gender" />
+                                        <field name="phone"
+                                            attrs="{'required':[('title','in',('head','secretary','financial_secretary'))]}" />
+                                        <field name="employer_id"/>
+                                        <field name="title" />
+                                    </tree>
+                                </field>
+                                <field name="company_id" groups="base.group_multi_company" invisible="1" />
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_finance_group_tree" model="ir.ui.view">
+            <field name="name">finance.group.tree</field>
+            <field name="model">finance.group</field>
+            <field name="arch" type="xml">
+                <tree string="Finance Group Order">
+                    <field name="display_name" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="finance_group_action" model="ir.actions.act_window">
+            <field name="name">Finance Groups</field>
+            <field name="res_model">finance.group</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_my_customer':1}</field>
+        </record>
+
+        <menuitem id="menu_finance_goup" name="Groups" sequence="2" parent="menu_finance_customer" action="finance_group_action" />
+
+    </data>
+</odoo>

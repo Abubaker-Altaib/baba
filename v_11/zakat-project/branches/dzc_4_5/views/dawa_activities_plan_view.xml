@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!-- Dawa Plan-->
+
+    <record model='ir.ui.view' id='dawa_activities_plan_tree'>
+
+      <field name='name'> Dawa Activities Plan Tree</field>
+      <field name='model'>dzc_4_5.dawa.activities.plan</field>
+      <field name='arch' type='xml'>
+        <tree string='Dawa Activities Plan Tree'>
+
+          <field name="code"/>
+          <field name="date"/>
+          <field name="name"/>
+          <field name="state" />
+
+        </tree>
+      </field>
+    </record>
+
+    <!-- Search View  Plan model -->
+    <record id="dawa_activities_plan_search" model="ir.ui.view">
+      <field name="name"> dawa_activities_plan Search</field>
+      <field name="model">dzc_4_5.dawa.activities.plan</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="code"/>
+          <field name="name"/>
+
+        </search>
+      </field>
+    </record>
+
+
+    <record id="dawa_activities_plan_form" model="ir.ui.view">
+      <field name="name">Dawa Activities Plan</field>
+      <field name="model">dzc_4_5.dawa.activities.plan</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml" >
+        <form >
+          <header>
+            <button name="confirm_action" states="draft," string="Confirm" type="object" class="oe_highlight" />
+            
+             <button name="approve_action" states="confirm," string="Approve" type="object" class="oe_highlight" />
+
+             <button name="done_action" states="approve," string="Done" type="object" class="oe_highlight" />
+
+            <button name="cancel_action" states="draft,confirm,approve" string="Cancel" type="object" class="oe_highlight" />
+            
+            <button name="set_to_draft_action" states="cancel," string="Set To Draft" type="object" class="oe_highlight" />
+
+
+            <field name="state" widget="statusbar"/>
+          </header>
+
+          <sheet>
+
+            <group col="4" colspan="2">
+                <field name="code" readonly="1"/>
+              
+                <field name="date" required="1"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+                <field name="name" required="1" attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+              
+                
+                <field name="type" required="1" attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+                <field name="year" required="1" readonly="1"/>
+
+                <field name="month" attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')],'invisible':[('type'  ,'!=' ,'month')],'required':[('type' ,'=' ,'month')]}"/>
+
+
+                 <field name="axis_id" required="1" attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+
+                <field name="state_id" required="1" domain="[('company_id' , '=' , company_id)]" attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+    
+  
+              <field name="company_id" required="1" readonly="1"/>
+
+                <!-- <field name="user_id" readonly="1"/> -->
+
+
+              </group>
+            <notebook>
+
+             <page string="Dawa Activities  Details">
+              <field name="activities_ids"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}">
+
+                <tree editable="bottom">
+                  <field name="activity_id" required="1" domain="[('dawa_axis_id' ,'=' ,parent.axis_id)]" context="{'axis_context':parent.activities_ids  }"/>
+
+                  <field name="no_program" required="1"/>
+
+                  <field name="cost" required="1"/>
+
+                  <field name="execute" required="1" readonly="1"/>
+
+                </tree>
+              </field>
+            </page>
+
+          </notebook>
+
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Dawa Activities Plan action -->
+  <record id="dawa_activities_plan_action" model="ir.actions.act_window">
+    <field name="name">Dawa Activities Plan</field>
+    <field name="res_model">dzc_4_5.dawa.activities.plan</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <!-- Dawa Activities Plan main menu -->
+  <menuitem id="dawa_main_menu"
+    parent="dzc4_5_menu"
+    name="Dawa Channel"
+    sequence="1"
+    />
+
+    <!--Dawa Plan menu -->
+    <menuitem id="dawa_activities_plan_menu"
+      parent="dawa_main_menu"
+      name="Dawa Activities Plan"
+      action="dawa_activities_plan_action"
+      sequence="1"
+
+      />
+    </data>
+  </odoo>
+
+

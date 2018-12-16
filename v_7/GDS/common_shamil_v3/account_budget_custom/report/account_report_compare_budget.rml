@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<document filename="Account Budget.pdf"  xmlns:py="http://genshi.edgewall.org/">
+  <template pageSize="(842.0,595.0)" title="Account Budget" author="NCTR" allowSplitting="20">
+    <pageTemplate id="first">
+
+	<frame id="first" x1="28" y1="28" width="786" height="440"/>
+	<pageGraphics>
+            <image x="85" y="460" height="95" width="600" >[[ company.logo or removeParentNode('image') ]]</image>
+    </pageGraphics>
+    </pageTemplate>
+  </template>
+
+  <stylesheet>
+
+    <blockTableStyle id="Content_Table">
+	<blockValign value="CENTER"/>
+	<blockAlignment value="CENTER"/>
+	<blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+	<lineStyle kind="GRID" colorName="#e6e6e6"/>
+	<blockTopPadding length="8"/>
+	<blockBottomPadding length="4"/>
+    </blockTableStyle>
+
+    <blockTableStyle id="Header_Table">
+	<blockAlignment value="CENTER"/>
+	<blockValign value="CENTER"/>
+      <blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+      <lineStyle kind="GRID" colorName="#e6e6e6"/>
+    </blockTableStyle>
+
+    <initialize>
+	<paraStyle name="all" alignment="justify"/>
+    </initialize>
+
+    <paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Header_Table_Header_Centre" fontName="Helvetica-Bold" fontSize="9.0" alignment="CENTER"/>
+    <paraStyle name="Header_Table_Detail_Centre" fontName="Helvetica" fontSize="9.0" alignment="CENTER"/>
+    <paraStyle name="Content_Table_Detail" fontName="Helvetica-Bold" fontSize="8.0" alignment="RIGHT" rightIndent="3"/>
+    <paraStyle name="Content_Table_Header" fontName="Helvetica-Bold" fontSize="9.0" alignment="CENTER"/>
+
+    <images/>
+  </stylesheet>
+
+  <story>
+  <section>[[ data['form']['report_name'] == 'compare' or removeParentNode('section') ]]
+    <para> <font color="white"> </font> </para>
+    <para style="Tilte">تقرير مقارنة مصدق العام [[ fiscalyear and fiscalyear.name or ' - ' ]] و مقترح العام [[ next_fiscalyear and next_fiscalyear.name or ' - ' ]] </para>
+    <para style="Tilte">و الصرف من شهر [[ start_period.name or '-' ]] الي شهر  [[ stop_period.name or '-' ]] </para>
+    <para style="Tilte">[[ analytic_account.name ]]</para>
+    <para style="Tilte">المبالغ بـ [[ accuracy ]] [[ company.currency_id.units_name ]] </para>
+    <para> <font color="white"> </font> </para>
+    <para> <font color="white"> </font> </para>
+    <para>[[ repeatIn(cost_center, 'analytic_account') ]]</para>
+	<blockTable colWidths="160.0,80.0,160.0,160.0,170.0,70.0" style="Content_Table" repeatRows="1">
+	    <tr>
+		<td>
+		   <para style="Content_Table_Header">الصرف الفعلي</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">نسبة التغير</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">المقترح للعام [[ next_fiscalyear and next_fiscalyear.name or ' - ' ]]</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">المصدق الحالي  [[ fiscalyear and fiscalyear.name or ' - ' ]] </para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">البيـــان</para>
+		</td>
+		<td>
+		   <para style="Content_Table_Header">بند الخصم</para>
+		</td>
+	    </tr>	    
+	    <tr>
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ formatLang(line['balance']/data['form']['accuracy']) ]] 
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>
+		<td>
+		   <para style="Content_Table_Detail"> [[ line['next_planned_amount'] == line['planned_amount'] and formatLang(0.0) or formatLang((line['next_planned_amount']-line['planned_amount'])*100/line['planned_amount']) ]]
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+		   </para>
+		</td>
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ formatLang(line['next_planned_amount']/data['form']['accuracy']) ]] 
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>          
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ formatLang(line['planned_amount']/data['form']['accuracy']) ]] 
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>  
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ line['name'] ]] 
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>	
+	    	<td>
+		   <para style="Content_Table_Detail">[[ repeatIn(company_detail(data['form'],analytic_account.id), 'line') ]] [[ (line['code']  &lt;&gt; '*' and line['code']) or (data['form']['type_selection'] == 'total' and line['class']) or '' ]]
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+			<font>[[ data['form']['type_selection'] == 'total' and line['code']  &lt;&gt; '*' and removeParentNode('tr') ]]</font>
+		   </para>
+	    	</td>
+	    </tr> 
+    </blockTable>
+    <pageBreak/>
+  </section>
+
+
+  <section>[[ data['form']['report_name'] == 'summary' or removeParentNode('section') ]]
+    <para> <font color="white"> </font> </para>
+    <para style="Tilte">تقرير ملخص الموازنة للعام [[ fiscalyear and fiscalyear.name or ' - ' ]]</para>
+    <para style="Tilte"> من [[ start_period.name or '-' ]] الي شهر  [[ stop_period.name or '-' ]] </para>
+    <para> <font color="white"> </font> </para>
+    <para> <font color="white"> </font> </para>
+	  
+	<blockTable colWidths="130.0,135.0,130.0,130.0,130.0,150.0" style="Content_Table" repeatRows="1">
+	    <tr>
+	    	<td>
+		   <para style="Content_Table_Header"> الاجــمالي </para>
+	    	</td>
+		<td>
+		   <para style="Content_Table_Header"> [[ name['field5'].name ]] </para>
+		</td>
+	    	<td>
+		   <para style="Content_Table_Header"> [[ name['field4'].name ]] </para>
+	    	</td>          
+	    	<td>
+		   <para style="Content_Table_Header"> [[ name['field3'].name ]] </para>
+	    	</td>  
+	    	<td>
+		   <para style="Content_Table_Header"> [[ name['field2'].name ]] </para>
+	    	</td>	
+	    	<td>
+		   <para style="Content_Table_Header">[[ repeatIn(dept_name(data['form']), 'name') ]] بند الخصم / الادارة </para>
+	    	</td>
+	    </tr>     
+	    <tr>
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ line['field6'] ]] 
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>
+		<td>
+		   <para style="Content_Table_Detail"> [[ line['field5'] ]]
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+		   </para>
+		</td>
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ line['field4'] ]] 
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>          
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ line['field3'] ]] 
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>  
+	    	<td>
+		   <para style="Content_Table_Detail"> [[ line['field2'] ]] 
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+		   </para>
+	    	</td>	
+	    	<td>
+		   <para style="Content_Table_Detail">[[ repeatIn(dept_budget(data['form'], name), 'line') ]] [[ line['field1'] ]] 
+			<font> [[ line['code']  &lt;&gt; '*' and setTag('para','para',{'fontName':"Helvetica",'fontSize':"8.0"}) or removeParentNode('font') ]]</font>
+			<font>[[ data['form']['type_selection'] == 'total' and line['code']  &lt;&gt; '*' and removeParentNode('tr') ]]</font>
+		   </para>
+	    	</td>
+	    </tr> 
+    	</blockTable>
+  </section>
+  </story>
+</document>

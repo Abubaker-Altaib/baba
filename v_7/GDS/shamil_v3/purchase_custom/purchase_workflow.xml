@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+     <!--
+            Purchase workflow customization
+     -->
+        <!-- Adding new transition for signing from purchase Department -->
+        <record id="act_sign" model="workflow.activity">
+            <field name="wkf_id" ref="purchase.purchase_order"/>
+            <field name="name">sign</field>
+            <field name="kind">function</field>
+            <field name="action">wkf_sign_order()</field>
+        </record>
+        
+        <record id="trans_draft_sign" model="workflow.transition">
+            <field name="act_from" ref="purchase.act_draft"/>
+            <field name="act_to" ref="act_sign"/>
+            <field name="signal">purchase_sign</field>
+        </record>
+       <record id="trans_sign_confirmed" model="workflow.transition">
+            <field name="act_from" ref="act_sign"/>
+            <field name="act_to" ref="purchase.act_confirmed"/>
+            <field name="signal">purchase_confirm</field>
+        </record>
+        <record id="trans_confirmed_cancel" model="workflow.transition">
+            <field name="act_from" ref="purchase.act_confirmed"/>
+            <field name="act_to" ref="purchase.act_cancel"/>
+            <field name="signal">purchase_cancel</field>
+        </record>
+        <record id="trans_sign_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_sign"/>
+            <field name="act_to" ref="purchase.act_cancel"/>
+            <field name="signal">purchase_cancel</field>
+        </record>
+
+        <record id="purchase.act_buy" model="workflow.activity">
+            <field name="wkf_id" ref="procurement.wkf_procurement"/>
+            <field name="name">buy</field>
+            <field name="kind">subflow</field>
+            <field name="subflow_id" search="[('osv','=','ireq.m')]"/>
+            <field name="action">action_po_assign()</field>
+        </record>
+  </data>
+</openerp>
+        

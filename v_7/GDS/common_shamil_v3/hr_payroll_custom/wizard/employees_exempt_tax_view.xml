@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_employees_exempt_tax" model="ir.ui.view">
+            <field name="name">employees.exempt.tax.form</field>
+            <field name="model">employees.exempt.tax</field>
+            <field name="arch" type="xml">
+                <form string="Identify employees who should be exempted from tax" version="7.0">
+                	<group>
+                	    <field name="date"/>
+		                <field name="company_ids" widget="many2many_tags" groups="base.group_multi_company"/>
+                    </group>
+                    <footer>
+                   		<button name="exempt_tax" string="Retrive" type="object" default_focus="1" class="oe_highlight"/>
+                  		or
+                  		<button string="Cancel" class="oe_link" special="cancel"/>
+                	</footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_employees_exempt_tax" model="ir.actions.act_window">
+            <field name="name">Employees who should be exempted </field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">employees.exempt.tax</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+       
+        <menuitem id="hr_employee_exempt_tax_wiz_menu" 
+                  name="Employees who should be exempted" 
+                  parent="hr_employee_exempt_tax_menu" 
+                  action="action_employees_exempt_tax"/>
+
+    </data>
+</openerp>

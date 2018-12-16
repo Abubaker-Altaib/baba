@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<document filename="customerinvoice.pdf">
+
+	<template pageSize="(595.0,842.0)" title="Enrich Payment"
+		author="NCTR" allowSplitting="20">
+		<pageTemplate>
+			<frame id="first" x1="1.3cm" y1="2.0cm" height="22.5cm" width="19cm" />
+			
+		</pageTemplate>
+	</template>
+	<stylesheet>
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		<paraStyle name="Main_header" alignment="CENTER"
+			fontName="Microsoft Sans Serif-Bold" fontSize="16.0" spaceBefore="0.0"
+			spaceAfter="20.0" />
+		<paraStyle name="P8" fontName="Microsoft Sans Serif-Bold"
+			fontSize="14" rightIndent="4" leading="17" />
+		<paraStyle name="col_Right" fontName="Microsoft Sans Serif-Bold"
+			fontSize="14" leading="17" alignment="RIGHT" spaceBefore="25.0"
+			spaceAfter="25.0" />
+
+		<images />
+	</stylesheet>
+	<story>
+		<para style="Main_header">[[ repeatIn(objects,'invoice') ]]</para>
+		<para style="col_Right">النمرة: [[ invoice.internal_sequence ]]</para>
+		<para style="col_Right">التاريخ: [[ invoice.date_invoice ]]</para>
+		<para style="col_Right">السيد/ [[ invoice.partner_id and invoice.partner_id.name or invoice.partner_name ]]
+		</para>
+
+		<para style="Main_header">السلام عليكم ورحمة الله وبركاته</para>
+		<para style="Main_header">الموضوع [[ invoice.name or '/']]</para>
+		<para style="col_Right">نرجو منكم التكرم بسداد مبلغ وقدرة ([[ formatLang(invoice.amount_total) or 0.0 ]])[[convert(invoice.amount_total) ]] عبارة عن [[ invoice.name or '/']] .</para>
+		<para style="col_Right"> يتم السداد نقداً أو بشيك برسم [[ company.name ]] .</para>
+		<para style="Main_header">وشكراً</para>
+		<para style="P8">[[ user.name ]]</para>
+		<para style="P8">ع/المدير المالي</para>
+	</story>
+</document>

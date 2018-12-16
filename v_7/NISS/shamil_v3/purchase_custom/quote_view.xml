@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+         <record id="pur_quote_form" model="ir.ui.view">
+            <field name="name">pur.quote.form</field>
+            <field name="model">pur.quote</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Quote" version="7.0">
+                    <header>
+                         <button name="button_dummy" states="draft" colspan="2" string="Compute" type="object" icon="gtk-execute"/>
+                         <button name="quote_confirm" states="draft" colspan="2" string="Confirm Quote" icon="gtk-execute"/>
+                         <button name="done" colspan="2" states="confirmed" string="Approved to Purchase" icon="gtk-go-forward" />
+                         
+                         <button name="action_cancel_draft" position="replace" >
+                             <button name="action_cancel_draft" states="cancel" colspan="2" string="Set to Draft" type="object" icon="gtk-convert"/>
+                        </button>
+
+                         <button name="quote_cancel" states="draft,confirmed" colspan="2" string="Cancel Quote" icon="gtk-cancel"/>
+                         <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done" statusbar_colors='{"confirmed":"red","done":"red","draft":"blue"}' readonly="1"/>
+                    </header>
+                    <sheet>
+                       <group>
+                        <group>
+                        <field name="name" colspan="2"/>
+                        <field name="q_no" required="1" />
+                        <field name="pq_date"/>
+                        <field name="supplier_id" domain="[('supplier','=',1)]" colspan="2" on_change="on_change_supplier(supplier_id)" required="1"  />
+                        </group>
+                        <group>
+                        <field name="vat_supp" colspan="2"/>
+                        <field name="delivery_period" colspan="2"/>
+                        <field name="delv_plan" colspan="2"/>
+                        </group>
+                       </group> 
+                    <notebook>
+                       <page string="Initial invoice">
+                        <group> 
+                        <field colspan="4" name="pq_pro_ids">
+                                <tree editable="bottom" string="Purchase Quote Lines" create="false" >
+                                    <field name="name"/>
+                                    <field name="product_id"/>
+                                    <field name="product_qty" on_change="subtotal(price_unit,product_qty)"/>
+                                    <field name="price_unit" on_change="subtotal(price_unit,product_qty)" required="1"/>
+                                    <field name="price_subtotal"/>
+                                </tree>
+                        </field>
+                        </group>
+                       <group>
+                        <field name="taxes_id" colspan="4" domain="[('parent_id','=',False),('type_tax_use','!=','sale'),('company_id','=',parent.company_id)]" widget="many2many_tags"/>
+                       </group> 
+                            <group col="14" colspan="4">
+                                <field name="amount_untaxed" sum="Untaxed amount" colspan="2"/>
+                                <field name="amount_tax" colspan="2"/>
+                                <field name="amount_total" sum="Total amount" colspan="2"/>                                        
+                           </group>
+                          </page>
+                        </notebook>
+                     </sheet>
+                </form>
+            </field>
+          </record>
+
+         <record id="pur_quote_tree" model="ir.ui.view">
+            <field name="name">pur.quote.tree</field>
+            <field name="model">pur.quote</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Purchase Quotes">
+                        <field name="name"/>
+                        <field name="pq_date"/>
+                        <field name="supplier_id" on_change="on_change_supplier(supplier_id)"/>
+                        <field name="vat_supp"/>
+                        <field name="amount_untaxed"/>
+                        <field name="amount_tax"/>
+                        <field name="amount_total"/>
+                        <button name="done" states="confirmed" string="Create Purchase Order" type="object" icon="gtk-go-forward" confirm="Are you sure you want to confirm this quote ?"/>
+                        <field name="state"/>
+                        <button name="quote_confirm" states="draft" string="Confirm Quote" icon="gtk-execute"/>
+                        <!--button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/-->
+                        <button name="quote_cancel" states="draft,confirmed" string="Cancel Quote" icon="gtk-cancel"/>
+                </tree>
+            </field>
+          </record>
+
+          <record id="pq_products_form" model="ir.ui.view">
+            <field name="name">pq.products.form</field>
+            <field name="model">pq.products</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Items">
+                   <notebook colspan="4">
+                      <page string="Quote Line">
+                        <field name="product_id" select="1" colspan="4"/>
+                        <field name="name"/>
+                        <field name="product_qty"/>
+                        <field name="price_unit" required="1"/>
+                        <field name="price_subtotal"/>
+                        <field name="desc" colspan="4"/>
+                      </page>
+                   </notebook>
+                </form>
+            </field>
+         </record>
+
+
+
+   </data>
+</openerp>

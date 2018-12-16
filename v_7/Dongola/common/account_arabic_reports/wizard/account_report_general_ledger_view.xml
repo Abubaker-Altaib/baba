@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="account_report_general_ledger_view" model="ir.ui.view">
+			<field name="name">General Ledger</field>
+			<field name="model">account.report.general.ledger</field>
+			<field name="inherit_id" ref="account.account_report_general_ledger_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='landscape']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='initial_balance']" position="attributes">
+					<attribute name="attrs">
+						{'readonly':[('fiscalyear_id','=',False)]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='amount_currency']" position="attributes">
+					<attribute name="groups">base.group_multi_currency</attribute>
+				</xpath>
+			</field>
+		</record>
+		<record id="account_report_general_ledger_view2" model="ir.ui.view">
+			<field name="name">Trial Balance</field>
+			<field name="model">account.report.general.ledger</field>
+			<field name="inherit_id" ref="account.account_report_general_ledger_view" />
+			<field name="arch" type="xml">
+				<data>
+					<xpath expr="//field[@name='landscape']" position="before">
+						<field name="move" />
+						<field name="analytic_view" />
+					</xpath>
+					<xpath expr="//field[@name='landscape']" position="attributes">
+						<attribute name="invisible">1</attribute>
+					</xpath>
+					<xpath expr="//page[@name='journal_ids']" position="after">
+						<page string="Accounts" name="accounts_ids">
+							<field name="account_ids" colspan="4" nolabel="1" />
+						</page>
+						<page string="Analytic Accounts" name="analytic_account_ids">
+							<field name="analytic_account_ids" />
+						</page>
+					</xpath>
+				</data>
+			</field>
+		</record>
+	</data>
+</openerp>

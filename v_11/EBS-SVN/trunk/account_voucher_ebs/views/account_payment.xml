@@ -1,0 +1,35 @@
+<odoo>
+    <data>
+
+         <!-- Inherited Form View Of account.payment -->
+        <record model="ir.ui.view" id="account_payment_custom_form_inherit">
+            <field name="name">Account Payment Form Inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="payment.view_account_payment_form_inherit_payment" />
+            <field name="arch" type="xml">
+                
+
+
+                <xpath expr='//field[@name="payment_transaction_id"]' position="attributes">
+	                		<attribute name="attrs">
+ 						        {'readonly':[('state','!=','draft')]}
+					        </attribute>
+                </xpath>
+                <xpath expr='//field[@name="journal_id"]' position="before">
+	                		<field name="amount_text" string="Amount Text" />
+                </xpath>
+
+                    <xpath expr='//field[@name="payment_transaction_id"]' position="after">
+	                		
+
+                        <field name="payment_receive_id"  attrs="{'invisible':[('from_purchase_receipts_f','=',False)]}"/>
+                        <field name="from_purchase_receipts_f" invisible="1"/>
+                        <field name="from_purchase_receipts_s" invisible="1"/>
+                        <field name="voucher_id" invisible="1"/>
+                    </xpath>
+
+                
+            </field>
+        </record>
+    </data>
+</odoo>

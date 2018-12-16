@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+       <record model="ir.ui.view" id="hr_job_survey_form">
+            <field name="name">hr job survey inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_job_survey" />
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='offer']" position="attributes">
+                    <attribute name = "invisible">True</attribute>
+                </xpath>
+                <xpath expr="//div" position="inside">
+                    <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                        <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                    </button>
+                </xpath>
+                <xpath expr="//button[@name='%(hr_recruitment.action_hr_job_sources)d']" position="attributes">
+                    <attribute name = "invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="hr_job_form">
+            <field name="name">hr job inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr.view_hr_job_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='address_id']" position="attributes">
+                    <attribute name ="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name ="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//notebook/page/group/field[@name='expected_employees']" position="after">
+                    <field name="grade_id" domain="[('type','=','grade')]"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <menuitem name="Skills" id="menu_hr_skills" action="hr_custom.hr_skills_action" parent="hr_recruitment.menu_hr_recruitment_configuration" sequence="10"/>
+
+        <menuitem
+            name="Degrees" id="hr_recruitment.menu_hr_recruitment_degree" parent="hr_recruitment.menu_hr_recruitment_configuration" action="hr_recruitment.hr_recruitment_degree_action" sequence="12" active="False"/>
+
+
+        <menuitem
+        id="hr_recruitment.hr_applicant_category_menu"
+        parent="hr_recruitment.menu_hr_recruitment_configuration"
+        action="hr_recruitment.hr_applicant_category_action"
+        sequence="2" groups="base.group_no_one"
+        active="False"/>
+
+
+        <menuitem id="hr_recruitment.menu_hr_recruitment_source" parent="hr_recruitment.menu_hr_recruitment_configuration" action="hr_recruitment.hr_recruitment_source_action" sequence="13"
+        active="False"/>
+
+        <menuitem id="hr_recruitment.menu_hr_department" name="Departments" parent="hr_recruitment.menu_hr_recruitment_configuration" action="hr_recruitment.action_hr_department" sequence="14"/>
+
+        <menuitem id="menu_hr_job_degree" name="Degrees" parent="hr_recruitment.menu_hr_recruitment_configuration" action="hr_custom.hr_job_degree_action" sequence="5" active="False"/>
+
+        <menuitem id="menu_hr_job_category" name="Category" parent="hr_recruitment.menu_hr_recruitment_configuration" action="hr_custom.hr_job_category_action" sequence="5"/>
+    </data>
+</odoo>

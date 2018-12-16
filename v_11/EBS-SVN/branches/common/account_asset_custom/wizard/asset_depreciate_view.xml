@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="asset_depreciate" model="ir.ui.view">
+			<field name="name">asset.depreciate</field>
+			<field name="model">asset.depreciate</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Depreciate Asset" version="7.0">
+					<group col="4" colspan="4">
+						<field name="from_date" required='True'/>
+						<field name="to_date" required='True'/>
+						<field name="dept_id" widget="many2many_tags" />
+						<field name="category_id" widget="many2many_tags" />
+									
+					</group>
+					<field name="note" />	
+					<footer>
+						<button name="depre" string="Depreciate" type="object"
+							class="oe_highlight" />
+						or
+						<button special="cancel" string="Cancel" class="oe_link" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+
+		<record id="action_depreciate" model="ir.actions.act_window">
+			<field name="name">Depreciate Asset</field>
+			<field name="res_model">asset.depreciate</field>
+			<field name="view_type">form</field>
+			<field name="view_id" ref="asset_depreciate"/>
+			<field name="target">new</field>
+		</record>
+
+
+		<menuitem action="action_depreciate"
+			name='Asset Depreciate'
+			id="action_depreciate_menu"
+			parent="account_asset_custom.account_asset_processes_menu" />
+
+	</data>
+</odoo>
+

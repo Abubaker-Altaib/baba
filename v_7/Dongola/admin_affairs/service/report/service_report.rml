@@ -1,0 +1,219 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+	
+
+	<template pageSize="(842.0,595.0)" title="Service Report" allowSplitting="20">
+    <pageTemplate id="first">
+      <!--frame id="first" x1="1cm" y1="0.7cm" width="28cm" height="19.5cm" showBoundary="0"/-->
+      <!--frame id="first"  x1="1.2cm" y1="2.7cm" width="18.5cm" height="23.5cm" showBoundary="0"/-->
+      <frame id="first"  x1="1.2cm" y1="1.7cm" width="27.5cm" height="16.5cm" showBoundary="0"/>
+      <!--header-->
+        <pageGraphics>
+            <!--image x="1.3cm" y="29.7cm" height="40.0" >[[ company.logo or removeParentNode('image') ]]</image-->
+            <image x="2cm" y="18.7cm" height="40.0" >[[ company.logo or removeParentNode('image') ]]</image>
+            <setFont name="DejaVu Sans" size="11"/>
+            <drawString x="13.1cm" y="19.7cm"  fontSize="14.0">[[ company.partner_id.name ]]</drawString>
+            <drawString x="13.3cm" y="18.9cm"  fontSize="14.0">نظام إدارة المؤسسة</drawString>
+            <setFont name="DejaVu Sans" size="8"/>
+            <fill color="black"/>
+            <stroke color="black"/>
+
+            <!-- page header -->
+            <lines>2cm 18.5cm 27.5cm 18.5cm</lines>
+            <lines>2cm 18.4cm 27.5cm 18.4cm</lines>
+            <lines>1.2cm 1.65cm 27.5cm 1.65cm</lines>
+
+            <drawString x="9.0cm" y="1.12cm" style="P13"> <pageCount/> </drawString>
+            <!--place x="1.3cm" y="0cm" height="2.55cm" width="27.7cm"-->
+            <place x="3.3cm" y="0cm" height="1.55cm" width="27.7cm">
+                <blockTable colWidths="10cm,10cm,7cm" >
+                    <tr>
+                        <td>
+                          <para leading="11" alignment="CENTER"> Page <pageNumber/> of <getName x="6cm" y="0cm" id="lastPage"/></para>
+                          
+                        </td>
+                        <td>
+                            <para leading="11" alignment="CENTER">المستخدم: [[ user.name ]] </para>
+                        </td>
+                        <td>
+                            <para></para>
+                        </td>
+                    </tr>
+                </blockTable>
+            </place>
+        </pageGraphics>
+      <!--/header-->
+    </pageTemplate>
+  </template>
+
+	<stylesheet>
+		<blockTableStyle id="Table2">
+			<blockBackground colorName="#E5E1E1" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="0" />
+			<blockBottomPadding length="0" />
+			<blockAlignment value="CENTER" />
+			<blockValign value="LEFT" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table7">
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="4" />
+			<blockBottomPadding length="8" />
+			<blockAlignment value="CENTER" />
+			<blockValign value="LEFT" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table3">
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		<paraStyle name="Main_header" alignment="CENTER"
+			fontName="Microsoft Sans Serif-Bold" fontSize="16.0" spaceBefore="0.0"
+			spaceAfter="20.0" />
+		<paraStyle name="P8" fontName="Microsoft Sans Serif"
+			fontSize="8.0" alignment="CENTER" rightIndent="4" />
+		<paraStyle name="P9" fontName="Microsoft Sans Serif-Bold"
+			fontSize="9.30" alignment="CENTER" />
+		<paraStyle name="P7" fontName="Microsoft Sans Serif"
+			fontSize="7.0" />
+		<paraStyle name="P33" fontName="Helvetica" fontSize="8.0"
+			leading="9" spaceAfter="7" />
+
+		<images />
+	</stylesheet>
+	<story>
+		<para style="P8">[[ repeatIn(line(data),'lines') ]]</para>
+		
+
+			<para style="Main_header">
+				إدارة الشئون الإدارية
+			</para>
+			<para style="Main_header">
+				تقرير خدمات [[ lines[0][0]['category'] or '/']]
+			</para>
+			<para style="Main_header">
+				في الفترة من [[data['form']['date_from'] ]] إلي [[data['form']['date_to'] ]]
+			</para>
+			<section>
+			<para style="P8">[[ repeatIn(lines,'m') ]]</para>
+
+			<para style="P8" alignment="RIGHT">[[ m[0]['contract_cost_sub_type'] ]]
+			</para>
+
+			<blockTable colWidths="80,160,70,100,100,90,80,100,50"
+				style="Table2">
+				<tr>
+					<td>
+						<para style="P9">إجمالي المبلغ</para>
+					</td>
+					<td>
+						<para style="P9">الخدمات</para>
+					</td>
+					<td>
+						<para style="P9">المبلغ الدوري</para>
+					</td>
+					<td>
+						<para style="P9">المقدم</para>
+					</td>
+
+					<td>
+						<para style="P9">الحالة</para>
+					</td>
+
+					<td>
+						<para style="P9">الجهة الطالبة</para>
+					</td>
+
+					<td>
+						<para style="P9">تاريخ الطلب</para>
+					</td>
+					<td>
+						<para style="P9">رقم الطلب</para>
+					</td>
+					<td>
+						<para style="P9">الرقم</para>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<para style="P8">
+							[[ repeatIn(m,'line') ]]
+							[[formatLang(line['total_cost']) ]]
+						</para>
+					</td>
+					<td>
+						<section>
+							<para style="P9">[[ not line['services'] and '/']]</para>
+							<blockTable colWidths="40,40,80" style="Table7">
+								[[ line['services'] or removeParentNode('blockTable')]]
+								<tr>
+									[[ repeatIn(line['services'],'include') ]]
+									<td>
+										<para style="P8">[[ formatLang(include['amount_ser']) or '/']]
+										</para>
+									</td>
+									<td>
+										<para style="P8">[[ formatLang(include['quantity']) or '/']]
+										</para>
+									</td>
+									<td>
+										<para style="P8">[[ include['cost_sub'] or '/']]</para>
+									</td>
+								</tr>
+							</blockTable>
+						</section>
+					</td>
+					<td>
+						<para style="P8">
+							[[ line['cost_f']!='no' and formatLang(line['cost_g']) or '']] [[ line['cost_f']=='daily' and 'يومياً' or line['cost_f']=='weekly' and 'أسبوعياً' or line['cost_f']=='monthly' and 'شهرياً' or line['cost_f']=='yearly' and 'سنوياً' or 'لايوجد' ]]
+						</para>
+					</td>
+					<td>
+						<para style="P8">[[ formatLang(line['amount'] )]]</para>
+					</td>
+					<td>
+						<para style="P8">
+							[[ line['state']=='draft' and 'فى البداية' or line['state']=='confirm_sm' and 'موافقة مدير القسم' or line['state']=='confirm_ss' and 'موافقة مدير الخدمات' or line['state']=='confirm_so' and 'موافقة ضابط الخدمات ' or line['state']=='open' and 'مشرف الشؤون الإدارية'or line['state']=='toclose' and 'إلي الإغلاق' or line['state']=='closed' and 'إنتهي' or line['state']=='cancel' and 'إنهاء' or '/' ]]
+						</para>
+					</td>
+
+					<td>
+						<para style="P8">[[ line['dept'] or '/' ]]</para>
+					</td>
+					<td>
+						<para style="P8">[[ line['date'] or '/' ]]</para>
+					</td>
+
+					<td>
+						<para style="P8">[[ line['name'] or '/' ]]</para>
+					</td>
+
+					<td>
+						<para style="P8">
+							<seq id="L1" />
+						</para>
+					</td>
+				</tr>
+			</blockTable>
+			<blockTable colWidths="80,750" style="Table3">
+				<tr>
+					<td>
+						<para style="P9">[[ formatLang(line['cost_sum'] )]]</para>
+					</td>
+					<td>
+						<para style="P9">الاجمالى</para>
+					</td>
+				</tr>
+			</blockTable>
+			<para style="Main_header"><seqReset id="L1" /></para>
+		</section>
+		
+	</story>
+</document>

@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <delete model="ir.ui.menu" id="account.menu_action_invoice_tree1" />
+        <delete model="ir.ui.menu" id="account.menu_action_invoice_out_refund" />
+        <delete model="ir.ui.menu" id="account.product_product_menu_sellable" />
+        <delete model="ir.ui.menu" id="account.product_product_menu_purchasable" />
+        <delete model="ir.ui.menu" id="account.menu_action_invoice_tree2" />
+        <delete model="ir.ui.menu" id="account.menu_action_invoice_in_refund" />
+        <delete model="ir.ui.menu" id="payment.root_payment_menu" />
+        <delete model="ir.ui.menu" id="payment.payment_acquirer_menu" />
+        <delete model="ir.ui.menu" id="payment.payment_transaction_menu" />
+        <delete model="ir.ui.menu" id="payment.payment_token_menu" />
+        <delete model="ir.ui.menu" id="payment.payment_icon_menu" />
+        <delete model="ir.ui.menu" id="account.menu_action_payment_term_form" />
+        <delete model="ir.ui.menu" id="account.menu_action_rounding_form_view" />
+        <!-- <delete model="ir.ui.menu" id="account.account_management_menu" /> -->
+        
+        <menuitem name="Accounts Type" id="menu_action_expense_request"
+            action="account.action_account_type_form" parent="account.account_account_menu" sequence="11" />
+
+        
+
+        <!-- res.company form view inherit -->
+        <record id="view_company_form_inherit" model="ir.ui.view">
+            <field name="name">res.company.form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="transfer_account_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_move_form_inherit" model="ir.ui.view">
+            <field name="name">account.move.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form" />
+            <field name="arch" type="xml">
+               <xpath expr="//form//field[@name='journal_id']" position="after">
+                   <field name="payment_id"/>
+               </xpath>
+               <xpath expr="//field[@name='ref']" position="attributes">
+                    <attribute name="attrs">
+                        {'readonly':[('state','!=','draft')],'required': [('id', '==', False)]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//notebook/page/field/tree/field[@name='name']" position="attributes">
+                    <attribute name="required">True</attribute>
+                </xpath>
+                <xpath expr="//notebook/page/field/tree/field[@name='analytic_tag_ids']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account.action_move_journal_line" model="ir.actions.act_window">
+            <field name="name">Journal Entries</field>
+            <field name="res_model">account.move</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="view_id" ref="account.view_move_tree"/>
+            <field name="search_view_id" ref="account.view_account_move_filter"/>
+            <field name="context">{'view_no_maturity': True}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a journal entry.
+              </p><p>
+                A journal entry consists of several journal items, each of
+                which is either a debit or a credit transaction.
+              </p><p>
+                Odoo automatically creates one journal entry per accounting
+                document: invoice, refund, vendor payment, bank statements,
+                etc. So, you should record journal entries manually only/mainly
+                for miscellaneous operations.
+              </p>
+            </field>
+        </record>
+
+
+        <!-- form of inherit res.partner view -->
+
+        <record id="view_res_partner_filter_inherit" model="ir.ui.view">
+            <field name="name">res.partner.select.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="code" />
+                    <field name="phone" />
+                    <field name="mobile" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_partner_tree_inherit" model="ir.ui.view">
+            <field name="name">res.partner.tree.inherit</field>
+            <field name="model">res.partner</field>
+            <field eval="8" name="priority"/>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='display_name']" position="after">
+                    <field name="code" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_line_tree_inherit" model="ir.ui.view">
+            <field name="name">account.analytic.line.tree.inherit</field>
+            <field name="model">account.analytic.line</field>
+            <field eval="8" name="priority"/>
+            <field name="inherit_id" ref="analytic.view_account_analytic_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='unit_amount']" position="replace">
+                    <field name="unit_amount" sum="Quantity" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="replace">
+                   <field name="amount" sum="Total" invisible="1"/>
+               </xpath>
+                <xpath expr="//field[@name='amount']" position="before">
+                   <field name="debit"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="after">
+                   <field name="credit"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_analytic_line_form_inherit" model="ir.ui.view">
+            <field name="name">account.analytic.line.form.inherit</field>
+            <field name="model">account.analytic.line</field>
+            <field eval="8" name="priority"/>
+            <field name="inherit_id" ref="analytic.view_account_analytic_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='unit_amount']" position="replace">
+                    <field name="unit_amount"  invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="replace">
+                   <field name="amount" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="before">
+                   <field name="debit"/>
+               </xpath>
+                <xpath expr="//field[@name='amount']" position="before">
+                   <field name="credit"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_partner_form_inherit2" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/div[2]/h1" position="after">
+                    <h1>
+                        <field name="code" placeholder="Code"/>
+                    </h1>
+                </xpath>
+                <xpath expr="//field[@name='category_id']" position="attributes">
+                    <attribute name="string">Category</attribute>
+                </xpath>
+                <xpath expr="//field[@name='vat']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//page[@name='sales_purchases']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//group[@name='acc_sale']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//group[@name='acc_purchase']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//group[@name='fiscal_information']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='property_account_receivable_id']" position="attributes">
+                    <attribute name="required">False
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='property_account_payable_id']" position="attributes">
+                    <attribute name="required">False
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_partner_view_buttons_inherit2" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.partner_view_buttons"/>
+            <field name="arch" type="xml">
+             <xpath expr="//button[@name='action_view_partner_invoices']" position="replace">
+                    <button type="object" class="oe_stat_button" icon="fa-pencil-square-o" name="action_view_partner_invoices" attrs="{'invisible':True}">
+                    </button>
+             </xpath>
+            </field>
+        </record>
+        <record id="view_partner_view_button_contracts_count_inherit2" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.partner_view_button_contracts_count"/>
+            <field name="arch" type="xml">
+             <xpath expr="/form/sheet//div//button[1]" position="replace">
+                <button class="oe_stat_button" type="action" name="203" icon="fa-book" groups="analytic.group_analytic_accounting" attrs="{'invisible':True}">
+                        <field string="Analytic Accounts" name="contracts_count" widget="statinfo" attrs="{'invisible':True}"/>
+                </button>
+             </xpath>
+            </field>
+        </record>
+        <record id="view_partner_property_form_inherit" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+             <xpath expr="/form/sheet//notebook//page[4]//group//group" position="after">
+               <group>
+                  <field name="customer"/>
+               </group>
+               <group>
+                  <field name="supplier"/>
+               </group>
+               <group>
+                   <button type="action" class="btn btn-sm btn-link" name="base.action_res_partner_bank_account_form">
+                  <span class="o_stat_value">1</span>
+                  <span class="o_stat_text">Bank account(s)</span>
+                  </button>
+             </group>
+             </xpath>
+            </field>
+        </record>
+        
+        <!-- Inherited Form View Of account.journal -->
+        <record model="ir.ui.view" id="account_journal_form_inherit">
+            <field name="name">Account Journal Form Inherit</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='default_debit_account_id']" position="attributes">
+                    <attribute name="attrs">{'required' :['|',('type', '=', 'bank'),('type', '=', 'cash')]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='default_credit_account_id']" position="attributes">
+                    <attribute name="attrs">{'required' :['|',('type', '=', 'bank'),('type', '=', 'cash')]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='bank_statements_source']" position="replace">
+                    <attribute name="invisible">1
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='bank_id']" position="attributes">
+                    <attribute name="invisible">1
+                    </attribute>
+                </xpath>
+                <xpath expr="//page[@name='bank_account']" position="attributes">
+                    <attribute name="invisible">1
+                    </attribute>
+                </xpath>
+                <xpath expr="//form//field[@name='company_id']" position="after">
+                    <field name="financial_era"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherited Form View Of account.tax -->
+        <record model="ir.ui.view" id="account_tax_form_inherit">
+            <field name="name">Account Tax Form Inherit</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="code" attrs="{'required' : True}" />
+                </xpath>
+                <xpath expr="//field[@name='type_tax_use']" position="after">
+                    <field name="date" attrs="{'required' : True}" />
+                </xpath>
+                <xpath expr="//field[@name='description']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='tag_ids']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='tax_group_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='tax_adjustment']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='analytic']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='refund_account_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[2]" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+         <!--Inherit view_account_tax_search  view-->
+        <record id="view_account_tax_inherit_search_sa" model="ir.ui.view">
+            <field name="name">view.account.tax.search.filter</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_account_tax_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='sale']" position="replace">
+                    <filter string="In" name="sale" domain="[('type_tax_use','=','sale')]"/>
+                </xpath>
+                <xpath expr="//filter[@name='purchase']" position="replace">
+                    <filter string="Out" name="purchase" domain="[('type_tax_use','=','purchase')]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherited Form View Of account.account -->
+        <record model="ir.ui.view" id="account_view_account_inherit">
+            <field name="name">Account Account Form Inherit</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='row']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_type_id']" position="after">
+                    <field name="nature" />
+                </xpath>
+                <xpath expr="//field[@name='currency_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='tag_ids']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='group_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_account_form1" model="ir.ui.view">
+            <field name="name">account.analytic.account.form</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="currency_id" position="before">
+                    <field name="parent_id" domain="[('type','=', 'view')]" attrs="{'required':[('type' ,'=','normal')]}" />
+                </field>
+                <field name="currency_id" position="after">
+                    <field name="type"/>
+                    <field name="cost_type"/>
+                </field>
+            </field>
+        </record>
+        
+       <record id="view_account_analytic_account_list" model="ir.ui.view">
+            <field name="name">account.analytic.account.list</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_list" />
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="replace">
+                    <tree string="Analytic Accounts" toolbar="1" decoration-info="type=='view'">
+                    <field name="code"/>
+                    <field name="display_name"/>
+                    <field name="parent_id"/>
+                     <field name="type" />
+                    <field name="active" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="balance"/>
+                </tree>
+                        
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_currency_form_inherit" model="ir.ui.view">
+            <field name="name">res.currency.form</field>
+            <field name="model">res.currency</field>
+            <field name="inherit_id" ref="base.view_currency_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//group[@groups='base.group_no_one']" position="attributes">
+                    <attribute name="groups">base.group_no_one,account.group_account_manager</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_invoice_inherit_form">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/notebook/page/field/tree/field[@name='account_analytic_id']" position="replace">
+                    <field name="account_analytic_id" groups="analytic.group_analytic_accounting"
+                    domain="['|',('company_id', '=', parent.company_id),('type', '=', 'normal')]"
+                    context="{'default_partner_id': parent.partner_id}"/>
+                </xpath>
+           </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="view_account_payment_form">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@name='post']" position="after">
+                    <button name="send" class="oe_highlight"  string="Send" type="object" attrs="{'invisible': ['|',('payment_type', '!=', 'transfer'),('state', '!=', 'draft')]}"/>
+
+                    <button name="confirm" class="oe_highlight"  string="Confirm" type="object" attrs="{'invisible': ['|',('payment_type', '!=', 'transfer'),('state', '!=', 'sent')]}"/>
+                </xpath>
+                <!-- <xpath expr="//header/button[@name='post']" position="replace">
+                    <button name="post" class="oe_highlight" string="Confirm" type="object" attrs="{'invisible': ['|',('payment_type', '=', 'transfer'),('state', '!=', 'draft')]}"/>
+                </xpath> -->
+                <xpath expr="//sheet/group/group/field[@name='payment_date']" position="after">
+                    <field name="payment_transfer_date" attrs="{'invisible': ['|',('payment_type', '!=', 'transfer'),('state', '=', 'draft')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_payment_form_inherit_custom" model="ir.ui.view">
+                <field name="name">view.account.payment.form.inherit.payment.custom</field>
+                <field name="model">account.payment</field>
+                <field name="inherit_id" ref="payment.view_account_payment_form_inherit_payment"/>
+                <field name="arch" type="xml">
+                    <xpath expr="//field[@name='payment_transaction_id']" position="attributes">
+                        <attribute name="invisible">True</attribute>
+                    </xpath>
+                </field>
+        </record>
+
+         <record id="payment_cancel_confirm_form_inherit" model="ir.ui.view">
+            <field name="name">payment.cancel.confirm.form.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account_cancel.payment_cancel_form_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@name='cancel']" position="replace">
+                    <button name="cancel" attrs="{'invisible': [('state', 'in', ['draft','cancelled'])]}" confirm="Are You Sure You Want To Cancel this Payment?" string="Cancel" type="object"/>
+                </xpath>
+            </field>
+        </record>
+
+         <record id="view_account_move_hide_journal_reversal" model="ir.ui.view">
+            <field name="name">account.move.hide.journal.reversal.form</field>
+            <field name="model">account.move.reversal</field>
+            <field name="inherit_id" ref="account.view_account_move_reversal"/>
+            <field name="arch" type="xml">
+                  <xpath expr="//form//group" position="replace">
+                      <group>
+                          <field name="date"/>
+                      </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="action_journal_search_inherit">
+            <field name="name">account.journal.search</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_search"/>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="name"]' position="after">
+                    <field name="type" string="Type:"/>
+                </xpath>
+            </field>
+        </record>
+        <act_window
+            id="account.action_move_line_select_tax_audit"
+            name="Journal Items tax"
+            context="{'search_default_account_id': [active_id]}"
+            res_model="account.move.line"
+            src_model="account.account"
+            view_id="account.view_move_line_tax_audit_tree"/>
+    </data>
+</odoo>
+

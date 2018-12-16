@@ -1,0 +1,256 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<record id="view_reemployment_form" model="ir.ui.view">
+			<field name="name">remployment.emlpyee.inherit</field>
+			<field name="model">hr.employee.reemployment</field>
+			<field name="inherit_id" ref="hr_custom.view_reemployment_form" />
+			<field name="arch" type="xml">
+				<button name="action_done" position="replace">
+					<button string="Cancel" name="cancel" states="complete,approve" />
+					<button string="Complete" name="complete" states="draft" />
+					<button string="Confirm" name="confirm" states="complete" />
+					<button string="Approve" name="approve" states="confirm" />
+					<button string="Done" name="done" states="approve" />
+				</button>
+				<field name="state" position="replace">
+					<field name="state" widget="statusbar"
+						statusbar_visible="draft,complete,confirm,approve,done" />
+				</field>
+				<field name="company_id" position="replace">
+					<field name="company_id" groups="base.group_multi_company"
+						widget="selection" attrs="{'readonly':[('state','in',('approve','done'))]}" />
+				</field>
+			</field>
+		</record>
+
+		<!-- Hr process archive -->
+		<record id="hr_process_archive_form_inherit_view" model="ir.ui.view">
+			<field name="name">hr.process.archive.inherit</field>
+			<field name="model">hr.process.archive</field>
+			<field name="inherit_id" ref="hr_custom.hr_process_archive_form_view" />
+			<field name="arch" type="xml">
+				<button name="approve" position="replace">
+					<field name="degree_level" invisible="1" />
+
+					<button string="HR User" name="to_hr_user" states="draft"
+						class="oe_highlight" />
+					<!-- level0  -->
+					<button string="Section Manager" name="to_section_manager"
+						class="oe_highlight"
+  							attrs="{'invisible': ['|',('state','!=','hr_user'),('degree_level','!=',0)]}" />
+					<button string="Department Manager" name="to_department_manager"
+						states="section_manager" class="oe_highlight" />
+					<button string="HR Manager" name="to_hr_manager" class="oe_highlight" 
+                           states="department_manager"  groups="base.group_hr_manager" />
+
+					<button string="HR Manager" name="to_hr_manager"
+						class="oe_highlight" attrs="{'invisible': ['|',('state','!=','hr_user'),('degree_level','=',0)]}"/>
+					<button string="Unit Manager" name="to_unit_manager" states="hr_manager"
+						class="oe_highlight" />
+
+                    <button string="Minister" name="to_minister" class="oe_highlight"
+                        attrs="{'invisible': ['|',('state','!=','unit_manager'),('degree_level','=',3)]}" />
+
+                    <button string="Service Manager" name="to_service_manager"
+						states="minister" class="oe_highlight" />
+					<!-- level1  -->
+					
+					<button string="Council Ministers" name="to_council_ministers"
+						states="service_manager" class="oe_highlight" />
+					<!-- level3  -->
+					<button string="Service Manager" name="to_service_manager2" class="oe_highlight" 
+                        attrs="{'invisible': ['|',('state','!=','unit_manager'),('degree_level','!=',3)]}"/>
+				</button>
+				<xpath expr="//field[@name='state']" position="attributes">
+					<attribute name="statusbar_visible">draft,hr_user,hr_manager,unit_manager,minister,service_manager,approved
+					</attribute>
+					<!--attribute name="statusbar_visible">draft,hr_user,section_manager,department_manager,hr_manager,approved</attribute -->
+				</xpath>
+				<xpath expr="//group" position="before">
+					<group>
+						<field name="name" class="oe_inline" attrs="{'invisible': [('name','=','/')]}"
+							readonly="1" />
+					</group>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="hr_emp_qualification_form_view" model="ir.ui.view">
+			<field name="name">hr.employee.qualification.inherit</field>
+			<field name="model">hr.employee.qualification</field>
+			<field name="inherit_id" ref="hr_custom.hr_emp_qualification_form_view" />
+			<field name="arch" type="xml">
+				<button name="approve_quali" position="replace">
+					<button string="Complete" name="complete_quali" states="draft"
+						type="object" class="oe_highlight" />
+					<button string="Approve" name="approve_quali" states="complete"
+						type="object" class="oe_highlight" />
+				</button>
+				<field name="state" position="replace">
+					<field name="state" widget="statusbar" statusbar_visible="draft,complete,approved" />
+				</field>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_emp_qualification_tree_view">
+			<field name="name">hr.employee.qualification.inherit</field>
+			<field name="model">hr.employee.qualification</field>
+			<field name="inherit_id" ref="hr_custom.hr_emp_qualification_tree_view" />
+			<field name="arch" type="xml">
+				<button name="approve_quali" position="replace">
+					<button string="Complete" name="complete_quali" states="draft"
+						type="object" icon="gtk-apply" />
+					<button string="Approve" name="approve_quali" states="complete"
+						type="object" icon="gtk-apply" />
+				</button>
+			</field>
+		</record>
+
+		<record id="hr_employee_family_view" model="ir.ui.view">
+			<field name="name">hr.employee.family.inherit</field>
+			<field name="model">hr.employee.family</field>
+			<field name="inherit_id" ref="hr_custom.hr_employee_family_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='family_approved']" position="replace">
+					<button string="Complete" name="family_complete" states="draft"
+						type="object" class="oe_highlight" groups="base.group_hr_user" />
+					<button string="Approve" name="family_approved" states="complete"
+						type="object" class="oe_highlight" groups="base.group_hr_manager" />
+				</xpath>
+				<xpath expr="//button[@name='family_stopped']" position="replace">
+					<button string="To Stop" name="family_to_stop" states="approved"
+						type="object" class="oe_highlight" groups="base.group_hr_user" />
+					<button string="Stopped" name="family_stopped" states="to_stop"
+						type="object" class="oe_highlight" groups="base.group_hr_manager" />
+				</xpath>
+				<xpath expr="//button[@name='set_to_draft']" position="attributes">
+					<attribute name="states">approved,stopped,rejected,complete,to_stop
+					</attribute>
+				</xpath>
+				<field name="state" position="replace">
+					<field name="state" widget="statusbar" statusbar_visible="draft,complete,approved" />
+				</field>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_employee_family_tree_view">
+			<field name="name">hr.employee.family.tree</field>
+			<field name="model">hr.employee.family</field>
+			<field name="inherit_id" ref="hr_custom.hr_employee_family_tree_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='family_approved']" position="replace">
+					<button string="Approve" name="family_approved" states="complete"
+						type="object" groups="base.group_hr_manager" icon="gtk-go-forward" />
+				</xpath>
+			</field>
+		</record>
+
+		<!-- Hr job -->
+		<record id="view_jobs_filter" model="ir.ui.view">
+			<field name="name">Job</field>
+			<field name="model">hr.job</field>
+			<field name="type">search</field>
+			<field name="inherit_id" ref="hr.view_job_filter" />
+			<field name="arch" type="xml">
+				<filter string="In Position" position="replace" />
+				<filter string="In Recruitment" position="replace" />
+			</field>
+		</record>
+
+		<record id="hr_job_form_inherit_view2" model="ir.ui.view">
+			<field name="name">hr.job.inherit</field>
+			<field name="model">hr.job</field>
+			<field name="inherit_id" ref="hr_custom.hr_job_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr="header" position="replace">
+					<header>
+						<field name="degree_level" invisible="1" />
+						<button string="Requst" name="request" states="draft"
+							groups="base.group_hr_user" class="oe_highlight" />
+						<button string="Hr Manager Confirm" name="confirm" states="complete"
+							groups="base.group_hr_manager" class="oe_highlight" />
+						<button string="Unit Manager" name="unit_manager" states="confirm"
+							class="oe_highlight" />
+
+						<!-- level1 -->
+						<button string="Minister" name="minister"
+							attrs="{'invisible': ['|',('state','!=','unit_manager'),('degree_level','!=',1)]}"
+							class="oe_highlight" />
+						<button string="Service Manager" name="service_manager"
+							attrs="{'invisible': ['|',('state','!=','minister'),('degree_level','!=',1)]}"
+							class="oe_highlight" />
+						<button string="Finance Minister" name="finance_minister"
+							attrs="{'invisible': ['|',('state','!=','service_manager'),('degree_level','!=',1)]}"
+							class="oe_highlight" />
+						<button string="Council Minister" name="done" states="finance_minister"
+							class="oe_highlight" />
+
+						<!-- level2 -->
+						<button string="Service Manager" name="service_manager"
+							attrs="{'invisible': ['|',('state','!=','unit_manager'),('degree_level','=',1)]}"
+							class="oe_highlight" />
+						<button string="Minister" name="minister"
+							attrs="{'invisible': ['|',('state','!=','service_manager'),('degree_level','!=',2)]}"
+							class="oe_highlight" />
+
+						<!-- level3 -->
+						<button string="Ministry Agent" name="ministry_agent"
+							attrs="{'invisible': ['|',('state','!=','service_manager'),('degree_level','!=',3)]}"
+							class="oe_highlight" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,complete,confirm,unit_manager,service_manager,minister,done" />
+					</header>
+				</xpath>
+
+				<xpath expr="//field[@name='name']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',('draft'))]}
+					</attribute>
+				</xpath>
+
+				<xpath expr="//field[@name='code']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',('draft'))]}
+					</attribute>
+				</xpath>
+				
+				<xpath expr="//field[@name='type']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',('draft'))]}
+					</attribute>
+				</xpath>
+				
+				<xpath expr="//field[@name='deparment_ids']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',('draft'))]}
+					</attribute>
+				</xpath>
+				
+				<xpath expr="//field[@name='parent_id']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',('draft'))]}
+					</attribute>
+				</xpath>
+				
+				<xpath expr="//field[@name='description']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',('draft'))]}
+					</attribute>
+				</xpath>
+				
+				<xpath expr="//field[@name='requirements']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',('draft'))]}
+					</attribute>
+				</xpath>
+				
+				<xpath expr="//field[@name='company_id']" position="attributes">
+					<attribute name="attrs">
+						{'readonly': [('state','not in',('draft'))]}
+					</attribute>
+				</xpath>
+			</field>
+		</record>
+	</data>
+</openerp>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+	<data>
+        <record id="kalwa_support_order_tree_view" model="ir.ui.view" >
+			<field name="name">Support Order</field>
+			<field name="model">khalwa.support.order</field>
+			<field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                    <field name="program_name" />
+                    <field name="date" />
+                    <!--<field name="state" /> -->
+                </tree>
+            </field>
+        </record>
+		<record id="kalwa_support_order_form_view" model="ir.ui.view" >
+			<field name="name">khalwa Support Order</field>
+			<field name="model">khalwa.support.order</field>
+			<field name="arch" type="xml">
+				<form >
+          			<header>
+              			<button name="action_confirm" string="Confirm" states="draft" type="object" class="oe_highlight"/>
+              			<button name="action_approve" string="Aprove" states="confirmed" type="object" class="oe_highlight"/>
+              			<button name="action_done" string="Done" states="approval" type="object" class="oe_highlight"/>
+              			<button name="action_cancle" states="draft,confirmed,approval" string="Cancel" type="object" class="oe_highlight"/>
+              			<button name="action_set_draft" states="cancel" string="Set Draft" type="object" class="oe_highlight"/>
+              			<button name="report_print" string="Khalwa Study" states="done" type="object" class="oe_highlight" attrs="{'invisible':['|',('support_type' , '!=' , 'khalwa'),('state', '!='  , 'done')]}"/>
+              			<field name="state" statusbar_visible="draft,confirmed,approval,done" widget="statusbar"/>
+          			</header>
+          			<sheet>
+            		<group>
+                	<group>
+                    <field name="name" readonly="1"/>
+                    <field name="support_type" required="1" attrs="{'readonly':[('state' , 'in' , ('done','cancel'))]}"/>
+
+                    <field name="oragnaztion_id" attrs="{'readonly':[('state','in',('done','cancel'))],'required':[('support_type' , '=' , 'organization')],
+                    'invisible':[('support_type','!=','organization')]}" domain="[('channel_type','=','dawa')]" />
+               
+ <field name="People" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                    
+<field name="support_method" required="1" attrs="{'readonly':[('state' , 'in' , ('done','cancel'))]}"/>
+                   
+                    
+                    <field name="place_id" attrs="{'invisible':[('support_type' , 'not in', ('khalwa','masjid','worship','house'))],'readonly':[('state','in',('done','cancel'))],'required':[('support_type' , '=' , 'khalwa')]}"/>
+                    <field name="company_id" required="1" readonly="1"/>
+                </group>
+                <group>
+                    <field name="date" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                    
+                        <field name="program_name" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                   
+                   
+                     <field name="program_area" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+    
+     <field name="approved_amount" attrs="{'invisible':[('support_method','!=','cash')],'readonly':[('state','=','done')],'required':[('support_method','=','cash')]}"/>
+      
+    <field name="estimated_cost"  attrs="{'readonly':[('state','=','done')],'invisible':[('support_method','!=','cash')],'required':[('support_method','=','cash')]}"/>
+                
+                </group>
+            </group>
+            <notebook>
+                <page string="Researcher Report">
+                  <group>
+                    <field name="researcher_report" attrs="{'readonly':[('state','=','done')]}" required="1"/>
+                  </group>
+                  
+                </page>
+                    <page string="Products" attrs="{'invisible':[('support_method' ,'!=' , 'material')]}">
+                                <field name="products_ids">
+                                    <tree editable="bottom">
+                                        <field name="product_id" required="1"/>
+                                        <field name="product_qty" required="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            
+                <page string="Almasaref Manager Comment" attrs="{'invisible':[('state','=','draft')]}">
+                  <group>
+                    <field name="type_" attrs="{'required':[('state','not in',['draft'])]}"/>
+                  </group>
+                  <group>
+                    <field name="almasaref_manager_comment" attrs="{'readonly':[('state','=','done')],'required':[('state','!=','draft')]}"/>
+                  </group>
+                </page>
+                <page string="Secretary of State Decision" attrs="{'invisible':[('state','!=','approval'),('state','!=','done'),('state','!=','cancel')]}">
+                  <group>
+                    <field name="secretary_state_decision" attrs="{'readonly':[('state','=','done')],'required':[('state','=','approval')]}"/>
+                  </group>
+                  
+                </page>
+                 <page string="Voucher" attrs="{'invisible':[('state','!=','done')]}">
+                        <group>
+                        <field name="vaucher_id" readonly="1"/>
+                      </group>
+                      </page>
+            </notebook>
+          </sheet>
+
+        </form>
+      </field>
+    </record>
+<act_window id="dzc4_5_kalwa_support_action"
+		name="Support order"
+		res_model="khalwa.support.order"
+		view_mode="search,tree,form"
+		/>
+		<menuitem id="support_menu"
+        name="Support Order"
+        parent="dzc4_5_menu"
+        sequence="1"
+        action="dzc4_5_kalwa_support_action"
+        />
+        
+<!-- Kalwa Support support order menu -->
+    <menuitem id="khalwa_support_menu"
+        name="Support Order"
+        parent="support_menu"
+        sequence="1"
+        action="dzc4_5_kalwa_support_action"
+        />
+        
+		
+	</data>
+</odoo>
+
+

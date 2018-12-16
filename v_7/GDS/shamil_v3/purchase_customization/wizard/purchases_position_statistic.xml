@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="id_purchases_position_statistic_report_view" model="ir.ui.view">
+            <field name="name">Purchases Position Statistic Report Wizard Form</field>
+            <field name="model">purchases.position.statistic</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Purchases Position Statistic Report Wizard" version="7.0">
+                    <separator string="Purchases Position Statistic Report" colspan="4"/>
+                        <group>
+
+                        <group col="4" colspan="2">
+                            <field name="from_date"/>
+                            <field name="to_date" />
+                        </group>
+                        <group col="4" colspan="2">
+                            <field name="location_id"  domain="[('executing_agency' , '=' , executing_agency),('usage' , '=' , 'internal' )]" />
+                            <field name="product_id" />
+                        </group>
+                        
+                        <group col="4" colspan="2" >
+                        <field name="department_id" />
+                        <field name="company_id"/>
+                        </group>
+                        <group col="4" colspan="2" >
+                             <field name="with_childern"/>
+                             <field name="executing_agency"/>  
+                        </group>
+                        </group>
+                    <footer>
+                      <button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight" colspan="2"/>
+                        or
+            <button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link" colspan="2"/>
+                            </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_purchases_position_statistic_report_wizard" model="ir.actions.act_window">
+            <field name="name">Action Purchases Position Statistic Report Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchases.position.statistic</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="id_purchases_position_statistic_report_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Purchases Position Statistic Report"
+                parent="purchase_report.menu_purchase_advance_reports"
+                action="action_purchases_position_statistic_report_wizard"
+                id="menu_purchases_position_statistic_report_wizard"
+                />
+
+    </data>
+</openerp>

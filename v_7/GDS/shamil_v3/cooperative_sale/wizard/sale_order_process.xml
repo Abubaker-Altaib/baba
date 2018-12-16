@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="id_sale_order_process_view" model="ir.ui.view">
+            <field name="name">sale order process</field>
+            <field name="model">sale.order.process</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Sale Order Process Wizard" version="7.0">
+        			<separator string="Sale Order Process" colspan="4"/>
+            			<group>
+            			<group col="4" colspan="4">
+            				<field name="order_cancel_lines" domain="[('state','=','complete2')]"/>
+
+            			</group>
+            			</group>
+	    			<footer>
+	 		<button name="order_process" string="Execute" type="object" 
+                               class="oe_highlight" groups="cooperative_sale.group_co_operative_sales_manager"/>
+                        or
+			<button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link" colspan="2"/>
+                        	</footer>
+               </form>
+            </field>
+	    </record>
+
+        <record id="action_sale_order_process_wiz" model="ir.actions.act_window">
+            <field name="name">sale order process action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.process</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="id_sale_order_process_view"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem
+               parent="base.menu_base_partner" 
+               id="menu_act_sale_order_process"
+               name="Sale Order Manager Process"
+	       groups="cooperative_sale.group_co_operative_sales_manager" 
+                />
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Process Sale order Manager"
+                parent="menu_act_sale_order_process"
+                action="action_sale_order_process_wiz"
+                id="act_sale_order_process_manager"
+                />
+
+    </data>
+</openerp>

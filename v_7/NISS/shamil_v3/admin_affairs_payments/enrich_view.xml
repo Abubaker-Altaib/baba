@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+		<!-- Enrich Record Form,Tree View & Action -->
+
+		<record id="view_payment_enrich_view_form" model="ir.ui.view">
+			<field name="name">payment.enrich.form</field>
+			<field name="model">payment.enrich</field>
+			<field name="arch" type="xml">
+			<form string="Enrich Payment" version="7.0">
+                           <header>
+
+					<button icon="terp-gtk-go-back-rtl" name="first_confirmed" states="draft" string="confirmation"
+						confirm="Are you sure you want to Confirm this request?" />
+					<button icon="terp-gtk-go-back-rtl" name="second_confirmed" states="first_confirmed" string="Section / Officer manager confirmation"
+						confirm="Are you sure you want to Confirm this request?" />
+					<button icon="terp-gtk-go-back-rtl" name="confirmed" states="second_confirmed" string="Department manager / PRM Manager confirmation"
+						confirm="Are you sure you want to Confirm this request?" />
+					<button icon="terp-gtk-go-back-rtl" name="done" states="confirmed" string="Close Enrich"
+						confirm="Are you sure you want to approve this request?" />
+					
+					<button name="cancel" states="draft,first_confirmed,second_confirmed,confirmed" string="Cancel Request"
+						icon="gtk-cancel" confirm="Are you sure you want to Cancel this request?" />
+					<button name="ir_action_cancel_draft" states="cancel"
+						string="Set to Draft" type="object" icon="gtk-convert"/>
+					<button name="modify_enrich" states="done"
+						string="Modify" type="object" icon="gtk-convert"/>
+                                        <field name="state" widget="statusbar" statusbar_visible="draft,done,cancel"
+                                 statusbar_colors='{"confirm":"red","validate":"blue","second_validate":"red"}'/>
+
+                           </header>
+                           <sheet>
+                             <group col="4" colspan="2" >
+				<field name="name"  />				
+				<field name="date"  attrs="{'readonly':[('state','!=','draft')] }" />
+				<field name="month" attrs="{'readonly':[('state','!=','draft')] }" />				
+				<field name="year"  attrs="{'readonly':[('state','!=','draft')] }"/>
+				<field name="desc"  />
+				<field name="enrich_category"  required="1" domain="[('company_id','=',company_id)]" />
+				<field name="department_id" />											
+			       </group>
+            		       <group col="4" colspan="4">
+           			<field name="amount" colspan="2" attrs="{'readonly':[('state','!=','draft')] }"/>
+			        <field name="residual_amount" colspan="2"/>
+			        <field name="paid_amount" colspan="2" />
+			       </group>
+            		       <group col="4" colspan="4">
+           			<field name="user_id" colspan="2" />
+			        <field name="company_id" colspan="2" />
+            		       </group>									
+				 	
+				<notebook colspan="4">
+					<page string="Details">
+					    <field colspan="4" name="enrich_lines" nolabel="1">	
+						<tree string="">
+					            <field name="name"/>
+					            <field name="date"/>
+                            			    <field name="cost"/>
+                            			    <field name="department_id"/>
+                            			    <field name="state"/>
+						</tree>
+					    </field>
+					</page>	
+					<page string="Notes">
+						<field name="notes" colspan="4" nolabel="1" />
+					</page>
+				</notebook>	
+                                </sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="view_payment_enrich_tree" model="ir.ui.view">
+			<field name="name">payment.enrich.tree</field>
+			<field name="model">payment.enrich</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree colors="blue:state in ('draft');gray:state in ('done','cancel');red:state in ('confirmed')" string="Enrich Payment">
+						<field name="name" colspan="2" />				
+						<field name="date" colspan="2" />
+						<field name="desc" colspan="2" />
+						<field name="enrich_category" colspan="2"/>
+						<field name="department_id" colspan="2"/>
+						<field name="month" colspan="2"/>
+						<field name="year" colspan="2"/>
+						<field name="company_id" colspan="2" />
+						<field name="state" colspan="2" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- service request Search Filter -->
+
+		<record id="view_payment_enrich_filter" model="ir.ui.view">
+			<field name="name">payment.enrich.list.select</field>
+			<field name="model">payment.enrich</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search for payment enrich Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="month" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="year" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="desc" colspan="1" />
+					<separator orientation="vertical" />
+					<field name="enrich_category" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="department_id" colspan="1"/>
+					<separator orientation="vertical" />
+                                        <field name="state" select="1"/>
+                                        <separator orientation="vertical" />
+					<field name="company_id" colspan="1"/>
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Enrich" icon="terp-personal"
+							domain="[]" context="{'group_by':'enrich_category'}" />
+						<filter string="Month" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'month'}" />
+						<filter string="Year" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'year'}" />
+
+					</group>
+
+				</search>
+			</field>
+		</record>
+
+<!-- Enrich Payment Lines-->
+		<record id="view_payment_enrich_lines_form" model="ir.ui.view">
+			<field name="name">payment.enrich.lines.form</field>
+			<field name="model">payment.enrich.lines</field>
+			<field name="arch" type="xml">
+		            <form string="Enrich" version="7.0">
+                                 <header>
+  				     <button icon="terp-gtk-go-back-rtl" name="done" states="draft" string="Process" confirm="Are you sure you want to Confirm this request?" />
+				      <button name="cancel" states="draft" string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to Cancel this request?" />
+				      <button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                                      <field name="state" widget="statusbar" statusbar_visible="draft,done,Cancel"
+                                             statusbar_colors='{"confirm":"red","validate":"blue","second_validate":"red"}'/>
+
+		                 </header>
+                                 <sheet>
+                                    <group col="4"  colspan="2">
+				      <field name="date" />				    
+				      <field name="cost" />
+                            	      <field name="department_id" />
+				      <separator string="Enrich Details" colspan="6"/>
+				      <field name="name" colspan="4" nolabel="1"/>
+                                    </group>
+				  </sheet>
+				</form>
+			</field>
+		</record>
+		<record id="view_payment_enrich_lines_tree" model="ir.ui.view">
+			<field name="name">payment.enrich.lines.tree</field>
+			<field name="model">payment.enrich.lines</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Enrich">  
+					 <field name="name"/>
+					 <field name="date"/>
+					 <field name="cost"/>
+                                    	 <field name="department_id"/>
+					 <field name="state"/>
+
+				</tree>
+			</field>
+		</record>
+
+		<!-- enrich category  Record Form,Tree View & Action -->
+
+		<record id="enrich_category_view_form" model="ir.ui.view">
+			<field name="name">enrich.category.form</field>
+			<field name="model">enrich.category</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+			    <form string="enrich category" version="7.0">
+                               <sheet>
+                                  <group col="4" colspan="2">
+				    <field name="name" colspan="1" required="1" />
+				    <field name="department_id" select="1" domain="[('company_id','=',company_id)]"/>
+				    <field name="company_id" select="1"/>
+	                          </group>
+                                </sheet>    
+			    </form>
+			</field>
+		</record>
+
+
+		<record id="enrich_category_view_tree" model="ir.ui.view">
+			<field name="name">enrich.category.tree</field>
+			<field name="model">enrich.category</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="enrich category">
+					<field name="name"/>
+					<field name="department_id"/>
+					<field name="company_id"/>
+				</tree>
+			</field>
+		</record>
+
+
+
+		<!-- enrich category  Search Filter -->
+
+		<record id="enrich_category_filter" model="ir.ui.view">
+			<field name="name">enrich.category.list.select</field>
+			<field name="model">enrich.category</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="enrich category">
+					<field name="name" select="1" />
+					<field name="department_id" select="1" />
+					<field name="company_id" select="1" />
+				</search>
+			</field>
+		</record>
+
+
+
+		<!-- Menu -->
+		
+
+		<record id="payment_enrich_action" model="ir.actions.act_window">
+			<field name="res_model">payment.enrich</field>
+			<field name="domain">[]</field>
+		</record>
+
+		<record id="enrich_category_action" model="ir.actions.act_window">
+			<field name="res_model">enrich.category</field>
+			<field name="domain">[]</field>
+		</record>
+		
+
+       <menuitem id="enrich_main_menu" name="Enrich Management" parent="admin_affairs.menu_administrative_affairs_root"  />
+       <menuitem id="enrich_payment_menu" name="Enrich" parent="enrich_main_menu" action="payment_enrich_action" sequence="1"/>
+       <menuitem id="enrich_category" name="Enrich Category" parent="enrich_main_menu" action="enrich_category_action" sequence="2"/>						
+
+	</data>
+</openerp>

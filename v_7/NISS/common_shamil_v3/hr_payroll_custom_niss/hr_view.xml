@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	
+		
+
+  <!--        
+        ============
+        Employee  inherits
+        ============
+        -->
+       <record id="view_employee_form_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_employee_form_inherit2"/>
+            <field name="arch" type="xml">
+               <xpath expr='//field[@name="bonus_id"]' position="after" version="7.0"> 
+                    <field name="payroll_state" colspan="2" attrs="{'readonly':[('state','not in', ('draft'))]}" required="1" on_change="onchange_state(payroll_state)"/>
+	            <field name="payroll_employee_id" colspan="2" attrs="{'readonly':[('state','not in', ('draft'))]}" required="1" domain="[('state_id','=',payroll_state)]"/>
+                    
+                </xpath>
+
+                <!-- make some fields readonly not in draft -->
+                <xpath expr='//field[@name="bonus_date"]' position="attributes">
+                    <attribute name="attrs">{'readonly':[('state','not in', ('draft'))]}</attribute>
+                </xpath>
+        	</field>
+        </record>
+
+
+		<record id="view_hr_payroll_main_archive_form" model="ir.ui.view">
+            <field name="name">hr.payroll.main.archive.inherit</field>
+            <field name="model">hr.payroll.main.archive</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_hr_payroll_main_archive_form"/>
+            <field name="arch" type="xml">
+               <xpath expr='//field[@name="job_id"]' position="after" version="7.0"> 
+			        <field name="payroll_employee_id" colspan="2" readonly="1"/>
+                                <field name="payroll_state" colspan="2"  readonly="1"/>
+                </xpath>
+        	</field>
+        </record>
+
+
+
+        <record id="view_hr_payroll_addendum_form" model="ir.ui.view">
+            <field name="name">hr.payroll.main.archive.inherit</field>
+            <field name="model">hr.payroll.main.archive</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_hr_payroll_addendum_form"/>
+            <field name="arch" type="xml">
+               <xpath expr='//field[@name="bonus_id"]' position="after" version="7.0"> 
+			        <field name="payroll_employee_id" colspan="2" readonly="1"/>
+                                <field name="payroll_state" colspan="2"  readonly="1"/>
+                </xpath>
+        	</field>
+        </record>
+     
+      
+
+
+<!--     
+   ============
+hr department payroll
+   ============
+-->
+
+	<record id="view_hr_department_payroll_form" model="ir.ui.view">
+	                   <field name="name">hr.department.payroll.form</field>
+	                   <field name="model">hr.department.payroll</field>
+	                   <field name="type">form</field>
+	                   <field name="arch" type="xml">
+	                       <form string="Department Of Payroll">
+	                         <field name="name"/>
+                                 <field name="state_id"/>
+					<newline />
+
+			        <notebook>
+					    <page string="Employee Names" >
+                                   		<field name="department_payroll_ids" nolabel="1" >
+								 <tree string="employee" >
+
+								<field name="name" />
+								
+				          			</tree>
+						</field>
+					    </page>
+				</notebook>
+
+	                       </form>
+	                   </field>
+	               </record>
+	               <record id="view_hr_department_payroll_tree" model="ir.ui.view">
+	                   <field name="name">hr.department.payroll.tree</field>
+	                   <field name="model">hr.department.payroll</field>
+	                   <field name="type">tree</field>
+	                   <field name="arch" type="xml">
+	                       <tree string="Department Of Payroll">
+                                   <field name="name"/>
+                                   <field name="department_payroll_ids" />
+	                       </tree>
+	                   </field>
+	               </record>
+	               
+	               <record id="open_hr_department_payroll_action" model="ir.actions.act_window">
+	       	            <field name="name">Department Of Payroll</field>
+	       	            <field name="res_model">hr.department.payroll</field>
+	       	            <field name="view_type">form</field>
+	       	            <field name="view_mode">tree,form</field>
+	       	            <field name="view_id" ref="view_hr_department_payroll_tree"/>	       	           
+	               </record>
+          <menuitem id="hr_department_payroll_menu" name="department payroll" sequence="7" parent="hr_custom.menu_hr_main_configuration" action="open_hr_department_payroll_action"/>
+		
+
+
+
+<!--Salary Suspend Archive-->
+  
+ <record model="ir.ui.view" id="hr2_basic_salary_suspend_archive_view">
+                <field name="name">hr2.basic.salary.suspend.archive.form</field>
+                <field name="model">hr2.basic.salary.suspend.archive</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                    <form string="Salary Suspend Archive">
+                          <field name="employee_id" select="1"/>
+			  <field name="suspend_date"/>
+			  <field name="suspend_type"/>
+                          <separator string="" colspan="4"  />
+			  <field name="comments" nolabel="1"/>
+			  <field name="company_id" groups="base.group_multi_company"/>
+                    </form>
+                </field>
+            </record>
+            <record model="ir.ui.view" id="hr2_basic_salary_suspend_archive_tree_view">
+                <field name="name">hr2.basic.salary.suspend.archive.tree</field>
+                <field name="model">hr2.basic.salary.suspend.archive</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                    <tree editable="top"  string="Salary Suspend Archive">
+                       <field name="employee_id" />
+			  <field name="suspend_date" />
+			  <field name="suspend_type"/>
+			  <field name="comments" />
+			  <field name="company_id" groups="base.group_multi_company"/>
+                    </tree>
+                </field>
+            </record>
+               <record id="hr2_basic_salary_suspend_archive_tree" model="ir.actions.act_window">
+			<field name="name">Salary Suspend Archive</field>
+			<field name="res_model">hr2.basic.salary.suspend.archive</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr2_basic_salary_suspend_archive_tree_view"/>
+	</record>
+	  <!-- salary suspend archive search-->
+ <record id="hr2_basic_salary_suspend_archive_filter" model="ir.ui.view">
+            <field name="name">hr2.basic.salary.suspend.archive.filter</field>
+            <field name="model">hr2.basic.salary.suspend.archive</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search Salary Suspend Archive">
+                    
+			<field name="employee_id" />
+                   
+			
+                        <field name="suspend_date"/>  
+                        
+                    
+                   <filter string="suspend_type" icon="terp-personal" domain="[]"
+						context="{'group_by':'suspend_type'}" />
+		</search>
+            </field>
+        </record>
+<!--end-->
+
+<report id="hr_payroll_custom_niss.payroll_listing_salary_rep" string="Department Listing"
+      model="hr.employee.salary.addendum" name="payroll.listing.salary"
+      rml="hr_payroll_custom_niss/report/payroll_listing_department.rml" auto="False"
+      header="True" menu="True" />
+
+            <!--record id="view_hr_allow_deduc_exception_filter" model="ir.ui.view">
+			<field name="name">salary suspend</field>
+			<field name="model">hr2.basic.salary.suspend.archive</field>
+			<field name="arch" type="xml">
+				<search string="">
+
+					<field name="employee_id" />
+					<field name="suspend_type" />
+					
+					<field name="suspend_date" />
+					 
+					<filter string="suspend_type" icon="terp-personal" domain="[]"
+						context="{'group_by':'suspend_type'}" />
+					 
+				</search>
+			</field>
+		</record-->
+
+   <menuitem id="hr2_basic_salary_suspend_archive_tree_menu" name="Salary Suspend Archive" parent="hr_custom.menu_hr_payroll_processes" action="hr2_basic_salary_suspend_archive_tree" sequence = "2"/>
+
+
+   <!--  Employee Custody -->
+ 		<record id="hr_basic_emp_qualification_filter" model="ir.ui.view">
+            <field name="name">hr.employee.family.filter</field>
+            <field name="model">hr.employee.family</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search Custody">
+                    <group col='8' colspan='4'>
+                           <field name="employee_id" />
+                    </group>
+                    <newline />
+                    <group expand="0" string="Group by...">
+						<filter string="Employee"  domain="[]" context="{'group_by':'employee_id'}" />
+						<separator orientation="vertical" />
+						<filter string="Relation Type" domain="[]" context="{'group_by':'relation_id'}" />
+						<separator orientation="vertical" />
+						<filter string="State" domain="[]" context="{'group_by':'state'}" />
+						<separator orientation="vertical" />
+						<filter string="Start Date" domain="[]" context="{'group_by':'start_date'}" />
+						<separator orientation="vertical" />
+						<filter string="Birth Date" domain="[]" context="{'group_by':'birth_date'}" />
+					</group>
+				</search>
+            </field>
+        </record>
+
+
+<!--################# start house_type ############################-->
+         <record model="ir.ui.view" id="hr_basic_houes_form_view">
+			<field name="name">hr.basic.houes.form</field>
+			<field name="model">hr.basic.houes</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="House Type" version="7.0">
+				<header>
+				  <button string="Approved" name="confirm" states="draft"  type="object" class="oe_highlight"  />
+				  <button string="Set To Draft" name="set_to_draft" states="confirm"  type="object" class="oe_highlight" />
+			          <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/> 
+					</header>
+					<sheet>
+						<group>
+						<group>
+							<field name="employee_id" domain="[('state','=','approved')]" attrs="{'readonly':[('state','=', 'confirm')]}" required="1"/>
+							<field name="department_id"/>
+							<field name="company_id" groups="base.group_multi_company" readonly="True"/>
+						
+						</group>
+						<group>
+							<field name="houes_date" attrs="{'readonly':[('state','=', 'confirm')]}" required="1"/>
+							<field name="houses_type"  attrs="{'readonly':[('state','=', 'confirm')]}" required="1"/>
+							<!--field name="house_type" /-->
+						</group>
+						<notebook colspan="4">
+							<page string="Comments">
+								<field name="Comments" />
+							</page>
+						</notebook>
+						</group>
+					
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_basic_houes_tree_view">
+			<field name="name">hr.basic.houes.tree</field>
+			<field name="model">hr.basic.houes</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Transfer Wishes">
+
+					<field name="houes_date" />
+					<field name="employee_id" domain="[('state','=','approved')]" />
+					<field name="department_id"/>
+					<field name="houses_type" />
+					<field name="state"/>
+
+				</tree>
+			</field>
+		</record>
+
+		<record id="hr_basic_houes_filter" model="ir.ui.view">
+			<field name="name">hr.basic.houes.filter</field>
+			<field name="model">hr.basic.houes</field>
+			<field name="arch" type="xml">
+				<search string="House Type">
+					<field name="employee_id" />
+					<field name="department_id"/>
+					<separator orientation="vertical" />
+					<field name="houses_type" />
+					<field name="Comments"/>
+
+					<newline/>
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Employee" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'employee_id'}" />
+						<filter string="House Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'houses_type'}" />
+						<separator orientation="vertical" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+
+		<record id="hr_basic_houes_action" model="ir.actions.act_window">
+			<field name="name">hr.basic.houes.action</field>
+			<field name="res_model">hr.basic.houes</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_basic_houes_tree_view" />
+			<field name="search_view_id" ref="hr_basic_houes_filter" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to create a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+		<menuitem id="hr_basic_houes_menu" name="House Type"
+			parent="hr_custom.menu_hr_payroll_processes" action="hr_basic_houes_action" sequence="2"  />
+<!--################# end house_type ############################-->
+    </data>
+</openerp>

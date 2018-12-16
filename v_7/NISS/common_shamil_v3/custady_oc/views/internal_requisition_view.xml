@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="requestion_form_customization_inherit_id" model="ir.ui.view">
+            <field name="name">requestion_customization.form</field>
+            <field name="model">ireq.m</field>
+            <field name="inherit_id" ref="purchase_customization.requestion_form_customization_inherit_id" />
+            <field name="arch" type="xml">
+                <button name="in_progress_fin_request" position='replace'>
+                    <button attrs="{'invisible':['|',('state','!=','closed_quote'),('executing_agency','=','oc')]}" name="in_progress_fin_request" string="In Progress Financial Request" groups="purchase_customization.group_fin_request_inprogress" confirm="Are you sure you want to mack this request in progress?" />
+                    <button attrs="{'invisible':['|',('state','!=','closed_quote'),('executing_agency','!=','oc')]}" name="in_progress_fin_request" string="approve" groups="purchase_customization.group_fin_request_inprogress" confirm="Are you sure you want to mack this request in progress?" /></button>
+                
+                <button  name="completed_fin_request" position='replace'>
+                    <button attrs="{'invisible':['|',('state','!=','in_progress_fin_request'),('executing_agency','=','oc')]}" name="completed_fin_request" string="Completed Financial Request" groups="purchase_customization.group_fin_request_complete" confirm="Are you sure you want to complete this request?" />
+                    <button attrs="{'invisible':['|',('state','!=','in_progress_fin_request'),('executing_agency','!=','oc')]}" name="completed_fin_request_oc" string="Done" groups="purchase_customization.group_fin_request_complete" confirm="Are you sure you want to complete this request?" />
+                    </button>
+
+                <field name="executing_agency" position='replace' >
+                    <field name="executing_agency" required="1" groups="purchase_customization.group_purchase_order_custom"/></field>
+                
+            </field>
+        </record>
+    </data>
+</openerp>

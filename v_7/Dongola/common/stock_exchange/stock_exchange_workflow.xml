@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="exchange_order" model="workflow">
+            <field name="name">Exchange Order Basic Workflow</field>
+            <field name="osv">exchange.order</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="act_draft" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+        </record>
+         <record id="act_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">action_confirm_order()</field>
+        </record>
+        <record id="act_confirmed1" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">confirmed1</field>
+            <field name="kind">function</field>
+            <field name="action">action_confirm1_order()</field>
+        </record>
+<!-- ******************************************************************** -->      
+         <record id="act_router" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">router</field>
+            <field name="split_mode">OR</field>
+            <field name="kind">function</field>
+            <field name="action">action_meter_router()</field>
+        </record>
+        <record id="act_confirmed2" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">confirmed2</field>
+            <field name="kind">function</field>
+            <field name="action">changes_state({'state':'confirmed2'})</field>
+        </record>
+<!-- ******************************************************************** -->
+        <record id="act_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="flow_stop">True</field>
+            <field name="action">action_cancel_order()</field>
+        </record>
+       <record id="act_budget" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">budget</field>
+            <field name="kind">subflow</field>
+            <field name="subflow_id" search="[('osv','=','account.budget.confirmation')]" type="int"/>
+            <field name="action">action_budget_create()</field>
+        </record>
+        <record id="act_budget_approved" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">budget_approved</field>
+            <field name="action">changes_state({'state':'budget_yes'})</field>
+            <field name="kind">function</field>
+        </record>
+        <record id="act_budget_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">budget_cancel</field>
+            <field name="action">changes_state({'state':'budget_no'})</field>
+            <field name="kind">function</field>
+        </record>
+        <record id="act_approve_qty" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">approve_qty</field>
+            <field name="kind">function</field>
+            <field name="action">changes_state({'state': 'approved_qty'})</field>
+        </record>
+        <record id="act_approve_order" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">approve_order</field>
+            <field name="kind">function</field>
+            <field name="action">action_approve_order()</field>
+        </record>
+        <record id="act_picking" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">picking</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'picking'})</field>
+        </record>
+        <record id="act_done" model="workflow.activity">
+            <field name="wkf_id" ref="exchange_order"/>
+            <field name="name">done</field>
+            <field name="action">write({'shipped':1,'state':'done'})</field>
+            <field name="kind">function</field>
+            <field name="flow_stop">True</field>
+        </record>
+
+        <!-- Transition-->
+
+        <record id="trans_draft_confirmed2" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_confirmed"/>
+            <field name="signal">exchange_confirms</field>
+            <!--field name="group_id" ref="group_exchange_department" /-->
+        </record>
+        <record id="trans_draft_cancel2" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancels</field>
+            <!--field name="group_id" ref="group_exchange_department" /-->
+        </record>
+        <record id="trans_draft_confirmed" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_confirmed"/>
+            <field name="signal">exchange_confirm</field>
+            <!--field name="group_id" ref="group_exchange_user" /-->
+        </record>
+        <record id="trans_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancel</field>
+            <!--field name="group_id" ref="group_exchange_user" /-->
+        </record>
+        <record id="trans_confirmed_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancel</field>
+            <!--field name="group_id" ref="group_exchange_department" /-->
+        </record>
+        <record id="trans_confirmed_cancel2" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancels</field>
+            <!--field name="group_id" ref="group_exchange_department_g" /-->
+        </record>
+        <!--record id="trans_draft_confirmed1" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed"/>
+            <field name="act_to" ref="act_confirmed1"/>
+            <field name="signal">exchange_confirm1</field>
+            <field name="group_id" ref="group_exchange_department_g" />
+        </record-->
+        <record id="trans_confirmed_cancel21" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancel</field>
+            <!--field name="group_id" ref="group_exchange_department" /-->
+        </record>
+        <record id="trans_draft_confirmed11" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed"/>
+            <field name="act_to" ref="act_confirmed1"/>
+            <field name="signal">exchange_confirm11</field>
+            <!--field name="group_id" ref="group_exchange_department" /-->
+        </record>
+        <record id="trans_confirmed1_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed1"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancel</field>
+            <!--field name="group_id" ref="group_exchange_approved" /-->
+        </record>
+        <record id="trans_approve_qty" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed1"/>
+            <field name="act_to" ref="act_approve_qty"/>
+            <field name="signal">exchange_approve_qty</field>
+            <!--field name="group_id" ref="group_exchange_approved" /-->
+        </record>
+        <record id="trans_confirmed1_cancels" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed1"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancel</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+        </record>
+        <record id="trans_approve_qtys" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed1"/>
+            <field name="act_to" ref="act_approve_qty"/>
+            <field name="signal">exchange_approve_qty</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+        </record>
+        <record id="trans_confirmed1_cancel2" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed1"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancels</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+        </record>
+      <!-- ********************************************************************************** -->
+        <record id="trans_confirmed_router" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed"/>
+            <field name="act_to" ref="act_router"/>
+            <field name="signal">exchange_confirm1</field>
+            <!--field name="group_id" ref="group_exchange_department_g" /-->
+        </record>
+        <record id="trans_router_confirmed1" model="workflow.transition">
+            <field name="act_from" ref="act_router"/>
+            <field name="act_to" ref="act_confirmed1"/>
+            <field name="condition">not has_meters_product()</field>
+        </record>
+        <record id="trans_router_confirmed2" model="workflow.transition">
+            <field name="act_from" ref="act_router"/>
+            <field name="act_to" ref="act_confirmed2"/>
+            <field name="condition">has_meters_product()</field>
+        </record>
+        <record id="trans_approve_meters_qty" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed2"/>
+            <field name="act_to" ref="act_confirmed1"/>
+            <field name="signal">exchange_approve_meters_qtys</field>
+            <!--field name="group_id" ref="group_exchange_meters_approved" /-->
+        </record>
+        <record id="trans_confirmed2_cancel2" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed2"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancels</field>
+            <!--field name="group_id" ref="group_exchange_meters_approved" /-->
+        </record>
+<!-- ********************************************************************************** -->  
+
+        <record id="trans_approve_qty2" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed1"/>
+            <field name="act_to" ref="act_approve_qty"/>
+            <field name="signal">exchange_approve_qtys</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+        </record>
+        <record id="trans_check_buget" model="workflow.transition">
+            <field name="act_from" ref="act_approve_qty"/>
+            <field name="act_to" ref="act_budget"/>
+            <field name="condition">total_amount&gt;0</field>
+        </record>
+        <record id="trans_approve_buget" model="workflow.transition">
+            <field name="act_from" ref="act_budget"/>
+            <field name="act_to" ref="act_budget_approved"/>
+            <field name="signal">subflow.valid</field>
+        </record>
+       <record id="trans_cancel_buget" model="workflow.transition">
+            <field name="act_from" ref="act_budget"/>
+            <field name="act_to" ref="act_budget_cancel"/>
+            <field name="signal">subflow.cancel</field>
+        </record>
+		<record id="trans_approve_order" model="workflow.transition">
+            <field name="act_from" ref="act_budget_approved"/>
+            <field name="act_to" ref="act_approve_order"/>
+            <field name="signal">exchange_approve</field>
+            <!--field name="group_id" ref="group_exchange_approved" /-->
+ 		</record>
+		<record id="trans_approve_orders" model="workflow.transition">
+            <field name="act_from" ref="act_budget_approved"/>
+            <field name="act_to" ref="act_approve_order"/>
+            <field name="signal">exchange_approve</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+ 		</record>
+		<record id="trans_approve_order2" model="workflow.transition">
+            <field name="act_from" ref="act_budget_approved"/>
+            <field name="act_to" ref="act_approve_order"/>
+            <field name="signal">exchange_approves</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+ 		</record>
+		<record id="trans_approve_order_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_budget_approved"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancel</field>
+            <!--field name="group_id" ref="group_exchange_approved" /-->
+		 </record>
+		 <record id="trans_approve_order_cancelss" model="workflow.transition">
+            <field name="act_from" ref="act_budget_approved"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancels</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+ 		</record>
+		<record id="trans_approve_order_cancel2" model="workflow.transition">
+            <field name="act_from" ref="act_budget_approved"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancels</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+ 		</record>
+        <record id="trans_budget_cancel2" model="workflow.transition">
+            <field name="act_from" ref="act_budget_cancel"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancels</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+        </record>
+        <record id="trans_budget_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_budget_cancel"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancel</field>
+            <!--field name="group_id" ref="group_exchange_approved" /-->
+        </record>
+        <record id="trans_budget_cancelss" model="workflow.transition">
+            <field name="act_from" ref="act_budget_cancel"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">exchange_cancel</field>
+            <!--field name="group_id" ref="group_exchange_approved2" /-->
+        </record>
+        <record id="trans_act_picking" model="workflow.transition">
+            <field name="act_from" ref="act_approve_order"/>
+            <field name="act_to" ref="act_picking"/>
+            <field name="condition">test_picking()</field> 
+        </record>
+        <record id="trans_picking_except_picking" model="workflow.transition">
+            <field name="act_from" ref="act_picking"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="trigger_model">stock.move</field>
+            <field name="trigger_expr_id">move_lines_get()</field>
+            <field name="condition">test_state('canceled')</field>
+        </record>
+        <record id="trans_picking_done_done" model="workflow.transition">
+            <field name="act_from" ref="act_picking"/>
+            <field name="act_to" ref="act_done"/>
+            <field name="trigger_model">stock.move</field>
+            <field name="trigger_expr_id">move_lines_get()</field>
+            <field name="condition">test_state('finished')</field>
+        </record>
+
+    </data>
+</openerp>

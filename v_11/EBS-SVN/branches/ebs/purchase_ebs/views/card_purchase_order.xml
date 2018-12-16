@@ -1,0 +1,74 @@
+<odoo>
+  <data>
+
+  		<record id="purchase_order_form_inherit_purchase_ebs" model="ir.ui.view">
+          <field name="name">purchase.order.form</field>
+          <field name="model">purchase.order</field>
+          <field name="inherit_id" ref="purchase.purchase_order_form" />
+          <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+              <attribute name="create">false</attribute>
+            </xpath>
+             <xpath expr="//field[@name='partner_id']" position="before">
+              <field name="paid" invisible="True" />
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="before">
+              <field name="card" invisible="True" />
+            </xpath>
+            <xpath expr="//form/header" position="replace">
+              <header invisible="context.get('show_purchase', True)" >
+                    <button name="action_rfq_send" states="draft" string="Send RFQ by Email" type="object" context="{'send_rfq':True}" class="oe_highlight" />
+                    <button name="action_rfq_send" states="sent" string="Re-Send RFQ by Email" type="object" context="{'send_rfq':True}" />
+                    <button name="print_quotation" string="Print RFQ" type="object" states="draft" class="oe_highlight" groups="base.group_user" />
+                    <button name="print_quotation" string="Print RFQ" type="object" states="sent" groups="base.group_user"/>
+
+                    <button name="button_confirm" string="Confirm" states="draft,sent" type="object" class="oe_highlight" groups="purchase_custom.group_purchase_responsible" attrs="{'invisible' :['|',('card','=',True)] }"/>
+
+                    <button name="button_approve_servMgr" string="Approve" states="approve_rfq" type="object" class="oe_highlight" groups="purchase_custom.group_service_manager" attrs="{'invisible' :['|',('card','=',True)] }"/>
+                    <button name="button_draft_servMgr" string="Set to Draft" states="approve_rfq" type="object" groups="purchase_custom.group_service_manager" attrs="{'invisible' :['|',('card','=',True)] }"/>
+                    <button name="button_cancel_rfq" string="Cancel" states="approve_rfq" type="object" confirm="Are you sure you wont to cancel this record?" groups="purchase_custom.group_service_manager" attrs="{'invisible' :['|',('card','=',True)] }"/>
+<!--  -->
+
+                    <button name="button_review" string="Review" states="approve" type="object" class="oe_highlight" groups="purchase_custom.group_purchase_internal_auditor" attrs="{'invisible' :['|',('card','=',True)] }"/>
+                    <button name="button_cancel_rfq" string="Cancel" states="approve" type="object" confirm="Are you sure you wont to cancel this record?" groups="purchase_custom.group_purchase_internal_auditor" attrs="{'invisible' :['|',('card','=',True)] }"/>
+               
+<!--  -->
+                    <button name="button_approve2" string="Approve" states="review" type="object" class="oe_highlight" groups="purchase_custom.group_purchase_general_manager" attrs="{'invisible' :['|',('card','=',True)] }"/>
+
+                    <button name="button_done" string="Purchase Order" states="approve2" type="object" class="oe_highlight" groups="purchase_custom.group_purchase_responsible" attrs="{'invisible' :['|',('card','=',True)] }"/>
+
+                    <button name="button_cancel_rfq" string="Cancel" states="review" type="object" confirm="Are you sure you wont to cancel this record?" groups="purchase_custom.group_purchase_general_manager" attrs="{'invisible' :['|',('card','=',True)] }"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft" readonly="1"/>
+              </header>
+                <header invisible="not context.get('show_purchase', True)">
+                    <button name="action_rfq_send" states="draft" string="Send RFQ by Email" type="object" context="{'send_rfq':True}" class="oe_highlight"/>
+                    <button name="action_rfq_send" states="sent" string="Re-Send RFQ by Email" type="object" context="{'send_rfq':True}" />
+                    <button name="print_quotation" string="Print RFQ" type="object" states="draft" class="oe_highlight" groups="base.group_user" />
+                    <button name="print_quotation" string="Print RFQ" type="object" states="sent" groups="base.group_user"/>
+
+                    <button name="button_confirm_order" type="object" states="draft,sent,done" string="Confirm Order" attrs="{'invisible' :['|',('card','=',True)] }"/>
+
+                    <button name="button_validate" type="object" states='to approve' string="Validate Order" class="oe_highlight" attrs="{'invisible' :['|',('card','=',True)] }"/>
+                    <button name="button_cancel" states="to approve" string="Cancel" confirm="Are you sure you wont to cancel this record?" type="object" attrs="{'invisible' :['|',('card','=',True)] }"/>
+
+                    <button name="button_approve" type="object" states='purchase' string="Approve Order" class="oe_highlight" attrs="{'invisible' :['|',('card','=',True)] }"/>
+                    <button name="button_cancel" states="purchase" string="Cancel" confirm="Are you sure you wont to cancel this record?" type="object" attrs="{'invisible' :['|',('card','=',True)] }"/>
+
+                    <!-- button for Cand PO for general manager approval -->
+
+                    <button name="button_approve" type="object"  string="General Manager Approve Order" class="oe_highlight" attrs="{'invisible' :['|','|',('card','!=',True),('paid','!=',True),('state','!=','done')] }" groups='purchase_custom.group_purchase_general_manager'/>
+
+                    <button name="action_view_picking" string="Receive Products" class="oe_highlight" type="object" attrs="{'invisible': ['|', '|' , ('is_shipped', '=', True), ('state','not in', ('purchase','done')), ('picking_count', '=', 0)]}"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft" readonly="1"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+
+
+
+  </data>
+</odoo>

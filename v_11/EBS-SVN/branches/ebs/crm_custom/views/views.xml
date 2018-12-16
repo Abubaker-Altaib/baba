@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<!-- Customers Invoices Tree View -->
+
+        <record id="view_customers_invoices_tree" model="ir.ui.view">
+            <field name="name">sale.customers.invoices.tree</field>
+            <field name="model">sale.order</field>
+            <!-- <field name="priority">100</field> -->
+            <field name="arch" type="xml">
+                <tree string="Customers Invoices" decoration-muted="state=='cancel'">
+			        <field name="name" />
+			        <field name="date_order" />
+			        <field name="partner_id" /> 
+			        <field name="user_id" />
+			        <field name="amount_total" />
+			        <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+		<!-- Customers Invoices Form View -->
+
+	    <record id="view_customers_invoices_form" model="ir.ui.view">
+	        <field name="name">sale.customers.invoices.form</field>
+	        <field name="model">sale.order</field>
+	        <field name="priority">100</field>
+	        <field name="arch" type="xml">
+	            <form string="Customers Invoices" >
+		        	<header>
+		                <button name="cus_inv_confirm" string="Confirm" states="draft" type="object" class="oe_highlight" groups="crm_custom.group_crm_user" />
+
+		                <button name="cus_inv_review" string="Review" states="confirm" type="object" class="oe_highlight" groups="crm_custom.group_crm_supervisor" />
+		                
+		                <button name="cus_inv_draft" string="Set to Draft" states="confirm" type="object" groups="crm_custom.group_crm_supervisor" />
+		                
+		                <button name="cus_inv_cancel" string="Cancel" states="confirm" type="object" groups="crm_custom.group_crm_supervisor" confirm="Are you sure you want to cancel this record?" />
+	                
+	                	<button name="cus_inv_approve" string="Approve" states="review" type="object" class="oe_highlight" groups="crm_custom.group_crm_department_manager" />
+		                
+		                <button name="cus_inv_draft" string="Set to Draft" states="review" type="object" groups="crm_custom.group_crm_department_manager" />
+	                
+	                	<button name="cus_inv_cancel" string="Cancel" states="review" type="object" groups="crm_custom.group_crm_department_manager" confirm="Are you sure you want to cancel this record?" />
+<!-- 	                
+		                <button name="cus_inv_validate" string="Validate" states="approve" type="object" class="oe_highlight" groups="crm_custom.group_crm_financial_manager" />
+		                
+		                <button name="cus_inv_cancel" string="Cancel" states="approve" type="object" groups="crm_custom.group_crm_financial_manager" confirm="Are you sure you want to cancel this record?" />
+ -->		                
+
+ 						<!-- new button for printing customer Quadation-->
+ 						<button type='object' name='print_report' string='Print' states="approve" />
+
+		                <field name="state" widget="statusbar" statusbar_visible="draft,confirm,review,approve,validate" readonly="1" />
+		        	</header>
+	            	<sheet>
+	            		<group>
+	            			<group>
+	            				<field name='name' string='Reference' readonly="True"/>
+	            				<field name="customer_invoice" invisible="1" />
+	            				<field name="partner_id" />
+	            				
+	            			</group>
+	            			<group>
+	            				<field name="center_id" required="1" attrs="{'readonly':[('state','!=','draft')]}" />
+	            				<field name='date_order' string='Order Date' readonly="False"/>
+	            			</group>
+	            		</group>
+		                <notebook>
+		                  <page string="Invoice lines">
+		                    <field name="order_line" attrs="{'readonly':[('state','!=','draft')]}" >
+		                      <tree string="" editable="top" >
+		                        <field name="product_id" string="Service" domain="[('service','=',True),('center_id','=',parent.center_id)]" context="{'form_view_ref':'sale_custom.product_template_only_form_view_inherit_sale_custom','default_service':True,'default_type':'service','default_center_id':parent.center_id}"  />
+		                        <field name="quantity" required="1" string="Quantity" />
+		                        <field name="previous_qty" />
+		                        <field name="product_uom_qty" invisible="1" string="Total Quantity" />
+		                        <field name="price_unit" string="Fees" readonly="1" />
+		                        <!--field name="tax_id" readonly="0" /-->
+		                        <field name="discount"/>
+		                        <field name="price_subtotal" string="Total" />
+		                      </tree>
+		                      <form>
+		                        <sheet>
+		                          <group>
+		                          	<group>
+			                            <field name="product_id" string="Service" domain="[('service','=',True)]" context="{'form_view_ref':'sale_custom.product_template_only_form_view_inherit_sale_custom','default_service':True}" />
+				                        <field name="product_uom_qty" string="Range" />
+				                    </group>
+				                    <group>
+				                        <field name="price_unit" readonly="1" string="Fees" />
+				                        <field name="price_subtotal" string="Total" />
+				                    </group>
+		                          </group>
+		                        </sheet>
+		                      </form>
+		                    </field>
+		                  </page>
+		                  <page name="description" string="Description">
+		                    <field name="note" nolable="1"  /> 
+		                  </page>
+
+		                  <page name="subject" string="Subject">
+		                    <field name="subject" nolable="1"  /> 
+		                  </page> 
+
+		                </notebook>
+	            	</sheet>
+	            </form>
+	        </field>
+	    </record>
+
+	    <record id="crm_custom.action_customers_invoices" model="ir.actions.act_window">
+	        <field name="name">Customer Quotations</field>
+	        <field name="res_model">sale.order</field>
+	        <field name="context">{'default_customer_invoice':True}</field>
+	        <field name="domain">[('customer_invoice','=',True)]</field>
+	        <field name="view_type">form</field>
+	        <field name="view_mode">tree,form</field>
+	    </record>
+
+	    <record id="customers_invoices_tree_action" model="ir.actions.act_window.view">
+	      <field name="sequence" eval="0"/>
+	      <field name="view_mode">tree</field>
+	        <field name="view_id" ref="view_customers_invoices_tree"/>
+	      <field name="act_window_id" ref="crm_custom.action_customers_invoices"/>
+	    </record>
+
+	   <!-- customer quotations action for form -->
+	    <record id="customers_invoices_form_action" model="ir.actions.act_window.view">
+	      <field eval="1" name="sequence"/>
+	      <field name="view_mode">form</field>
+	      <field name="view_id" ref="crm_custom.view_customers_invoices_form"/>
+	      <field name="act_window_id" ref="crm_custom.action_customers_invoices"/>
+	    </record>
+
+
+	    <delete model="ir.ui.menu" id="crm.sale_order_menu_quotations_crm" />
+	    <delete model="ir.ui.menu" id="crm.crm_opportunity_report_menu_lead" />
+	    <delete model="ir.ui.menu" id="crm.crm_opportunity_report_menu"/>
+	    <delete model='ir.ui.menu' id='crm.crm_activity_report_menu'/>
+	    <delete model="ir.ui.menu" id="crm.sales_team_menu_report_crm"/>
+	    <delete model='ir.ui.menu' id='crm.crm_menu_config'/>
+	    <delete model='ir.ui.menu' id='crm.crm_team_config'/>
+	    <delete model='ir.ui.menu' id='crm.menu_crm_opportunities'/>
+	    <delete model='ir.ui.menu' id='crm.crm_config_settings_menu'/>
+	    <delete model='ir.ui.menu' id='crm.crm_team_menu_config_activity_types'/>
+	    <delete model='ir.ui.menu' id='crm.menu_crm_config_lead'/>
+	    <delete model='ir.ui.menu' id='crm.menu_crm_lead_stage_act'/>
+	    <delete model='ir.ui.menu' id='crm.menu_crm_lead_categ'/>
+	    <delete model='ir.ui.menu' id='crm.menu_crm_lost_reason'/>
+	    
+
+
+	</data>
+</odoo>

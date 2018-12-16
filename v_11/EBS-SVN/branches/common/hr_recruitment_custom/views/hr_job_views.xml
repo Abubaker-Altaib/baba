@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_job_category_form" model="ir.ui.view">
+            <field name="name">Job Category</field>
+            <field name="model">hr.applicant.category</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_applicant_category_view_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='color']" position="after">
+                    <field name="skill_ids" required="1" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                    <field name="job_ids" readonly="1">
+                        <tree string="Jobs">
+                            <field name="sequence"/>
+                            <field name="name"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_skills_form" model="ir.ui.view">
+            <field name="name">Skills</field>
+            <field name="model">hr.skills</field>
+            <field name="arch" type="xml">
+                <form string="Skills">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_skills_view_tree" model="ir.ui.view">
+            <field name="name">Skills</field>
+            <field name="model">hr.skills</field>
+            <field name="arch" type="xml">
+                <tree string="Skills">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_skills_action" model="ir.actions.act_window">
+            <field name="name">Skills</field>
+            <field name="res_model">hr.skills</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_job_form">
+            <field name="name">hr job inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr.view_hr_job_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="replace">
+                    <button name="action_approved" string="Approve" states="draft" type="object" class="oe_highlight"/>
+                    <button name="action_draft" string="Job Review" states="approved,cancel" type="object"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approved"/>
+                </xpath>
+                <xpath expr="//sheet/group" position="before">
+                    <group>
+                        <group>
+                            <field name="code" required="1"/>
+                            <field name="j_type"/>
+                        </group>
+                        <group>
+                            <field name="categ_id" required="1" />
+                            <field name="sequence" required="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="approved_user_id" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                        <field name="approved_date" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                    </group>
+                </xpath>
+                <xpath expr="//group[@name='recruitment']" position="attributes">
+                    <attribute name ="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='department_id']" position="attributes">
+                    <attribute name ="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='address_id']" position="attributes">
+                    <attribute name ="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name ="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='no_of_recruitment']" position="attributes">
+                    <attribute name ="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='description']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//label[@for='description']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//sheet" position="inside">
+                    <notebook>
+                        <page string="Job Information">
+                            <group>
+                                <field name="description"/>
+                                <field name="tasks"/>
+                                <field name="goals"/>
+                            </group>
+                        </page>
+                        <page string="Job Requirements">
+                            <group >
+                                <field name="degree_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                <field name="general_experience" required="1"/>
+                                <field name="specialize_experience"/>
+                            </group>
+                            <group string="Skills">
+                                <field name="skills_ids" required="1" nolabel="1" />
+                            </group>
+                            <group string="Languages">
+                                <field name = "lang_ids" nolabel="1">
+                                    <tree string="Languages" editable="top">
+                                        <field name="lang_id"/>
+                                        <field name="tpye"/>
+                                        <field name="level"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Work Situations &amp; Personal Attributes">
+                            <group>
+                                <field name="work_situations"/>
+                                <field name="personal_chars" />
+                            </group>
+                        </page>
+                        <page string="Job Location">
+                            <group >
+                                <field name="grade_id" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="expected_employees" />
+                                <field name="no_of_employee" />
+                                <field name="no_of_recruitment" />
+                            </group>
+                            <field name = "department_ids" nolabel="1">
+                                <tree editable="top">
+                                    <field name="department_id"/>
+                                    <field name="no_of_plan"/>
+                                    <field name="no_of_employee"/>
+                                    <field name="no_of_free"/>
+                                    <field name="state" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Career Path">
+                            <group>
+                                <field name="next_job_id" domain="[('categ_id','=',categ_id)]"/>
+                                <field name="margin"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </xpath>
+                <xpath expr="//field[@name='message_follower_ids']" position="after">
+                    <field name="message_ids" widget="mail_thread"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_job_search">
+            <field name="name">hr job inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr.view_job_filter" />
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='in_recruitment']" position="replace">
+                    <filter domain="[('state','=','approved')]" string="Approved" name="in_recruitment"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_job_tree">
+            <field name="name">hr job inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr.view_hr_job_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="replace">
+                    <tree string="Job" decoration-bf="message_needaction==True">
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="expected_employees"/>
+                        <field name="no_of_employee"/>
+                        <field name="no_of_recruitment"/>
+                        <field name="state"/>
+                        <field name="message_needaction" invisible="1"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_job_survey_form">
+            <field name="name">hr job survey inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_job_survey" />
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='offer']" position="attributes">
+                    <attribute name = "invisible">True</attribute>
+                </xpath>
+                <xpath expr="//div" position="inside">
+                    <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                        <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                    </button>
+                </xpath>
+                <xpath expr="//button[@name='%(hr_recruitment.action_hr_job_sources)d']" position="attributes">
+                    <attribute name = "invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="recruitment_job_department_view_tree" model="ir.ui.view">
+            <field name="name">Jobs Location</field>
+            <field name="model">hr.job.department</field>
+            <field name="arch" type="xml">
+                <tree string="Jobs Location">
+                    <field name="job_id"/>
+                    <field name="no_of_plan"/>
+                    <field name="no_of_employee"/>
+                    <field name="no_of_free"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_hr_department_employee">
+            <field name="name">Employees</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{'search_default_department_id': active_id}</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_hr_department_job">
+            <field name="name">Job</field>
+            <field name="res_model">hr.job.department</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'search_default_department_id': active_id}</field>
+        </record>
+
+        <record id="view_department_form" model="ir.ui.view">
+            <field name="name">Department</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="hr.view_department_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='toggle_active']" position="before">
+                    <button class="oe_stat_button" icon="fa-file-o" name="%(action_hr_department_job)d" type="action">
+                        <field name="no_of_job" widget="statinfo" string="Jobs"/>
+                    </button>
+                    <button class="oe_stat_button" icon="fa-users" name="%(action_hr_department_employee)d" type="action">
+                        <field name="no_of_employee" widget="statinfo" string="Employees"/>
+                    </button>
+                </xpath>
+                <field name="name" position="after">
+                    <field name="j_type"/>
+                </field>
+            </field>
+        </record>
+
+        <menuitem name="Skills" id="menu_hr_skills" action="hr_skills_action" parent="hr_recruitment.menu_hr_recruitment_configuration" sequence="10"/>
+        <menuitem name="Degrees" id="hr_recruitment.menu_hr_recruitment_degree" parent="hr_recruitment.menu_hr_recruitment_configuration" action="hr_recruitment.hr_recruitment_degree_action" sequence="12" groups="base.group_no_one"/>
+        <menuitem id="hr_recruitment.menu_hr_recruitment_source" parent="hr_recruitment.menu_hr_recruitment_configuration" action="hr_recruitment.hr_recruitment_source_action" groups="base.group_no_one" sequence="13"/>
+        <menuitem id="hr_recruitment.menu_hr_department" name="Departments" parent="hr_recruitment.menu_hr_recruitment_configuration" action="hr_recruitment.action_hr_department" sequence="14"/>
+
+    </data>
+</odoo>

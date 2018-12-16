@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<openerp>
+	<data>
+		<!-- Budgets -->
+
+
+		<record model="ir.ui.view" id="account_budget_view_form">
+			<field name="name">account.budget.view.form</field>
+			<field name="model">account.budget</field>
+			<field name="inherit_id" ref="account_budget_custom.account_budget_view_form" />
+			<field name="arch" type="xml">
+
+				<xpath expr='//button[@name="cancel"]' position="attributes">
+					<attribute name="states">validate</attribute>
+				</xpath>
+				<xpath expr='//button[@name="confirm"]' position="replace" />
+				<xpath expr='//button[@name="validate"]' position="attributes">
+					<attribute name="states">draft</attribute>
+				</xpath>
+				<xpath expr='//field[@name="state"]' position="attributes">
+					<attribute name="statusbar_visible">draft,validate,done</attribute>
+				</xpath>
+
+
+			</field>
+		</record>
+
+
+		<!-- FiscalYear Budgets -->
+		<record model="ir.ui.view" id="account_fiscalyear_budget_view_form">
+			<field name="name">account.fiscalyear.budget.view.form</field>
+			<field name="model">account.fiscalyear.budget</field>
+			<field name="inherit_id"
+				ref="account_budget_custom.account_fiscalyear_budget_view_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="cancel"]' position="attributes">
+					<attribute name="states">complete,confirm</attribute>
+				</xpath>
+				<xpath expr='//button[@name="confirm"]' position="replace">
+					<button string="Complete" name="complete" states="draft"
+						type="workflow" icon="gtk-apply" groups="account_budget_custom.group_budget_manager"/>
+					<button string="Confirm" name="confirm" states="complete"
+						type="workflow" icon="gtk-apply" groups="account_budget_custom.group_budget_manager"/>
+					<button string="Approve" name="approve" states="confirm"
+						type="workflow" icon="gtk-ok" groups="account_budget_custom.group_budget_manager"/>
+				</xpath>
+				<xpath expr='//button[@name="validate"]' position="attributes">
+					<attribute name="states">approve</attribute>
+				</xpath>
+				<xpath expr='//field[@name="state"]' position="attributes">
+					<attribute name="statusbar_visible">draft,complete,confirm,validate,done</attribute>
+				</xpath>
+			</field>
+		</record>
+
+	</data>
+</openerp>
+
+

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="view_account_report_asset_operation_form" model="ir.ui.view">
+			<field name="name">account.report.asset.operation.form</field>
+			<field name="model">account.report.asset.operation</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+			     <form string="Generate Reports" version="7.0">
+                                 <group col="4" colspan="4">
+			            <field name="company_id" />
+				    <field name="asset_lists" />
+                                 </group>
+                                 <group>
+			         <notebook colspan="4">
+				    <page string="Filter">
+				        <field name="filter"  colspan="4"/>	
+				     <separator string="Date" colspan="4" />
+                                        <group col="4" colspan="4" >
+                                            <field name="date_from"  domain="[('fiscalyear_id', '=', fiscalyear_id)]" attrs="{'readonly':[('filter','=','filter_no')], 'required':[('filter','!=','filter_no')]}" />
+                                            <field name="date_to" domain="[('fiscalyear_id', '=', fiscalyear_id)]" attrs="{'readonly':[('filter','=','filter_no')], 'required':[('filter','!=','filter_no')]}" />
+                                        </group>
+				     </page>
+		                     <page string="Category">
+			                   <field name="category_id" colspan="4" nolabel="1"  width="550" height="200" />
+		                     </page>
+				 </notebook>
+                                      </group>
+				      <newline/>
+				      <separator colspan="4" />
+                                         <footer>
+                                             <button name="check_report" string="Print" type="object" default_focus="1" class="oe_highlight"/>
+                  	                      or
+                  	                     <button string="Cancel" class="oe_link" special="cancel"/>
+                                         </footer>
+			        </form>
+			</field>
+		</record>
+		<record id="action_account_report_asset_operation" model="ir.actions.act_window">  <!-- rename id -->
+			<field name="name">Asset operation</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.report.asset.operation</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_account_report_asset_operation_form" />
+			<field name="target">new</field>
+		</record>
+                        
+        <menuitem id="menu_fixed_asset_reports" name="Reporting" parent="menu_finance_assets" sequence="15"/>
+        <menuitem name="Asset operation" parent="menu_fixed_asset_reports" action="action_account_report_asset_operation"
+		  id="menu_action_account_report_asset_operation" />
+	</data>
+
+</openerp>

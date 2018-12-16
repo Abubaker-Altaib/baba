@@ -1,0 +1,370 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+  <template pageSize="(612.0, 792.0)" title="Test" author="Martin Simon" allowSplitting="20">
+    <pageTemplate id="first">
+      <frame id="first" x1="0.0" y1="0.0" width="612" height="792"/>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+    <blockTableStyle id="Check_Table">
+	<blockTopPadding length="0.0"/>
+    </blockTableStyle>
+    <blockTableStyle id="Internal_Check_Table">
+	<blockBottomPadding length="0.1"/>
+    </blockTableStyle>
+    <blockTableStyle id="body">
+	<blockValign value="CENTER"/>
+    </blockTableStyle>
+    <blockTableStyle id="voucher_table">
+	<blockValign value="CENTER"/>
+	<lineStyle kind="GRID" colorName="#D3D3D3"/>
+	<blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+	<blockTopPadding length="5"/>
+	<blockBottomPadding length="5"/>
+    </blockTableStyle>
+    <blockTableStyle id="table">
+	<blockValign value="CENTER"/>
+	<blockTopPadding length="7"/>
+	<blockBottomPadding length="7"/>
+    </blockTableStyle>
+    <initialize>
+      <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="table_header" fontName="Helvetica-Bold" fontSize="10.0" leading="13" alignment="CENTER"/>
+    <paraStyle name="bold_paragraph" fontName="Helvetica-Bold" fontSize="10.0" leading="13" alignment="RIGHT"/>
+    <paraStyle name="paragraph" fontName="Helvetica-Bold" fontSize="12.0" leading="13" alignment="RIGHT"/>
+    <paraStyle name="sub_paragraph" fontName="Helvetica-Bold" fontSize="10.0" leading="13" alignment="RIGHT" spaceBefore="4.0" spaceAfter="4.0"/>
+    <paraStyle name="sub" fontName="Helvetica" fontSize="10.0" leading="13" alignment="RIGHT" spaceBefore="4.0" spaceAfter="4.0"/>
+    <paraStyle name="Left_Side" fontName="Helvetica-Bold" fontSize="5" leading="13" alignment="RIGHT"/>
+    <paraStyle name="Left_Side_name" fontName="Helvetica-Bold" fontSize="5.2" leading="13" alignment="RIGHT"/>
+    <paraStyle name="amount_box" fontName="Helvetica-Bold" fontSize="9" leading="13" alignment="CENTER"/>
+    <paraStyle name="terp_header_Centre" fontName="Helvetica-Bold" fontSize="12.0" leading="19" alignment="CENTER" spaceBefore="1.0" spaceAfter="1.0"/>
+  </stylesheet>
+  <story>
+    <para>[[repeatIn(objects,'voucher')]] </para>
+    <blockTable style="Check_Table" colWidths="4.7cm,16.4cm">
+      <tr>
+	<td>
+          <blockTable style="Internal_Check_Table" colWidths="3.4cm,1.1cm" rowHeights="1.4cm,0.6cm,1.0cm,2.7cm">
+            <tr>
+              <td>
+                <para style="Left_Side">
+		   [[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_year]] <font color="white">..</font>
+		   [[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_mon]]<font color="white">..</font>
+		   [[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_mday]]
+		</para>
+              </td>
+	      <td>
+                <para></para>
+              </td>
+            </tr>
+	    <tr>
+              <td>
+                <para style="Left_Side_name">[[ voucher.partner_id.name ]]</para>
+              </td>
+	      <td>
+                <para></para>
+              </td>
+            </tr>
+	    <tr>
+              <td>
+                <para style="Left_Side">[[ formatLang (voucher.amount) ]]</para>
+              </td>
+              <td>
+                <para></para>
+              </td>
+            </tr>
+	    <tr>
+              <td>
+                <para></para>
+              </td>
+              <td>
+                <para></para>
+              </td>
+            </tr>
+          </blockTable>
+	</td>
+        <td>
+          <blockTable style="Internal_Check_Table" colWidths="2cm,12.5cm,1.9cm" rowHeights="2.2cm,0.8cm,0.8cm,0.8cm,1.1cm" >
+            <tr>
+              <td>
+                <para></para>
+              </td>
+              <td>
+                <para style="paragraph">
+		   [[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_year]]/[[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_mon]]/[[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_mday]]
+		</para>
+              </td>
+              <td>
+                <para></para>
+              </td>
+            </tr>
+	    <tr>
+              <td>
+                <para></para>
+              </td>
+              <td>
+                <para style="paragraph">[[ voucher.partner_id.name ]]</para>
+              </td>
+              <td>
+                <para></para>
+              </td>
+            </tr>
+	    <tr>
+              <td>
+                <para></para>
+              </td>
+              <td>
+                <para style="paragraph">
+			[[ len(voucher.amount_in_word) > 61 and voucher.amount_in_word[0:voucher.amount_in_word.rfind(" ",0,61)+1] ]]
+			[[ not(len(voucher.amount_in_word) > 61) and voucher.amount_in_word ]]
+		</para>
+              </td>
+              <td>
+                <para></para>
+              </td>
+            </tr>
+	    <tr>
+              <td>
+                <para></para>
+              </td>
+              <td>
+                <para style="paragraph">[[ len(voucher.amount_in_word) > 61 and  voucher.amount_in_word[voucher.amount_in_word.rfind(" ",0,61)+1:len(voucher.amount_in_word)] ]]</para>
+              </td>
+              <td>
+                <para></para>
+              </td>
+            </tr>
+	    <tr>
+              <td>
+                <para></para>
+              </td>
+              <td>
+		<blockTable  style="Internal_Check_Table" colWidths="9.2cm,3.0cm">
+		  <tr>
+		    <td>
+                	<para></para>
+		    </td>
+		    <td>
+                	<para style="amount_box"> #[[ formatLang (voucher.amount) ]]#</para>
+		    </td>
+		    
+		  </tr>
+		</blockTable>
+              </td>
+              <td>
+                <para></para>
+              </td>
+            </tr>
+          </blockTable>
+	</td>
+      </tr>
+    </blockTable>
+<!--
+    <pageBreak/>
+    <blockTable style="body" colWidths="540">
+	<tr>
+	    <td>
+	        <para> <font color="white"> </font> </para>
+	        <para> <font color="white"> </font> </para>
+	        <para> <font color="white"> </font> </para>
+    		<para style="terp_header_Centre">الهيئة القومية للإتصالات</para>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+    		<para style="terp_header_Centre">إدارة الشئون المالية</para>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+    		<para style="terp_header_Centre">الخرطوم</para>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+    		<para style="sub_paragraph"> أورنيك حساب رقم 17 </para>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+    		<para style="sub"> الوحدة / الهيئة القومية للإتصالات </para>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+		<para style="sub">[[ voucher.partner_id.name ]]</para>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+		<para style="sub">[[ voucher.period_id.fiscalyear_id.name ]] / السنة المالية </para>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+	        <para> <font color="white"> </font> </para>
+	        <para> <font color="white"> </font> </para>
+		<blockTable colWidths="270.0,150.0,120.0" style="voucher_table"  repeatRows="1">
+		    <tr>
+			<td>
+			  <para style="table_header">البيان</para>
+			</td>
+			<td>
+			  <para style="table_header">خصماً على</para>
+			</td>
+			<td>
+			  <para style="table_header">المبلغ بالجنيه</para>
+			</td>
+		    </tr>
+		    <tr>
+			<td>
+			  <para style="paragraph">[[ voucher.name  ]]</para>
+			</td>
+		
+			<td>
+			  <para style="paragraph">[[ voucher.journal_id.default_credit_account_id.name ]]</para>
+			</td>
+			<td>
+			  <para style="paragraph">[[ formatLang (voucher.amount) ]]</para>
+			</td>
+		    </tr>
+		    <tr>
+			<td>
+			  <para style="paragraph"></para>
+			</td>
+		
+			<td>
+			  <para style="paragraph">الجملة</para>
+			</td>
+			<td>
+			  <para style="paragraph">[[ formatLang (voucher.amount) ]]</para>
+			</td>
+		   </tr>
+		</blockTable>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+	        <para> <font color="white"> </font> </para>
+	        <para> <font color="white"> </font> </para>
+     		<para style="bold_paragraph">صافي المبلغ كتابة : [[ voucher.amount_in_word ]]</para>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+	        <para> <font color="white"> </font> </para>
+	     	<para style="paragraph">[[ auditLog(move.id,'account.move') ]] : تراجع</para>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+	        <para> <font color="white"> </font> </para>
+	     	<para style="paragraph">................................................................. : توقيع ثاني</para>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+	        <para> <font color="white"> </font> </para>
+	     	<para style="paragraph">.................................................................. : توقيع أول</para>
+	    </td>
+	</tr>
+	<tr>
+	    <td>
+    <blockTable colWidths="250.0,40.0,250.0" style="table" repeatRows="1">
+      <tr>
+	<td>
+	  <para> <font color="white"> </font> </para>
+          <para style="paragraph">[[ voucher.chk_seq ]] : شيك رقم</para>
+        </td>
+        <td>
+	   <para></para>
+        </td>
+        <td>
+	   <para></para>
+        </td>
+      </tr>
+      <tr>
+	<td>
+	  <para> <font color="white"> </font> </para>
+          <para style="paragraph">التاريخ : [[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_year]]/[[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_mon]]/[[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_mday]]</para>
+        </td>
+        <td>
+	   <para></para>
+        </td>
+        <td>
+	   <para> <font color="white"> </font> </para>
+	   <para style="paragraph">التاريخ : [[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_year]]/[[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_mon]]/[[ time.strptime(voucher.date_due,'%Y-%m-%d').tm_mday]]</para>
+        </td>
+      </tr>
+      <tr>
+	<td>
+          <para style="paragraph">: المستلم</para>
+        </td>
+        <td>
+	   <para></para>
+        </td>
+        <td>
+	   <para style="paragraph">: المرفقات</para>
+        </td>
+      </tr>
+      <tr>
+	<td>
+          <para style="paragraph">............................. : الإسم</para>
+        </td>
+        <td>
+	   <para></para>
+        </td>
+        <td>
+	   <para style="paragraph">........................... /1</para>
+        </td>
+      </tr>
+      <tr>
+	<td>
+          <para style="paragraph">...................... : نمرة البطاقة</para>
+        </td>
+        <td>
+	   <para></para>
+        </td>
+        <td>
+	   <para style="paragraph">........................... /2</para>
+        </td>
+      </tr>
+      <tr>
+	<td>
+          <para style="paragraph">........................... : العنوان</para>
+        </td>
+        <td>
+	   <para></para>
+        </td>
+        <td>
+	   <para style="paragraph">........................... /3</para>
+        </td>
+      </tr>
+      <tr>
+	<td>
+          <para style="paragraph">........................... : التاريخ</para>
+        </td>
+        <td>
+	   <para></para>
+        </td>
+        <td>
+	   <para style="paragraph">........................... /4</para>
+        </td>
+      </tr>
+      <tr>
+	<td>
+          <para style="paragraph">........................... : التوقيع</para>
+        </td>
+        <td>
+	   <para></para>
+        </td>
+        <td>
+	   <para style="paragraph">........................... /5</para>
+        </td>
+      </tr>
+     </blockTable></td></tr>
+     </blockTable>
+-->
+  </story>
+</document>

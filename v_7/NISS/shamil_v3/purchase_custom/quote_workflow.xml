@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="pur_quote" model="workflow">
+            <field name="name">Requisition Basic Workflow</field>
+            <field name="osv">pur.quote</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="pur_quote_draft" model="workflow.activity">
+            <field name="wkf_id" ref="pur_quote"/>
+            <field name="flow_start"> True</field>
+            <field name="name">draft</field>
+        </record>
+        <record id="pur_quote_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="pur_quote"/>
+            <field name="name">confirmed</field>
+               <field name="kind">function</field>
+            <field name="action">confirmed()</field>
+        </record>
+        <record id="pur_quote_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="pur_quote"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel()</field>
+        </record>
+        <record id="pur_quote_done" model="workflow.activity">
+            <field name="wkf_id" ref="pur_quote"/>
+            <field name="name">done</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>
+        </record>
+
+        <record id="pur_quote_trans_draft_confirmed" model="workflow.transition">
+            <field name="act_from" ref="pur_quote_draft"/>
+            <field name="act_to" ref="pur_quote_confirmed"/>
+            <field name="signal">quote_confirm</field>
+        </record>
+        <record id="pur_quote_trans_confirmed_cancel" model="workflow.transition">
+            <field name="act_from" ref="pur_quote_confirmed"/>
+            <field name="act_to" ref="pur_quote_cancel"/>
+            <field name="signal">quote_cancel</field>
+        </record>
+        <record id="pur_quote_trans_confirmed_done" model="workflow.transition">
+            <field name="act_from" ref="pur_quote_confirmed"/>
+            <field name="act_to" ref="pur_quote_done"/>
+            <field name="signal">done</field>
+        </record>
+        <record id="pur_quote_trans_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="pur_quote_draft"/>
+            <field name="act_to" ref="pur_quote_cancel"/>
+            <field name="signal">quote_cancel</field>
+        </record>
+    </data>
+</openerp>

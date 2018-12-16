@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<!-- Additional services -->
+		<record model="ir.ui.view" id="additional_service_form_view">
+			<field name="name">hr.additional.service.form</field>
+			<field name="model">hr.additional.service</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Additional service" version="7.0">
+				<header>
+						<button string="Approved" name="confirm" states="draft"  type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_data_entery"/>
+						<button string="Set To Draft" name="set_to_draft" states="confirm"  type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_data_entery"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,confirm"/> 
+					</header>
+					<sheet>
+						<group>
+						<group>
+							<field name="code" />
+							<field name="employee_id" domain="[('state','=','approved')]" attrs="{'readonly':[('state','=', 'confirm')]}"/>
+							<field name="service_place" attrs="{'readonly':[('state','=', 'confirm')]}" on_change="onchange_service_place(service_place)"/>
+							<field name="service_type" attrs="{'readonly':[('state','=', 'confirm')]}"/>
+						</group>
+						<group>
+							<field name="previous_place" attrs="{'readonly':[('state','=', 'confirm')]}"/>
+							<field name="previous_job" attrs="{'readonly':[('state','=', 'confirm')]}"/>
+							<field name="come_from" attrs="{'readonly':[('state','=', 'confirm')]}"/>
+							<field name="company_id" groups="base.group_multi_company"/>
+						</group>
+						<group>
+							<field name="start_date" attrs="{'readonly':[('state','=', 'confirm')]}" />
+							<field name="end_date" attrs="{'readonly':[('state','=', 'confirm')]}"/>
+							<separator colspan="2" string="Durations"/> 
+							<field name="days"/>
+							<field name="months"/>
+							<field name="years"/>
+						</group>
+						
+						<notebook colspan="4">
+							<page string="Comments">
+								<field name="comments" />
+							</page>
+						</notebook>
+						</group>
+					
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="additional_service_tree_view">
+			<field name="name">hr.additional.service.tree</field>
+			<field name="model">hr.additional.service</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Additional service">
+					<field name="code" />
+					<field name="employee_id" domain="[('state','=','approved')]" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="days"/>
+					<field name="months"/>
+				    <field name="years"/>
+				    <field name="state"/>
+				    <field name="service_type"/>
+
+				</tree>
+			</field>
+		</record>
+
+		<record id="additional_service_filter" model="ir.ui.view">
+			<field name="name">additional_service_filter</field>
+			<field name="model">hr.additional.service</field>
+			<field name="arch" type="xml">
+				<search string="Additional service">
+					<field name="employee_id" />
+					<separator orientation="vertical" />
+					<newline/>
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Employee" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'employee_id'}" />
+						<separator orientation="vertical" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+
+		<record id="additional_service_action" model="ir.actions.act_window">
+			<field name="name">Additional service</field>
+			<field name="res_model">hr.additional.service</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="additional_service_tree_view" />
+			<field name="search_view_id" ref="additional_service_filter" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to define a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+		<menuitem id="additional_service_menu" name="Additional service"
+			parent="hr.menu_hr_main" action="additional_service_action" />
+
+		<act_window
+			id="act_employee_additional_services"
+			name="Employee Additional service"
+			res_model="hr.additional.service"
+			src_model="hr.employee"
+			domain="[('employee_id','=', active_id)]"
+			view_type="form"
+			view_mode="tree,form"/>
+
+
+		<!-- HR Unlock Reasons-->
+			<record model="ir.ui.view" id="hr_unlock_reason_form_view">
+				<field name="name">hr.unlock.reason.form</field>
+				<field name="model">hr.unlock.reason</field>
+				<field name="type">form</field>
+				<field name="arch" type="xml">
+					<form string="HR Unlock Reasons" version="7.0">
+						<group col="4">
+							<field name="name" required="1" />
+							<field name="type" required="1" />
+							<field name="company_id" groups="base.group_multi_company"/>
+						</group>
+					</form>
+				</field>
+			</record>
+
+			<record model="ir.ui.view" id="hr_unlock_reason_tree_view">
+			<field name="name">hr.unlock.reason.tree</field>
+			<field name="model">hr.unlock.reason</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="HR Unlock Reason">
+					<field name="name" />
+					<field name="type" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="hr_unlock_reason_action" model="ir.actions.act_window">
+			<field name="name">Unlock Reason</field>
+			<field name="res_model">hr.unlock.reason</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_unlock_reason_tree_view" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to define a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+		<menuitem id="hr_unlock_reason_menu" name="Unlock Reason"
+			parent="hr.menu_open_view_attendance_reason_config" sequence="10" action="hr_unlock_reason_action" />
+
+
+		<!-- HR Unlock -->
+		<record model="ir.ui.view" id="hr_unlock_form_view">
+			<field name="name">hr.unlock.form</field>
+			<field name="model">hr.unlock</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="HR Unlock" version="7.0">
+				<header>
+						<button string="Confirm" name="confirm" states="draft"  type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_leave_user"/>
+						<button string="Approve" name="approve" states="confirm"  type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_leave_user"/>
+						<button string="Set To Draft" name="set_to_draft" states="approved"  type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_leave_user"/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,confirm,approved"/> 
+					</header>
+					<sheet>
+						<group>
+						<group>
+							
+							<field name="employee_id" domain="[('state','=','approved')]"  attrs="{'readonly':[('state','!=', 'draft')],'required':True}" on_change="onchange_employee_id(employee_id)"/>
+
+							<field name="emp_degree" readonly='1'/>
+							<field name="emp_dept" readonly='1'/>
+							<field name="otherid" readonly='1'/>
+						</group>
+						<group>
+							<field name="reason" attrs="{'readonly':[('state','!=', 'draft')],'required':True}"/>
+							<field name="destination" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+							<field name="start_date" attrs="{'readonly':[('state','!=', 'draft')],'required':True}" />
+							<field name="end_date" attrs="{'readonly':[('state','!=', 'draft')],'required':True}"/>
+							<field name="company_id" groups="base.group_multi_company"/>
+
+						</group>
+						<group>
+							<separator colspan="2" string="Department Comment"/> 
+							<field name="dept_comment" attrs="{'readonly':[('state','=', 'approved')]}" nolabel="1"/>
+
+						</group>
+						
+						<notebook colspan="4">
+							<page string="Comments">
+							<field name="comment" attrs="{'readonly':[('state','!=', 'draft')]}" />
+						</page>
+						</notebook>
+						</group>
+					
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_unlock_tree_view">
+			<field name="name">hr.unlock.tree</field>
+			<field name="model">hr.unlock</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="HR Unlock">
+					<field name="employee_id" domain="[('state','=','approved')]" />
+					<field name="emp_dept" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="destination"/>
+				</tree>
+			</field>
+		</record>
+		<record id="hr_unlock_action" model="ir.actions.act_window">
+			<field name="name">HR Unlock</field>
+			<field name="res_model">hr.unlock</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_unlock_tree_view" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to define a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+		<menuitem id="hr_unlock_menu" name="HR Unlock"
+			parent="hr_holidays.menu_open_ask_holidays" sequence="10" action="hr_unlock_action" />
+
+
+
+
+		<!-- HR Append -->
+		<record model="ir.ui.view" id="hr_append_form_view">
+			<field name="name">hr.append.form</field>
+			<field name="model">hr.append</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="HR Append" version="7.0">
+				<header>
+						<button string="Confirm" name="confirm" states="draft"  type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_process_user"/>
+						<button string="Set To Draft" name="set_to_draft" states="confirm"  type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_process_user"/>
+						<button string="Move Order" name="create_move_order" attrs="{'invisible':['|',('move_order_line_id','!=',False),('state','!=', 'confirm')]}" type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_process_user" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,confirm"/> 
+					</header>
+					<sheet>
+						<group>
+						<group>
+							
+							<field name="employee_id" domain="[('state','=','approved')]" attrs="{'readonly':[('state','=', 'confirm')]}"/>
+							<field name="otherid" />
+							<field name="destination" attrs="{'readonly':[('state','=', 'confirm')]}"/>
+							<field  name="move_order_line_id" attrs="{'readonly' : [('state' , '!=' , 'draft')]}" domain="[('type' , '=' , 'append' ),('append_id' , '=' , False) , ('date' ,'&gt;=', start_date),('date' ,'&lt;', end_date) ,('employee_id' , '=' , employee_id) ]" />
+						</group>
+						<group>
+							<field name="start_date" required="1" attrs="{'readonly':[('state','=', 'confirm')]}" />
+							<field name="end_date"/>
+							<field name="company_id" groups="base.group_multi_company"/>
+						</group>
+						<!--group>
+							<separator colspan="2" string="Append Reason"/> 
+							<field name="reason" attrs="{'readonly':[('state','=', 'confirm')]}" nolabel="1"/>
+
+							<separator colspan="2" string="HR Comment"/> 
+							<field name="hr_comment" attrs="{'readonly':[('state','=', 'confirm')]}" nolabel="1"/>
+
+						</group-->
+						
+						
+						</group>
+
+						<notebook>
+							<page string="Reasons">
+								<field name="reason" attrs="{'readonly':[('state','=', 'confirm')]}" nolabel="1"/>
+							</page>
+							<page string="HR Descion">
+								<field name="hr_comment" attrs="{'readonly':[('state','=', 'confirm')]}" nolabel="1"/>
+							</page>
+						</notebook>
+					
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_append_tree_view">
+			<field name="name">hr.append.tree</field>
+			<field name="model">hr.append</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="HR Append">
+					<field name="employee_id" domain="[('state','=','approved')]" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="destination"/>
+				</tree>
+			</field>
+		</record>
+		<record id="hr_append_action" model="ir.actions.act_window">
+			<field name="name">HR Append</field>
+			<field name="res_model">hr.append</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_append_tree_view" />
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to define a new record.
+				</p>
+				<p>
+					provide your information here.
+				</p>
+			</field>
+		</record>
+		<menuitem id="hr_append_menu" name="HR Append"
+			parent="menu_service_main" action="hr_append_action" sequence="3"/>
+
+
+		<!-- Employee  inherits -->
+		<record id="view_employee_form_inherit_service" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_custom.view_employee_form_inherit"/>
+            <field name="arch" type="xml">
+            	<xpath expr='//field[@name="job_letter_date"]' position="after" version="7.0">
+
+            		<label for="service_state_id"/>
+                    <div>
+                        <field name="service_state_id" readonly="1"/>
+                        <div class="address_format">
+                            <field name="service_state_id_level2" domain="[('level','=','2'),('parent_id','=',service_state_id)]" readonly="1"/>
+                            <field name="service_state_id_level3" domain="[('level','=','3'),('parent_id','=',service_state_id_level2)]" readonly="1"/>
+                        </div>
+                    </div>
+
+
+					<field name="military_type" invisible="1"/>
+            		<field name="is_isolated" readonly="1" attrs="{'invisible':[('military_type','=','officer')]}"/>
+            	</xpath>
+            	<xpath expr='//field[@name="employment_date"]' position="after">
+            		<field name="recruitment_date" attrs="{'required':[('state','=','draft')]}"/>
+            	</xpath>
+
+            	<xpath expr='//field[@name="marital"]' position="after">
+            		<field name="health_status" attrs="{'required':[('state','=','draft')]}"/>
+            	</xpath>
+            	<xpath expr='//field[@name="join_date"]' position="after">
+            			<label for="dept_service_years" string="Department Service"/>
+		    				<div>
+                            <table>
+	        				<tr>
+	        					<td width="130">
+	        					  of Years  
+	        					</td>
+	        					<td width="30">
+	        					<field name="dept_service_years" readonly="1"/>
+	        					</td>
+	        					<td width="130">
+	        					  of Months  
+	        					</td>
+	        					<td width="30">
+	        					<field name="dept_service_months" readonly="1"/>
+	        					</td>
+	        					<td width="130">
+	        					  of Days  
+	        					</td>
+	        					<td width="30">
+	        					<field name="dept_service_days" readonly="1"/>
+	        					</td>
+	        				</tr>
+
+	        				
+	        			</table>
+                    </div>
+            		
+            	</xpath>
+
+            	<xpath expr='//page[3]' position="after" version="7.0"> 
+		    		<page string="Additional services">
+		    			<table class="date_table2">
+	        				<tr>
+	        					<th>
+									<button string="Actual Duration Computation" name="actual_duration_computation" type="object" class="oe_highlight"/>
+	        					</th>
+	        					<th>
+	        						Years
+	        					</th>
+	        					<th>
+	        						Months
+	        					</th>
+	        					<th>
+	        						Days
+	        					</th>
+	        				</tr>
+	        				<tr>
+	        					<td>
+	        					Connected Service Durations
+	        					</td>
+	        					<td>
+	        						<field name="connected_service_years" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="connected_service_months" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="connected_service_days" readonly="1"/>
+	        					</td>
+	        				</tr>
+	        				<tr>
+	        					<td>
+	        					Separated Service Durations
+	        					</td>
+	        					<td>
+	        						<field name="separated_service_years" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="separated_service_months" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="separated_service_days" readonly="1"/>
+	        					</td>
+	        				</tr>
+	        				<!-- <tr>
+	        					<td>
+	        					Operation Service Durations
+	        					</td>
+	        					<td>
+	        						<field name="operation_service_years" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="operation_service_months" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="operation_service_days" readonly="1"/>
+	        					</td>
+	        				</tr> -->
+
+	        				
+
+	        				<tr>
+	        					<td>
+	        					Actual Service Durations
+	        					</td>
+	        					<td>
+	        						<field name="actual_service_years" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="actual_service_months" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="actual_service_days" readonly="1"/>
+	        					</td>
+	        				</tr>        	
+	        				<tr>
+	        					<td>
+	        					Total Service Durations
+	        					</td>
+	        					<td>
+	        						<field name="total_service_years" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="total_service_months" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="total_service_days" readonly="1"/>
+	        					</td>
+	        				</tr>
+	        				<!-- <tr>
+	        					<td>
+	        					Lost Service Durations
+	        					</td>
+	        					<td>
+	        						<field name="lost_service_years" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="lost_service_months" readonly="1"/>
+	        					</td>
+	        					<td>
+	        					<field name="lost_service_days" readonly="1"/>
+	        					</td>
+	        				</tr> -->
+	        			</table>
+							
+
+					</page>
+
+					<page string="Military Training">
+						<field name="military_training_id" readonly="1">
+							<tree editable="top">
+								<field name="place" />
+								<field name="type" />
+								<field name="start_date" />
+								<field name="end_date" />
+							</tree>
+						</field>
+					</page>
+                     	
+                </xpath>
+                </field>
+        </record>
+
+		<record id="view_wizard_suspend_form" model="ir.ui.view">
+            <field name="name">Suspend Emlpyees</field>
+            <field name="model">emp.suspend</field>
+            <field name="inherit_id" ref="hr_payroll_custom_niss.view_wizard_suspend_form"/>
+            <field name="arch" type="xml">
+				<xpath expr='//footer' position="replace" version="7.0">
+					<footer groups="hr_custom_military.hr_emp_process_user">
+						<button name="emp_suspend" string="Process" type="object" 
+										class="oe_highlight"/>
+									or
+						<button icon='gtk-cancel' special="cancel" string="Close" class="oe_link" colspan="2"/>
+					</footer>
+            	</xpath>
+			</field>
+		</record>
+
+
+		<record id="view_hr_employee_substitution_form" model="ir.ui.view">
+            <field name="name">hr.employee.substitution.form</field>
+			<field name="model">hr.employee.substitution</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_hr_employee_substitution_form"/>
+            <field name="arch" type="xml">
+				<xpath expr='//button[@name="action_approve"]' position="replace" version="7.0">
+					<button name="action_approve" string="Approve" states="draft"
+							type="object" groups="hr_custom_military.hr_emp_process_user"/>
+				</xpath>
+				<xpath expr='//button[@name="action_done"]' position="replace" version="7.0">
+					<button name="action_done" string="Done" states="draft"
+							type="object" groups="hr_custom_military.hr_emp_process_user"/>
+				</xpath>
+
+				<xpath expr='//field[@name="bonus_id"]' position="after">
+                	<field name="company_id"  groups="base.group_multi_company"/>
+				</xpath>
+			</field>
+		</record>
+
+		<!-- Hr dismissal Inherit -->
+        <record model="ir.ui.view" id="hr_dismissal_form_view_inherit">
+            <field name="name">hr.dismissal.form</field>
+            <field name="model">hr.dismissal</field>
+            <field name="inherit_id" ref="hr_custom.hr_dismissal_form_view"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="code"]' position="after">
+                	<label for="state_id"/>
+					<field name="state_id" domain="[('state_type' , '=' , 'out' )]" required="1"/>
+				</xpath>
+            </field>
+        </record>
+
+		<record id="view_employment_termination_inherit_form" model="ir.ui.view">
+            <field name="name">employment.termination.form</field>
+           <field name="model">hr.employment.termination</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_employment_termination_inherit_form"/>
+            <field name="arch" type="xml">
+				<xpath expr='//button[@name="termination"]' position="replace" version="7.0">
+					<button name="date_reflect" string="Terminate" states="draft" type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_process_user"/>
+					<button name="termination" string="Terminate" states="date_reflect" type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_process_user"/>
+					<button string="Move Order" name="create_move_order" attrs="{'invisible':['|',('move_order_line_id','!=',False),('state','!=', 'refuse')]}" type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_process_user" />
+				</xpath>
+
+				<xpath expr='//field[@name="dismissal_type"]' position="after" version="7.0">
+					<group>
+				<field  name="move_order_line_id" attrs="{'readonly' : [('state' , '!=' , 'draft')]}" domain="[('type' , '=' , 'termination' ),('employee_id' , '=' , employee_id) ]" />
+				<field  name="company_id"  groups="base.group_multi_company"/>
+			</group>
+				</xpath>
+
+				<xpath expr='//button[@name="calculation"]' position="replace" version="7.0">
+					<button name="calculation" string="Allowances Calculation" states="refuse" 
+                                     type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_process_user"/>
+				</xpath>
+
+				<xpath expr='//button[@name="transfer"]' position="replace" version="7.0">
+					<button name="transfer" string="Allowances Transfer" states="calculate" 
+                                    type="object" class="oe_highlight" groups="hr_custom_military.hr_emp_process_user"/>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_employee_retirement" model="ir.ui.view">
+            <field name="name">Employee Retirement</field>
+            <field name="model">employee.retirement</field>
+            <field name="type">form</field>
+			<field name="inherit_id" ref="hr_custom.view_employee_retirement"/>
+            <field name="arch" type="xml">
+                <xpath expr="//footer" position="replace">
+					<footer  groups="hr_custom_military.hr_emp_process_user">
+                   		<button name="check_emp_retirement" string="Check Retirement" type="object" default_focus="1" class="oe_highlight"/>
+                  		or
+                  		<button string="Cancel" class="oe_link" special="cancel"/>
+                	</footer>
+				</xpath>
+               
+            </field>
+        </record>
+		<record id="hr_payroll_custom.employees_salary_report_action" model="ir.actions.act_window">
+			<field name="groups_id" eval="[(4,ref('hr_payroll_custom.group_payroll_user'))]"/>
+        </record>
+	</data>
+</openerp>

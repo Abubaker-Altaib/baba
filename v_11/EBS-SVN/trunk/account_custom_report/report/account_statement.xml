@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>    
+    <template id="account_statement_report_tamplate">
+        <t t-call="web.html_container">
+           <t t-call="web.internal_layout">
+           	<div class="page">
+           		<!--div class="header">
+           			<p>كشف حساب</p>
+           			<hr style="text-align: right;border: 1px solid black;" />
+           		</div-->
+                <h5 class="text-right">Account Number: <span t-esc="account_code" /></h5>
+                <h5 class="text-right">Account Name: <span t-esc="account_name" /></h5>
+                <h5 class="text-right">Date from: <span t-esc="date_from" /> to: <span t-esc="date_to" /></h5>
+                <h6>Currency  <span t-esc="account_currency" /></h6>
+                <div class="table-responsive"><table class="table table-hover o_portal_my_doc_table">
+                	<thead class="text-right" style="display: table-header-group;" >
+                		<tr>
+		                	<th class="text-right">Balance</th>
+		                	<th class="text-right">Credit</th>
+		                	<th class="text-right">Debit</th>
+		                	<th class="text-right">Describtion</th>
+		                	<th class="text-right">Voucher</th>
+		                	<th class="text-right">Entry</th>
+		                	<th class="text-right">Date</th>
+		                </tr>
+                	</thead>
+                	<tbody class="text-right" style="display: table-row-group" >
+	                	<t t-foreach="docs" t-as="d">
+	                		<tr>
+			                	<td><span t-field="d.amount_currency" /></td>
+			                	<td><span t-field="d.credit" /></td>
+			                	<td><span t-field="d.debit" /></td>
+			                	<td><span t-field="d.name" /></td>
+			                	<td>0</td>
+			                	<td><span t-field="d.move_id" /></td>
+			                	<td><span t-field="d.date_maturity" /></td>
+			                </tr>
+	                	</t>
+	                	<tr>
+	                		<td><t t-esc="sum(d.amount_currency for d in docs) " /></td>
+	                		<td><t t-esc="sum(d.credit for d in docs) " /></td>
+	                		<td><t t-esc="sum(d.debit for d in docs) " /></td>
+	                		<td>Total</td>
+	                	</tr>
+	                </tbody>
+	            </table></div>
+	            <p>Printed by <span t-esc="user_name" /></p>
+		        <div class="footer" >
+		        	<ul class="list-inline" style="text-align: center;">
+					 <li>Page</li>
+					 <li><span class="page"/></li>
+					 <li>of</li>
+					 <li><span class="topage"/></li>
+					</ul>
+		            <p>Account statement <span t-esc="account_name" /></p>
+		            <hr style="display: block;height: 1px;border: 0;border-top: 1px solid black;margin: 1em 0;padding: 0;" />
+		            <p><span t-if="target_moves=='posted'">This report covers only posted entries</span></p>
+		        </div>
+            </div>
+            </t>
+        </t>
+    </template>
+</odoo>

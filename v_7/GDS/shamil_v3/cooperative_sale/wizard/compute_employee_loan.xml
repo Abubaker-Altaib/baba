@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="id_sale_employee_loan_wiz_view" model="ir.ui.view">
+            <field name="name">Sale Order Employee loan Wizard Form</field>
+            <field name="model">sale.employee.loan.wiz</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Sale Employee loan Wizard" version="7.0">
+        			<separator string="Sale Employee loan" colspan="4"/>
+            			<group>
+
+            			<group col="4" colspan="4">
+            				<field name="from_date"/>
+            				<field name="to_date" />
+            			</group>
+            			<group col="4" colspan="4">
+            				<field name="loan_date" />
+            		    		<field name="category_id"  />
+                        </group>
+            			<group col="2" colspan="2" >
+	                        <field name="company_id" />
+            			</group>
+
+                               
+            			</group>
+	    			<footer>
+	 		<button name="transfer_loan" string="Transfer" type="object" 
+                               class="oe_highlight"/>
+                        or
+			<button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link" colspan="2"/>
+                        	</footer>
+               </form>
+            </field>
+	    </record>
+
+        <record id="action_sale_employee_loan_wiz" model="ir.actions.act_window">
+            <field name="name">Employee loan From Sale Order </field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.employee.loan.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="id_sale_employee_loan_wiz_view"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem
+                parent="base.menu_base_partner" 
+               id="menu_act_sale_employee_loan"
+               name="Cooperative Employee Loan"
+			   groups="base.group_sale_manager" 
+                />
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Create Employee Loan"
+                parent="menu_act_sale_employee_loan"
+                action="action_sale_employee_loan_wiz"
+                id="menu_sale_employee_loan_wizard"
+                />
+
+    </data>
+</openerp>

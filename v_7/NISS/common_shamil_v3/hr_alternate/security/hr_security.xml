@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+	<record id="hr_alternative_setting" model="res.groups">
+            <field name="name">HR alternative Setting</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_setting_military'))]"/>
+            <field name="category_id" ref="hr_custom_military.hr_military_category"/>
+        </record>
+
+    <record id="hr_alternative_process_multi_company_rule" model="ir.rule">
+            <field name="name">hr alternative process multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_alternative_process"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+    <record id="hr_alternative_process_collective_multi_company_rule" model="ir.rule">
+            <field name="name">hr alternative process collective multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_alternative_process_collective"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+    <record id="hr_alternative_setting_multi_company_rule" model="ir.rule">
+            <field name="name">hr alternative setting multi company rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_alternative_setting"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+        
+    </data>
+</openerp>

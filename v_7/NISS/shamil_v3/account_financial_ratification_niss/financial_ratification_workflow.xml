@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Pre-Complete State -->
+        <record id="act_pre_complete1" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">precomplete1</field>
+            <field name="action">pre_complete1()</field>
+            <field name="kind">function</field>
+        </record>
+        <record id="act_pre_complete2" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">precomplete2</field>
+            <field name="action">pre_complete2()</field>
+            <field name="kind">function</field>
+        </record>
+        <record id="act_pre_complete3" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">precomplete3</field>
+            <field name="action">pre_complete3()</field>
+            <field name="kind">function</field>
+        </record>
+        <record id="act_pre_complete4" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">precomplete4</field>
+            <field name="action">pre_complete4()</field>
+            <field name="kind">function</field>
+        </record>
+        <record id="act_pre_complete5" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">precomplete5</field>
+            <field name="action">pre_complete5()</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act_pre_complete6" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">precomplete6</field>
+            <field name="action">pre_complete6()</field>
+            <field name="kind">function</field>
+        </record>
+        <record id="act_router" model="workflow.activity">
+            <field name="wkf_id" ref="account_voucher.wkf"/>
+            <field name="name">router</field>
+            <field name="split_mode">OR</field>
+            <field name="kind">function</field>
+            <field name="action">router()</field>
+        </record>
+       
+	<!-- Transition -->
+        <record id="account_financial_ratification.t13" model="workflow.transition">
+            <field name="act_from" ref="account_financial_ratification.act_pre_complete"/>
+            <field name="act_to" ref="act_pre_complete1"/>
+            <field name="signal">precomplete1</field>
+        </record>
+        <record id="t113" model="workflow.transition">
+	    <field name="act_from" ref="act_pre_complete1"/>
+            <field name="act_to" ref="act_pre_complete2"/>
+            <field name="signal">precomplete2</field>
+        </record>
+        <record id="t114" model="workflow.transition">
+	    <field name="act_from" ref="act_pre_complete2"/>
+            <field name="act_to" ref="act_pre_complete3"/>
+            <field name="signal">precomplete3</field>
+        </record>
+        
+      
+        
+        <record id="t115" model="workflow.transition">
+	    	<field name="act_from" ref="act_pre_complete3"/>
+            <field name="act_to" ref="act_pre_complete4"/>
+            <field name="signal">precomplete4</field>
+        </record>
+        
+        <record id="close_post12" model="workflow.transition">
+	    	<field name="act_from" ref="act_pre_complete4"/>
+            <field name="act_to" ref="account_financial_ratification.act_pre_close"/>
+            <field name="signal">preclose</field>
+        </record>
+       <record id="account_financial_ratification.close_post" model="workflow.transition">
+	    	<field name="act_from" ref="account_financial_ratification.act_pre_close"/>
+            <field name="act_to" ref="act_router"/>
+            <field name="signal">router</field>
+        </record>
+        <record id="close_post124" model="workflow.transition">
+	    <field name="act_from" ref="act_router"/>
+            <field name="act_to" ref="act_pre_complete5"/>
+	    <field name="condition">test_wkf('vmanager')</field>
+        </record>
+       <record id="close_post125" model="workflow.transition">
+	    <field name="act_from" ref="act_router"/>
+            <field name="act_to" ref="act_pre_complete6"/>
+	    <field name="condition">test_wkf('gmanager')</field>
+        </record>
+        <record id="close_post4" model="workflow.transition">
+	    <field name="act_from" ref="act_router"/>
+            <field name="act_to" ref="account_financial_ratification.act_pre_post"/>
+	    <field name="condition">test_wkf('other')</field>
+        </record>
+         <record id="close_post126" model="workflow.transition">
+	    <field name="act_from" ref="act_pre_complete5"/>
+            <field name="act_to" ref="account_financial_ratification.act_pre_post"/>
+            <field name="signal">prepost</field>
+        </record>
+
+        <record id="close_post127" model="workflow.transition">
+	    <field name="act_from" ref="act_pre_complete6"/>
+            <field name="act_to" ref="account_financial_ratification.act_pre_post"/>
+            <field name="signal">prepost</field>
+        </record>
+
+
+ 
+  
+      
+    </data>
+</openerp>

@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+    
+   <!--
+     Customization Purchase view & workflow
+   -->
+      <record model="ir.ui.view" id="purchase_order_form_inherit">
+            <field name="name">purchase.order.form.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+
+            <!--  workflow buttoms -->
+            
+            <button name="purchase_cancel" position="replace" >
+                <button name="purchase_cancel" states="draft,confirmed,sent,sign" string="Cancel Order"/>
+            </button>
+
+
+            <button name="purchase_confirm" position="before">
+                <button name="purchase_sign" 
+                        colspan="2" 
+                		states="draft" 
+                		string="Purchase Sign" 
+                		icon="gtk-go-forward"/>        
+            </button>
+            
+           <button name="purchase_confirm"  position="replace">
+               <button name="purchase_confirm" 
+                        colspan="2"
+                		states="sign" 
+                		string="Supply department" 
+                		icon="gtk-go-forward"/>
+           </button>
+            </field>  
+            
+      </record>
+      
+      
+     
+     <!-- customization of purchase order line tree -->
+     <record model="ir.ui.view" id="purchase_order_line_tree_inherit">
+        <field name="name">purchase.order.line.tree.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+                <field name="order_line" position="replace">
+                <field colspan="4" name="order_line" nolabel="1" widget="one2many_list" attrs="{'readonly':[('state', '!=', 'except_picking')],    			'required':[('state', '=', 'except_picking')]}">
+                <tree string="Purchase Order Lines">
+                      <field name="date_planned"/>
+                      <field name="name"/>
+                      <field name="product_qty"/>
+                      <field name="product_uom"/>
+                      <field name="price_unit"/>
+                      <field name="price_subtotal"/>
+                            </tree>
+                         </field>
+                     </field>
+<field name="amount_total" position="after">
+                <field name="written_total" sum="Total written" colspan="4"/>
+            </field> 
+         <xpath
+expr="/form/sheet/notebook/page/field/tree/field[@name='date_planned']"
+                         position="replace"/>
+         </field>
+        </record>  
+
+        <record id="pricelist_type_purchase" model="product.pricelist.type">
+            <field name="name">Purchase Pricelist</field>
+            <field name="key">purchase</field>
+        </record>
+
+        <record id="list0" model="product.pricelist">
+            <field name="name">Purchase Pricelist</field>
+            <field name="type">purchase</field>
+        </record>          
+ </data>
+</openerp>

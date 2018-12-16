@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <act_window id="basal_drainage_action"
+                    name="Basal Drainage Form"
+                    res_model="planning.basal.darinage"
+                    view_mode="search,tree,form"/>
+
+        <act_window id="basal_drainage_order_action"
+                    name="Basal Drainage Order"
+                    res_model="basal.drainage.order"
+                    view_mode="search,tree,form"/>
+                    
+        <act_window id="basal_drainage_program_action"
+                    name="Basal Drainage Order"
+                    res_model="basal.drainage.program"
+                    view_mode="search,tree,form"/> 
+
+        <record id="basal_drainage_search" model="ir.ui.view">
+            <field name="name">basal drainage search</field>
+            <field name="model">planning.basal.darinage</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="code"/>
+                </search>
+            </field>
+        </record>
+        <!-- basal drainage tree view -->
+        <record id="sup_tree" model="ir.ui.view">
+            <field name="name">Basal Drainage</field>
+            <field name="model">planning.basal.darinage</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="code"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="name"/>
+                    <field name="state"/>
+
+                </tree>
+            </field>
+        </record>
+        <!-- basal drainage form view -->
+
+
+        <record id="view_basal_drainage_planning_form" model="ir.ui.view">
+            <field name="name">Basal Drainage Form</field>
+            <field name="model">planning.basal.darinage</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="confirm" states="draft" string="Confirm" type="object" class="oe_highlight"/>
+                        <button name="approve" states="confirm" string="Approve" type="object" class="oe_highlight"/>
+
+                        <button name="cancel" states="draft,confirm,approve" string="Cancel" type="object"
+                                class="oe_highlight"/>
+                        <button name="draft" states="cancel" string="Set To Draft" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group colspan="2">
+                            <group>
+                                <field name="code" readonly="1"/>
+                                <field name="date_from" required="1" attrs="{'readonly':[('state', '=' , 'done')]}"/>
+                                <field name="type" required="1" attrs="{'readonly':[('state', '=' , 'done')]}"/>
+                                 
+                               <field name="name" attrs="{'readonly':[('state', '=' , 'done')]}"/>
+                            </group>
+                            <group>
+                                <field name="order_date" required="1" attrs="{'readonly':[('state', '=' , 'done')]}"/>
+                                <field name="date_to" required="1" attrs="{'readonly':[('state', '=' , 'done')]}"/>
+                                 <field name="local_state_id" required="1"
+                                       attrs="{'readonly':[('state', '=' , 'done')]}"/>
+                                       
+
+                                       <field name="company_id" readonly="1"/>
+                            </group>
+                        </group>
+                      
+                        <notebook>
+                            <page string="Adminstrative Units">
+                                <field name="unit_of_admin_ids"
+                                       attrs="{'readonly':['|',('state', '=' , 'done'),('local_state_id','=',False)]}">
+                                    <tree editable="bottom">
+                                        <field name="admin_unit_id" required="1"
+                                               domain="[('local_state_id' , '=' , parent.local_state_id)]"/>
+                                        
+
+                                        <field name="committee"
+                                               domain="[('administrative_unit_id', '=', admin_unit_id)]"
+                                               attrs="{'column_invisible':[('parent.type','=','a_u')],'required':[('parent.type','=','z_c')]}"/>
+
+                                        <field name="no_of_families" required="1"/>
+
+                                        <field name="excuting_actual" readonly="1"/>
+                                        <field name="persecnt" widget="progressbar"/>
+                                    </tree>
+                                </field>
+
+
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- basal drainage order search view -->
+        <record id="basal_drainage_search" model="ir.ui.view">
+            <field name="name">basal drainage Order search</field>
+            <field name="model">basal.drainage.order</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="program_id"/>
+                </search>
+            </field>
+        </record>
+        <!-- basal drainage order tree view -->
+        <record id="basal_drainage_order_tree" model="ir.ui.view">
+            <field name="name">Basal Drainage Order</field>
+            <field name="model">basal.drainage.order</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="order_date"/>
+                    <field name="program_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!-- basal drainage Order form view -->
+
+
+        <record id="view_basal_drainage_order_form" model="ir.ui.view">
+            <field name="name">Basal Drainage Order Form</field>
+            <field name="model">basal.drainage.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="confirm" states="draft" string="Confirm" type="object" class="oe_highlight"/>
+                        <button name="approve" states="confirm" string="Approve" type="object" class="oe_highlight"/>
+                        <button name="done" states="approve" string="Done" type="object" class="oe_highlight"/>
+                        <button name="cancel" states="draft,confirm,approve" string="Cancel" type="object"
+                                class="oe_highlight"/>
+                        <button name="draft" states="cancel" string="Set To Draft" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group colspan="2">
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="program_id" attrs="{'readonly':[('state', '=' , 'done')]}" required="1"/>
+                                <field name="local_state_id" required="1"
+                                       attrs="{'readonly':[('state', '=' , 'done')]}"/>
+                                <field name="company_id" readonly="1"/>
+                                
+                            </group>
+                            <group>
+                                <field name="order_date" required="1"  attrs="{'readonly':[('state', '!=' , 'draft')]}"/>
+                                <field name="order_type" required="1" attrs="{'readonly':[('state', '!=' , 'draft')]}"/>
+                                <field name="address_id" required="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Families">
+                                <field name="families_ids" required="1" attrs="{'readonly':[('state', '=' , 'done')]}"
+                                       domain="[('company_id' , '=' ,company_id)]">
+                                    <tree editable="bottom">
+                                        <field name="fageer_id" required="1"
+                                               context="{'form_view_ref': 'zakat_base.zakat_res_partner_form_view', 'default_zakat_partner': 1, 'default_Fageer': 1,}"
+                                               domain="[('zakat_partner' , '=' , 'True')]"/>
+                                        <field name="status_class" required="1"/>
+                                        <field name="amount" required="1"
+                                               attrs="{'readonly':[('parent.order_type' , '=' ,'material')],'required':[('parent.order_type','=','cash')],'column_invisible':[('parent.order_type' , '!=' , 'cash')]}"/>
+
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Products" attrs="{'invisible':[('order_type' ,'!=' , 'material')]}">
+                                <field name="products">
+                                    <tree editable="bottom">
+                                        <field name="product_id" required="1"/>
+                                        <field name="product_qty" required="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        
+        <record id="basal_drainage_program_search" model="ir.ui.view">
+            <field name="name">basal drainage program search</field>
+            <field name="model">basal.drainage.program</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        
+        <record id="basal_drainage_program_tree" model="ir.ui.view">
+            <field name="name">Basal Drainage Programs</field>
+            <field name="model">basal.drainage.program</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="support_type"/>
+                </tree>
+            </field>
+        </record>
+        
+        
+        <!-- basal drainage Program form view -->
+
+
+        <record id="view_basal_drainage_program_form" model="ir.ui.view">
+            <field name="name">Basal Drainage Program </field>
+            <field name="model">basal.drainage.program</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group col="4" colspan="2">
+                                <field name="name" required="1"/>
+                                <field name="support_type" required="1"/>
+                                <field name="company_id" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Accounting">
+                                <group col="4" colspan="2">
+                                    <field name="account_id" required="1"/>
+                                    <field name="analytic_account_id" required="1"/>
+                                    <field name="journal_id" required="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record> 
+
+        <!--  basal drainage main menu -->
+        <menuitem id="basal_drainage"
+                  parent="dzc1_menu"
+                  name="Basal Drainage"
+                  action="basal_drainage_action"
+                  sequence="5"/>
+
+        <!--  basal drainage planning menu -->
+        <menuitem id="basal_drainage_planning"
+                  parent="basal_drainage"
+                  name="Basal Drainage Planning"
+                  action="basal_drainage_action"
+                  sequence="1"/>
+
+        <!--  basal drainage order menu -->
+        <menuitem id="basal_drainage_order"
+                  parent="basal_drainage"
+                  name="Basal Drainage Order"
+                  action="basal_drainage_order_action"/>
+                  
+        <!--  basal drainage program menu  -->
+        <menuitem id="basal_drainage_program_menu"
+                  parent="configuration_dzc1"
+                  name="Basal Drainage Programs"
+                  action="basal_drainage_program_action"/> 
+    </data>
+</odoo>

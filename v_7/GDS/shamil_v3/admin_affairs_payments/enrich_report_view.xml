@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+
+	<data>
+
+<!-- Enrich Report View Report -->
+
+
+<report  header="False" auto="False"  menu ="False" id="enrich_report_view" model="payment.enrich" name="enrich_report" string="Enrich Payment" rml="admin_affairs_payments/report/enrich_report.rml"/>
+
+<!-- Enrich receive Report -->
+    <report auto="False" menu="False" id="enrich_receive_notification" model="payment.enrich.lines" 
+       name="enrich_receive_notification.report" rml="addons/admin_affairs_payments/report/enrich_receive_notification.rml" 
+       string="Enrich Receive Notification" />
+
+    <record model="ir.ui.view" id="view_enrich_receive_notification">
+            <field name="name">enrich_receive_notification</field>
+            <field name="type">form</field>
+            <field name="model">payment.enrich.lines</field>
+            <field name="inherit_id" ref="view_payment_enrich_lines_form"/>
+            <field name="arch" type="xml">
+            <button name="ir_action_cancel_draft" position="after">
+                <button name="%(enrich_receive_notification)d" colspan="2" string="Print Receive Notification" states="done" type="action" icon="gtk-print"/>
+            </button>
+            </field>  
+    </record>
+
+
+		
+	</data>
+</openerp>

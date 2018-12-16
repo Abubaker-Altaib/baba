@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="view_account_curency_close" model="ir.ui.view">
+			<field name="name">account.curency.close.form</field>
+			<field name="model">account.curency.close</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Generate Fiscal Year Exchange Adjustment Entries"
+					version="7.0">
+					<separator string="Generate Fiscal Year Exchange Adjustment Entries"
+						colspan="4" />
+					<label
+						string="This wizard will generate the end of year journal entries of selected fiscal year, Which adjust the exchange differences through the year."
+						colspan="4" />
+					<newline />
+					<group col="6">
+						<field name="company_id" invisible='1' />
+						<field name="fiscalyear_id" options='{"no_open":True}'
+							domain="[('state','=','draft')]" on_change="onchange_fiscalyear_id(fiscalyear_id,company_id)" />
+						<field name="account_id"
+							domain="[('type','=','other'),('company_id','=',company_id)]" />
+						<field name="journal_id" domain="[('company_id','=',company_id)]" />
+						<field name="period_id" domain="[('fiscalyear_id','=',fiscalyear_id)]" />
+						<newline />
+						<field name="report_name" colspan="4" />
+					</group>
+					<footer>
+						<button colspan="2" string="Create" name="data_save" type="object"
+							class="oe_highlight" />
+						or
+						<button colspan="2" special="cancel" string="Cancel" class="oe_link" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_account_curency_close" model="ir.actions.act_window">
+			<field name="name">Curency Close</field>
+			<field name="res_model">account.curency.close</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_account_curency_close" />
+			<field name="target">new</field>
+		</record>
+
+		<menuitem action="action_account_curency_close" id="menu_wizard_curency_close" groups="base.group_multi_currency"
+			parent="account.menu_account_end_year_treatments" />
+
+	</data>
+</openerp>

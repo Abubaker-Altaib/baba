@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_recruitment_plan_form" model="ir.ui.view">
+            <field name="name">Recruitment Plans</field>
+            <field name="model">hr.recruitment.plan</field>
+            <field name="arch" type="xml">
+                <form string="Recruitment Plans">
+                    <header>
+                        <button string="Confirm" name="action_confirm" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Confirm" name="action_hr_confirm" states="hr" type="object" class="oe_highlight"/>
+                        <button string="Confirm" name="action_finance_confirm" states="finance" type="object" class="oe_highlight"/>
+                        <button string="Approve" name="action_done" states="executive" type="object" class="oe_highlight"/>
+                        <button string="Refuse" name="action_refused" states="hr,finance,executive" type="object" />
+                        <button string="To Edit" name="set_to_draft" states="refused" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,hr,finance,executive,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="Plan's Name"/>
+                            </h1>
+                        </div>
+                        <group col="4">
+                            <field name="year" required="1"/>
+                            <field name="date"/>
+                            <field name="plan_type"/>
+                            <field name="need_start_date"/>
+                            <field name="budget"/>
+                            <field name="need_end_date"/>
+                        </group>
+                        <notebook>
+                            <page string ="Needs">
+                                <field name="need_ids" context="{'default_state':'approve'}">
+                                    <tree string="Needs"  editable="bottom">
+                                        <field name="job_id" required="1" />
+                                        <field name="department_id" required="1"/>
+                                        <field name="need" sum="Total Needs"/>
+                                        <field name="approve" sum="Total Approve"/>
+                                        <field name="salary" required="1"/>
+                                        <field name="month"/>
+                                        <field name="budget" />
+                                        <field name="state" invisible= "1"/>
+                                    </tree>
+                                </field>
+                                <field name="notes" colspan="4" placeholder="Add note..." nolabel="1"/>
+                            </page>
+                           <page string="Needs By Jobs"  attrs="{'invisible':[('plan_type','=','em_plan')]}">
+                                <field name="group_need_ids" nolabel="1" readonly="1">
+                                    <tree>
+                                        <field name="job_id" />
+                                        <field name="need" sum="Total Needs"/>
+                                        <field name="approve" sum="Total Approve"/>
+                                        <field name="budget" />
+                                        <field name="state" invisible= "1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_recruitment_plan_tree" model="ir.ui.view">
+            <field name="name">recruitment Plan</field>
+            <field name="model">hr.recruitment.plan</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state=='draft'" decoration-danger="state=='refused'" decoration-muted="state=='done'" string="Recruitment Plans">
+                    <field name="name"/>
+                    <field name="year"/>
+                    <field name="budget"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_recruitment_plan_action" model="ir.actions.act_window">
+            <field name="name">Recruitment Plans</field>
+            <field name="res_model">hr.recruitment.plan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+       <menuitem
+            name="Recruitment Needs"
+            id="menu_recruitment_needs"
+            parent="hr_recruitment.menu_hr_recruitment_root"
+            sequence="2"
+            groups="hr_recruitment.group_hr_recruitment_user,base_custom.group_unit_manager"/>
+        <menuitem
+            name="Recruitment Plans"
+            id="menu_recruitment_plan"
+            action="hr_recruitment_plan_action"
+            parent="menu_recruitment_needs"
+            sequence="1"
+            groups="hr_recruitment.group_hr_recruitment_user"/>
+        <record id="recruitment_needs_form" model="ir.ui.view">
+            <field name="name">Recruitment Needs</field>
+            <field name="model">hr.recruitment.needs</field>
+            <field name="arch" type="xml">
+                <form string="Recruitment Needs">
+                    <header>
+                        <button string="Confirm" name="action_confirm" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" name="action_approve" states="confirm" type="object" class="oe_highlight"/>
+                        <button string="Refuse" name="action_refused" states="confirm,approve" type="object" />
+                        <button string="To Edit" name="set_to_draft" states="refused,confirm,approve" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="need_type" widget="radio"/>
+                                <field name="department_id" options="{'no_create': True, 'no_open': True}" required="1"/>
+                                <field name="job_id"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    attrs="{'required':[('need_type','=','exist')], 'invisible': [('state', '=', 'draft'),('need_type', '=', 'new')]}"/>
+                                <field name="job_name"
+                                    attrs="{'required':[('need_type','=','new')] , 'invisible': [('need_type', '=', 'exist')]}"/>
+                                <field name="need"/>
+                                <field name="approve" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="plan_id" domain="[('state','=','draft')]"
+                                   options="{'no_create': True, 'no_open': True}" required="1"/>
+                            </group>
+                        </group>
+                        <group string ="Job Details" attrs="{'invisible':[('need_type','=','exist')]}">
+                            <field name="description" attrs="{'required':[('need_type','=','new')]}"/>
+                            <field name="goals" attrs="{'required':[('need_type','=','new')]}"/>
+                            <field name="missions" attrs="{'required':[('need_type','=','new')]}"/>
+                            <field name="duty" attrs="{'required':[('need_type','=','new')]}"/>
+                        </group>
+                        <field name="notes" colspan="4" placeholder="Add note..." nolabel="1" height="50"/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+               </form>
+           </field>
+       </record>
+       <record id="recruitment_needs_view_tree" model="ir.ui.view">
+           <field name="name">Recruitment Needs</field>
+           <field name="model">hr.recruitment.needs</field>
+           <field name="arch" type="xml">
+               <tree decoration-info="state=='draft'" decoration-danger="state=='refused'" decoration-muted="state=='done'" string="Recruitment Needs">
+                   <field name="plan_id"/>
+                   <field name="department_id"/>
+                   <field name="job_id"/>
+                   <field name="need_type"/>
+                   <field name="need"/>
+                   <field name="state"/>
+               </tree>
+           </field>
+        </record>
+        <record id="view_need_filter" model="ir.ui.view">
+            <field name="name">hr.recruitment.needs.search</field>
+            <field name="model">hr.recruitment.needs</field>
+            <field name="arch" type="xml">
+                <search string="Recruitment Needs By Jobs">
+                    <field name="plan_id"/>
+                    <field name="department_id"/>
+                    <field name="state"/>
+                    <field name="job_id" />
+                    <group expand="0" string="Group By">
+                        <filter name="group_plan" string="Plan" domain="[]" context="{'group_by':'plan_id'}"/>
+                        <filter name="group_job" string="Job" domain="[]" context="{'group_by':'job_id'}"/>
+                        <filter name="group_department" string="Department" domain="[]" context="{'group_by':'department_id'}"/>
+                    </group>
+                </search>
+             </field>
+         </record>
+        <record id="recruitment_needs_action" model="ir.actions.act_window">
+            <field name="name">Recruitment Needs</field>
+            <field name="res_model">hr.recruitment.needs</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem
+            name="Recruitment Needs"
+            id="menu_job_needs"
+            action="recruitment_needs_action"
+            parent="menu_recruitment_needs"
+            sequence="2"
+            groups="hr_recruitment.group_hr_recruitment_user,base_custom.group_unit_manager"/>
+
+       <record id="recruitment_group_need_form" model="ir.ui.view">
+           <field name="name">Recruitment Needs By Jobs</field>
+           <field name="model">hr.recruitment.needs.grouping</field>
+           <field name="arch" type="xml">
+               <form string="Recruitment Needs By Jobs">
+                    <header>
+                        <button string="Confirm" name="action_confirm" states="draft" type="object" class="oe_highlight"/>
+                        <button string="Approve" name="action_approve" states="confirm" type="object" class="oe_highlight"/>
+                        <button string="Refuse" name="action_refused" states="confirm,approve" type="object" />
+                        <button string="To Edit" name="set_to_draft" states="refused,confirm,approve" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,approve"/>
+                    </header>
+                   <sheet>
+                        <group>
+                            <group>
+                                <field name="job_id" domain="[('state','=','approved')]"
+                                required="1" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="plan_id" domain="[('state','=','draft')]"
+                                required="1" options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="need"/>
+                                <field name="approve"/>
+                            </group>
+                        </group>
+                        <label string="Needs"/>
+                        <field name="needs_ids" nolabel="1" context="{'default_plan_id': plan_id, 'default_job_id': job_id}">
+                           <tree editable="top">
+                               <field name="department_id"/>
+                               <field name="job_id" invisible="1"/>
+                               <field name="plan_id" invisible="1" />
+                               <field name="need" sum="Total Needs"/>
+                               <field name="approve" sum="Total Approve"/>
+                               <field name="state"  invisible="1"/>
+                           </tree>
+                        </field>
+                        <field name="notes" colspan="4" placeholder="Add note..." nolabel="1" height="50"/>
+                    </sheet>
+              </form>
+          </field>
+      </record>
+              <record model="ir.ui.view" id="hr_needs_grouping_kanban">
+            <field name="name">hr.recruitment.needs.grouping.kanban</field>
+            <field name="model">hr.recruitment.needs.grouping</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="job_id"/>
+                    <field name="need"/>
+                    <field name="approve"/>
+                    <field name="plan_id"/>
+                    <field name="needs_ids"/>
+                    <field name="state"/>
+
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_global_click">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title"><t t-esc="record.job_id.value"/></strong>
+                                    </div>
+                                    <span class="badge"><strong>Need :</strong><t t-esc="record.need.value"/></span>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span><t t-esc="record.plan_id.value"/></span>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span class="badge"><strong>Approve :</strong><t t-esc="record.approve.value"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+      <record id="recruitment_group_need_view_tree" model="ir.ui.view">
+          <field name="name">Recruitment Needs By Jobs</field>
+          <field name="model">hr.recruitment.needs.grouping</field>
+          <field name="arch" type="xml">
+              <tree decoration-info="state=='draft'" decoration-danger="state=='refused'" decoration-muted="state=='done'" string="Recruitment Needs By Jobs">
+                  <field name="job_id"/>
+                  <field name="plan_id"/>
+                  <field name="need"/>
+                  <field name="approve"/>
+                  <field name="state"/>
+              </tree>
+          </field>
+      </record>
+      <record id="view_group_need_filter" model="ir.ui.view">
+            <field name="name">hr.recruitment.needs.grouping.search</field>
+            <field name="model">hr.recruitment.needs.grouping</field>
+            <field name="arch" type="xml">
+                <search string="Recruitment Needs By Jobs">
+                    <field name="plan_id"/>
+                    <field name="state"/>
+                    <field name="job_id" />
+                    <group expand="0" string="Group By">
+                        <filter name="group_plan" string="Plan" domain="[]" context="{'group_by':'plan_id'}"/>
+                        <filter name="group_job" string="Job" domain="[]" context="{'group_by':'job_id'}"/>
+                    </group>
+                </search>
+             </field>
+         </record>
+       <record id="recruitment_group_need_action" model="ir.actions.act_window">
+           <field name="name">Recruitment Needs By Jobs</field>
+           <field name="res_model">hr.recruitment.needs.grouping</field>
+           <field name="view_type">form</field>
+           <field name="domain">[]</field>
+           <field name="view_mode">kanban,tree,form</field>
+       </record>
+       <menuitem
+            name="Recruitment Needs By Jobs"
+            id="menu_group_need"
+            action="recruitment_group_need_action"
+            parent="menu_recruitment_needs"
+            sequence="12"
+            groups="hr_recruitment.group_hr_recruitment_user"/>
+        <!-- Inherited form view of hr applicant -->
+        <record model="ir.ui.view" id="hr_job_applications_form">
+            <field name="name">hr applications inherit</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='source_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='reference']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_name']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='categ_ids']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//label[@for='categ_ids']" position="attributes">
+                   <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//label[@for='salary_expected']" position="before">
+                   <field name="last_salary"/>
+                </xpath>
+                <xpath expr="//label[@for='partner_name']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="replace">
+                   <div class="oe_title">
+                    <h1><field name="partner_name" required='True'/></h1>
+                </div>
+                </xpath>
+                <xpath expr="//field[@name='type_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='availability']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//group/group[2]" position="after">
+                    <group string="Academic Info">
+                        <field name="type_id" placeholder="Degree"/>
+                        <field name="institute"/>
+                        <field name="qualified_year"/>
+                        <field name="score" />
+                    </group>
+                </xpath>
+                 <xpath expr="//group/group[1]" position="replace">
+                    <group>
+                         <field name="email_from" widget="email"/>
+                         <field name="partner_phone"/>
+                         <field name="partner_mobile"/>
+                         <field name="address"/>
+                     </group>
+                 </xpath>
+                 <xpath expr="//group/group[2]" position="replace">
+                    <group >
+                         <field name="gender"/>
+                         <field name="country_id"/>
+                         <field name="date_of_Birth"/>
+                         <field name="marital"/>
+                     </group>
+                 </xpath>
+                 <xpath expr="//group/group[5]" position="after">
+                    <group>
+                        <separator string="" />
+                        <separator string="" />
+                        <separator string="" />
+                        <separator string="" />
+                        <field name="user_id"/>
+                        <field name="medium_id" groups="base.group_no_one" />
+                        <field name="priority" widget="priority"/>
+                     </group>
+                 </xpath>
+                <xpath expr="//field[@name='department_id']" position="after">
+                    <field name="type_of_target"/>
+                    <field name="general_experience"/>
+                    <field name="specialize_experience"/>
+                    <field name="Official_time"/>
+                    <field name="availability"/>
+
+                </xpath>
+                <xpath expr="//group" position="after">
+                    <separator string="Application Skills"/>
+                    <field name="skills_ids"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_hr_job_kanban_inherit" model="ir.ui.view">
+            <field name="name">hr.job.kanban</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr_recruitment.view_hr_job_kanban" />
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='documents']" position="inside">
+                   <a name="%(hr_custom.cancel_job_wiz_action)d" type="action">Job Cancel</a>
+                   <a name="%(hr_custom.merge_job_wiz_action)d" type="action">Merge Job</a>
+                   <a name="%(hr_custom.transfer_job_wiz_action)d" type="action">Transfer Job</a>
+                </xpath>
+            </field>
+        </record>
+        <menuitem
+            parent="hr_recruitment.menu_hr_recruitment_root"
+            id="hr_recruitment.menu_hr_job_position"
+            action="hr_recruitment.action_hr_job"
+            sequence="1"
+            groups="hr_recruitment.group_hr_recruitment_user"/>
+        <menuitem
+            name="Applications"
+            parent="hr_recruitment.menu_hr_recruitment_root"
+            id="hr_recruitment.menu_crm_case_categ0_act_job"
+            sequence="2"
+            groups="hr_recruitment.group_hr_recruitment_user"/>
+        <menuitem
+            name="All Applications"
+            parent="hr_recruitment.menu_crm_case_categ0_act_job"
+            id="hr_recruitment.menu_crm_case_categ_all_app"
+            action="hr_recruitment.crm_case_categ0_act_job"
+            sequence="2"
+            groups="hr_recruitment.group_hr_recruitment_user"/>
+        <menuitem id="hr_recruitment.hr_applicant_nmenu_activity"
+            name="Next Activities"
+            parent="hr_recruitment.menu_crm_case_categ0_act_job"
+            action="hr_recruitment.hr_applicant_action_activity"
+            sequence="20"
+            groups="hr_recruitment.group_hr_recruitment_user"/>
+        <menuitem
+            name="Resumes and Letters"
+            parent="hr_recruitment.menu_hr_recruitment_root"
+            id="hr_recruitment.menu_crm_case_categ0_act_job02"
+            action="hr_recruitment.hr_applicant_resumes"
+            sequence="3"
+            groups="hr_recruitment.group_hr_recruitment_user"/>
+        <menuitem
+            name="Reports"
+            id="hr_recruitment.report_hr_recruitment"
+            parent="hr_recruitment.menu_hr_recruitment_root"
+            sequence="99"
+            action="hr_recruitment.hr_applicant_action_analysis"
+            groups="hr_recruitment.group_hr_recruitment_user"/>
+        <menuitem
+            id="hr_recruitment.menu_hr_recruitment_configuration"
+            name="Configuration"
+            parent="hr_recruitment.menu_hr_recruitment_root"
+            sequence="100"
+            groups="hr_recruitment.group_hr_recruitment_manager"/>
+        <menuitem
+            id="hr_recruitment.menu_hr_recruitment_global_settings"
+            name="Settings"
+            parent="hr_recruitment.menu_hr_recruitment_configuration"
+            sequence="0"
+            action="hr_recruitment.action_hr_recruitment_configuration"
+            groups="base.group_system,hr_recruitment.group_hr_recruitment_manager"/>
+        <menuitem
+            id="hr_recruitment.menu_hr_recruitment_stage"
+            name="Stages"
+            parent="hr_recruitment.menu_hr_recruitment_configuration"
+            action="hr_recruitment.hr_recruitment_stage_act"
+            groups="base.group_no_one,hr_recruitment.group_hr_recruitment_manager"
+            sequence="1"/>
+        <menuitem
+            id="hr_recruitment.hr_applicant_category_menu"
+            parent="hr_recruitment.menu_hr_recruitment_configuration"
+            action="hr_recruitment.hr_applicant_category_action"
+            sequence="2"
+            groups="base.group_no_one,hr_recruitment.group_hr_recruitment_manager"/>
+        <menuitem
+            id="hr_recruitment.menu_hr_recruitment_degree"
+            name="Degrees"
+            parent="hr_recruitment.menu_hr_recruitment_configuration"
+            action="hr_recruitment.hr_recruitment_degree_action"
+            sequence="5"
+            groups="base.group_no_one,hr_recruitment.group_hr_recruitment_manager"/>
+        <menuitem
+            parent="hr_recruitment.menu_hr_recruitment_configuration"
+            id="hr_recruitment.menu_hr_job_position_config"
+            action="hr_recruitment.action_hr_job_config"
+            sequence="10"
+            groups="hr_recruitment.group_hr_recruitment_manager"/>
+        <menuitem
+            id="hr_recruitment.menu_hr_recruitment_source"
+            parent="hr_recruitment.menu_hr_recruitment_configuration"
+            action="hr_recruitment.hr_recruitment_source_action"
+            groups="base.group_no_one,hr_recruitment.group_hr_recruitment_manager"
+            sequence="10"/>
+        <menuitem
+            id="hr_recruitment.menu_hr_department"
+            name="Departments"
+            parent="hr_recruitment.menu_hr_recruitment_configuration"
+            action="hr_recruitment.action_hr_department"
+            groups="hr_recruitment.group_hr_recruitment_manager"/>
+    </data>
+</odoo>

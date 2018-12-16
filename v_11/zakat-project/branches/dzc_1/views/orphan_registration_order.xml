@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <data>
+  <!-- orgnization support order form -->
+    <record id="orphan_registration_order_form" model="ir.ui.view">
+      <field name="name">Orphan Registration Order</field>
+      <field name="model">orphan.registration.order</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml" >
+        <form >
+          <header>
+              <button name="action_confirm" string="Confirm" states="draft" type="object"
+                    class="oe_highlight"/>
+              <button name="action_approve" string="Aprove" states="confirmed" type="object"
+                    class="oe_highlight"/>
+              <button name="action_done" string="Done" states="approval" type="object"
+                    class="oe_highlight"/>
+              <button name="action_cancle" states="draft,confirmed,approval" string="Cancel" type="object"
+                    class="oe_highlight"/>
+              <button name="action_set_draft" states="cancel" string="Set Draft" type="object"
+                    class="oe_highlight"/>
+              <field name="state" statusbar_visible="draft,confirmed,approval,done" widget="statusbar"/>
+          </header>
+          <sheet>
+            <group>
+                <group>
+                    <field name="name" readonly="1"/>
+
+                    <field name="subject_name" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+
+                    <field name="company_id" readonly="1" attrs="{'readonly':[('state','=','done')]}"/>
+                </group>
+                <group>
+                    <field name="date" required="1" readonly="1"/>
+
+                    <field name="local_state_id" required="1" attrs="{'readonly':[('state','=','done')]}" domain="[('company_id','=',company_id)]"/>
+                    <field name="address_id" required="1"/>
+                </group>
+            </group>
+
+          <notebook>
+            <page string="Fuqaraa">
+                <field name="fageer_ids" attrs="{'readonly':[('state' , 'in' , ('done' , 'cancel'))]}">
+                      <tree editable="bottom" >
+                        <field name="name" required="1" context="{'fageer_ids':parent.fageer_ids}" domain="[('orphan','=',False),('local_state_id','=',parent.local_state_id),('case_type','=','urgent'),('state','=','done')]"/>
+                        <field name="family_ids" required="1" domain="[('relation','=','son')]"/>
+                        <field name="admin_unit_id" required="1" readonly="1"/>
+                        <field name="decision" required="1" attrs="{'required':[('parent.state' , '=' , 'confirm')] , 'column_invisible':[('parent.state' , '!=' , 'confirm')]}"/>                        
+                      </tree>
+                  </field>
+            </page>
+              <page string="Notes">
+                  <group>
+                <field name="notes" attrs="{'invisible':[('state' , '!=' , 'draft')]}" />
+            </group>
+              </page>
+          </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+ <!-- the tree -->
+    <record id="orphan_registration_order_tree" model="ir.ui.view">
+        <field name="name">Orphan Registration Order</field>
+        <field name="model">orphan.registration.order</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="subject_name"/>
+                <field name="local_state_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+ <!-- the action -->
+    <record id="orphan_registration_order_action" model="ir.actions.act_window">
+            <field name="name">Orphan Registration Order</field>
+            <field name="res_model">orphan.registration.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+    </record>
+ <!--  the menu -->
+    <menuitem id="orphan_registration_order_menu"
+        name="Orphan Registration Order"
+        parent="orphan_main_menu"
+        action="orphan_registration_order_action"
+        sequence="3"/>
+ </data>
+</odoo>

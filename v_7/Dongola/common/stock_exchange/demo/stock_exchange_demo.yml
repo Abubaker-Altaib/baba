@@ -1,0 +1,53 @@
+- 
+  Creating a Stock Journal Record
+- 
+  !record {model: stock.journal, id: stock.journal_delivery}:
+    location_id: stock.stock_location_customers
+    name: Delivery Orders
+- 
+  Creating a Department Record
+- 
+  !record {model: hr.department, id: hr.dep_administration}:
+    manager_id: base.user_root
+    name: Administration  
+- 
+  Creating a Exchange Order Record
+- 
+  !record {model: exchange.order, id: exchange_order_rec0}:
+    department_id: hr.dep_administration 
+    location_dest_id: stock.stock_location_components
+
+    name: /
+    order_line:
+      - approved_qty: 1.0
+        name: '[1] Ice Cream'
+        price_unit: 0.0
+        product_id: stock.product_icecream
+        product_qty: 1.0
+        product_uom: product.product_uom_kgm
+      - approved_qty: 1.0
+        name: '[CPU2] High speed processor config'
+        price_unit: 300.0
+        product_id: product.product_product_cpu2
+        product_qty: 1.0
+        product_uom: product.product_uom_unit
+    stock_journal_id: stock.journal_delivery
+    ttype: other
+    
+- 
+  Creating a Store Order Record
+- 
+  !record {model: exchange.order, id: exchange_order_rec1}:
+    department_id: hr.dep_administration 
+    location_dest_id: stock.stock_location_components
+    location_id: stock_account_internal.location_transit
+    categ_id:  product.cat0
+    name: /
+    order_line:
+      - approved_qty: 1.0
+        name: '[1] Ice Cream'
+        price_unit: 5.0
+        product_id: stock.product_icecream
+        product_qty: 1.0
+        product_uom: product.product_uom_kgm
+    ttype: store

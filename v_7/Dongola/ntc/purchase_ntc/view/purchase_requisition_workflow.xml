@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="workflow.activity" id="purchase_wafi.act_confirm_dept">
+            <field name="wkf_id" ref="purchase_wafi.wkf_purchase_requisition"/>
+            <field name="name">approve</field>
+            <field name="kind">function</field>
+            <field name="action">tender_approve()</field>
+        </record>
+
+
+        <record model="workflow.activity" id="act_HRM_approve1">
+            <field name="wkf_id" ref="purchase_wafi.wkf_purchase_requisition"/>
+            <field name="name">HRM_approve1</field>
+            <field name="kind">function</field>
+            <field name="action">tender_HRM_approve1()</field>
+        </record>
+
+        <record model="workflow.activity" id="act_commite">
+            <field name="wkf_id" ref="purchase_wafi.wkf_purchase_requisition"/>
+            <field name="name">commite_confirm</field>
+            <field name="kind">function</field>
+            <field name="action">commite_confirm()</field>
+        </record>
+        
+        <record model="workflow.activity" id="purchase_wafi.act_approve">
+            <field name="wkf_id" ref="purchase_wafi.wkf_purchase_requisition"/>
+            <field name="name">GM_approve1</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'GM_approve1'})</field>
+        </record>
+
+        <record model="workflow.activity" id="act_HRM_approve2">
+            <field name="wkf_id" ref="purchase_wafi.wkf_purchase_requisition"/>
+            <field name="name">HRM_approve2</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'HRM_approve2'})</field>
+        </record>
+
+        <record model="workflow.activity" id="act_approve2">
+            <field name="wkf_id" ref="purchase_wafi.wkf_purchase_requisition"/>
+            <field name="name">GM_approve2</field>
+            <field name="kind">function</field>
+            <field name="action">tender_GM_approve2()</field>
+        </record>
+        <!--transition-->
+        <record id="purchase_wafi.t3" model="workflow.transition">
+            <field name="act_from" ref="purchase_wafi.act_confirm_dept"/>
+            <field name="act_to" ref="act_HRM_approve1"/>
+            <field name="signal">tender_HRM_approve1</field>
+        </record>
+
+        <record id="t12" model="workflow.transition">
+            <field name="act_from" ref="act_HRM_approve1"/>
+            <field name="act_to" ref="act_approve2"/>
+            <field name="signal">tender_GM_approve1</field>
+        </record>
+
+        <record id="t13" model="workflow.transition">
+            <field name="act_from" ref="act_HRM_approve1"/>
+            <field name="act_to" ref="act_commite"/>
+            <field name="signal">tender_commite</field>
+        </record>
+
+        <record id="t14" model="workflow.transition">
+            <field name="act_from" ref="act_commite"/>
+            <field name="act_to" ref="purchase_wafi.act_progress"/>
+            <field name="signal">tender_in_progress</field>
+        </record>
+
+        <record id="t15" model="workflow.transition">
+            <field name="act_from" ref="purchase_wafi.act_budget_approve"/>
+            <field name="act_to" ref="act_HRM_approve2"/>
+            <field name="condition">not test_roof()</field>
+        </record>
+        <record id="t16" model="workflow.transition">
+            <field name="act_from" ref="purchase_wafi.act_budget_approve"/>
+            <field name="act_to" ref="act_approve2"/>
+            <field name="condition">test_roof()</field>
+        </record>
+        
+        <record id="t17" model="workflow.transition">
+            <field name="act_from" ref="act_HRM_approve2"/>
+            <field name="act_to" ref="act_commite"/>
+            <field name="signal">tender_HRM_approve2</field>
+        </record>
+
+        <record id="t18" model="workflow.transition">
+            <field name="act_from" ref="act_approve2"/>
+            <field name="act_to" ref="act_commite"/>
+            <field name="signal">tender_approve2</field>
+        </record>
+
+        <record id="purchase_wafi.t5" model="workflow.transition">
+            <field name="act_from" ref="act_commite"/>
+            <field name="act_to" ref="purchase_wafi.act_done"/>
+            <field name="signal">tender_done</field>
+        </record>
+        
+        <record id="purchase_wafi.19" model="workflow.transition">
+            <field name="act_from" ref="purchase_wafi.act_draft"/>
+            <field name="act_to" ref="purchase_wafi.act_confirm_dept"/>
+            <field name="signal">draft_to_approve</field>
+        </record>
+
+        <record id="trans_purchase_cancel" model="workflow.transition">
+            <field name="act_from" ref="purchase_wafi.act_progress"/>
+            <field name="act_to" ref="purchase_wafi.act_cancel"/>
+            <field name="signal">tender_cancel</field>
+        </record>
+    </data>
+   
+</openerp>
+
+       
+    

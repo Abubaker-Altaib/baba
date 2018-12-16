@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+		<!-- Occasion Services Record Form,Tree View & Action -->
+
+		<record id="id_occasion_services_view_form" model="ir.ui.view">
+			<field name="name">occasion.services.form</field>
+			<field name="model">occasion.services</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Occasion Services" version= "7.0">
+<header>
+
+								<button name="dept_manager" states="draft" string="Confirm"
+									confirm="Are you sure you want to confirm this Record?" groups="base.group_media_section_manager"/>
+
+								<button name="dept_manager_outside" states="admin_outside" string="Department of financial and administrative affairs"
+									confirm="Are you sure you want to confirm this Record?" groups="base.group_media_section_manager"/>
+
+
+								<button name="admin_outside_process" states="dept_manager_outside" string="Department Manager To confirm"
+									confirm="Are you sure you want to confirm this Record?" groups="base.group_media_section_manager"/>
+
+
+								<button name="officer" states="admin_outside_process" string="Department of financial and administrative affairs"
+									confirm="Are you sure you want to confirm this Record?" groups="base.group_media_section_manager"/>
+
+
+
+
+								<button name="genral_dept" states="dept_manager" string="Department Manager"
+									confirm="Are you sure you want to confirm this Record?" groups="base.group_media_section_manager"/>
+								<button name="gm" states="genral_dept" string="Genral Department Manager"
+									confirm="Are you sure you want to confirm this Record?" groups="base.group_media_section_manager"/>
+								<button name="process" states="gm" string="GM Confirm"
+									confirm="Are you sure you want to confirm this Record?" groups="base.group_media_section_manager"/>
+								<button name="confirmed" states="process" string="Admin Affaris Genral Manager"
+									confirm="Are you sure you want to confirm this Record?" groups="base.group_media_section_manager"/>
+								<button name="service" states="confirmed" string="Admin Affaris Manager"
+									confirm="Are you sure you want to confirm this Record?" groups="base.group_media_section_manager"/>
+								<button name="officer" states="service" string="Service Manager"
+									confirm="Are you sure you want to Process this Record?" groups="base.group_admin_affairs_manager"/>
+
+								<button name="done" states="officer" string="Service Officer To process"
+									confirm="Are you sure you want to Process this Record?" groups="base.group_admin_affairs_general_manager"/>
+								<button name="cancel" states="draft,confirmed,process,dept_manager,genral_dept,gm,service,admin_outside,dept_manager_outside,admin_outside_process,officer" string="Cancel Request"
+									icon="gtk-cancel" confirm="Are you sure you want to Cancel this Record?" />
+								<button name="ir_action_cancel_draft" states="cancel"
+									string="Set to Draft" type="object" icon="gtk-convert" />
+								<field name="state" widget="statusbar" statusbar_visible="draft,done,cancel" />
+							</header>
+							<sheet>
+
+					<group col="4" >
+						<field name="name" colspan="2" />
+						<field name="date_of_request" colspan="2"/>
+						<!--field name="desc" colspan="6"/-->
+						<field name="execute_date" colspan="2"/>
+						<field name="occasion_type_id" colspan="2"/>
+						<!--field name="executing_agency_id" colspan="2"/-->
+						<field name="department_id" colspan="2"/>
+						<field name="multi_service" colspan="2" required="1"/>
+						<field name="no_day" colspan="2" attrs="{'invisible':[('multi_service','!=','need_hospitality')],'required':[('multi_service','==','need_hospitality')]}"/>
+						<field name="hosptality_no" colspan="2" attrs="{'invisible':[('multi_service','!=','need_hospitality')]}"/>
+						<field name="partners_cost" colspan="2"/>
+						<field name="user_id" colspan="2"/>
+						<field name="company_id" colspan="2"/>
+
+					</group>
+					<notebook colspan="4">
+						<page string="service" attrs="{'invisible':[('multi_service','!=','need_hospitality')],'required':[('multi_service','==','need_hospitality')]}">
+								<field colspan="4" name="occasion_service_order_lines" nolabel="1" required="1"
+									 >
+									<tree editable="bottom" string="Items">
+										<field name="occasion_service_type"  />
+										<field name="occasion_service_qty" />
+										<field name="occasion_service_sort" />
+									</tree>
+									<form string="Items">
+										<field name="occasion_service_type" required="1"/>
+										<field name="occasion_service_qty" required="1"/>
+										<field name="occasion_service_sort" required="1"/>
+									</form>
+								</field>
+						</page>
+						<page string="Partners" attrs="{'invisible':[('state','not in',('officer','done'))]}">
+								<field name="occasion_partners" colspan="4" nolabel="1" >
+									<tree editable="bottom" string="Items">
+										<field name="name"  />
+										<field name="partners_id" />
+										<field name="occasion_category" />
+										<field name="cost" />
+									</tree>
+									<form string="Items">
+										<field name="name" colspan="6"/>
+										<field name="partners_id" />
+										<field name="occasion_category" />
+										<field name="cost" required="1"/>
+									</form>
+								</field>
+						</page>
+						<page string="Account" attrs="{'invisible':[('state','!=','done')]}">
+							<field name="account_voucher_ids" colspan="4" nolabel="1" />
+						</page>
+                                                <page string="Description">
+							<field name="desc" colspan="4" nolabel="1" />
+						</page>
+						<page string="Notes">
+							<field name="notes" colspan="4" nolabel="1" />
+						</page>
+					</notebook>
+							<!--group col="15" colspan="6"-->
+
+				</sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="id_occasion_services_view_tree" model="ir.ui.view">
+			<field name="name">occasion.services.tree</field>
+			<field name="model">occasion.services</field>
+			<field name="arch" type="xml">
+				<tree string="Occasion Services">
+					<field name="name"/>
+					<field name="date_of_request" colspan="2"/>
+					<field name="execute_date" colspan="2"/>
+					<field name="occasion_type_id" colspan="2"/>
+					<field name="department_id" colspan="2"/>
+					<!--field name="executing_agency_id" colspan="2"/-->
+					<!--field name="total_amount" colspan="2"/-->
+					<field name="state"/>
+					<field name="user_id"/>
+				</tree>
+			</field>
+		</record>
+
+
+
+		<!-- occasion services Search Filter -->
+
+		<record id="view_occasion_services_filter" model="ir.ui.view">
+			<field name="name">occasion.services.list.select</field>
+			<field name="model">occasion.services</field>
+			<field name="arch" type="xml">
+				<search string="Search for Occasion Services.">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="department_id" select="1" widget="selection"/>
+					<separator orientation="vertical" />
+					<field name="occasion_type_id" select="1" widget="selection"/>
+					<separator orientation="vertical" />
+					<field name="date_of_request" select="1" />
+					<separator orientation="vertical" />
+					<field name="state" select="1" />
+
+
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Responsible" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'user_id'}" />
+						<filter string="Date of the Request" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date_of_request'}" />
+						<filter string="Department" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'department_id'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+			
+			
+
+					</group>
+				</search>
+			</field>
+		</record>
+
+
+
+
+		<!-- Occasion Services Type  Record Form,Tree View & Action -->
+
+		<record id="id_occasion_services_type_view_form" model="ir.ui.view">
+			<field name="name">occasion.services.type.form</field>
+			<field name="model">occasion.services.type</field>
+			<field name="arch" type="xml">
+				<form string="Occasion Services Type" version="7.0">
+					<sheet>
+						<group col="4" colspan="2">
+							<field name="code" colspan="1" />
+							<field name="name" colspan="1" />
+						</group >
+					</sheet>
+	
+				</form>
+			</field>
+		</record>
+
+
+		<record id="id_occasion_services_type_view_tree" model="ir.ui.view">
+			<field name="name">occasion.services.type.tree</field>
+			<field name="model">occasion.services.type</field>
+			<field name="arch" type="xml">
+				<tree string="Occasion Services Type">
+					<field name="code" />
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+
+
+
+		<!-- occasion services type  Search Filter -->
+
+		<record id="view_occasion_services_type_filter" model="ir.ui.view">
+			<field name="name">occasion.services.type.list.select</field>
+			<field name="model">occasion.services.type</field>
+			<field name="arch" type="xml">
+				<search string="Search for Occasion Record">
+					<field name="name" select="1" />
+				</search>
+			</field>
+		</record>
+
+		<!-- Occasion Category Type  Record Form,Tree View & Action -->
+
+		<record id="id_occasion_category_view_form" model="ir.ui.view">
+			<field name="name">occasion.category.form</field>
+			<field name="model">occasion.category</field>
+			<field name="arch" type="xml">
+				<form string="Occasion Category" version="7.0">
+                                        <sheet>
+                                               <group col="4" colspan="2">
+							<field name="name" colspan="4" />
+							<field name="company_id" colspan="2" />
+							<newline/>
+							<separator string="Account Information" colspan="2"/>
+							<newline/>
+							<separator string="Template properties" colspan="4"/>
+							<field name="templet_id" colspan="2" />
+					        	<field name="name_type" colspan="2" />
+							<separator string="Direct Account properties" colspan="4"/>
+							<field name="journal_id" colspan="2" />
+							<field name="account_id" colspan="2" />
+							<field name="analytic_id" colspan="2" />
+                                               </group>
+                                        </sheet>
+	
+				</form>
+			</field>
+		</record>
+
+
+		<record id="id_occasion_category_view_tree" model="ir.ui.view">
+			<field name="name">occasion.category.tree</field>
+			<field name="model">occasion.category</field>
+			<field name="arch" type="xml">
+				<tree string="Occasion Category">
+					<field name="name" />
+					<field name="company_id"/>
+				</tree>
+			</field>
+		</record>
+
+
+
+		<!-- occasion services type  Search Filter -->
+
+		<record id="view_occasion_category_filter" model="ir.ui.view">
+			<field name="name">occasion.category.list.select</field>
+			<field name="model">occasion.category</field>
+			<field name="arch" type="xml">
+				<search string="Search for Occasion Category">
+					<field name="name" select="1" />
+					<field name="company_id" select="1" />
+				</search>
+			</field>
+		</record>
+
+		<!-- Menu -->
+
+		<record id="id_occasion_services_action" model="ir.actions.act_window">
+			<field name="res_model">occasion.services</field>
+			<field name="domain">[]</field>
+		</record>
+
+		<record id="id_occasion_services_type_action" model="ir.actions.act_window">
+			<field name="res_model">occasion.services.type</field>
+			<field name="domain">[]</field>
+		</record>
+
+		<record id="id_occasion_category_action" model="ir.actions.act_window">
+			<field name="res_model">occasion.category</field>
+			<field name="domain">[]</field>
+		</record>
+
+       
+       <menuitem id="id_occasion_services" name="Occasion Services"
+			parent="id_public_relation" sequence="3" />
+
+       <menuitem id="id_occasion_services_menu" name="Occasion Services"
+			parent="id_occasion_services" action="id_occasion_services_action" />
+
+       <menuitem id="id_public_relation_configration_menu" name="Occasion Configration"
+			parent="admin_affairs.admin_affairs_configuration_menu" />
+
+
+      <menuitem id="id_occasion_services_type" name="Occasion Services Type"
+			parent="id_public_relation_configration_menu" action="id_occasion_services_type_action" />
+
+      <menuitem id="id_occasion_category" name="Occasion Category"
+			parent="id_public_relation_configration_menu" action="id_occasion_category_action" />
+
+
+
+
+
+
+	</data>
+</openerp>

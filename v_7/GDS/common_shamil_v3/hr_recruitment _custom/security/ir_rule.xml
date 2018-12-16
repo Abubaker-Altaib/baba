@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+
+        <record id="rule_employment_needs_manager" model="ir.rule">
+            <field name="name">HR employment needs manager</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employment_needs"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_manager')), (4,ref('base.group_hr_overview')), (4,ref('base.group_hr_jmanager'))]"/>
+        </record>
+        <record id="rule_employment_needs_user" model="ir.rule">
+            <field name="name">HR employment needs user</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employment_needs"/>
+            <field name="domain_force">['|',('department_id.company_id','=',False),('department_id.company_id','child_of',[user.company_id.id])]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_juser'))]"/>
+        </record>
+        <record id="rule_employment_needs_department" model="ir.rule">
+            <field name="name">HR employment needs department</field>
+            <field model="ir.model" name="model_id" ref="model_hr_employment_needs"/>
+            <field name="domain_force">['|',('department_id','=',False),('department_id','child_of',[user.context_department_id.id])]</field>
+            <field name="groups" eval="[(4,ref('base.group_department_manager'))]"/>
+        </record>
+    </data>
+</openerp>

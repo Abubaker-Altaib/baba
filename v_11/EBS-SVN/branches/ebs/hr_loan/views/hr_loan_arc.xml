@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+<!--========== hr.loan.archive==========-->
+
+        <record model="ir.ui.view" id="hr_loan_archive_form_view">
+            <field name="name">hr.loan.archive.form</field>
+            <field name="model">hr.loan.archive</field>
+            <field name="arch" type="xml">
+                <form string="Loan Archive">
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_colors="{'suspend':'red','suspend_penalty':'red'}" statusbar_visible="draft" />
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <!-- <field name="payroll_id"/> -->
+                                <!-- <field name="code" select="1"/> -->
+                                <field name="employee_id" required='1' />
+                                <field name="loan_request_id" required="1"/>
+                                <field name="loan_amount" />
+                            </group>
+                            <group>
+                                <field name="month" required="1"/>
+                                <field name="year" required="1"/>
+                                <!-- <field name="payment_type" /> -->
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_loan_archive_tree_view">
+            <field name="name">hr.loan.archive.tree</field>
+            <field name="model">hr.loan.archive</field>
+            <field name="arch" type="xml">
+                <tree string="Loan Archive" colors="blue:state == 'paid'">
+                    <!-- <field name="payroll_id"/> -->
+                    <!-- <field name="code" select="1"/> -->
+                    <field name="employee_id"/>
+                    <field name="month" select="1"/>
+                    <field name="year" select="1"/>
+                    <field name="loan_request_id" />
+                    <field name="loan_amount" />
+                    <!-- <field name="payment_type" />    -->
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+<!-- 
+        <record id="hr_loan_archive_filter" model="ir.ui.view">
+            <field name="name">hr.loan.archive.filter </field>
+            <field name="model">hr.loan.archive</field>
+            <field name="arch" type="xml">
+                <search string="payroll loan archive">
+                    <group col='8' colspan='4'>
+                        <field name="loan_id" widget="selection" />	
+                        <field name="year" />		
+                        <field name="month" />		
+                        <field name="loan_amount" />		
+                        <field name="employee_id" widget="selection" />
+                    </group>
+                </search>
+            </field>
+        </record>
+ -->
+ <!-- 
+        <record id="hr_loan_archive_graph" model="ir.ui.view">
+            <field name="name">hr.loan.archive.graph</field>
+            <field name="model">hr.loan.archive</field>
+            <field name="arch" type="xml">
+                <graph string="loans" type="bar">
+                    <field name="month"/>
+                    <field name="loan_amount" operator="+"/>
+                    <field name="loan_id" operator="+"/>
+                </graph>
+            </field>
+        </record>
+ -->
+        <record id="hr_loan_archive_tree" model="ir.actions.act_window">
+    		<field name="name">Loan Archive</field>
+    		<field name="res_model">hr.loan.archive</field>
+    		<field name="view_type">form</field>
+    		<field name="view_mode">tree,form</field>
+            <field name="context">{'create':False,'edit':False}</field>
+    		<field name="view_id" ref="hr_loan_archive_tree_view"/>
+	    </record>
+
+        <menuitem id="hr_loan_archive_tree_menu" name="Loan Archive" parent="hr_loan_menu"   action="hr_loan_archive_tree" />
+    </data>
+</odoo>

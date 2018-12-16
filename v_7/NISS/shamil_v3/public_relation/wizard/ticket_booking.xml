@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+	<!-- Ticket Booking Wizard View-->
+
+    	<record id="view_ticket_booking_wizard" model="ir.ui.view">
+            <field name="name">Ticket Booking wizard</field>
+            <field name="model">ticket.booking.wizard</field>
+            <field name="arch" type="xml">
+               <form string="Ticket Booking report" version="7.0">
+
+
+            		<group col="4">
+            			<field name="date_from" />
+            			<field name="date_to" />
+            			<field name="type"/>
+            			<field name="state"/>
+            			<field name="procedure_for" required="True"/>
+            			<field name="department_id" />
+            			<field name="company_id" />
+            			<field name="travel_purpose" />
+            			<field name="partner_id" />
+            			<field name="foreigner_id"  attrs="{'invisible':[('procedure_for', '!=', 'foreigners')]}"/>
+            			<field name="employee_id"  attrs="{'invisible':[('procedure_for', '!=', 'sudanese')]}"/>
+    			</group>
+                       <footer>
+           	    		<button name="print_report" string="Print" type="object" icon="gtk-ok" class="oe_highlight"/>
+			or	<button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link"/>
+    			</footer>
+            		
+    			</form>
+            </field>
+		</record>
+		
+	<!-- Ticket Booking Wizard Action-->
+        <record id="action_ticket_booking_wizard" model="ir.actions.act_window">
+            <field name="name">Ticket Booking wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ticket.booking.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+		    <field name="view_id" ref="view_ticket_booking_wizard"/>
+            <field name="target">new</field>
+        </record>
+
+	<!-- Ticket Booking Wizard Menu-->
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Ticket Booking report"
+                parent="menu_public_report"
+                action="action_ticket_booking_wizard"
+                id="menu_ticket_booking_report"
+                />
+
+    </data>
+</openerp>

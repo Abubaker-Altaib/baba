@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<!-- HR Employee Seniority Report Wizard -->
+
+
+	<record id="seniority_report_wizard_form" model="ir.ui.view">
+            <field name="name">seniority.report.wizard</field>
+            <field name="model">seniority.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Seniority Report" version="7.0">
+                	<group col="4" colspan="2">
+                        <field name="type"/>
+                    </group>
+
+                     <group>
+                        <field name='degrees' attrs="{'invisible':[('type','!=','degree')],'required':[('type','=','degree')]}"/>
+                    </group>
+                    <group>
+                        <field name='departments' attrs="{'invisible':[('type','!=','department')],'required':[('type','=','department')]}"/>
+                    </group>
+              
+              <footer>
+
+                    <button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+                         or
+                <button special="cancel" string="Cancel" class="oe_link"/>
+              </footer>
+          </form>
+            </field>
+      </record>
+
+        <record id="action_seniority_report_wizard" model="ir.actions.act_window">
+            <field name="name">Seniority Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">seniority.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="seniority_report_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+      
+        <menuitem sequence="30"
+                name="Seniority Report"
+                action="action_seniority_report_wizard"
+                id="seniority_report_menu"
+                parent="hr_custom.menu_hr_employees_reports"
+                />
+
+        
+    </data>
+</openerp>

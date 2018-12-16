@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_purchase_receipt_form">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher_custom.view_purchase_receipt_form" />
+			<field name="arch" type="xml">
+				<field name="pay_journal_id" position="replace">
+					<field name="allow_check" invisible="1" />
+					<field name="pay_journal_id"
+						domain="[('type','in',['cash','bank']),('special','=',False)]"
+						context="{'pay_type':pay_type}"
+						attrs="{'readonly': [('state','!=','draft')],'required': [('state','=','draft'),('pay_now','=','pay_now')],'invisible': [('pay_now','=','pay_later')]}"
+						on_change="onchange_journal_id(journal_id, pay_journal_id, line_dr_ids, tax_id, partner_id, date, amount, type, company_id,pay_now)" />
+				</field>
+				<xpath expr="//button[@string='Cancel Voucher']" position="after">
+					<button name="%(action_account_check_print)d" string="Print Check"
+						type="action"
+						attrs="{'invisible':['|','|','|','|',('allow_check','=',False),('pay_now','=','pay_later'),('state','!=','posted'),('amount','=',0.0),('pay_type','!=','chk')]}" />
+					<button name="%(wizard_bank_letter)d" string="Bank letter"
+						type="action" groups="account_voucher_custom.group_account_expense_pay"
+						attrs="{'invisible':['|','|','|','|',('allow_check','=',False),('pay_now','=','pay_later'),('state','!=','posted'),('amount','=',0.0),('pay_type','!=','letter')]}" />
+				</xpath>
+				<field name="company_id" position="after">
+					<field name="chk_seq" attrs="{'invisible':[('allow_check','!=',True)]}" readonly="1"
+						colspan="1" />
+					<field name="pay_type"
+						attrs="{'invisible':[('pay_now','!=','pay_now')]}" />
+				</field>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_bank_and_cash_form">
+			<field name="name">account.voucher.bank_and_cash.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher_custom.view_bank_and_cash_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='action_cancel_draft']" position="after">
+					<button name="%(action_account_check_print)d" string="Print Check"
+						type="action"
+						attrs="{'invisible':['|','|','|',('allow_check','=',False),('state','!=','posted'),('amount','=',0.0),('pay_type','!=','chk')]}" />
+					<button name="%(wizard_bank_letter)d" string="Bank letter"
+						type="action"
+						attrs="{'invisible':['|','|','|',('allow_check','=',False),('state','!=','posted'),('amount','=',0.0),('pay_type','!=','letter')]}" />
+				</xpath>
+				<xpath
+					expr="/form/sheet[@string='Feeding and Supply']/group/group/field[@name='name']"
+					position="after">
+					<newline />
+					<field name="pay_type"
+						attrs="{'invisible':['|','|',('allow_check','=',False),('state','!=','posted'),('amount','=',0.0)]}" />
+					<field name="allow_check" invisible="1" />
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_sale_receipt_form">
+			<field name="name">account.voucher.sale.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher_custom.view_sale_receipt_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<field name="name" position="after">
+					<field name="pay_type" string="Receipt Type"
+						attrs="{'readonly':[('state','!=','draft')]}" />
+					<field name="chk_seq" string="Receipt Ref #"
+						attrs="{'readonly':[('state','!=','draft')]}" />
+				</field>
+				<xpath expr="//field[@name='pay_journal_id']" position="attributes">
+					<attribute name="context">{'pay_type':pay_type}</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_vendor_payment_check_form">
+			<field name="name">account.voucher.payment.check.form</field>
+			<field name="model">account.voucher</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="account_voucher.view_vendor_payment_form" />
+			<field name="arch" type="xml">
+				<xpath expr="/form/header" position="replace">
+					<header>
+						<button name="proforma_voucher" string="Validate" states="draft"
+							invisible="context.get('line_type', False)" class="oe_highlight" />
+						<button name="cancel_voucher" string="Cancel Voucher"
+							states="draft,proforma" invisible="context.get('line_type', False)" />
+						<button name="cancel_voucher" string="Unreconcile" type="object"
+							states="posted" invisible="context.get('line_type', False)"
+							confirm="Are you sure to unreconcile and cancel this record ?" />
+						<button name="action_cancel_draft" type="object" states="cancel"
+							string="Set to Draft" invisible="context.get('line_type', False)" />
+						<button name="%(action_account_check_print)d" string="Print Check"
+							type="action"
+							attrs="{'invisible':['|','|','|',('allow_check','=',False),('state','!=','posted'),('amount','=',0.0),('pay_type','!=','chk')]}" />
+						<button name="%(wizard_bank_letter)d" string="Bank letter"
+							type="action"
+							attrs="{'invisible':['|','|','|',('allow_check','=',False),('state','!=','posted'),('amount','=',0.0),('pay_type','!=','letter')]}" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,posted"
+							statusbar_colors='{"proforma":"blue"}' />
+					</header>
+				</xpath>
+				<xpath expr="//field[@name='currency_id']" position="replace" />
+				<xpath expr="//field[@name='journal_id']" position="replace">
+					<field name="journal_id" domain="[('type','in',['bank', 'cash'])]"
+						widget="selection" select="1"
+						on_change="onchange_partner(partner_id, journal_id, amount, currency_id, type, date)"
+						string="Payment Method" />
+					<field name="currency_id"
+						on_change="onchange_date(date, currency_id, payment_rate_currency_id, amount, company_id, context)"
+						attrs="{'readonly':[('state','!=','draft')]}" />
+				</xpath>
+				<xpath expr="//field[@name='partner_id']" position="replace">
+					<field name="pay_now" invisible="1" />
+					<field name="partner_id" domain="[('supplier','=',1)]"
+						on_change="onchange_partner_id(partner_id, journal_id, amount, currency_id, type, date)"
+						string="Supplier" required="1" />
+				</xpath>
+				<field name="amount" position="after">
+					<field name="allow_check" invisible="1" />
+					<field name="amount_in_word" attrs="{'invisible':[('allow_check','!=',1)]}"
+						nolabel="1" colspan="2" />
+					<field name="chk_seq" attrs="{'invisible':[('allow_check','!=',True)]}"
+						colspan="1" />
+					<field name="chk_status" invisible="1" />
+					<field name="pay_type"
+						attrs="{'invisible':['|','|',('allow_check','=',False),('state','!=','posted'),('amount','=',0.0)]}" />
+				</field>
+				<xpath expr="//field[@name='date']" position="replace">
+					<field name="date" select="1"
+						on_change="onchange_date(date, currency_id, payment_rate_currency_id, amount, company_id, context)"
+						required="1" />
+				</xpath>
+				<field name="name" colspan="4" />
+				<field name="type" invisible="True" />
+
+				<xpath
+					expr="/form/sheet/notebook/page[@string='Payment Information']/field[@name='line_dr_ids']/tree[@string='Supplier Invoices and Outstanding transactions']"
+					position="replace">
+					<tree string="Credits" editable="bottom" colors="gray:amount==0">
+						<field name="move_line_id"
+							context="{'journal_id':parent.journal_id, 'partner_id':parent.partner_id}"
+							on_change="onchange_move_line_id(move_line_id)"
+							domain="[('account_id.type','in',('receivable','payable')), ('reconcile_id','=', False),('partner_id','=',parent.partner_id)]"
+							required="1" />
+						<field name="account_id" groups="base.group_no_one"
+							domain="[('type','=','receivable')]" />
+						<field name="date_original" readonly="1" />
+						<field name="date_due" readonly="1" />
+						<field name="amount_original" readonly="1" />
+						<field name="amount_unreconciled" readonly="1" />
+						<field name="partial_reconcile"
+							on_change="onchange_reconcile(reconcile, partial_reconcile, amount, amount_unreconciled, move_line_id, context)" />
+						<field name="reconcile"
+							on_change="onchange_reconcile(reconcile, partial_reconcile, amount, amount_unreconciled, move_line_id, context)" />
+						<field name="amount" sum="Total Allocation"
+							on_change="onchange_amount(amount, amount_unreconciled, context)"
+							string="Allocation" />
+					</tree>
+				</xpath>
+				<xpath
+					expr="/form/sheet/notebook/page[@string='Payment Information']/field[@name='line_cr_ids']/tree[@string='Credits']"
+					position="replace">
+					<tree string="Creditsss" editable="bottom" colors="gray:amount==0">
+						<field name="move_line_id"
+							context="{'journal_id':parent.journal_id, 'partner_id':parent.partner_id}"
+							on_change="onchange_move_line_id(move_line_id)"
+							domain="[('account_id.type','=','payable'), ('reconcile_id','=', False), ('partner_id','=',parent.partner_id)]"
+							required="1" />
+						<field name="account_id" groups="base.group_no_one"
+							domain="[('type','=','receivable')]" />
+						<field name="date_original" readonly="1" />
+						<field name="date_due" readonly="1" />
+						<field name="amount_original" readonly="1" />
+						<field name="amount_unreconciled" readonly="1" />
+						<field name="partial_reconcile"
+							on_change="onchange_reconcile(reconcile, partial_reconcile, amount, amount_unreconciled, move_line_id, context)" />
+						<field name="reconcile"
+							on_change="onchange_reconcile(reconcile, partial_reconcile, amount, amount_unreconciled, move_line_id, context)" />
+						<field name="amount" sum="Total Allocation"
+							on_change="onchange_amount(amount, amount_unreconciled, context)"
+							string="Allocation" />
+					</tree>
+				</xpath>
+
+				<xpath expr="//field[@name='statement_id']" position="replace" />
+				<xpath expr="//field[@name='ref']" position="replace" />
+			</field>
+		</record>
+	</data>
+</openerp>
+

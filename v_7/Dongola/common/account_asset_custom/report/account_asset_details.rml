@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+	<template pageSize="(842.0,595.0)" title="Assets Details Report"
+		author="NCTR" allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="1.3cm" y1="0.9cm" width="800" height="500" />
+			<pageGraphics>
+				<image x="85" y="490" height="95" width="600">
+					[[ company.logo or removeParentNode('image') ]]
+				</image>
+			</pageGraphics>
+		</pageTemplate>
+	</template>
+
+	<stylesheet>
+		<blockTableStyle id="Table2">
+			<blockBackground colorName="#E5E1E1" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="0" />
+			<blockBottomPadding length="0" />
+			<blockAlignment value="CENTER" />
+			<blockValign value="LEFT" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table7">
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="4" />
+			<blockBottomPadding length="8" />
+			<blockAlignment value="CENTER" />
+			<blockValign value="LEFT" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table3">
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		<paraStyle name="Main_header" alignment="CENTER"
+			fontName="Microsoft Sans Serif-Bold" fontSize="16.0" spaceBefore="0.0"
+			spaceAfter="20.0" />
+		<paraStyle name="P8" fontName="Microsoft Sans Serif"
+			fontSize="8.0" alignment="CENTER" rightIndent="4" />
+		<paraStyle name="P9" fontName="Microsoft Sans Serif-Bold"
+			fontSize="9.30" alignment="CENTER" />
+
+		<images />
+	</stylesheet>
+	<story>
+		
+        <para style="Main_header">
+            الهيئة القومية للإتصالات
+        </para>
+        <para style="Main_header">
+		  بيانات إضافات اﻷصول الثابتة في [[ data['form']['date'] ]] 
+        </para>
+       
+		<section>
+		<para style="p8" alignment="CENTER">
+            المعدل : [[ depreciation() or '0' ]] %
+        </para>
+		<para style="p8" alignment="RIGHT">
+            أستاذ اﻷصول : [[ category() or '/' ]] 
+        </para>
+		<para style="P8">[[ repeatIn(lines(data),'m') ]]</para>
+		<section>
+			
+			<blockTable colWidths="80,80,80,80,80,80,160,80"
+					style="Table2">
+				<tr>
+					<td>
+						<para style="P9">صافي القيمة الدفترية</para>
+					</td>
+					<td>
+						<para style="P9">اﻹهلاك</para>
+					</td>
+					<td>
+						<para style="P9">اﻹجمالي</para>
+					</td>
+					<td>
+						<para style="P9">العدد</para>
+					</td>
+					<td>
+						<para style="P9">قيمة الأصل</para>
+					</td>
+					<td>
+						<para style="P9">تاريخ الاستخدام</para>
+					</td>
+					<td>
+						<para style="P9">البيان</para>
+					</td>
+					<td>
+						<para style="P9">الرقم</para>
+					</td>
+				</tr>
+				
+				<tr>
+				<para style="P8">[[ repeatIn(m,'line') ]]</para>
+					<td>
+						<para style="P9">[[ line['rest_value'] or '0' ]]</para>
+					</td>
+					<td>
+						<para style="P9"> [[ line['depreciation'] or '0' ]]</para>
+					</td>
+					<td>
+						<para style="P9"> [[ line['sum_value'] or '0' ]]</para>
+					</td>
+					<td>
+						<para style="P9">[[ line['count'] or '0' ]]</para>
+					</td>
+					<td>
+						<para style="P9">[[ line['value'] or '0' ]]</para>
+					</td>
+					<td>
+						<para style="P9">[[ line['date'] or '/' ]]</para>
+					</td>
+					<td>
+						<para style="P9">[[ line['name'] or '/' ]]</para>
+					</td>
+					<td>
+						<para style="P9"><seq id="L1" /></para>
+					</td>
+				</tr>
+			</blockTable>
+			<para style="Main_header"><seqReset id="L1" /></para>
+		</section>
+		</section>
+	</story>
+</document>

@@ -1,0 +1,74 @@
+<odoo>
+    <data>
+        <!--Report Example-->
+        <record id="view_exmp_report_wizard" model="ir.ui.view">
+            <field name="name">exmp.report.wizard</field>
+            <field name="model">trial.balance.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Example Report">
+
+
+                    <group col="4" colspan="4">
+                        <field name="target_moves" widget="radio"/>
+                        <field name="account_id" domain="[('user_type_id.type','=','view')]" context="{'show_parent_account':True}"/>
+
+
+
+                        <field name="initial_balance"/>
+                        <field name="show_type" attrs="{'invisible':['|',('report_type','!=','details'),('account_id','!=',False)],'required':[('report_type','=','details')]}"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+
+                        <field name="report_type" invisible="1"/>
+
+                    </group>
+
+                    <group col="1" colspan="1">
+                        <div>* If you not select any 'Parent Account' all accounts will be printed without filter </div>
+                    </group>
+
+
+                    <footer>
+                        <button name="print_report" attrs="{'invisible':[('report_type','!=','normal')]}" string="Print" type="object" default_focus="1"
+                                class="oe_highlight"/>
+                        <button name="print_report_details" attrs="{'invisible':[('report_type','!=','details')]}" string="Print" type="object" default_focus="1"
+                                class="oe_highlight"/>
+                        <button string="Cancel" class="btn btn-default" special="cancel"/>
+                    </footer>
+
+
+                </form>
+            </field>
+        </record>
+
+
+
+        <record id="exmp_report_action" model="ir.actions.act_window">
+            <field name="name">Trial Balance Details</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">trial.balance.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_exmp_report_wizard"/>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="account.model_account_account"/>
+            <field name="binding_type">report</field>
+        </record>
+
+
+        <menuitem name="Trial Balance with Balance" id="account_custom.examplereport"
+                  parent="account.menu_finance_legal_statement"
+                  action="exmp_report_action" groups="account.group_account_user"/>
+
+
+        <report
+                id="action_trial_b"
+                model="res.partner"
+                string="Example"
+                menu="False"
+                report_type="qweb-pdf"
+                name="account_custom_report.trial_b"
+                file="account_custom_report.trial_b"
+        />
+    </data>
+</odoo>

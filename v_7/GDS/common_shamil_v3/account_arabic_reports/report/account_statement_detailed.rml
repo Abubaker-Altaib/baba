@@ -1,0 +1,438 @@
+<?xml version="1.0"?>
+<document filename="Detailed Account Statement.pdf">
+	<template pageSize="(842.0,595.0)" title="Detailed Account Statement" author="NCTR" allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="1.3cm" y1="0.9cm" width="786" height="435" />
+			<header>
+				<pageGraphics>
+					<!-- You Logo - Change X,Y,Width and Height -->
+					<image x="1.4cm" y="16.3cm" height='70'>[[ company.logo or removeParentNode('image') ]]</image>
+				</pageGraphics>
+			</header>
+		</pageTemplate>
+	</template>
+
+	<stylesheet>
+		<blockTableStyle id="Table2">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table1">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="6" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		
+		<paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0"
+			alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0" />
+		<paraStyle name="terp_default_Center" fontName="Helvetica"
+			fontSize="8.5" leading="11" alignment="CENTER" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="terp_default_Center_bold" fontName="Helvetica-Bold"
+			fontSize="8.5" leading="11" alignment="CENTER" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="terp_default_Right_bold" fontName="Helvetica-Bold"
+			fontSize="8.5" alignment="RIGHT" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="terp_default_Right" fontName="Helvetica"
+			fontSize="8.5" alignment="RIGHT" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="white_space" fontName="Helvetica"
+			fontSize="8.5" leading="11" alignment="RIGHT" spaceBefore="4"
+			spaceAfter="4" />
+		<images />
+	</stylesheet>
+
+	<story>
+		<para style="white_space"></para>
+
+		<blockTable colWidths="539.0">
+			<tr>
+				<td>
+					<para style="Tilte">كشف حساب تفصيلي</para>
+				</td>
+			</tr>
+		</blockTable>
+		
+		<para style="white_space"></para>
+
+		<blockTable colWidths="160.0,120.0,160.0,140.0,100.0,100.0" style="Table1">
+			<tr>
+				<td>
+					<para style="terp_default_Center_bold">المعاملات المقصودة</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">الترتيب حسب</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">فلترة</para>			
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">الحساب</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">السنة المالية</para>
+				</td>
+
+				<td>
+					<para style="terp_default_Center_bold">مخطط الحسابات</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="terp_default_Center">[[ get_target_move(data) ]]</para>
+				</td>
+				<td>
+					<para style="terp_default_Center">[[ get_sortby(data)=='date' and 'التواريخ' or 'رقم المرجع']]</para>
+				</td>
+				<td>
+					<para style="terp_default_Center">[[ get_filter(data)!='Date' and  get_filter(data)!='Periods' and 'بدون فلترة' or '' ]]</para>
+					<blockTable colWidths="80,80">
+						[[ get_filter(data)=='Date' or removeParentNode('blockTable') ]]
+						<tr>
+							<td>
+								<para style="terp_default_Center"> الى</para>
+							</td>
+							<td>
+								<para style="terp_default_Center"> من</para>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<para style="terp_default_Center"> [[ get_end_date(data) ]] </para>
+							</td>
+							<td>
+								<para style="terp_default_Center"> [[ get_start_date(data) ]] </para>
+							</td>
+						</tr>
+					</blockTable><blockTable colWidths="80,80">
+						[[ get_filter(data)=='Periods' or removeParentNode('blockTable') ]]
+						<tr>
+							<td>
+								<para style="terp_default_Center"> الى</para>
+							</td>
+							<td>
+								<para style="terp_default_Center"> من</para>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<para style="terp_default_Center"> [[ get_end_period(data) ]] </para>
+							</td>
+							<td>
+								<para style="terp_default_Center"> [[ get_start_period(data)]] </para>
+							</td>
+						</tr>
+					</blockTable>
+				</td>
+				<td>
+					<para style="terp_default_Center">[[ get_account_id(data) or '-' ]]</para>
+				</td>
+				<td>
+					<para style="terp_default_Center">[[ get_fiscalyear(data) or '' ]]</para>
+				</td>
+				<td>
+					<para style="terp_default_Center">[[ get_account(data) or '' ]]</para>
+				</td>
+			</tr>
+		</blockTable>
+
+
+		<!-- blockTable colWidths="160.0,120.0,160.0,140.0,100.0,100.0"
+			style="Table1">
+			<tr>
+				<td>
+					<para style="terp_default_Center_bold">المعاملات المقصودة</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">الترتيب حسب</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">[[ get_filter(data)=='Date' and 'التواريخ' or
+						removeParentNode('para') ]]</para>
+					<para style="terp_default_Center_bold">[[ (get_filter(data)=='Periods' or
+						get_filter(data)=='No Filter') and 'الفترات' or
+						removeParentNode('para') ]]</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">الحساب</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">السنة المالية</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">مخطط الحسابات</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="terp_default_Center">[[ get_target_move(data) ]] </para>
+				</td>
+				<td>
+					<para style="terp_default_Center">[[ get_sortby(data) ]]</para>
+				</td>
+				<td>
+					<para style="terp_default_Center">[[ (get_fiscalyear(data) or
+						get_filter(data)=='Date') and removeParentNode('para') or '-' ]]
+					</para>
+					<blockTable colWidths="80.0,80.0">
+						[[ get_fiscalyear(data) or get_filter(data)=='Date' or
+						removeParentNode('blockTable') ]]
+						<tr>
+							<td>
+								<para style="terp_default_Center"> الى</para>
+							</td>
+							<td>
+								<para style="terp_default_Center"> من</para>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<para style="terp_default_Center">
+									[[ get_filter(data)=='Date' and
+									formatLang(get_end_date(data),date=True) or
+									get_end_period(data) ]]
+								</para>
+							</td>
+							<td>
+								<para style="terp_default_Center">
+									[[ get_filter(data)=='Date' and
+									formatLang(get_start_date(data),date=True) or
+									get_start_period(data)]]
+								</para>
+							</td>
+						</tr>
+					</blockTable>
+				</td>
+				<td>
+					<para style="terp_default_Center">[[ get_account_id(data) or '-' ]]</para>
+				</td>
+				<td>
+					<para style="terp_default_Center">[[ get_fiscalyear(data) or '-' ]]</para>
+				</td>
+				<td>
+					<para style="terp_default_Center">[[ get_account(data) or '-' ]]</para>
+				</td>
+			</tr>
+		</blockTable-->
+
+		<para style="white_space"></para>
+
+		<blockTable colWidths="615.0,165.0">
+			[[ display_initial_balance(data) or removeParentNode('blockTable') ]]
+			<tr>
+				<td>
+					<para style="terp_default_Right_bold">[[ formatLang(ibalance()) ]] [[
+						company.currency_id.symbol ]] </para>
+				</td>
+				<td>
+					<para style="terp_default_Right_bold">الرصيد الإفتتاحي:</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="615.0,165.0">
+			[[ display_currency(data) or removeParentNode('blockTable') ]]
+			<tr>
+				<td>
+					<para style="terp_default_Right_bold">[[ formatLang(icurrency_amount()) ]] </para>
+				</td>
+				<td>
+					<para style="terp_default_Right_bold">رصيد افتتاحي العملة: </para>
+				</td>
+			</tr>
+		</blockTable>
+
+
+		<!-- WIthout currency -->
+		<section>
+			[[ display_currency(data) == False or removeParentNode('section') ]]
+			<blockTable colWidths="100.0,100.0,100.0,170.0,112.0,110.0,62.0,30.0"
+				style="Table1" repeatRows="1">
+				<tr>
+					<td>
+						<para style="terp_default_Center_bold">الرصيد</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">دائن</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">مدين</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">البيان</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">رقم القيد</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">المرجع</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">التاريخ</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">#</para>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<para style="terp_default_Right">[[ formatLang(line['progress']) ]] [[
+							company.currency_id.symbol ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ formatLang(line['credit']) ]] [[
+							company.currency_id.symbol ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ formatLang(line['debit']) ]] [[
+							company.currency_id.symbol ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ line['label'] ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ line['move'] ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ line['ref'] ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">
+							[[ repeatIn(lines(data), 'line') ]][[ line['date'] ]]
+						</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">
+							<seq id="L2" />
+						</para>
+					</td>
+				</tr>
+			</blockTable>
+			<para style="terp_default_Right">
+				<seqReset id="L2" />
+			</para>
+			<blockTable colWidths="100.0,100.0,100.0,480.0" style="Table2"
+				repeatRows="1">
+				<tr>
+					<td>
+						<para style="terp_default_Right_bold">
+							[[ formatLang(balance()) ]] [[ company.currency_id.symbol ]]
+							<font color="white"></font>
+						</para>
+					</td>
+					<td>
+						<para style="terp_default_Right_bold">[[ formatLang(sum_credit()) ]] [[
+							company.currency_id.symbol ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right_bold">[[ formatLang(sum_debit()) ]] [[
+							company.currency_id.symbol ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold"> المجمـــــــــــــــوع</para>
+					</td>
+				</tr>
+			</blockTable>
+
+		</section>
+
+
+		<!-- WIth currency -->
+		<section>
+			[[ display_currency(data) or removeParentNode('section') ]]
+			<blockTable colWidths="90,90.0,90.0,90.0,170.0,100.0,90.0,60.0"
+				style="Table1" repeatRows="1">
+				<tr>
+					<td>
+						<para style="terp_default_Center_bold">العملة</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">الرصيد</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">دائن</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">مدين</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">البيان</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">رقم القيد</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">المرجع</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold">التاريخ</para>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<para style="terp_default_Right">[[ line['currency'] or '' ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ formatLang(line['progress']) ]] [[
+							company.currency_id.symbol ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ formatLang(line['credit']) ]] [[
+							company.currency_id.symbol ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ formatLang(line['debit']) ]] [[
+							company.currency_id.symbol ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ line['label'] ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ line['move'] ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ line['ref'] ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right">[[ repeatIn(lines(data), 'line') ]][[ line['date'] ]]
+						</para>
+					</td>
+				</tr>
+			</blockTable>
+			<blockTable colWidths="90,90.0,90.0,90.0,420.0" style="Table2"
+				repeatRows="1">
+				<tr>
+					<td>
+						<para style="terp_default_Right_bold">
+							[[ formatLang(sum_amount_curency()) ]] [[ amount_currency.currency_id.symbol ]]    </para>
+					</td>
+					<td>
+						<para style="terp_default_Right_bold">
+							[[ formatLang(balance()) ]]
+						</para>
+					</td>
+					<td>
+						<para style="terp_default_Right_bold">[[ formatLang(sum_credit()) ]] [[
+							company.currency_id.symbol ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Right_bold">[[ formatLang(sum_debit()) ]] [[
+							company.currency_id.symbol ]]</para>
+					</td>
+					<td>
+						<para style="terp_default_Center_bold"> المجمـــــــــــــــوع</para>
+					</td>
+				</tr>
+			</blockTable>
+		</section>
+	</story>
+</document>

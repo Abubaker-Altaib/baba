@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!--workflow difinition -->
+		<record id="wkf_mission" model="workflow">
+			<field name="name">hr.employee.mission.wkf</field>
+			<field name="osv">hr.employee.mission</field>
+			<field name="on_create">True</field>
+		</record>
+
+		<!--workflow state -->
+		<record id="act_draft" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_mission" />
+			<field name="flow_start">True</field>
+			<field name="name">draft</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'draft'})</field>
+		</record>
+		<record id="act_complete" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_mission" />
+			<field name="name">complete</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'completed'})</field>
+		</record>
+		<record id="act_confirm" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_mission" />
+			<field name="name">confirm</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'confirmed'})</field>
+		</record>
+		<record id="act_validate" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_mission" />
+			<field name="name">validate</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'validated'})</field>
+		</record>
+		<record id="act_approve" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_mission" />
+			<field name="name">approve</field>
+			<field name="kind">function</field>
+			<field name="action">mission_approved()</field>
+			<field name="flow_stop" eval="False"/>
+		</record>
+		<record id="act_reject" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_mission" />
+			<field name="name">reject</field>
+			<field name="kind">function</field>
+			<field name="action">rejecte_mission()</field>
+			<field name="flow_stop" eval="False"/>
+		</record>
+
+		<!-- Transmission activity -->
+		<record id="act_open" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_mission" />
+			<field name="name">open</field>
+			<field name="kind">function</field>
+			<field name="action">mission_approved(),write({'state':'open'})</field>
+		</record>
+		<record id="act_pending" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_mission" />
+			<field name="name">pending</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'pending'})</field>
+		</record>
+		<record id="act_close" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_mission" />
+			<field name="name">close</field>
+			<field name="kind">function</field>
+			<field name="action">write({'state':'close'})</field>
+		</record>
+
+		<!--workflow transition -->
+		<record id="trans_mission_complete" model="workflow.transition">
+			<field name="act_from" ref="act_draft" />
+			<field name="act_to" ref="act_complete" />
+			<field name="signal">complete_mission</field>
+		</record>
+		<record id="trans_mission_confirm" model="workflow.transition">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_confirm" />
+			<field name="condition">validate</field>
+			<field name="signal">confirm_mission</field>
+		</record>
+		<record id="trans_mission_complete_validate" model="workflow.transition">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_validate" />
+			<field name="condition">not validate</field>
+			<field name="signal">confirm_mission</field>
+		</record>
+		<record id="trans_mission_confirm_validate" model="workflow.transition">
+			<field name="act_from" ref="act_confirm" />
+			<field name="act_to" ref="act_validate" />
+			<field name="signal">validate_mission</field>
+		</record>
+		<record id="trans_mission_approve" model="workflow.transition">
+			<field name="act_from" ref="act_validate" />
+			<field name="act_to" ref="act_approve" />
+			<field name="condition">type==2 and operation_duration_computation() or True</field>
+			<field name="signal">approve_mission</field>
+		</record>
+		<record id="trans_mission_approve_reject" model="workflow.transition">
+			<field name="act_from" ref="act_approve" />
+			<field name="act_to" ref="act_reject" />
+			<field name="signal">reject_mission</field>
+		</record>
+		<record id="trans_mission_complete_reject" model="workflow.transition">
+			<field name="act_from" ref="act_complete" />
+			<field name="act_to" ref="act_reject" />
+			<field name="signal">reject_mission</field>
+		</record>
+		<record id="trans_mission_confirm_reject" model="workflow.transition">
+			<field name="act_from" ref="act_confirm" />
+			<field name="act_to" ref="act_reject" />
+			<field name="signal">reject_mission</field>
+		</record>
+		<record id="trans_mission_validate_reject" model="workflow.transition">
+			<field name="act_from" ref="act_validate" />
+			<field name="act_to" ref="act_reject" />
+			<field name="signal">reject_mission</field>
+		</record>
+		<record id="trans_mission_draft_reject" model="workflow.transition">
+			<field name="act_from" ref="act_reject" />
+			<field name="act_to" ref="act_draft" />
+			<field name="signal">set_to_draft_mission</field>
+		</record>
+
+		<!--Transmission workflow transition -->
+		<record id="trans_mission_open" model="workflow.transition">
+			<field name="act_from" ref="act_draft" />
+			<field name="act_to" ref="act_open" />
+			<field name="signal">confirm_transmission</field>
+		</record>
+		<record id="trans_mission_close" model="workflow.transition">
+			<field name="act_from" ref="act_open" />
+			<field name="act_to" ref="act_close" />
+			<field name="signal">close_transmission</field>
+		</record>
+		<record id="trans_mission_pending" model="workflow.transition">
+			<field name="act_from" ref="act_open" />
+			<field name="act_to" ref="act_pending" />
+			<field name="signal">pending</field>
+		</record>
+		<record id="trans_mission_pending_open" model="workflow.transition">
+			<field name="act_from" ref="act_pending" />
+			<field name="act_to" ref="act_open" />
+			<field name="signal">open</field>
+		</record>
+		<record id="trans_mission_open_reject" model="workflow.transition">
+			<field name="act_from" ref="act_open" />
+			<field name="act_to" ref="act_reject" />
+			<field name="signal">reject_transmission</field>
+		</record>
+		<record id="trans_mission_close_draft" model="workflow.transition">
+			<field name="act_from" ref="act_close" />
+			<field name="act_to" ref="act_draft" />
+			<field name="signal">set_to_draft_mission</field>
+		</record>
+	</data>
+</openerp>

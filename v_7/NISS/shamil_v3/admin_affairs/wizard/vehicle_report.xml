@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- vehicle report wiz View -->
+		<record id="view_vehicle_report_wiz" model="ir.ui.view">
+			<field name="name">Vehicle Report Wiz</field>
+			<field name="model">vehicle.report.wiz</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Vehicl Report" version="7.0">
+					<group >
+						<field name="company_id" colspan="2" groups="base.group_multi_company" required="1" />
+						<newline />
+						<!--field name="date_from" colspan="2" required="1"/>
+						<field name="date_to" colspan="2" required="1"/-->
+						<newline />
+						<field name="group_by" required="1"/>
+						<!--field name="total_report" invisible="1"/-->
+						<field name="report_type" invisible="1"/>
+						<newline />
+					</group>
+					<group >
+						<field name="included_department" attrs="{'invisible':[('group_by','not in',['department'])]}" />
+						<field name="vehicle_status" attrs="{'invisible':[('group_by','!=','status')]}" />
+						<!--field name="departments_ids" attrs="{'invisible':[('group_by','not in',['department','department_custody'])]}" /-->
+						<field name="departments_ids" attrs="{'invisible':[('group_by','not in',['department'])]}" />
+						<field name="models_ids" attrs="{'invisible':[('group_by','!=','model')]}" />
+						<field name="categories_ids" attrs="{'invisible':[('group_by','!=','category')]}" />
+						<field name="ownerships_ids" attrs="{'invisible':[('group_by','!=','ownership')]}" />
+						<field name="uses_ids" attrs="{'invisible':[('group_by','!=','use')]}" />
+						<field name="year" attrs="{'invisible':[('group_by','!=','year')]}" />
+						<field name="degree_ids" attrs="{'invisible':[('group_by','!=','degree')]}" />
+						<!--field name="employees_ids" attrs="{'invisible':[('group_by','!=','employee_custody')]}" /-->
+					</group>
+					<footer>
+						<button name="print_report" string="Print" type="object"
+							class="oe_highlight" />
+						or
+						<button special="cancel" string="Cancel" class="oe_link" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<!-- vehicle report wiz Action -->
+		<record id="action_vehicle_report_wiz" model="ir.actions.act_window">
+			<field name="name">Vehicle Report </field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">vehicle.report.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_vehicle_report_wiz" />
+			<!--field name="context">{'default_total_report': False}</field-->
+			<field name="context">{'default_report_type': 'normal_report'}</field>
+			<field name="target">new</field>
+		</record>
+
+		<!-- vehicle wizard Menu -->
+		<menuitem name="Vehicle Report" parent="admin_affairs.fleet_report_menu"
+			action="action_vehicle_report_wiz" id="menu_vehicle_report_wiz" sequence="1"/>
+
+
+
+		<!-- Total vehicle report wiz View -->
+		<record id="view_total_vehicle_report_wiz" model="ir.ui.view">
+			<field name="name">Total Vehicle Report Wiz</field>
+			<field name="model">vehicle.report.wiz</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Total Vehicle Report" version="7.0">
+					<group >
+						<field name="company_id" colspan="2" groups="base.group_multi_company" required="1" />
+						<newline />
+						<!--field name="date_from" colspan="2" required="1"/>
+						<field name="date_to" colspan="2" required="1"/-->
+						<newline />
+						<!--field name="total_report" invisible="1"/-->
+						<field name="report_type" invisible="1"/>
+						<field name="status" invisible="1"/>
+						<newline />
+					</group>
+					<group col="4" >
+						<field name="category_id" />
+						<field name="year" />
+						<field name="model_id" attrs="{'invisible':[('brand_id','!=',False)]}"/>
+						<field name="use_id" />
+						<field name="degree_id" />
+						<field name="department_id" />
+						<field name="included_department" attrs="{'invisible':[('department_id','=',False)]}" />
+						<field name="vehicle_type" attrs="{'invisible':[('department_id','=',False)]}" />
+						<field name="ownership_id" invisible="1" />
+						<field name="employee_id" />
+						<field name="vehicle_status" />
+						<field name="brand_id" on_change="onchange_brand(brand_id)"/>
+						<field name="old_system_driver" />
+						<field name="place_id" />
+					</group>
+					<newline />
+					<group attrs="{'invisible':[('brand_id','=',False)]}">
+						<field name="models_ids" domain="[('brand_id','=',brand_id)]"/>
+					</group>
+					<newline />
+					<group>
+						<field name="vehicle_id" domain="[('status','=',status)]"/>
+					</group>
+					<footer>
+						<button name="print_report" string="Print" type="object"
+							class="oe_highlight" />
+						or
+						<button special="cancel" string="Cancel" class="oe_link" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<!-- Total vehicle wiz Action -->
+		<record id="action_total_vehicle_report_wiz" model="ir.actions.act_window">
+			<field name="name">Total Vehicle Report </field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">vehicle.report.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_total_vehicle_report_wiz" />
+			<!--field name="context">{'default_total_report': True, 'default_status':'active'}</field-->
+			<field name="context">{'default_report_type':'total_report', 'default_status':'active'}</field>
+			<field name="target">new</field>
+		</record>
+
+		<!-- Total vehicle wizard Menu -->
+		<menuitem name="Total Vehicle Report" parent="admin_affairs.fleet_report_menu"
+			action="action_total_vehicle_report_wiz" id="menu_total_vehicle_report_wiz" sequence="2"/>
+
+
+		<!-- total out -->
+		<!-- Total vehicle report wiz View -->
+		<record id="view_total_vehicle_report_wiz_out" model="ir.ui.view">
+			<field name="name">Total Vehicle Report Wiz</field>
+			<field name="model">vehicle.report.wiz</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Total Out Vehicle Report" version="7.0">
+					<group >
+						<field name="company_id" colspan="2" groups="base.group_multi_company" required="1" />
+						<newline />
+						<!--field name="date_from" colspan="2" required="1"/>
+						<field name="date_to" colspan="2" required="1"/-->
+						<newline />
+						<!--field name="total_report" invisible="1"/-->
+						<field name="report_type" invisible="1"/>
+						<field name="status" invisible="1"/>
+						<newline />
+					</group>
+					<group col="4" >
+						<field name="category_id" />
+						<field name="year" />
+						<field name="model_id" attrs="{'invisible':[('brand_id','!=',False)]}"/>
+						<field name="use_id" />
+						<field name="out_department" />
+						<field name="included_department" attrs="{'invisible':[('out_department','=',False)]}" />
+						<field name="vehicle_type" attrs="{'invisible':[('out_department','=',False)]}" />
+						<field name="ownership_id" invisible="1" />
+						<field name="vehicle_status" />
+						<field name="brand_id" on_change="onchange_brand(brand_id)"/>
+						<field name="out_driver" />
+						<field name="place_id" />
+					</group>
+					<newline />
+					<group attrs="{'invisible':[('brand_id','=',False)]}">
+						<field name="models_ids" domain="[('brand_id','=',brand_id)]"/>
+					</group>
+					<newline />
+					<group>
+						<field name="vehicle_id" domain="[('status','=',status),('belong_to','=','out')]"/>
+					</group>
+					<footer>
+						<button name="print_report" string="Print" type="object"
+							class="oe_highlight" />
+						or
+						<button special="cancel" string="Cancel" class="oe_link" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<!-- Total vehicle wiz Action -->
+		<record id="action_total_vehicle_report_wiz_out" model="ir.actions.act_window">
+			<field name="name">Total Out Vehicle Report </field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">vehicle.report.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_total_vehicle_report_wiz_out" />
+			<field name="context">{'default_report_type':'total_report_out', 'default_status':'active'}</field>
+			<field name="target">new</field>
+		</record>
+
+		<!-- Total vehicle wizard Menu -->
+		<menuitem name="Total Out Vehicle Report" parent="admin_affairs.fleet_report_menu"
+			action="action_total_vehicle_report_wiz_out" id="menu_total_vehicle_report_wiz_out" sequence="2"/>
+
+
+		<!-- Total vehicle wiz Action -->
+		<record id="action_total_inactive_vehicle_report_wiz" model="ir.actions.act_window">
+			<field name="name">Vehicles Archive Report</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">vehicle.report.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_total_vehicle_report_wiz" />
+			<!--field name="context">{'default_total_report': True, 'default_status':'inactive'}</field-->
+			<field name="context">{'default_report_type':'total_report', 'default_status':'inactive'}</field>
+			<field name="target">new</field>
+		</record>
+
+		<!-- Total vehicle wizard Menu -->
+		<menuitem name="Vehicles Archive Report" parent="admin_affairs.fleet_report_menu"
+			action="action_total_inactive_vehicle_report_wiz" id="menu_total_inactive_vehicle_report_wiz" sequence="3"/>
+
+
+
+		<!-- Total vehicle number report wiz View -->
+		<record id="view_total_vehicle_number_report_wiz" model="ir.ui.view">
+			<field name="name">Total Vehicle Number Report Wiz</field>
+			<field name="model">vehicle.report.wiz</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Total Vehicle Number Report" version="7.0">
+					<group >
+						<field name="company_id" colspan="2" groups="base.group_multi_company" required="1" />
+						<newline />
+						<!--field name="date_from" colspan="2" required="1"/>
+						<field name="date_to" colspan="2" required="1"/-->
+						<newline />
+						<!--field name="total_report" invisible="1"/-->
+						<field name="status" invisible="1"/>
+						<field name="report_type" invisible="1"/>
+						<newline />
+					</group>
+					<group col="4" >
+						<field name="category_id" />
+						<field name="year" />
+						<field name="model_id" />
+						<field name="use_id" />
+						<field name="degree_id" />
+						<field name="department_id" />
+						<field name="included_department" attrs="{'invisible':[('department_id','=',False)]}" />
+						<field name="ownership_id" invisible="1" />
+						<field name="employee_id" />
+						<field name="vehicle_status" />
+						<!--field name="brand_id" on_change="onchange_brand(brand_id)"/-->
+						<field name="old_system_driver" />
+					</group>
+					<newline />
+					<!--group attrs="{'invisible':[('brand_id','=',False)]}">
+						<field name="models_ids" domain="[('brand_id','=',brand_id)]"/>
+					</group>
+					<newline />
+					<group>
+						<field name="vehicle_id" domain="[('status','=',status)]"/>
+					</group-->
+					<footer>
+						<button name="print_report" string="Print" type="object"
+							class="oe_highlight" />
+						or
+						<button special="cancel" string="Cancel" class="oe_link" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<!-- Total vehicle number wiz Action -->
+		<record id="action_total_vehicle_number_report_wiz" model="ir.actions.act_window">
+			<field name="name">Total Vehicle Number Report </field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">vehicle.report.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_total_vehicle_number_report_wiz" />
+			<field name="context">{'default_report_type':'total_number_report', 'default_status':'active'}</field>
+			<field name="target">new</field>
+		</record>
+
+		<!-- Total vehicle Number wizard Menu -->
+		<menuitem name="Total Vehicle Number Report" parent="admin_affairs.fleet_report_menu"
+			action="action_total_vehicle_number_report_wiz" id="menu_total_vehicle_number_report_wiz" sequence="4"/>       
+ 		
+
+	</data>
+</openerp>

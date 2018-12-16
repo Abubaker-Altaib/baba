@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_trialbalance_custom">
+    <t t-call="web.html_container">
+        <t t-call="web.internal_layout">
+            <div class="page">
+		<style>
+			table {
+			    border-collapse: collapse;
+			}
+
+			table, td {
+			    border: 1px solid black;
+			}
+			#table tr:nth-child(even){background-color: #CEF6D8;}
+
+			#table tr:hover {background-color: #ddd;}
+			#table thead, th {
+			    padding-top: 12px;
+			    padding-bottom: 12px;
+			    text-align: right;
+			    background-color: #088A68;
+			    color: white;
+			}
+		</style>
+                <h2 class="text-center"> ميزان المراجعة </h2>
+                <center>
+                <div class="row mt32">
+
+                    <div class="col-xs-4">
+                        <strong>:المعاملات المقصودة</strong>
+                        <p>
+                            <span t-if="data['target_move'] == 'all'">كل المعاملات</span>
+                            <span t-if="data['target_move'] == 'posted'">المعاملات المعتمدة</span>
+                        </p>
+                    </div>
+                    <div class="col-xs-4">
+                        <p>
+                            <t t-if="data['date_from']"><strong>التاريخ من :</strong> <span t-esc="data['date_from']"/><br/></t>
+                            <t t-if="data['date_to']"><strong>التاريخ الي :</strong> <span t-esc="data['date_to']"/></t>
+                        </p>
+                    </div>
+
+                    <div class="col-xs-4">
+                        <strong>:المستوي</strong>
+                        <p>
+                            <span t-esc="data['level']"/>
+
+                        </p>
+                    </div>
+                </div>
+                </center>
+                <table id="table" class="table table-condensed">
+
+                    <thead >
+                        <tr>
+                            <th class="text-center">رقم الحساب</th>
+                            <th class="text-center">اسم الحساب</th>
+                            <th colspan="2" class="text-center" >رصيد اول المدة</th>
+                            <th colspan="2" class="text-center" >اجمالي الحركة</th> 
+                            <th colspan="2" class="text-center" >رصيد اخر المدة</th>
+
+                        </tr>
+                    
+			  <tr>
+
+			    <th></th>
+			    <th></th>	
+			    <th class="text-center">مدين</th>
+			    <th class="text-center">دائن</th>
+			    <th class="text-center">مدين</th>
+			    <th class="text-center">دائن</th>
+			    <th class="text-center">مدين</th>
+			    <th class="text-center">دائن</th>
+		    
+			  </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr t-foreach="Accounts" t-as="account">
+
+
+                            <td class="text-right">
+                                <span t-att-style="style" t-esc="account['code']"/>
+                            </td>
+
+
+                            <td class="text-right">
+                                <span style="color: white;" t-esc="'..'"/>
+                                <span t-att-style="style" t-esc="account['name']"/>
+                            </td>
+
+<!-- Initial Balance-->
+                            <td class="text-right">
+                                 <span t-att-style="style" t-esc="account['init_debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                            </td>
+                            <td class="text-right">
+                                <span t-att-style="style" t-esc="account['init_credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                            </td>
+
+
+<!-- End of Initial Balance-->
+<!-- Total movment-->
+                            <td class="text-right">
+                                 <span t-att-style="style" t-esc="account['debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                            </td>
+
+                            <td class="text-right">
+                                <span t-att-style="style" t-esc="account['credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                            </td>
+
+<!-- End of Total movment-->
+
+<!-- End of period-->
+                            <td class="text-right">
+                                 <span t-att-style="style" t-esc="account['total_debit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                            </td>
+
+                            <td class="text-right">
+                                <span t-att-style="style" t-esc="account['total_credit']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                            </td>
+
+<!-- End of End of period-->
+
+
+                            
+                        </tr>
+<!-- total-->
+                    <thead >
+                        <tr>
+                                  <th><span t-att-style="style"/></th>
+                                  <th class="text-center"><strong>الاجمالي</strong></th>
+<!-- Total Initial Balance-->
+                            <th class="text-right"><t  t-esc="sum(l['init_debit'] for l in Accounts )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                            <th class="text-right"> <t  t-esc="sum(l['init_credit'] for l in Accounts )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> </th>
+
+
+
+<!-- Total of Total movment-->
+                            <th class="text-right"><t  t-esc="sum(l['debit'] for l in Accounts )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+
+                            <th class="text-right"> <t  t-esc="sum(l['credit'] for l in Accounts )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> </th>
+
+
+<!-- End of period-->
+                            <th class="text-right"><t  t-esc="sum(l['total_debit'] for l in Accounts )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+
+                            <th class="text-right"> <t  t-esc="sum(l['total_credit'] for l in Accounts )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> </th>
+
+                           
+                              </tr>
+                    </thead >
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </t>
+</template>
+</odoo>

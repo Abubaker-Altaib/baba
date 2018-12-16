@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+     <!-- ======================= inherit job ==================== -->	
+
+        <record id="view_job_inher2_form" model="ir.ui.view">
+            <field name="name">hr.job.inherit3</field>
+            <field name="model">hr.job</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_custom.hr_job_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[@string='Departments']" position="after" version="7.0">
+                    <page string="Approved Positions">
+			<field colspan="4" name="approved_ids" nolabel="1"/>			     
+                    </page>
+                </xpath>
+            </field> 
+        </record>
+
+
+    <!-- ============Hr Employment Needs ============-->
+
+        <record model="ir.ui.view" id="hr_employment_needs_tree_view">
+            <field name="name">hr.employment.needs.tree</field>
+            <field name="model">hr.employment.needs</field>
+            <field name="arch" type="xml">
+                <tree string="Employment Needs" editable="top">
+                    <field name="year"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="need"/>
+	            <field name="reasons"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_employment_needs_filter" model="ir.ui.view">
+            <field name="name">hr.employment.needs.search</field>
+            <field name="model">hr.employment.needs</field>
+            <field name="arch" type="xml">             
+                <search string="Search Emplyment Needs">
+                    <field name="department_id"/>
+                    <field name="year" />
+                    <field name="job_id" />
+                    <group expand="0" string="Group By...">
+                        <filter string="Department" icon="terp-folder-orange" domain="" context="{'group_by':'department_id'}"/>
+                        <separator orientation="vertical"/>                       
+                        <filter string="Job" icon="terp-stock_symbol-selection" domain="" context="{'group_by':'job_id'}"/>
+                        <separator orientation="vertical"/>                       
+                        <filter string="Year" icon="terp-stock_symbol-selection" domain="" context="{'group_by':'year'}"/>
+                    </group>
+                </search>                  
+            </field>
+        </record>  
+
+        <record model="ir.actions.act_window" id="action_hr_employment_needs">
+            <field name="name">needs</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employment.needs</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_employment_needs_tree_view"/>
+        </record>
+
+ 	<menuitem id="hr_employment_needs_menu"
+                  name="Employment Needs" 
+                  parent="base.menu_crm_case_job_req_main" 
+                  action="action_hr_employment_needs" sequence = "14"/>
+
+    <!-- ============ HR Employment Approval ============-->
+
+        <record model="ir.ui.view" id="hr_employment_approval_view">
+            <field name="name">hr.employment.approval.form </field>
+            <field name="model">hr.employment.approval</field>
+            <field name="arch" type="xml">
+                <form string="Employment Approval" version="7.0">
+                    <header>
+                        <button string="Confirm" name="confirmed" states="draft" type="object" class="oe_highlight" />
+                        <button string="Approve" name="approved" states="confirmed" type="object" class="oe_highlight"/>
+                        <button string="Reject"  name="refused"  states="draft,confirmed" type="object" class="oe_highlight" />
+                        <button string="Set to Draft" name="set_to_draft" states="refused" type="object" class="oe_highlight"  />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,approved,refused" />
+                    </header>
+                    <sheet>
+                        <group  col="4" colspan="2">                        
+		            <field name="year" class="oe_title" attrs="{'readonly':[('state','not in',('draft'))]}" on_change="change_year(year)"/>
+                            <field name="job_id" attrs="{'readonly':[('state','not in',('draft'))]}" />
+		            <field name="requested" class="oe_inline"/>
+                            <field name="approved" class="oe_inline" attrs="{'readonly':[('state','in',('approved'))]}"/>      
+                        </group>                                                    
+                        <notebook colspan="4" >
+                            <page string="Needed Positions">
+                               <group colspan="4">
+			        <field colspan="4" name="need_ids" nolabel="1">			     
+			            <tree string="Needs" >
+                                        <field name="department_id"/>
+                                        <field name="need"/>
+			            </tree>
+			        </field>
+                               </group>                                
+                            </page>
+                            <page string="Rejection Reasons" attrs="{'invisible':[('state','!=','refused')]}">
+                                <div colspan="4">
+                                    <field name="rejection_reason"/>
+                                </div>
+                            </page>                          
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_employment_approval_tree_view">
+            <field name="name">hr.employment.approval.tree</field>
+            <field name="model">hr.employment.approval</field>
+            <field name="arch" type="xml">
+                <tree string="Employment Approval" >
+                    <field name="job_id"/>
+                    <field name="approved"/>
+                    <field name="year"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_employment_approval_filter" model="ir.ui.view">
+            <field name="name">hr.employment.approval.search</field>
+            <field name="model">hr.employment.approval</field>
+            <field name="arch" type="xml">             
+                <search string="Search Emplyment Approval">
+                    <field name="job_id"/>
+                    <field name="year" />
+                    <group expand="0" string="Group By...">
+                        <filter string="Job" icon="terp-folder-orange" domain="" context="{'group_by':'job_id'}"/>
+                        <separator orientation="vertical"/>                       
+                        <filter string="Year" icon="terp-stock_symbol-selection" domain="" context="{'group_by':'year'}"/>
+                        <separator orientation="vertical"/>                       
+                        <filter string="State" icon="terp-stock_symbol-selection" domain="" context="{'group_by':'state'}"/>
+                    </group>
+                </search>                  
+            </field>
+        </record>  
+
+        <record model="ir.actions.act_window" id="action_hr_employment_approval">
+            <field name="name">Approval</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employment.approval</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="hr_employment_approval_tree_view"/>
+        </record>
+
+ 	<menuitem id="hr_employment_approval_menu"
+                  name="Employment Approval" 
+                  parent="base.menu_crm_case_job_req_main" 
+                  action="action_hr_employment_approval" sequence = "10"/>
+
+        <menuitem
+            name="Recruitment"
+            id="base.menu_crm_case_job_req_main"
+            parent="hr.menu_hr_root"
+            sequence="1"
+            groups="base.group_department_manager,base.group_hr_juser,base.group_hr_overview"/>
+
+    </data>
+</openerp>

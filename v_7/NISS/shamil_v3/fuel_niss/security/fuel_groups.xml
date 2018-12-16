@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data noupdate="0">
+		<!--record id="group_fuel_plan" model="res.groups">
+			<field name="name">Fuel Plan</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+		</record-->
+		<!--record id="group_fuel_financial_oc" model="res.groups">
+			<field name="name">Financial Officer/OC</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+		</record>
+		<record id="group_fuel_financial_hq" model="res.groups">
+			<field name="name">Financial Officer/HQ</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+		</record>
+		<record id="group_fuel_pump_hq" model="res.groups">
+			<field name="name">Pump Officer/HQ</field>
+			<field name="category_id" ref="admin_affairs.admin_affair" />
+		</record-->
+		<!--record id="fuel_management.group_fuel_officer_oc" model="res.groups">
+			<field name="name">Fuel Configuration</field>
+			<field name="category_id" ref="fuel_category" />
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root'),ref('fuel_management.fuel_config_menu'),ref('fleet.fleet_configuration')])]"/>
+		</record-->
+	</data>
+	<data >
+		<!-- stock.location  -->
+		<record id="stock_location_fuel_user" model="ir.rule">
+			<field name="name">Stock Location Fuel user</field>
+			<field model="ir.model" name="model_id" ref="stock.model_stock_location"/>
+			<field name="domain_force">[('fuel_ok','=',True)]</field>
+			<field name="groups" eval="[(4, ref('fuel_management.group_fuel_config')),(4, ref('fuel_management.group_fuel_pump_hq')),(4, ref('fuel_management.group_fuel_financial_hq')),(4, ref('fuel_management.group_fuel_officer_oc'))]"/>
+		</record>
+
+		<!-- stock.picking  -->
+		<record id="stock_picking_fuel_user" model="ir.rule">
+			<field name="name">Stock Picking Fuel user</field>
+			<field model="ir.model" name="model_id" ref="stock.model_stock_picking"/>
+			<field name="domain_force">[('fuel_ok','=',True)]</field>
+			<field name="groups" eval="[(4, ref('fuel_management.group_fuel_config')),(4, ref('fuel_management.group_fuel_pump_hq')),(4, ref('fuel_management.group_fuel_financial_hq')),(4, ref('fuel_management.group_fuel_officer_oc'))]"/>
+		</record>
+
+		<!-- stock.picking.in  -->
+		<record id="stock_picking_fuel_user" model="ir.rule">
+			<field name="name">Stock Picking IN Fuel user</field>
+			<field model="ir.model" name="model_id" ref="stock.model_stock_picking_in"/>
+			<field name="domain_force">[('fuel_ok','=',True)]</field>
+			<field name="groups" eval="[(4, ref('fuel_management.group_fuel_config')),(4, ref('fuel_management.group_fuel_pump_hq')),(4, ref('fuel_management.group_fuel_financial_hq')),(4, ref('fuel_management.group_fuel_officer_oc'))]"/>
+		</record>
+
+		<!-- stock.picking.out  -->
+		<record id="stock_picking_fuel_user" model="ir.rule">
+			<field name="name">Stock Picking OUT Fuel user</field>
+			<field model="ir.model" name="model_id" ref="stock.model_stock_picking_out"/>
+			<field name="domain_force">[('fuel_ok','=',True)]</field>
+			<field name="groups" eval="[(4, ref('fuel_management.group_fuel_config')),(4, ref('fuel_management.group_fuel_pump_hq')),(4, ref('fuel_management.group_fuel_financial_hq')),(4, ref('fuel_management.group_fuel_officer_oc'))]"/>
+		</record>
+
+		<!-- stock.move  -->
+		<record id="stock_move_fuel_user" model="ir.rule">
+			<field name="name">Stock Move OUT Fuel user</field>
+			<field model="ir.model" name="model_id" ref="stock.model_stock_move"/>
+			<field name="domain_force">[('fuel_ok','=',True)]</field>
+			<field name="groups" eval="[(4, ref('fuel_management.group_fuel_config')),(4, ref('fuel_management.group_fuel_pump_hq')),(4, ref('fuel_management.group_fuel_financial_hq')),(4, ref('fuel_management.group_fuel_officer_oc'))]"/>
+		</record>
+	</data>
+</openerp>

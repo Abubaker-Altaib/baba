@@ -1,0 +1,226 @@
+<?xml version="1.0"?>
+<document filename="Account Balance.pdf">
+	<!-- <template pageSize="(842.0,595.0)" title="Account Balance" author="NCTR" 
+		allowSplitting="20"> <pageTemplate id="first"> <frame id="first" x1="28.0" 
+		y1="28.0" width="786" height="539"/> </pageTemplate> </template> -->
+	<template pageSize="(595.0,842.0)" title="Account Balance"
+		author="NCTR" allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="1.3cm" y1="0.9cm" width="786" height="440" />
+		</pageTemplate>
+	</template>
+
+	<stylesheet>
+		<blockTableStyle id="Tilte_Table">
+			<blockAlignment value="LEFT" />
+			<blockValign value="TOP" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Content_Table">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Header_Table">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Inner_Header_Table">
+			<blockAlignment value="LEFT" />
+			<blockValign value="CENTER" />
+			<lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0"
+				stop="1,-1" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+
+		<paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0"
+			alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0" />
+		<paraStyle name="Header_Table_Header_Centre" fontName="Helvetica-Bold"
+			fontSize="8.0" alignment="CENTER" />
+		<paraStyle name="Header_Table_Detail_Centre" fontName="Helvetica"
+			fontSize="8.0" alignment="CENTER" />
+		<paraStyle name="Content_Table_Detail" fontName="Helvetica-Bold"
+			fontSize="8.0" alignment="RIGHT" rightIndent="8" />
+		<paraStyle name="Content_Table" fontName="Helvetica"
+			fontSize="8.0" alignment="RIGHT" rightIndent="8" />
+		<paraStyle name="Content_Table_Header" fontName="Helvetica-Bold"
+			fontSize="10.0" alignment="CENTER" rightIndent="4" />
+
+		<images />
+	</stylesheet>
+
+	<story>
+		<para style="Tilte">ميزان المراجعة</para>
+
+		<para>
+			<font color="white">
+			</font>
+		</para>
+		<para>
+			<font color="white">
+			</font>
+		</para>
+
+		<blockTable colWidths="130.0,130.0,100.0,80.0,100.0" style="Header_Table">
+			<tr>
+				<td>
+					<para style="Header_Table_Header_Centre">المعاملات المقصودة</para>
+				</td>
+				<td>
+					<para style="Header_Table_Header_Centre">مفلترة بحسب [[ get_filter(data)!='No Filter' and
+						get_filter_Trans(data) ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Header_Centre">عرض الحساب</para>
+				</td>
+				<td>
+					<para style="Header_Table_Header_Centre">السنة المالية</para>
+				</td>
+
+				<td>
+					<para style="Header_Table_Header_Centre">[[ get_label_according_model(data) ]]</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_target_move(data) ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_filter(data)=='No Filter' and
+						get_filter_Trans(data) or removeParentNode('para') ]]</para>
+					<blockTable colWidths="60.0,60.0" style="Inner_Header_Table">
+						[[ get_filter(data)=='Date' or removeParentNode('blockTable') ]]
+						<tr>
+							<td>
+								<para style="Header_Table_Header_Centre">تاريخ النهاية</para>
+							</td>
+							<td>
+								<para style="Header_Table_Header_Centre">تاريخ البداية</para>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_end_date(data) or
+									removeParentNode('para') ]]</para>
+							</td>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_start_date(data) or
+									removeParentNode('para') ]]</para>
+							</td>
+						</tr>
+					</blockTable>
+					<blockTable colWidths="60.0,60.0" style="Inner_Header_Table">
+						[[ get_filter(data)=='Periods' or removeParentNode('blockTable')
+						]]
+						<tr>
+							<td>
+								<para style="Header_Table_Header_Centre">الفترة النهائية</para>
+							</td>
+							<td>
+								<para style="Header_Table_Header_Centre">الفترة الابتدائية</para>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_end_period(data) or
+									removeParentNode('para') ]]</para>
+							</td>
+							<td>
+								<para style="Header_Table_Detail_Centre">[[ get_start_period(data) or
+									removeParentNode('para') ]]</para>
+							</td>
+						</tr>
+					</blockTable>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_display_account(data) ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_fiscalyear(data) or '' ]]</para>
+				</td>
+				<td>
+					<para style="Header_Table_Detail_Centre">[[ get_account(data) or '' ]]</para>
+				</td>
+			</tr>
+		</blockTable>
+
+		<para>
+			<font color="white">
+			</font>
+		</para>
+		<para>
+			<font color="white">
+			</font>
+		</para>
+
+
+		<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[ Without Just Balance ]~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<blockTable colWidths="130.0,130.0,210.0,70.0" style="Content_Table" repeatRows="1">
+			<tr>
+				<td>
+					<para style="Content_Table_Header">داين</para>
+				</td>
+				<td>
+					<para style="Content_Table_Header">مدين</para>
+				</td>
+				<td>
+					<para style="Content_Table_Header">الحساب</para>
+				</td>
+				<td>
+					<para style="Content_Table_Header">الرمز</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="Content_Table">
+						[[ (a['init_balance']+a['balance']) &lt; 0 and formatLang(abs(a['balance'])) or formatLang(0) ]]
+					</para>
+				</td>
+				<td>
+					<para style="Content_Table">
+						[[ (a['init_balance']+a['balance']) &gt; 0 and formatLang(abs(a['balance'])) or formatLang(0) ]]
+					</para>
+				</td>
+				<td>
+					<para style="Content_Table"> [[ a['name'] ]][[(get_multi_company(data,a['id'])) ]]</para>
+				</td>
+				<td>
+					<para style="Content_Table">
+						[[ repeatIn(lines(data['form']), 'a') ]]
+						<i>[[ a['code'] or removeParentNode('tr') ]]</i>
+					</para>
+					<para style="Content_Table">
+						<font color="white">[[ a['type']&lt;&gt;'view' or removeParentNode('tr') ]]</font>
+					</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="130.0,130.0,280.0" style="Content_Table">
+			<tr>
+				<td>
+					<para style="Content_Table_Detail">[[ formatLang(get_credit()) ]]
+					</para>
+				</td>
+				<td>
+					<para style="Content_Table_Detail">[[ formatLang(get_debit()) ]]
+					</para>
+				</td>
+				<td>
+					<para style="Content_Table_Detail"> المجمــــــــــــــــــــوع </para>
+				</td>
+			</tr>
+		</blockTable>
+	</story>
+</document>

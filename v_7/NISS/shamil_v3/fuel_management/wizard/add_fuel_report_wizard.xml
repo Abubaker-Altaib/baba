@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<!-- Additional Fuel Report Wizard -->
+
+
+	<record id="add_fuel_report_wizard_form" model="ir.ui.view">
+            <field name="name">add.fuel.report.wizard</field>
+            <field name="model">add.fuel.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Additional Fuel Report" version="7.0">
+                	
+                    <group>
+                        <field name="type"/>
+                        <field name="state"/>
+                        <field name="purpose_id" attrs="{'invisible':[('type','not in',['other','moving'])]}"/>
+                    </group>
+                    <group>
+                        <field name="start_date" attrs="{'required':[('type','in',('moving','temporary','other'))],'invisible':[('type','not in',('moving','temporary','other'))]}"/>
+                        <field name="end_date" attrs="{'required':[('type','in',('moving','temporary','other'))],'invisible':[('type','not in',('moving','temporary','other'))]}"/>
+                    </group>
+              
+              <footer>
+
+                <button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+                         or
+                <button special="cancel" string="Cancel" class="oe_link"/>
+              </footer>
+          </form>
+        </field>
+      </record>
+
+        <record id="action_add_fuel_report_wizard" model="ir.actions.act_window">
+            <field name="name">Add Fuel Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">add.fuel.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="add_fuel_report_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+      
+        <menuitem sequence="30"
+                name="Additional fuel Report"
+                action="action_add_fuel_report_wizard"
+                id="add_fuel_report_wizard_menu"
+                parent="fuel_report_menu"
+                />
+
+        
+    </data>
+</openerp>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="payroll_report_bank_form" model="ir.ui.view">
+            <field name="name">payroll.report.bank.form</field>
+            <field name="model">payroll.report.bank</field>
+            <field name="arch" type="xml">
+                <form string="payroll report bank" version="7.0">
+                  <group>
+                    <field name="company_id" colspan="2" widget="many2many_tags" groups="base.group_multi_company" />
+                    <field name="payroll_ids"  widget="many2many_tags" colspan="2"/>
+                      <field name="month" colspan="2"/>
+                      <field name="year" colspan="2"/>        
+                      <field name="type" colspan="2"/>
+                  </group>
+                  <group>
+                    <field name="bonus_date" attrs="{'invisible':[('type','=','1')],'required':[('type','!=','1')]}"/>
+                    <field name="allow" attrs="{'invisible':[('type','=','1')],'required':[('type','!=','1')]}"/>
+                    </group>
+                  <notebook>
+                    <page string="Banks">
+                      <group><field name="no_bank" /></group>
+                      <field name="bank_id" colspan="2"/>
+                    </page>
+                  </notebook>                              
+                    <footer>
+                        <button icon="gtk-execute" name="xls_export" string="Export" type="object" class="oe_highlight" context="{'xls_export':1}" />
+                        <button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+                          or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="payroll_report_bank" model="ir.actions.act_window">
+            <field name="name">payroll report bank</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">payroll.report.bank</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+      	<menuitem
+                  action="payroll_report_bank"
+                  id="menu_payroll_report_bank"
+                  parent="hr_payroll_custom.menu_hr_payroll_reporting"
+                  name="Payroll report bank" />
+
+
+
+        <report auto="False" id="additional_bank"
+         model="hr.additional.allowance" 
+         name="additional_bank"
+         rml="hr_ntc_custom/report/additional_report_bank.rml" 
+         string="additional wage Bank report"/>
+
+
+    </data>
+</openerp>

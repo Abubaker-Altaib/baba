@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<!-- fuel request Record Form,Tree View & Action -->
+		<record id="id_fuel_request_view_form" model="ir.ui.view">
+			<field name="name">fuel.request.form</field>
+			<field name="model">fuel.request</field>
+			<field name="arch" type="xml">
+				<form string="Extra Fuel Request" version="7.0">
+                    			<header>
+						<button name="confirmed_s" states="draft" string="Section confirmation"
+		                                        confirm="Are you sure you want to Confirm this request?" 
+                                                        class="oe_highlight" groups="base.group_Section_manager" />
+			                        <button name="confirmed_d" states="confirmed_s" 
+                                                        string=" Department confirmation" 
+                                                        groups="base.group_department_managers"  class="oe_highlight" />
+		                               <button name="approved" states="confirmed_d" 
+                                                       string="admin affairs confirmation"  class="oe_highlight"
+                                                       confirm="Are you sure you want to approve this request" 
+                                                       groups="base.group_admin_affairs_manager"/>					
+	                                        <button name="execute" states="approved" string=" Execution"
+	                                                confirm="Are you sure you want to Process this request"
+                                                        groups="base.group_service_section_manager"  class="oe_highlight" />
+			                        <button name="done" states="execute" string="Service officer To Execute "
+					                confirm="Are you sure you want to approve this request?" 
+                                                        class="oe_highlight" groups="base.group_fuel_plan" />
+					        <button name="cancel" states="draft,confirmed_s,confirmed_d,approved,execute" 
+                                                        string="Cancel" class="oe_highlight" 
+                                                        confirm="Are you sure you want to Cancel this request?"                             
+                                                        groups="base.group_admin_affairs_manager" />
+						<button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" 
+                                                        type="object"  class="oe_highlight"/>
+                        			<field name="state" widget="statusbar" statusbar_visible="draft,done,cancel" />
+                    			</header>
+					<sheet>
+                                		<group col="2" colspan="2">
+                                        		<field name="alarm" />
+                                        	</group>
+						<group col="4" colspan="4">
+							<field name="name" colspan="1" />
+							<field name="date" colspan="1"/>
+							<field name="purpose" select ="1" colspan="1"/>
+							<field name="description" colspan="1" attrs="{
+							  'required':[('purpose','=','emergency'),('purpose','=','mission')]}" />
+							<field name="car_id" colspan="1" attrs="{
+							  'required':['|',('purpose','=','emergency'),('state','=','execute')],'readonly':['|',('state','=','done'),'&amp;',('state','in',('approved','execute','done')),('purpose','=','emergency')]}" />
+							<!--field name="car_number" colspan="1" /-->
+							<field name="department" colspan="1" attrs="{'required':[('purpose','!=','mission')]}"/>
+							<field name="date_of_travel" colspan="1" attrs="{
+							  'invisible':[('purpose','=','emergency')],'required':[('purpose','=','mission')]}" />
+							<field name="date_of_return" colspan="1"  attrs="{
+							  'invisible':[('purpose','=','emergency')],'required':[('purpose','=','mission')]}" />
+							<!--field name="ref" colspan="1" /-->
+							<!--field name="driver" colspan="1" /-->
+						</group>
+						<group col="4" colspan="4">
+						<field name="payment_selection" colspan="2" attrs="{'invisible':[('state','not in',('execute','picking','done'))],'required':[('state','=','execute')]}"/>
+						<field name="cost" colspan="2" attrs="{'invisible':[('payment_selection','!=','enrich')],'required':[('payment_selection','==','enrich')]}"/>
+						<field name="enrich_category" colspan="2" attrs="{'invisible':['!',('state','not in',('execute','picking','done')),('payment_selection','!=','enrich')],'required':[('state','=','execute'),('payment_selection','==','enrich')]}" domain="[('state','=','confirmed'),('company_id','=',company_id)]"/>
+							<field name="user_id" colspan="1"/>
+							<field name="picking_no" colspan="1"/>
+							<field name="company_id" colspan="1"/>						
+						</group>
+						<notebook colspan="4">
+							<page string="Fuel">
+								<field colspan="4" name="fuel_lines" nolabel="1" 
+  								       attrs="{ 'readonly':['|',('state','=','done'),
+                                                                        '&amp;',('state','in',('approved','execute','done'))
+                                                                                  ,('purpose','=','emergency')]}">
+									<tree editable="bottom" string="Fuel Lines">
+										<field name="product_id" 
+                                                                                      on_change="product_id_change(product_id)" />
+										<field name="name" invisible="True"/>
+										<field name="product_qty" />
+										<field name="product_uom" />
+                                                               		</tree>
+								</field>									
+							</page>
+							<page string="Employee/Beneficiary">
+								<field name="employee_ids" colspan="4" nolabel="1" 
+                                                                       attrs="{'required':[('purpose','=','mission')]}"/>
+							</page>
+							<page string="Notes">
+								<field name="notes" colspan="4" nolabel="1" />
+							</page>
+					 	</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="id_fuel_request_view_tree" model="ir.ui.view">
+			<field name="name">fuel.request.tree</field>
+			<field name="model">fuel.request</field>
+			<field name="arch" type="xml">
+				<tree string="Extra Fuel Request">
+					<field name="name"/>
+					<field name="date" select="1" />
+					<field name="purpose" select ="1" colspan="1"/>
+					<field name="description" colspan="1"/>
+					<field name="state" colspan="1"/>
+					<field name="car_id" colspan="1"/>
+					<!--field name="car_number" colspan="1" /-->
+					<field name="user_id" colspan="1"/>
+
+				</tree>
+			</field>
+		</record>
+
+		<!-- fuel request lines Form and Tree -->
+		<record id="id_fuel_request_lines_form" model="ir.ui.view">
+			<field name="name">fuel.request.lines.form</field>
+			<field name="model">fuel.request.lines</field>
+			<field name="arch" type="xml">
+				<form string="Fuel" version="7.0">
+					<notebook colspan="4">
+						<page string="Fuel Item">
+							<group>
+								<field name="product_id" colspan="4"
+								       on_change="product_id_change(product_id)" domain="[('fuel_ok','=',True)]" />
+								<field name="name" colspan="4" />
+								<field name="product_qty" colspan="2" />
+								<field name="product_uom" colspan="2" />
+								<field name="description" colspan="4" />
+							</group>
+						</page>
+						<page string="Notes">
+							<field name="notes" colspan="4" nolabel="1" />
+						</page>						
+					</notebook>
+				</form>
+			</field>
+		</record>
+
+		<record id="fuel_request_lines_tree" model="ir.ui.view">
+			<field name="name">fuel.request.lines.tree</field>
+			<field name="model">fuel.request.lines</field>
+			<field name="arch" type="xml">
+				<tree string="Items">
+					<field name="product_id" on_change="product_id_change(product_id)"/>
+					<field name="name" />
+					<field name="product_uom" />
+					<field name="product_qty" />
+				</tree>
+			</field>
+		</record>		
+
+		<!-- fuel request Search Filter -->
+		<record id="view_fuel_request_filter" model="ir.ui.view">
+			<field name="name">fuel.request.list.select</field>
+			<field name="model">fuel.request</field>
+			<field name="arch" type="xml">
+				<search string="Search for Fuel Request Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="car_id"/>
+					<separator orientation="vertical" />
+					<!--field name="car_number" />
+					<separator orientation="vertical" /-->
+					<field name="date" select="1" />
+					<separator orientation="vertical" />
+					<field name="purpose"/>
+				</search>
+			</field>
+		</record>
+
+             <!--Fuel Menu -->
+	     <record id="id_fuel_request_action" model="ir.actions.act_window">
+			<field name="res_model">fuel.request</field>
+			<field name="domain">[]</field>
+	     </record>
+
+       <menuitem id="id_fuel_request_menu" name="Extra Fuel Request" parent="fuel_management_menu" action="id_fuel_request_action" />
+
+       <!--Shortcut To Fuel Picking-->
+       <act_window
+           domain="[('fuel_request_id', '=', active_id)]"
+           id="act_fuel_request_and_Fuel_picking"
+           name="Fuel Picking"
+           res_model="fuel.picking"
+           src_model="fuel.request"/>
+
+	</data>
+</openerp>

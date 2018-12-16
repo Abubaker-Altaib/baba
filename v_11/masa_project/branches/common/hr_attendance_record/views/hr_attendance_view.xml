@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_hr_attendance_log_form" model="ir.ui.view">
+            <field name="name">hr.attendance.log.form</field>
+            <field name="model">hr.attendance.log</field>
+            <field name="arch" type="xml">
+                <form string="Attendance Log" create="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id" readonly="1"/>
+                                <field name="action_datetime" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="action" readonly="1"/>
+                            </group>
+
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_hr_attendance_log_tree" model="ir.ui.view">
+            <field name="name">hr.attendance.log.tree</field>
+            <field name="model">hr.attendance.log</field>
+            <field name="arch" type="xml">
+                <tree string="Attendance" create="0">
+                    <field name="employee_id"/>
+                    <field name="action_datetime"/>
+                    <field name="action"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_hr_attendance_log_search">
+            <field name="name">hr.attendance.log.filter</field>
+            <field name="model">hr.attendance.log</field>
+            <field name="arch" type="xml">
+                <search string="Hr Attendance Search">
+                    <field name="action_datetime" string="Attendance"/>
+                    <field name="action"/>
+
+                    <filter string="Today" name="today" domain="[('action_datetime','&gt;=',datetime.datetime.now().replace(hour=0, minute=0, second=0)),('action_datetime','&lt;=',datetime.datetime.now().replace(hour=23, minute=59, second=59))]" />
+                    <filter string="Current Month" domain="[('action_datetime','&gt;=', datetime.datetime.now().strftime('%Y-%m-01'))]" />
+                    <separator/>
+                    <filter string="My Attendance" domain="[('employee_id.user_id.id', '=', uid)]" />
+                    <field name="employee_id"/>
+                    <group expand="0" string="Group By">
+                        <filter name="employee" string="Employee" context="{'group_by':'employee_id'}"/>
+                        <separator/>
+                        <filter name="groupby_name" string="Month" context="{'group_by':'name'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_hr_attendance_log" model="ir.actions.act_window">
+            <field name="name">Attendance Log</field>
+            <field name="res_model">hr.attendance.log</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_today':1}</field>
+            <field name="domain">[('state','=','fetched')]</field>
+            <field name="search_view_id" ref="view_hr_attendance_log_search" />
+        </record>
+
+        <menuitem id="menu_hr_attendance_log_view" name="Attendance Log" action="action_hr_attendance_log" parent="hr_attendance.menu_hr_attendance_manage_attendances" sequence="11" groups="hr_attendance.group_hr_attendance_user"/>
+
+        <!-- attendance request -->
+        <record id="view_hr_attendance_request_form" model="ir.ui.view">
+            <field name="name">hr.attendance.request.form</field>
+            <field name="model">hr.attendance.log</field>
+            <field name="arch" type="xml">
+                <form string="Attendance Requests">
+                    <header>
+                        <button name="request" states="draft" class="oe_highlight" string="Request" type="object" />
+
+                        <button name="approve" states="requested" class="oe_highlight" string="Approve" type="object" />
+
+                        <button name="refuse" states="requested" class="oe_highlight" string="Refuse" type="object" />
+
+                        <button name="cancel" states="draft,requested" class="oe_highlight" string="Cancel" type="object" />
+
+                        <button name="draft" states="canceled,refused" class="oe_highlight" string="To Draft" type="object" />
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,requested,approved"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id" required="1"/>
+                                <field name="action_datetime" required="1"/>
+                            </group>
+                            <group>
+                                <field name="reason" required="1"/>
+                                <field name="action" required="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="view_hr_attendance_request_tree" model="ir.ui.view">
+            <field name="name">hr.attendance.request.tree</field>
+            <field name="model">hr.attendance.log</field>
+            <field name="arch" type="xml">
+                <tree string="Attendance Requests">
+                    <field name="employee_id"/>
+                    <field name="action_datetime"/>
+                    <field name="action"/>
+                    <field name="state" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_hr_attendance_request" model="ir.actions.act_window">
+            <field name="name">Attendance Requests</field>
+            <field name="res_model">hr.attendance.log</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_today':1,'default_state':'draft'}</field>
+            <field name="domain">[('state','!=','fetched')]</field>
+            <field name="search_view_id" ref="view_hr_attendance_log_search" />
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_hr_attendance_request_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_hr_attendance_request_tree"/>
+            <field name="act_window_id" ref="action_hr_attendance_request"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_hr_attendance_request_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_hr_attendance_request_form"/>
+            <field name="act_window_id" ref="action_hr_attendance_request"/>
+        </record>
+
+
+        <menuitem id="menu_hr_attendance_request_view" name="Attendance Requests" action="action_hr_attendance_request" parent="hr_attendance.menu_hr_attendance_manage_attendances" sequence="12" />
+
+
+
+
+        <!-- Resource calendar Form view -->
+        <record id="resource_calendar_form_inherit" model="ir.ui.view">
+            <field name="name">resource.calendar.form</field>
+            <field name="model">resource.calendar</field>
+            <field name="inherit_id" ref="resource.resource_calendar_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='company_id']" position="replace">
+                    <group>
+                        <field name="class_id"/>
+                        <field name="priority"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                    </group>
+                    <group>
+                        <field name="excuse" widget="float_time"/>
+                        <field name="include_on_deduction"/>
+                        <field name="max_late" widget="float_time"/>
+                    </group>
+                    <group>
+                        <field name="gender"/>
+                        <field name="job_id"/>
+                        <field name="category_ids" widget="many2many_tags"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='attendance_ids']" position="attributes">
+                    <attribute name="context">{'default_is_expt':False}</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[1]" position="after">
+                    <page string="Exception Working Hours">
+                        <field name="attendance_ids_expt" context="{'default_is_expt':True}">
+                            <tree string="Working Time" editable="top">
+                                <field name="name"/>
+                                <field name="shift" required="1"/>
+                                <field name="dayofweek"/>
+                                <field name="hour_from" widget="float_time"/>
+                                <field name="hour_to" widget="float_time"/>
+                                <field name="rest" widget="float_time"/>
+                                <field name="date_from" required="1"/>
+                                <field name="date_to" required="1"/>
+                                <field name="is_expt" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//notebook[last()]" position="inside">
+                    <page string="Employees" autofocus="autofocus">
+                        <field name="employees_ids" widget="many2many"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_resource_calendar_tree_inherit" model="ir.ui.view">
+            <field name="name">resource.calendar.tree</field>
+            <field name="model">resource.calendar</field>
+            <field name="inherit_id" ref="resource.view_resource_calendar_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="priority"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- RESOURCE.CALENDAR.ATTENDANCE Inherit-->
+        <record id="view_resource_calendar_attendance_tree_inherit" model="ir.ui.view">
+            <field name="name">resource.calendar.attendance.tree</field>
+            <field name="model">resource.calendar.attendance</field>
+            <field name="inherit_id" ref="resource.view_resource_calendar_attendance_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="shift" required="1"/>
+                </xpath>
+                <xpath expr="//field[@name='hour_to']" position="after">
+                    <field name="rest" widget="float_time"/>
+                </xpath>
+                <xpath expr="//field[@name='date_from']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='date_to']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_resource_calendar_attendance_form_inherit" model="ir.ui.view">
+            <field name="name">resource.calendar.attendance.form</field>
+            <field name="model">resource.calendar.attendance</field>
+            <field name="inherit_id" ref="resource.view_resource_calendar_attendance_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='dayofweek']" position="after">
+                    <field name="rest" widget="float_time"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Attendance Record Form view -->
+        <record id="hr_attendance_view_form_custom" model="ir.ui.view">
+            <field name="name">hr.attendance.form</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.hr_attendance_view_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="replace">
+                    <form string="HR Attendance">
+                        <header>
+                            <button string="Reload" name="reload" type="object" class="oe_highlight"/>
+                        </header>
+                        <sheet>
+                            <group>
+                                <group>
+                                    <field name="employee_id" required="True" readonly="1"/>
+                                    <field name="check_in" readonly="1"/>
+                                    <field name="check_out" readonly="1"/>
+
+                                </group>
+                                <group>
+                                    <field name="date"/>
+                                    <field name="duty_time"/>
+
+                                </group>
+                                <group string="Work Hours">
+                                    <field name="plan_hours" widget="float_time"/>
+                                    <field name="worked_hours" readonly="1" widget="float_time"/>
+
+
+                                </group>
+                                <group string="Over Time">
+                                    <field name="early_hours" widget="float_time"/>
+                                    <field name="late_hours" widget="float_time"/>
+                                </group>
+                                <group string="Lateness">
+                                    <field name="total_delay" widget="float_time"/>
+                                    <field name="diff_from_duety" widget="float_time"/>
+                                    <field name="deduction_amount" invisible="1"/>
+                                    <field name="excuse_seconds" widget="float_time" attrs="{'invisible':[('absence_type','!=', 'excuse')]}"/>
+                                    <field name="payslip_id" invisible="1"/>
+                                    <field name="absence_type"/>
+                                </group>
+
+                            </group>
+                            <notebook>
+                                <page string="Day Log">
+                                    <field name="day_log">
+                                        <tree>
+                                            <field name="action_datetime" string="Time"/>
+                                            <field name="action" />
+                                            <field name="state" />
+                                        </tree>
+                                    </field>
+                                </page>
+                                 <page string="Calendar Leaves">
+                                    <field name="calendar_leaves_ids">
+                                        <tree>
+                                            <field name="type"/>
+                                            <field name="date_from" />
+                                            <field name="date_to" />
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+
+                            <div>
+                                <field name="comment" placeholder="Additional notes..."/>
+                            </div>
+
+                        </sheet>
+                        <!-- <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" />
+                        <field name="message_ids" widget="mail_thread" />
+                    </div> -->
+                    </form>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_attendance_tree" model="ir.ui.view">
+            <field name="name">hr.attendance.tree</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.view_attendance_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="replace">
+                    <tree string="HR Attendance">
+                        <field name="date" />
+                        <field name="employee_id" />
+                        <field name="duty_time"/>
+                        <field name="department_id"/>
+                        <field name="check_in" />
+                        <field name="check_out" />
+                        <field name="plan_hours" widget="float_time"/>
+                        <field name="worked_hours" widget="float_time"/>
+                        <field name="total_delay" widget="float_time"/>
+                        <field name="diff_from_duety" widget="float_time"/>
+                        <field name="absence_type"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_attendance_view_filter" model="ir.ui.view">
+            <field name="name">hr_attendance_view_filter</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.hr_attendance_view_filter" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='department_id']" position="after">
+                    <field name="date"/>
+                </xpath>
+                <xpath expr="//filter[@name='employee']" position="after">
+                    <filter string="Date" icon="terp-partner" domain="[]" context="{'group_by':'date'}"/>
+                    <filter string="Department" icon="terp-go-month" domain="[]" context="{'group_by':'department_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_resource_calendar_config" name="Resource Calendar" parent="hr_attendance.menu_hr_attendance_root" sequence="30"/>
+
+        <menuitem action="resource.action_resource_calendar_form" id="resource.menu_resource_calendar" parent="menu_resource_calendar_config" sequence="0"/>
+
+
+        <!-- <record id="hr_attendance_employee" model="ir.ui.view">
+        <field name="name">hr.employee.form</field>
+        <field name="model">hr.employee</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='barcode']" position="before">
+		            <field name="emp_attendance_no"/>
+                    <field name="work_time"/>
+                <newline/>
+            </xpath>
+        </field>
+    </record> -->
+
+        <record id="view_calendar_classification_form" model="ir.ui.view">
+            <field name="name">calendar.classification.form</field>
+            <field name="model">calendar.classification</field>
+            <field name="arch" type="xml">
+                <form string="Calendar Classification">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <div>
+                            <label for="calendars_ids" class="oe_edit_only"/>
+                            <field name="calendars_ids">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="priority" />
+                                </tree>
+                            </field>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_calendar_classification_tree" model="ir.ui.view">
+            <field name="name">calendar.classification.tree</field>
+            <field name="model">calendar.classification</field>
+            <field name="arch" type="xml">
+                <tree string="Calendar Classification">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="calendar_classification_action" model="ir.actions.act_window">
+            <field name="name">Calendar Classification</field>
+            <field name="res_model">calendar.classification</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="calendar_classification_menu" parent="hr_attendance_record.menu_resource_calendar_config" action="calendar_classification_action" sequence="2"/>
+
+        <record model="ir.ui.menu" id="hr_attendance.menu_hr_attendance_my_attendances">
+            <field name="active" eval="False"/>
+        </record>
+
+        <record model="ir.ui.menu" id="hr_attendance.menu_hr_attendance_kiosk_mode">
+            <field name="active" eval="False"/>
+        </record>
+
+        <record model="ir.ui.menu" id="hr_attendance.menu_hr_attendance_view_employees_kanban">
+            <field name="active" eval="False"/>
+        </record>
+
+        <record model="ir.ui.menu" id="hr_attendance.menu_hr_attendance_settings">
+            <field name="active" eval="False"/>
+        </record>
+
+        <record model="ir.ui.menu" id="hr_attendance.menu_hr_attendance_report">
+            <field name="active" eval="False"/>
+        </record>
+    </data>
+</openerp>

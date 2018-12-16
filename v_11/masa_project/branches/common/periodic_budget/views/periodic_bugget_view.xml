@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<!-- ################# fiscal year budget form view #################-->
+		<record id="fiscalyear_budget_custom_form_view" model="ir.ui.view">
+			<field name="name">Budgetary Period Form</field>
+            <field name="model">account.fiscalyear.budget</field>
+            <field name="inherit_id" ref="account_budget_custom.account_fiscalyear_budget_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form//field[@name='date_from']" position="replace">
+					<field name="period_id" required="1"/>
+                </xpath>
+                <xpath expr="//form//field[@name='date_to']" position="replace">
+                </xpath>
+                <xpath expr="//form//field[@name='intervals']" position="replace">
+                    <field name="bugetary_position_id"  required="1"/>
+                </xpath>
+            </field>
+		</record>
+		
+		<!--########### periods budgets form view ############### -->
+		<record id="periods_budget_custom_form_view" model="ir.ui.view">
+            <field name="name">Budgetary Period Form</field>
+            <field name="model">crossovered.budget</field>
+            <field name="inherit_id" ref="account_budget.crossovered_budget_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/group[1]/group[1]/field[@name='creating_user_id']" position="before">
+					<field name="period" required="1"/>
+                </xpath>
+                <xpath expr="/form/sheet/group[1]/group[1]" position="inside">
+                    <field name="bugetary_position_id"  required="1"/>
+                </xpath>
+            </field>
+        </record> 
+        
+        <!-- ################budget incom form view ##################-->
+		<record id="periods_budget_income_custom_form_view" model="ir.ui.view">
+            <field name="name">Income Budgets</field>
+            <field name="model">crossovered.budget</field>
+            <field name="inherit_id" ref="account_budget_custom.crossovered_budget_in_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/group[1]/group[1]" position="inside">
+                    <field name="bugetary_position_id"  required="1"/>
+                </xpath>
+            </field>
+        </record> 
+        <!-- ############### budgetary positions form view ##########-->
+        <record id="bugetary_positions_custom_form_view" model="ir.ui.view">
+            <field name="name">Budgetary Positions Form</field>
+            <field name="model">account.budget.post</field>
+            <field name="inherit_id" ref="account_budget.view_budget_post_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/group[1]/field[@name='name']" position="after">
+					<field name="class_type" required="1"/>
+                </xpath>
+                <xpath expr="/form/notebook/page[1]" position="after">
+					<page string="Sub Bugetary Positions" attrs="{'invisible':[('class_type' , '!=' , 'view')]}">
+						<field name="view_lines" attrs="{'required':[('class_type', '=' , 'view')]}" readonly="1">
+							<tree editable="false">
+								<field name="name" readonly="1"/>
+								<field name="code" readonly="1"/>
+								<field name="type" readonly="1"/>
+							</tree>
+						</field>
+					</page>
+                </xpath>
+            </field>
+        </record> 
+    </data>
+</odoo>
+
+
+
+

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     
+<template id="report_debt_reconstruction_view">
+    <t t-call="web.html_container">
+        <t t-call="web.internal_layout">
+        <div class="page">
+            <body>
+                 
+                <h5 class="text-right"><span t-esc="account_name" />:  Account name</h5>
+                <h5><span t-esc="account_currency"/><span t-esc="account_currency" />:   currency</h5>
+
+                <div class="table-responsive"><table class="table table-hover o_portal_my_doc_table" style="border:1px solid black;background-color:grey;">
+                <thead style="border:1px solid black">
+                    <tr>
+                    <th class="text-right">More</th>
+                    <th class="text-right">Two years</th>    
+                    <th class="text-right">Year</th>
+                    <th class="text-right">six months</th>
+                    <th class="text-right">Three months</th>
+                    <th class="text-right" >Month</th>
+                    <th class="text-right" style="border:1px solid black;">Balance</th>
+                    <th class="text-right" style="border:1px solid black;">Account name</th>
+                    <th class="text-right" style="border:1px solid black;">Code</th>
+                    </tr>
+                </thead>
+
+                <tbody style="border:1px solid black">
+                    <t t-set='a'        t-value='0'/>
+                    <t t-set='balanc'  t-value='0'/>
+                    <t t-set='balanc1' t-value='0'/>
+                    <t t-set='balanc3' t-value='0'/>
+                    <t t-set='balanc6' t-value='0'/>
+                    <t t-set='year1'   t-value='0'/>
+                    <t t-set='year2'   t-value='0'/>
+                    <t t-set='year'    t-value='0'/>
+                    <t t-foreach='non_duplicated_accounts' t-as='account'>
+
+                    <tr>
+                    <td class="text-right" ><span t-esc="years[a]"/></td>  
+                    <td class="text-right" ><span t-esc="years2[a]"/></td>
+                    <td class="text-right" ><span t-esc="years1[a]"/></td>
+                    <td class="text-right" ><span t-esc="balances6[a]"/></td>
+                    <td class="text-right" ><span t-esc="balances3[a]"/></td>
+                    <td class="text-right" ><span t-esc="balances1[a]"/></td>
+                    <td class="text-right" style="border:1px solid black;">
+                    <span t-esc="smalles_move[a].debit - smalles_move[a].credit"/></td>
+                    <td class="text-right" style="border:1px solid black;"><span t-field="account.name"/></td>
+                    <td class="text-right" style="border:1px solid black;"><span t-field="account.code"/></td>
+                    </tr>
+
+                    <t t-set='balanc'  t-value='balanc + smalles_move[a].debit - smalles_move[a].credit'/>
+                    <t t-set='balanc1' t-value='balanc1 + balances1[a]'/>
+                    <t t-set='balanc3' t-value='balanc3 + balances3[a]'/>
+                    <t t-set='balanc6' t-value='balanc6 + balances6[a]'/>
+                    <t t-set='year1'   t-value='year1 + years1[a]'/>
+                    <t t-set='year2'   t-value='year2 + years2[a]'/>
+                    <t t-set='year'    t-value='year + years[a]'/>
+                    <t t-set='a'        t-value='a+1'/>
+                    </t>
+
+
+                    <tr>
+                    <td class="text-right"><span t-esc="year"/></td>
+
+                    <td class="text-right"><span t-esc="year2"/></td>
+
+                    <td class="text-right"><span t-esc="year1"/></td>
+
+                    <td class="text-right"><span t-esc="balanc6"/></td>
+
+                    <td class="text-right"><span t-esc="balanc3"/></td>
+
+                    <td class="text-right"><span t-esc="balanc1"/></td>
+
+                    <td class="text-right" style="border:1px solid black;"><span t-esc="balanc"/></td>
+
+                    <th class="text-right" style="text-align: center; border:1px solid black;" colspan="3">Sentence</th>
+                    </tr>
+
+
+                    <tr>
+                    <td class="text-right"></td>
+
+                    <td class="text-right"></td>
+
+                    <td class="text-right"></td>
+
+                    <td class="text-right"></td>
+
+                    <td class="text-right"></td>
+
+                    <td class="text-right"></td>
+
+                    <td class="text-right" style="border:1px solid black;">
+                    </td>
+
+                    <th class="text-right" style="text-align: center; border:1px solid black;"  colspan="3">%ratio</th>
+                    </tr>
+
+                    
+                </tbody>  
+            </table></div><br></br><br></br><br></br> 
+
+             <div class="row">
+                <td><p class="text-right"><spane t-esc="request.env.user.name"/> Printed by</p></td> 
+             </div>
+
+            </body>
+        </div>
+       </t>
+    </t>
+</template>
+</odoo>

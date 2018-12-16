@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data noupdate="1">
+		 <delete model="ir.ui.menu" id="hr_custom.hr_transfer_archive_tree_menu"/>
+	</data>
+		
+	<data>
+ 
+		<!-- *******************************************************************************
+*										Employee (Departments) Movements 
+****************************************************************************************-->
+		<record id="hr_movements_department" model="ir.ui.view">
+			<field name="name">Deprtment Movements Form</field>
+			<field name="model">hr.movements.department</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Transfer Archive" version="7.0">
+					<header>
+						<field name="state" invisible="1"/>
+						<button string="Approved" name="do_approve" states="draft" type="object" class="oe_highlight" groups="base.group_hr_manager" />
+						<button type="object" string="Set to Draft" states="approved" name="set_to_draft" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,approved"/>
+					</header>
+					<sheet>
+						<group>
+							<group>
+								<field name="employee_id" domain="[('state','=','approved')]"  on_change="onchange_employee(employee_id)" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+								<field name="employee_salary_scale" invisible="1" />
+								<field name="new_company_id" widget="selection" attrs="{'readonly' : [('state' , '!=' , 'draft')]}" on_change="onchange_company(new_company_id)"/>
+								<field name="reference" select="1" attrs="{'readonly' : [('state' , '!=' , 'draft')]}" />
+								<field name="previous" readonly="1" select="1" attrs="{'readonly' : [('state' , '!=' , 'draft')]}" invisible="1"/>
+								<field name="last_department_id" readonly="1" nvisible="0"/>
+							</group>
+							<group>
+								<field name="date" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+								<field name="approve_date" required="1" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+								<field name="code" select="1" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+								<field name="days" attrs="{'invisible':[('reference','!=', 'hr.salary.bonuses')]}" />
+								<field name="promotion_type" attrs="{'invisible':[('reference','!=', 'hr.salary.degree')]}" />
+								<field name="company_id" groups="base.group_multi_company" readonly="1" invisible="1"/>
+								<field name="prev_company_id"  readonly="0" invisible="1"/>
+							</group>
+							<notebook colspan="4">
+								<page string="Comments">
+									<field name="comments" />
+								</page>
+							</notebook>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_process_archive_tree_view">
+			<field name="name">hr.movements.department.tree</field>
+			<field name="model">hr.movements.department</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Transfer Archive">
+					<field name="employee_id" domain="[('state','=','approved')]"  select="1" />
+					<field name="reference" select="1" />
+					<field name="previous" />
+					<field name="approve_date" />
+					<field name="date" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+		<record id="hr_movement_department_action" model="ir.actions.act_window">
+			<field name="name">hr.movements.department</field>
+			<field name="res_model">hr.movements.department</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		<menuitem id="process_archive_department_menu" name="Depatrment Movements" groups="base.group_hr_user" parent="hr_custom.menu_hr_payroll_processes" action="hr_movement_department_action" sequence="2"/>
+		<!-- Job movements   -->
+		<record id="hr_movements_job" model="ir.ui.view">
+			<field name="name">Job Movements Form</field>
+			<field name="model">hr.movements.job</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Transfer Archive" version="7.0">
+					<header>
+						<field name="state" invisible="1"/>
+						<button string="Approved" name="do_approve" states="draft" type="object" class="oe_highlight" groups="base.group_hr_manager" />
+						<button type="object" string="Set to Draft" name="set_to_draft" states='approved'/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,approved"/>
+					</header>
+					<sheet>
+						<group>
+							<group>
+								<field name="employee_id" domain="[('state','=','approved')]"  on_change="onchange_employee(employee_id)" />
+								<field name="employee_salary_scale" invisible="1" />
+								<field name="reference" select="1" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+								<field name="last_job_id" readonly="1" select="1" />
+								<field name="approve_date" required="1" />
+							</group>
+							<group>
+								<field name="date" />
+								<field name="code" select="1" />
+								<field name="days" attrs="{'invisible':[('reference','!=', 'hr.salary.bonuses')]}" />
+								<field name="promotion_type" attrs="{'invisible':[('reference','!=', 'hr.salary.degree')]}" />
+								<field name="company_id" groups="base.group_multi_company" readonly="1"/>
+							</group>
+							<notebook colspan="4">
+								<page string="Comments">
+									<field name="comments" />
+								</page>
+							</notebook>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_movements_job_tree_view">
+			<field name="name">hr.movements.job.tree</field>
+			<field name="model">hr.movements.job</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Transfer Archive">
+					<field name="employee_id" domain="[('state','=','approved')]"  select="1" />
+					<field name="reference" select="1" />
+					<field name="previous" />
+					<field name="approve_date" />
+					<field name="date" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+		<record id="hr_movement_job_action" model="ir.actions.act_window">
+			<field name="name">hr.movements.job</field>
+			<field name="res_model">hr.movements.job</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		<menuitem id="process_archive_job_menu" name="Jobs Movements" groups="base.group_hr_user" parent="hr_custom.menu_hr_payroll_processes" action="hr_movement_job_action" sequence="3"/>
+		<!-- promotion   -->
+		<record id="hr_movements_degree" model="ir.ui.view">
+			<field name="name">Promotion</field>
+			<field name="model">hr.movements.degree</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Transfer Archive" version="7.0">
+					<header>
+						<field name="state" invisible="1"/>
+						<button string="Approved" name="do_approve" states="draft" type="object" class="oe_highlight" groups="base.group_hr_manager" />
+						<button type="object" string="Set to Draft" name="set_to_draft" states='approved'/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,approved"/>
+					</header>
+					<sheet>
+						<group>
+							<group>
+								<field name="employee_id" domain="[('state','=','approved')]"  on_change="onchange_employee(employee_id,process_type)" />
+								<field name="new_scale_id" attrs="{'readonly' : [('state' , '!=' , 'draft')]}" required="1" on_change="onchange_salary(employee_id,new_scale_id,process_type)"/>
+								<field name="reference" attrs="{'readonly' : [('state' , '!=' , 'draft')]}" on_change="onchange_degree(reference,process_type)" domain="[('payroll_id' , '=' , new_scale_id )]"/>
+								<field name="new_bonuse_id" attrs="{'readonly' : [('state' , '!=' , 'draft')]}" required="1" domain="[('degree_id' , '=' , reference)]" />
+								<field name="process_type" invisible="1"/>
+							</group>
+							<group>
+								<field name="company_id" groups="base.group_multi_company" readonly="1"/>
+								<field name="date" />
+								<field name="approve_date" required="1"/>
+							</group>
+							<notebook colspan="4">
+								<page string="Previous Data">
+									<group>
+										<field name="employee_salary_scale" string="Previous Scale" readonly="1" />
+										<field name="last_degree_id" readonly="1" />
+										<field name="last_bonus_id" readonly="1" />
+										<field name="is_last" invisible="1"/>
+										<field name="last_bonus_date" invisible="1" />
+										<field name="last_promo_date" invisible="1" />
+									</group>
+								</page>
+								<page string="Comments">
+									<field name="comments" />
+								</page>
+							</notebook>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_movements_degree_tree_view">
+			<field name="name">hr.movements.degree.tree</field>
+			<field name="model">hr.movements.degree</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Transfer Archive">
+					<field name="employee_id" domain="[('state','=','approved')]"  select="1" />
+					<field name="reference" select="1" />
+					<field name="previous" />
+					<field name="approve_date" required="1"/>
+					<field name="date" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+		<record id="hr_movement_degree_action" model="ir.actions.act_window">
+			<field name="name">hr.movements.degree</field>
+			<field name="res_model">hr.movements.degree</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="context">{"default_process_type":"promotion"}</field>
+			<field name="domain">[('process_type' , '=' , 'promotion')]</field>
+		</record>
+		<menuitem id="process_archive_degree_menu" name="Promotion" groups="base.group_hr_user" parent="hr_custom.menu_hr_payroll_processes" action="hr_movement_degree_action" sequence="1"/>
+		<record id="hr_movement_isolate_action" model="ir.actions.act_window">
+			<field name="name">hr.movements.degree</field>
+			<field name="res_model">hr.movements.degree</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="context">{"default_process_type":"isolate"}</field>
+			<field name="domain">[('process_type' , '=' , 'isolate')]</field>
+		</record>
+		<menuitem id="process_archive_isolate_menu" name="Isolation" groups="base.group_hr_user" parent="hr_custom.menu_hr_payroll_processes" action="hr_movement_isolate_action" sequence="5"/>
+		<!-- bouns movements   -->
+		<record id="hr_movements_bonus" model="ir.ui.view">
+			<field name="name">Job Movements Form</field>
+			<field name="model">hr.movements.bonus</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Transfer Archive" version="7.0">
+					<header>
+						<field name="state" invisible="1"/>
+						<button string="Approved" name="do_approve" states="draft" type="object" class="oe_highlight" groups="base.group_hr_manager" />
+						<button type="object" string="Set to Draft" name="set_to_draft" states='approved'/>
+						<field name="state" widget="statusbar" statusbar_visible="draft,approved"/>
+					</header>
+					<sheet>
+						<group>
+							<group>
+								<field name="employee_id" domain="[('state','=','approved')]"  on_change="onchange_employee(employee_id)" />
+								<field name="reference" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+								<field name="last_bonus_id" readonly="1" />
+								<field name="last_bonus_date" invisible="1" />
+							</group>
+							<group>
+								<field name="company_id" groups="base.group_multi_company" readonly="1"/>
+								<field name="date" />
+								<field name="approve_date" required="1" />
+								<field name="code" select="1" />
+							</group>
+							<notebook colspan="4">
+								<page string="Comments">
+									<field name="comments" />
+								</page>
+							</notebook>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_movements_bouns_tree_view">
+			<field name="name">hr.movements.bonus.tree</field>
+			<field name="model">hr.movements.bonus</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Transfer Archive">
+					<field name="employee_id" domain="[('state','=','approved')]"  select="1" />
+					<field name="reference" select="1" />
+					<field name="previous" />
+					<field name="approve_date" />
+					<field name="date" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+		<record id="hr_movement_bonus_action" model="ir.actions.act_window">
+			<field name="name">hr.movements.bonus</field>
+			<field name="res_model">hr.movements.bonus</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		<menuitem id="process_archive_bonus_menu" name="Bounse" groups="base.group_hr_user" parent="hr_custom.menu_hr_payroll_processes" action="hr_movement_bonus_action" sequence="4"/>
+
+		<record id="hr_basic_emp_family_filter" model="ir.ui.view">
+			<field name="name">hr.employee.family.filter</field>
+			<field name="model">hr.employee.family</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Family">
+					<group col='8' colspan='4'>
+						<field name="employee_id">
+							<filter icon="terp-personal" name="my_family"
+								domain="[('employee_id.user_id','=', uid)]" help="My Qualtification" />
+						</field>
+						<separator orientation="vertical" />
+						<field name="relation_id" widget="selection" />
+						<separator orientation="vertical" />
+						<field name="start_date" />
+						<field name="birth_date" />
+						<field name="state" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="hr_basic_dep_arch_filter" model="ir.ui.view">
+			<field name="name">hr.movements.department.filter</field>
+			<field name="model">hr.movements.department</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Family">
+					<group col='8' colspan='4'>
+						<field name="company_id" />
+						<field name="employee_id" />
+						<field name="reference" />
+						<field name="state" />
+					</group>
+					<group expand="0" string="Group By...">
+                        <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+				</search>
+			</field>
+		</record>
+
+		<record id="hr_basic_job_arch_filter" model="ir.ui.view">
+			<field name="name">hr.movements.job.filter</field>
+			<field name="model">hr.movements.job</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Family">
+					<group col='8' colspan='4'>
+						<field name="company_id" />
+						<field name="employee_id" />
+						<field name="reference" />
+						<field name="state" />
+					</group>
+					<group expand="0" string="Group By...">
+                        <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+				</search>
+			</field>
+		</record>
+
+		<record id="hr_basic_bonus_arch_filter" model="ir.ui.view">
+			<field name="name">hr.movements.bonus.filter</field>
+			<field name="model">hr.movements.bonus</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Family">
+					<group col='8' colspan='4'>
+						<field name="company_id" />
+						<field name="employee_id" />
+						<field name="reference" />
+						<field name="state" />
+					</group>
+					<group expand="0" string="Group By...">
+                        <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+				</search>
+			</field>
+		</record>
+
+		<record id="hr_basic_degree_arch_filter" model="ir.ui.view">
+			<field name="name">hr.movements.degree.filter</field>
+			<field name="model">hr.movements.degree</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Family">
+					<group col='8' colspan='4'>
+						<field name="company_id" />
+						<field name="employee_id" />
+						<field name="reference" />
+						<field name="state" />
+					</group>
+					<group expand="0" string="Group By...">
+                        <filter string="Company" icon="terp-go-home" domain="[]" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    </group>
+				</search>
+			</field>
+		</record>
+
+
+<record model="ir.ui.view" id="hr_custom.view_employment_termination_form">
+           <field name="name">employment.termination.form</field>
+           <field name="model">hr.employment.termination</field>
+           <field name="arch" type="xml">
+               <form string="Termination" version="7.0">
+                  <header>
+                   <button name="do_terminate" string="Terminate" states="confirmed" type="object" class="oe_highlight" groups="base.group_user"/>
+                        <button name="do_confirm" string="Confirm" states="draft" type="object" class="oe_highlight" groups="base.group_user"/>
+                         <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,refuse" />
+                 </header>
+                  <sheet>
+                  	<group col="4">
+                  		<field name="employee_id" class="oe_inline"/>
+	                     <field name="dismissal_date" class="oe_inline"/>
+	                     <field name="dismissal_type"/>
+                  	</group>
+                  	<notebook>
+                  		<page string="Comment">
+                  			<field name="comments" placeholder="Note..."/>
+                  		</page>
+                  		<page string="Details">
+                  			<group  colspan="4"  attrs="{'invisible':[('state','in',('draft','refuse'))]}">
+			    	       		<field name="date"/>
+	                            <field name="acc_number" attrs="{'invisible':[('state','!=','transfer')]}"/>
+                           </group>    
+                          <group  colspan="4" string="End Of Service Lines " attrs="{'invisible':[('state','in',('draft','refuse'))]}">
+                              <field name="line_ids" nolabel="1" readonly="1" widget="many2many">
+	                             <tree>
+							    	<field name="name" />
+							    	<field name="amount"/>
+					 			</tree>
+			      				</field>
+
+			  				</group> 
+                  		</page>
+                  	</notebook>
+                 </sheet>
+               </form>
+           </field>
+       </record>
+
+         <!-- Termination inherit
+        <record model="ir.ui.view" id="view_employment_termination_inherit_form">
+                <field name="name">employment.termination.inherit.form</field>
+                <field name="model">hr.employment.termination</field>
+                <field name="inherit_id" ref="hr_payroll_custom.view_employment_termination_inherit_form"/>
+                <field name="arch" type="xml">
+                	<xpath expr='//field[@widget="statusbar"]' position='replace' version="7.0">
+                		<field name="state" widget="statusbar" statusbar_visible="draft,confirmed,refuse" />
+                	</xpath>
+                	<xpath expr='//button[@name="calculation"]' position='replace' version="7.0">
+                		<button name="do_terminate" string="Terminate" states="confirmed" type="object" class="oe_highlight" groups="base.group_user"/>
+                	</xpath>
+
+	        	</field>
+	    </record>-->
+	</data>
+</openerp>

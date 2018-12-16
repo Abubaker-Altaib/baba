@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Maintenance Stock report wiz View -->
+		<record id="view_maintenance_stock_report_wiz" model="ir.ui.view">
+			<field name="name">Maintenance Stock Report Wiz</field>
+			<field name="model">fuel.stock.report.wiz</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Recieved And Delivery Report" version="7.0">
+					<group>
+						<field name="company_id" colspan="2" groups="base.group_multi_company" required="1" readonly="1"/>
+						<field name="maintenance" invisible="1" />
+					</group>
+					<group >
+						<newline />
+						<newline />
+							<field name="pick_type" required="1"/>
+							<field name="location_id" required="1" domain="[('is_maintenance_location','=',True)]"/>
+							<field name="product_id" domain="[('spare_ok','=',True)]"/>
+							
+					</group>
+					<group>
+						<field name="date_from" required="1"/>
+						<field name="date_to" required="1"/>
+					</group>
+					<footer>
+						<button name="print_report" string="Print" type="object"
+							class="oe_highlight" />
+						or
+						<button special="cancel" string="Cancel" class="oe_link" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<!-- Maintenance Stock report wiz Action -->
+		<record id="action_maintenance_stock_report_wiz" model="ir.actions.act_window">
+			<field name="name">Incoming And Outgoing Report </field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">fuel.stock.report.wiz</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="context">{'default_maintenance': True}</field>
+			<field name="view_id" ref="view_maintenance_stock_report_wiz" />
+			<field name="target">new</field>
+		</record>
+
+		<!-- Maintenance Stock report wizard Menu -->
+		<menuitem name="Incoming And Outgoing Report" parent="vehicles_maintenance.menu_maintenances_reports"
+			action="action_maintenance_stock_report_wiz" id="menu_maintenance_stock_report_wiz" sequence="4"/>
+      
+ 		
+
+	</data>
+</openerp>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<openerp>
+  <data>
+    <!--Work Flow Intialization-->
+    <record id="id_contract_co_operative_fees_workflow" model="workflow">
+       <field name="name">contract.co.operative.fees.workflow</field>
+       <field name="osv">contract.fees</field>
+       <field name="on_create">True</field>
+    </record>
+    <!--Work Flow Activites Intialization-->
+    <record id="id_wkf_contract_co_operative_fees_draft" model="workflow.activity">
+        <field name="wkf_id" ref="id_contract_co_operative_fees_workflow"/>
+        <field name="flow_start">True</field>
+        <field name="name">draft</field>
+    </record>
+    
+   <record id="id_wkf_contract_co_operative_fees_done" model="workflow.activity">
+       <field name="wkf_id" ref="id_contract_co_operative_fees_workflow"/>
+       <field name="name">done</field>
+       <field name="kind">function</field>
+       <!--field name="flow_stop">True</field-->
+       <field name="action">done()</field>
+       
+   </record>
+   <record id="id_wkf_contract_co_operative_fees_cancel" model="workflow.activity">
+       <field name="wkf_id" ref="id_contract_co_operative_fees_workflow"/>
+       <field name="name">cancel</field>
+       <field name="kind">function</field>
+       <field name="action">cancel()</field>
+   </record>
+  <!--Work Flow Transitions Intialization-->
+  <record id="id_wkf_contract_co_operative_fees_draft_done" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_contract_co_operative_fees_draft" />
+     <field name="act_to" ref="id_wkf_contract_co_operative_fees_done" />
+     <field name="signal">done</field>
+    </record>
+
+  <record id="id_wkf_contract_co_operative_fees_draft_cancel" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_contract_co_operative_fees_draft" />
+     <field name="act_to" ref="id_wkf_contract_co_operative_fees_cancel" />
+     <field name="signal">cancel</field>
+  </record>
+
+<!--record id="id_wkf_contract_co_operative_fees_cancel_draft" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_contract_co_operative_fees_cancel" />
+     <field name="act_to" ref="id_wkf_contract_co_operative_fees_draft" />
+     <field name="signal">cancel_direct</field>
+  </record-->
+  </data>
+</openerp>

@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+		<record id="view_employee_salary_addendum_form_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.salary.addendum.inherit.form</field>
+            <field name="model">hr.employee.salary.addendum</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_employee_salary_addendum_form" />
+			<field name="arch" type="xml"><field name="date" class="oe_inline"/>
+				<xpath expr='//field[@name="compute_per"]' position="replace">
+					<field name="compute_per" on_change="onchange_compute_perrr(name,month,year,compute_per,type,addendum_ids,payroll_ids)" readonly="1"/>
+				</xpath>
+				<xpath expr='//field[@name="payroll_ids"]' position="replace">
+					<field name="payroll_ids" widget="many2many_tags" on_change="scale_change(name,month,year,compute_per,type,addendum_ids,payroll_ids)" attrs="{'readonly':[('state','!=','draft')]}"/>
+				</xpath>
+				<xpath expr='//field[@name="month"]' position="replace">
+					<field name="month" nolabel="1" required="1" placeholder="Select Month" class="oe_inline" on_change="name_change(name,month,year,compute_per,type,addendum_ids,payroll_ids)" attrs="{'readonly':[('state','!=','draft')]}"/>
+				</xpath>
+				<xpath expr='//field[@name="year"]' position="replace">
+                    <field name="year" nolabel="1"  required="1" placeholder="Year" class="oe_inline" on_change="scale_change(name,month,year,compute_per,type,addendum_ids,payroll_ids)" attrs="{'readonly':[('state','!=','draft')]}"/>
+				</xpath>
+				<xpath expr='//field[@name="type"]' position="replace">
+                    <field name="type" on_change="type_change(name,month,year,compute_per,type,addendum_ids,payroll_ids)" attrs="{'readonly':[('state','!=','draft')]}"/>
+                    <field name="payroll_ids_me" invisible="1"/>
+				</xpath>
+				<xpath expr='//field[@name="addendum_ids"]' position="replace">
+                    <field name="addendum_ids" nolabel="1"
+                               attrs="{'required':[('type','=','addendum')], 'readonly':[('state','!=','draft')]}" 
+                               domain= "[('in_salary_sheet','!=', 'True'),('allowance_type','=','general'),('allowance_type','!=','in_cycle')]"
+                               on_change="addendum_change(name,month,year,compute_per,type,addendum_ids,payroll_ids)"/>
+				</xpath>
+				<xpath expr='//group[1]/div' position="after">
+					<field name="percentage"  attrs="{'readonly':[('state','!=','draft')]}"/>
+					<field name="compute_date" class="oe_inline" invisible="1" string="Computation Date" />
+				</xpath>
+				<xpath expr='//notebook/page[3]' position="replace">
+					<page string="Employees" attrs="{'invisible':[('compute_per','!=','employee')], 'readonly':[('state','!=','draft')]}">
+			            <field name="employee_ids" attrs="{'readonly':[('state','!=','draft')]}">
+                            <tree name="EmployeeEEE"  editable="top"> 
+                            	<field name="emp_code" on_change="onchange_code(emp_code, parent.payroll_ids, parent.employee_ids, parent.payroll_ids_me)"/>
+                                <field name="employee_id" on_change="onchange_employee(parent.percentage,employee_id)" domain= "[('id','in',parent.payroll_ids_me[0][2])]" 
+                                context="{'line_ids':parent.employee_ids,'model':'hr.salary.addendum.percentage'}"/>
+                                <field name="percentage"/>
+                            </tree>  
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr='//notebook/page[1]' position="after">
+                	<page string="Deduction" attrs="{'invisible':[('type','!=','addendum')], 'readonly':[('state','!=','draft')]}">
+			                <field name="deduction_ids" nolabel="1" 
+                               domain= "[('allowance_type','!=','in_cycle')]" attrs="{'readonly':[('state','!=','draft')]}"/>
+			            </page>
+                </xpath>
+		<xpath expr='//button[@name="validate"]' position="attributes">
+				    <attribute name="groups">purchase_ntc.group_internal_auditor</attribute>
+				</xpath>
+				<xpath expr='//button[@name="action_cancel"]' position="attributes">
+				    <attribute name="groups">purchase_ntc.group_internal_auditor</attribute>
+				</xpath>
+				<xpath expr="//sheet" position="after">
+					<div class="oe_chatter">
+	                    <!--field name="message_follower_ids" widget="mail_followers"/-->
+	                    <field name="message_ids" widget="mail_thread"/>
+	                </div>
+	            </xpath>
+	            <xpath expr='//field[@name="date"]' position="attributes">
+				    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="name"]' position="attributes">
+				    <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+				</xpath>
+			</field>
+		</record>
+
+
+		<record id="view_hr_payroll_main_archive_form_inherit" model="ir.ui.view">
+			<field name="name">hr.payroll.main.archive.inherit.form</field>
+			<field name="model">hr.payroll.main.archive</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_hr_payroll_main_archive_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//notebook/page[2]/field/tree/field[@name="amount"]' position="after">
+					<field name="percentage" />
+					<field name="final_amount" />
+				</xpath>	
+			</field>
+		</record>
+
+		<record id="view_hr_payroll_addendum_form_inherit" model="ir.ui.view">
+			<field name="name">hr.payroll.addendum.form</field>
+			<field name="model">hr.payroll.main.archive</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_hr_payroll_addendum_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//notebook/page[2]/field/tree/field[@name="amount"]' position="after">
+					<field name="percentage" />
+					<field name="final_amount" />
+				</xpath>	
+			</field>
+		</record>
+
+		<record id="hr_inherit_main_arch_inherit" model="ir.ui.view">
+			<field name="name">hr.payroll.main.archive.inherit.form</field>
+			<field name="model">hr.payroll.main.archive</field>
+			<field name="inherit_id" ref="hr_loan.hr_inherit_main_arch" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="loan_amount"]' position="after">
+					<field name="percentage" />
+					<field name="final_amount" />
+				</xpath>	
+			</field>
+		</record>
+
+		<record id="view_hr_allow_deduc_archive_form_inherit" model="ir.ui.view">
+			<field name="name">hr.allowance.deduction.archive.inherit.form</field>
+			<field name="model">hr.allowance.deduction.archive</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_hr_allow_deduc_archive_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="amount"]' position="after">
+					<field name="percentage" />
+					<field name="final_amount" />
+				</xpath>	
+			</field>
+		</record>
+
+		<record id="view_hr_allow_deduc_archive_tree_inherit" model="ir.ui.view">
+			<field name="name">hr.allowance.deduction.archive.inherit.tree</field>
+			<field name="model">hr.allowance.deduction.archive</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_hr_allow_deduc_archive_tree" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="amount"]' position="after">
+					<field name="percentage" />
+					<field name="final_amount" />
+				</xpath>	
+			</field>
+		</record>
+
+        <record model="ir.ui.view" id="hr_loan_archive_form_view_inherit">
+            <field name="name">hr.loan.archive.inherit.form</field>
+            <field name="model">hr.loan.archive</field>
+			<field name="inherit_id" ref="hr_loan.hr_loan_archive_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="loan_amount"]' position="after">
+					<field name="percentage" />
+					<field name="final_amount" />
+				</xpath>	
+			</field>
+		</record>
+
+		<record id="hr_loan_archive_tree_inherit" model="ir.ui.view">
+			<field name="name">hr.loan.archive.inherit.tree</field>
+			<field name="model">hr.loan.archive</field>
+			<field name="inherit_id" ref="hr_loan.hr_loan_archive_tree_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="loan_amount"]' position="after">
+					<field name="percentage" />
+					<field name="final_amount" />
+				</xpath>	
+			</field>
+		</record>
+
+        <record model="ir.ui.view" id="view_allowance_deduction_inherit_form">
+			<field name="name">hr.allowance.deduction.inherit.form</field>
+			<field name="model">hr.allowance.deduction</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_allowance_deduction_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="name_type"]' position="after">
+					<field name="type3"/>
+					<field name="deduction_from" attrs="{'invisible':[('name_type','=','allow')]}"/>
+				</xpath>
+				<xpath expr='//field[@name="linked_absence"]' position="after">
+					<field name="allow_out_employee" attrs="{'invisible':['|','|',('in_salary_sheet','=',True),('allowance_type','not in',('general')),('type3','=','2')]}"/>
+				</xpath>
+				<xpath expr='//field[@name="special"]' position="after">
+					<field name="mission" attrs="{'invisible':[('type3','=','1')]}"/>
+				</xpath>
+				<xpath expr="//field[@name='salary_included'] " position ='attributes'>
+					<attribute name="attrs">{'invisible':[('type3','=','2')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='old_salary_included'] " position ='attributes'>
+					<attribute name="attrs">{'invisible':[('type3','=','2')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='linked_absence'] " position ='attributes'>
+					<attribute name="attrs">{'invisible':[('type3','=','2')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='related_marital_status'] " position ='attributes'>
+					<attribute name="attrs">{'invisible':[('type3','=','2')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='distributed'] " position ='attributes'>
+					<attribute name="attrs">{'invisible':[('type3','=','2')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='stamp'] " position ='attributes'>
+					<attribute name="attrs">{'invisible':[('type3','=','2')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='code'] " position ='attributes'>
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//field[@name='account_id'] " position ='after'>
+					<field name="analytic_id" domain="[('type','!=','view')]"/>
+				</xpath>
+				<xpath expr="//field[@name='link_with_unpaid_leaves'] " position ='replace'>
+					<field name="link_with_unpaid_leaves"/>
+				</xpath>
+				<xpath expr="//page[8]/field/tree/field[@name='married'] " position ='after'>
+					<field name="degree_id"/>
+				</xpath>
+			</field>
+
+		</record>
+
+		<record model="ir.ui.view" id="view_allowance_deduction_tree_ntc">
+			<field name="name">hr.allowance.deduction.tree</field>
+			<field name="model">hr.allowance.deduction</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_allowance_deduction_tree" />
+			<field name="arch" type="xml">
+				<xpath expr="/tree/field[@name='code'] " position ='attributes'>
+					<attribute name="invisible">1</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="hr_inherit_salary_scale" model="ir.ui.view">
+			<field name="name">hr.payroll.salary.scale.inherit.form</field>
+			<field name="model">hr.salary.scale</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_salary_scale_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='sub_bonus'] " position ='after'>
+					<field name="subs_period" />
+				</xpath>
+				<xpath expr="//field[@name='end_date'] " position ='after'>
+					<field name="active" />
+				</xpath>
+				<xpath expr="//page[@string='Degrees'] " position ='before'>
+					<page string="Degrees Category">
+						<field colspan="4" name="cat_ids" nolabel="1" />
+					</page>
+				</xpath>	
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_hr_allow_deduc_exception_form_ntc">
+			<field name="name">hr.allowance.deduction.exception.form</field>
+			<field name="model">hr.allowance.deduction.exception</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_hr_allow_deduc_exception_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='amount'] " position ='replace'>
+					<field name="amount" on_change="onchange_factor(amount,factor)" attrs="{'invisible':[('action','=','exclusion')]}" />
+				</xpath>
+				<xpath expr="//field[@name='end_date'] " position ='after'>
+					<field name="factor" on_change="onchange_factor(amount,factor)" attrs="{'invisible':[('action','!=','special')]}" />
+					<field name="special_amount" attrs="{'invisible':[('action','!=','special')]}"/>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_salary_scale_allow_deduct" model="ir.ui.view">
+            <field name="name">salary.scale.allow.deduct.form</field>
+            <field name="model">salary.scale.allow.deduct</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_salary_scale_allow_deduct" />
+            <field name="arch" type="xml">
+            	<xpath expr="//button[@name='update_degrees']" position ='replace'/>
+            	<xpath expr="/form/group" position ='before'>
+	            	<header>
+	                   		<button name="update_degrees" string="update" type="object"/>
+	                </header>
+	            </xpath>
+                <xpath expr="//field[@name='degree_ids'] " position ='replace'>
+                	<field colspan="4" name="degree_ids">
+						<tree string="Degrees" editable="top">
+							<field name="sequence" />
+							<field name="name" />
+						</tree>
+					</field>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!-- Employee Substitution inherit -->
+		<record id="hr_employee_substitution_form" model="ir.ui.view">
+			<field name="name">hr.employee.substitution.form.inherit</field>
+			<field name="model">hr.employee.substitution</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_payroll_wafi.hr_employee_substitution_form" />
+			<field name="arch" type="xml">
+				<field name="state" position="replace">
+					<field name="state" widget="statusbar"
+						statusbar_visible="draft,approve,done"
+						statusbar_colors='{"cancel":"red"}' />
+				</field>
+
+				<xpath expr='//button[@name="complete"]' position="attributes">
+				    <attribute name="string">HR Recommendation</attribute>
+				    <attribute name="groups">base.group_hr_user</attribute>
+				</xpath>
+				<xpath expr='//button[@name="confirm"]' position="attributes">
+				    <attribute name="string">Department Manager Recommendation</attribute>
+				</xpath>
+				<xpath expr='//button[@name="confirm"]' position="after">
+				    <button name="general_dep" string="General Department Manager Recommendation" states="confirm"
+						class="oe_highlight" groups="base_custom.group_general_department_manager" />
+					<button name="hr_finance_mg" string="Financial and Hummans Manager Approve" states="general_dep"
+						class="oe_highlight" groups="base_custom.group_general_hr_manager" />
+					<button name="hr_general_mg_cancel" string="Cancel" states="general_dep"
+						class="oe_highlight" groups="base_custom.group_general_hr_manager" />
+					<button name="general_sub_app" string="General Manager Approve" states="hr_finance"
+						class="oe_highlight" groups="base_custom.group_account_general_manager" />
+
+
+					<!--button name="review_ap" string="Reviewer Approve" states="hr_finance"
+						class="oe_highlight" groups="purchase_ntc.group_internal_auditor" />
+					<button name="review_cancel" string="Cancel" states="hr_finance"
+						class="oe_highlight" groups="purchase_ntc.group_internal_auditor" /-->
+				</xpath>
+				<xpath expr='//button[@name="approve"]' position="attributes">
+				    <attribute name="string">HR Implementation</attribute>
+				    <attribute name="states">implement</attribute>
+				    <attribute name="groups">base.group_hr_user</attribute>
+				</xpath>
+				<xpath expr='//button[@name="cancel"]' position="attributes">
+				    <attribute name="groups">base_custom.group_account_general_manager</attribute>
+				    <attribute name="states">hr_finance</attribute>
+				</xpath>
+
+				<xpath expr="//sheet" position="after">
+					<div class="oe_chatter">
+	                    <!--field name="message_follower_ids" widget="mail_followers"/-->
+	                    <field name="message_ids" widget="mail_thread"/>
+	                </div>
+	            </xpath>
+
+			</field>
+		</record>
+
+		<record id="view_employees_salary_report" model="ir.ui.view">
+            <field name="name">Employees Salary Report</field>
+            <field name="model">employees.salary.report</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_employees_salary_report" />
+            <field name="arch" type="xml">
+            	<field name="year" position="after">
+					<field name="curr_uid" invisible="1"/>
+			        <field name="curr_uid_hr" invisible="1"/>
+				</field>
+            	<xpath expr='//button[@name="print_report"]' position="attributes">
+			   	 	<attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute>
+				</xpath>
+
+            </field>
+        </record>
+
+		<record model="ir.ui.view" id="view_hr_payroll_addendum_tree">
+			<field name="name">hr.payroll.addendum.tree</field>
+			<field name="model">hr.payroll.main.archive</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_hr_payroll_addendum_tree" />
+			<field name="arch" type="xml">
+				<field name="employee_id" position="after">
+					<field name="bank_account_id"/>
+				</field>
+				<field name="scale_id" position="after">
+					<field name="allow_deduct"/>
+				</field>
+			</field>
+		</record>
+
+		<record id="view_hr_hr_payroll_main_filter" model="ir.ui.view">
+			<field name="name">Payroll Main Archive</field>
+			<field name="model">hr.payroll.main.archive</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_hr_hr_payroll_main_filter" />
+			<field name="arch" type="xml">
+				<xpath expr='//filter[@string="Month"]' position="after">
+				    <filter string="Allowance" icon="terp-go-home" context="{'group_by':'allow_deduct'}" />
+				</xpath>
+			</field>
+		</record>
+<report
+            auto="False"
+            menu="False" 
+            id="bonus_listing"
+            model="hr.payroll.main.archive"
+            name="bonus_listing.report"
+            file="hr_ntc_custom/report/bonus_listing.mako"
+            string="Bonus Listing" 
+            report_type="webkit"  header="True" />
+
+		<record model="ir.ui.view" id="view_additional_allowance_form">
+			<field name="name">hr.additional.allowance.form</field>
+			<field name="model">hr.additional.allowance</field>
+			<field name="inherit_id" ref="hr_additional_allowance.view_additional_allowance_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="confirm"]' position="attributes">
+				    <attribute name="groups">admin_affairs.group_admin_affair_manager</attribute>
+				</xpath>
+				<xpath expr='//button[@name="validate"]' position="attributes">
+				    <attribute name="groups">base.group_hr_user</attribute>
+				</xpath>
+				<xpath expr='//button[@name="second_validate"]' position="attributes">
+				    <attribute name="groups">purchase_ntc.group_internal_auditor</attribute>
+				</xpath>
+				<xpath expr='//button[@name="refuse"]' position="attributes">
+				    <attribute name="groups">base.group_hr_user,base.group_hr_manager,admin_affairs.group_admin_affair_manager</attribute>
+				</xpath>
+				<xpath expr='//button[@name="set_to_draft"]' position="attributes">
+				    <attribute name="groups">base.group_hr_manager,purchase_ntc.group_internal_auditor</attribute>
+				</xpath>
+				
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_degree_category_form">
+			<field name="name">hr.degree.category.form</field>
+			<field name="model">hr.degree.category</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_degree_category_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//form[@string="Degree category"]' position="replace">
+				    <form string="Degree category" version="7.0">
+				    	<sheet>
+				    		<group>
+								<field name="name" />
+								<field name="code" />
+								<field name="account_id" />
+								<field name="worker" />
+							</group>
+						</sheet>
+					</form>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_degree_category_tree">
+			<field name="name">hr.degree.category.tree</field>
+			<field name="model">hr.degree.category</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_degree_category_tree" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="name"]' position="after">
+				    <field name="account_id" />
+				    <field name="worker" />
+				</xpath>
+			</field>
+		</record>
+
+		<report
+         auto="False"
+         menu="False" 
+         id="hr_payroll_custom.social_insurance_webkit_id"
+         model="hr.payroll.main.archive"
+         name="social.insurrance.webkit"
+         file="hr_ntc_custom/report/social_insurance.rml"
+         string="Social Insurance Report" 
+         report_type="pdf"
+         header="True" />
+
+        <report
+         auto="False"
+         menu="False" 
+         id="hr_payroll_custom.insurrance_solidarity_webkit_id"
+         model="hr.payroll.main.archive"
+         name="insurrance.solidarity.webkit"
+         file="hr_ntc_custom/report/health_insurance.rml"
+         string="Health Insurance And Solidarity Report" 
+         report_type="pdf"  header="True" />
+
+
+        <record id="view_insurrance_solidarity" model="ir.ui.view">
+            <field name="name">insurrance.solidarity</field>
+            <field name="model">insurrance.solidarity</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_insurrance_solidarity" />
+            <field name="arch" type="xml">
+            	<xpath expr='//field[@name="factor"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+            </field>
+        </record>
+
+        <!--report auto="False" id="additional_wage_id"
+         model="hr.additional.allowance" 
+         name="additional_form"
+         rml="hr_ntc_custom/report/additional_Form.rml" 
+         string="additional allowance form"/-->
+
+         <!-- salary bonuses -->
+
+		<record model="ir.ui.view" id="view_salary_bonuses_form">
+			<field name="name">hr.salary.bonuses.form</field>
+			<field name="model">hr.salary.bonuses</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_salary_bonuses_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="sequence"]' position="after">
+				    <field name="active" />
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_hr_employee_substitution_filter" model="ir.ui.view">
+			<field name="name">Employee Substitution</field>
+			<field name="model">hr.employee.substitution</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_hr_employee_substitution_filter" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="end_date"]' position="after">
+					<group>
+					    <filter icon="terp-camera_test" domain="[('state','=','complete')]" string="Wating Department Manager Recommendation" name="dep_manag"/>
+					    <filter icon="terp-camera_test" domain="[('state','=','confirm')]" string="Wating General Department Manager Recommendation" name="gen_dep_manag"/>
+					    <filter icon="terp-camera_test" domain="[('state','=','general_dep')]" string="Waiting General Financial and Hummans Manager Approve" name="hr_general_dep"/>
+					    <filter icon="terp-camera_test" domain="[('state','=','hr_finance')]" string="Waiting General Manager Approve" name="general_mang"/>
+					    <filter icon="terp-camera_test" domain="[('state','=','implement')]" string="Waiting HR Implementation" name="implement"/>
+					</group>
+				</xpath>
+			</field>
+		</record>
+
+	</data>
+</openerp>

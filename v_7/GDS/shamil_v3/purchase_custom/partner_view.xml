@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--  record model="ir.ui.view" id="_partner_form_inherit1">
+            <field name="name">res.partner.vat.inherit1</field>
+            <field name="type">form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base_vat.view_partner_form"/>
+            <field name="arch" type="xml">
+            <xpath expr="/form/notebook/page/group/group/field[@name='vat']" position="attributes">
+                    <attribute name="groups">base.group_partner_manager</attribute>
+            </xpath>
+            </field>  
+        </record-->
+
+        <record model="ir.ui.view" id="partner_form_inherit1">
+            <field name="name">res.partner.form.inherit1</field>
+            <field name="type">form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+            <field name="customer" position="replace">
+                   <field name="customer" select="1" 
+                   groups ="base.group_partner_manager"/>
+            </field>
+            <field name="user_id" position="replace">
+                   <field name="user_id" 
+                   groups ="base.group_partner_manager"/>
+            </field>
+            <field name="active" position="replace">
+                   <field name="active" 
+                   groups ="base.group_partner_manager"/>
+            </field>
+            <field name="website" position="replace">
+                   <field name="website" widget="url"
+                    groups ="base.group_partner_manager"/>
+            </field>
+            <field name="date" position="replace">
+                   <field name="date" 
+                   groups ="base.group_partner_manager"/>
+            </field>
+            <xpath expr="/form/sheet/notebook/page[@string='History']" position="attributes">
+                    <attribute name="groups">base.group_partner_manager</attribute>
+            </xpath>
+
+            </field>  
+        </record>
+
+       <!-- ************* inherit Accounting tab ***********-->
+
+  <record model="ir.ui.view" id="view_partner_property_form_inherit1">
+            <field name="name">res.partner.property.form.inherit1</field>
+            <field name="type">form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+            <field name="property_account_position" position="replace">
+                   <field name="property_account_position" 
+                   widget="selection" groups ="base.group_partner_manager"/>
+            </field>
+            <field name="property_payment_term" position="replace">
+                   <field name="property_payment_term" 
+                   widget="selection" groups ="base.group_partner_manager"/>
+            </field>
+            <field name="credit" position="replace">
+                   <field name="credit" groups ="base.group_partner_manager"/>
+            </field>
+            <field name="credit_limit" position="replace">
+                   <field name="credit_limit" 
+                   groups ="base.group_partner_manager"/>
+            </field>
+            <field name="debit" position="replace">
+                   <field name="debit" 
+                   groups ="base.group_partner_manager"/>
+            </field>
+            <field name="property_payment_term" position="replace">
+                   <field name="property_payment_term" 
+                   widget="selection" groups ="base.group_partner_manager"/>
+            </field>
+            <xpath expr="/form/sheet/notebook/page/field[@name='bank_ids']" position="attributes">
+                    <attribute name="groups">base.group_partner_manager</attribute>
+            </xpath>
+            <field name="property_account_position" position="replace">
+                  <field name="property_account_position" 
+                  widget="selection" groups ="base.group_partner_manager"/>
+            </field>
+            <xpath expr="/form/sheet/notebook/page[@string='Accounting']"
+             position="attributes">
+            <attribute name="groups">base.group_partner_manager</attribute>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page[@string='Accounting']" position="after">
+                 <page string="Year">
+                 <separator colspan="4" string="Years"/>
+                 <field colspan="4" name="year_id" nolabel="1"/>
+                 </page>
+              </xpath>
+          </field>
+       </record>
+       
+        <record model="ir.ui.view" id="view_partner_property_form_inherits1">
+            <field name="name">res.partner.view_partner_property_form.inherit1</field>
+            <field name="type">form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="stock.view_partner_property_form"/>
+            <field name="arch" type="xml">
+            
+            <field name="property_stock_customer" position="replace">
+                   <field name="property_stock_customer" domain="[('usage','=','supplier')]"
+                    groups="base.group_partner_manager"/>
+            </field>
+            
+            </field>  
+        </record>
+       
+       <record id="view_res_partner_filter_inherit1" model="ir.ui.view">
+            <field name="name">res.partner.select.inherit1</field>
+            <field name="model">res.partner</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="priority">40</field>
+            <field name="arch" type="xml">
+            <xpath expr="/search/filter[@name='customer']" position="attributes">
+                    <attribute name="groups">base.group_partner_manager</attribute>
+            </xpath>
+            </field>  
+       </record>
+
+        <!--menuitem action="base.action_partner_category_form" 
+        id="base.menu_partner_category_form" 
+        parent="base.menu_procurement_management_supplier_name" sequence="1" /-->
+
+
+       <record model="ir.ui.view" id="res_partner_category_form_inherit">
+            <field name="name">res.partner.category.form.inherit</field>
+            <field name="type">form</field>
+            <field name="model">res.partner.category</field>
+            <field name="inherit_id" ref="base.view_partner_category_form"/>
+            <field name="arch" type="xml">
+            <field name="parent_id" position="after">
+                   <field name="type" groups ="base.group_partner_manager" required="True"/>
+            </field>
+
+            <field name="parent_id" position="replace">
+                    <field name="parent_id" 
+                    on_change="onchange_parent_id(parent_id)" />
+            </field>
+
+            </field>
+       </record>
+
+
+        <!--menuitem action="custom_supplier_form_action" 
+        id="menu_custom_supplier_form_action" 
+        parent="base.menu_procurement_management_supplier_name" sequence="1" /-->
+ 
+<!-- supplier tree -->
+
+         <record id="custom_supplier_tree" model="ir.ui.view">
+            <field name="name">custom.supplier.tree</field>
+            <field name="model">res.partner</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+	        <tree string="Partner">
+            <field name="name"/>
+                    <field name="ref" />
+                    <field name="phone"/>
+                    <field name="email"/>
+                    <field name="city"/>
+                    <field name="country"/>
+             </tree>
+            </field>
+          </record>
+
+<!-- supplier form -->
+      
+        <record id="year_partner_form" model="ir.ui.view">
+            <field name="name">partner.year.form</field>
+            <field name="model">res.partner.year</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Supplier Year">
+                       <group col="4" colspan="4">
+                       <field name="name" colspan="2"/>
+                       <field name="active" />
+                       <separator colspan="4" string="Partners"/>
+                       <field colspan="4" name="partner_ids" nolabel="1"/>
+                       </group> 
+                </form>
+            </field>
+          </record>
+         <record id="year_supplier_tree" model="ir.ui.view">
+            <field name="name">year.supplier.tree</field>
+            <field name="model">res.partner.year</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+	    <tree string="Year">
+               <field name="name" colspan="2"/>
+               <field name="active" />
+               <field name="partner_ids" />
+                </tree>
+            </field>
+          </record>
+
+       <record id="view_res_partner_year_filter" model="ir.ui.view">
+            <field name="name">year.partner.select</field>
+            <field name="model">res.partner.year</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Supplier years serach">
+                   <group col='10' colspan='4'>
+                        <separator orientation="vertical"/>
+                        <field name="name" select="1"/>
+                        <field name="active" />
+                   </group>
+               </search>
+            </field>
+        </record>
+        <record id="year_supplier_form_action" model="ir.actions.act_window">
+            <field name="name">Supplier Years </field>
+            <field name="view_id" ref="year_supplier_tree"/>
+            <field name="res_model">res.partner.year</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_res_partner_year_filter"/>
+        </record>
+
+        <!--menuitem action="year_supplier_form_action" id="menu_year_supplier_form_action" parent="base.menu_procurement_management_supplier_name" sequence="4" /-->
+        
+<!-- supplier search -->
+       <record id="view_custom_res_partner_filter" model="ir.ui.view">
+            <field name="name">custom.res.partner.select</field>
+            <field name="model">res.partner</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search supplier">
+                   <group col='10' colspan='4'>
+                        <separator orientation="vertical"/>
+                        <field name="name" select="1"/>
+                        <field name="ref" select="1"/>
+                        <field name="country" select="1"/>
+                        <field name="category_id" widget="selection" />
+                   </group>
+               </search>
+            </field>
+        </record>
+
+<!-- action -->
+
+        <record id="custom_supplier_form_action" model="ir.actions.act_window">
+            <field name="name">Supplier new form </field>
+            <field name="view_id" ref="custom_supplier_tree"/>
+            <field name="res_model">res.partner</field>
+            <field name="domain">[('supplier','=','1'),('category_id.type','=','supplier')]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_custom_res_partner_filter"/>
+        </record> 
+
+       </data>    
+</openerp>
+ 

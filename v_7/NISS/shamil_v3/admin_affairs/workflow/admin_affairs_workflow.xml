@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+       <!-- vehicle move workflow-->
+       <record id="vehicle_move_wkf" model="workflow">
+            <field name="name">vehicle.move.wkf</field>
+            <field name="osv">vehicle.move</field>
+            <field name="on_create">True</field>
+        </record>
+        
+        <record id="act_draft" model="workflow.activity">
+            <field name="wkf_id" ref="vehicle_move_wkf"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'draft'})</field>
+
+        </record>    
+           
+        <record id="act_receipt" model="workflow.activity">
+            <field name="wkf_id" ref="vehicle_move_wkf"/>
+            <field name="name">receipt</field>
+	         <field name="kind">function</field>
+            <field name="action">write({'state':'receipt'})</field>
+        </record>
+
+        <record id="act_delivery" model="workflow.activity">
+            <field name="wkf_id" ref="vehicle_move_wkf"/>
+            <field name="name">delivery</field>
+             <field name="kind">function</field>
+            <field name="action">write({'state':'delivery'})</field>
+        </record>
+
+        <record id="act_done" model="workflow.activity">
+            <field name="wkf_id" ref="vehicle_move_wkf"/>
+            <field name="name">done</field>
+	         <field name="kind">function</field>
+            <field name="action">done()</field>
+        </record>    
+           
+        <record id="act_refuse" model="workflow.activity">
+            <field name="wkf_id" ref="vehicle_move_wkf"/>
+            <field name="name">refuse</field>
+	         <field name="kind">function</field>
+            <field name="action">write({'state':'refuse'})</field>
+        </record>
+        
+        <record id="t1" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_delivery"/>
+            <field name="condition">check_assign()</field>
+	        <field name="signal">assign</field>
+        </record>
+
+        <record id="t2" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_receipt"/>
+            <field name="condition">check_assign()</field>
+	        <field name="signal">return</field>
+        </record>
+
+        <record id="t3" model="workflow.transition">
+            <field name="act_from" ref="act_delivery"/>
+            <field name="act_to" ref="act_done"/>
+            <field name="condition">check_done()</field>
+	         <field name="signal">done</field>
+        </record>
+
+        <record id="t8" model="workflow.transition">
+            <field name="act_from" ref="act_receipt"/>
+            <field name="act_to" ref="act_done"/>
+            <field name="condition">check_done()</field>
+             <field name="signal">done</field>
+        </record>
+
+        <record id="t4" model="workflow.transition">
+            <field name="act_from" ref="act_delivery"/>
+            <field name="act_to" ref="act_refuse"/>
+	         <field name="signal">refuse</field>
+        </record>
+
+        <record id="t9" model="workflow.transition">
+            <field name="act_from" ref="act_receipt"/>
+            <field name="act_to" ref="act_refuse"/>
+             <field name="signal">refuse</field>
+        </record>
+
+        <record id="t5" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_done"/>
+	         <field name="signal">confirm</field>
+        </record>
+
+        <!--record id="t6" model="workflow.transition">
+            <field name="act_from" ref="act_done"/>
+            <field name="act_to" ref="act_draft"/>
+	         <field name="signal">set_to_draft</field>
+        </record-->
+
+        <record id="t7" model="workflow.transition">
+            <field name="act_from" ref="act_refuse"/>
+            <field name="act_to" ref="act_draft"/>
+	         <field name="signal">set_to_draft</field>
+        </record>
+
+	<!-- vehicle accident workflow-->
+	<record id="vehicle_accident_wkf" model="workflow">
+            <field name="name">vehicle.accident.wkf</field>
+            <field name="osv">vehicle.accident</field>
+            <field name="on_create">True</field>
+        </record>
+        
+        <record id="act_acc_draft" model="workflow.activity">
+            <field name="wkf_id" ref="vehicle_accident_wkf"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'draft'})</field>
+
+        </record>    
+           
+        <record id="act_acc_wait" model="workflow.activity">
+            <field name="wkf_id" ref="vehicle_accident_wkf"/>
+            <field name="name">wait</field>
+	         <field name="kind">function</field>
+            <field name="action">write({'state':'committee'})</field>
+        </record>
+
+        <record id="act_acc_done" model="workflow.activity">
+            <field name="wkf_id" ref="vehicle_accident_wkf"/>
+            <field name="name">done</field>
+	         <field name="kind">function</field>
+            <field name="action">write({'state':'done'})</field>
+        </record>    
+           
+        <record id="act_acc_refuse" model="workflow.activity">
+            <field name="wkf_id" ref="vehicle_accident_wkf"/>
+            <field name="name">refuse</field>
+	         <field name="kind">function</field>
+            <field name="action">write({'state':'refuse'})</field>
+        </record>
+
+	    <record id="act_vehicle_dept" model="workflow.activity">
+            <field name="wkf_id" ref="vehicle_accident_wkf"/>
+            <field name="name">vehicle_dept</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'vehicle_dept'})</field>
+        </record>    
+           
+        <record id="act_maintenace_dept" model="workflow.activity">
+            <field name="wkf_id" ref="vehicle_accident_wkf"/>
+            <field name="name">maintenace_dept</field>
+	        <field name="kind">function</field>
+            <field name="action">write({'state':'maintenace_dept'})</field>
+        </record>
+        
+        <record id="tacc1" model="workflow.transition">
+            <field name="act_from" ref="act_acc_draft"/>
+            <field name="act_to" ref="act_vehicle_dept"/>
+	        <field name="condition">to_vehicle_dept()</field>
+	        <field name="signal">confirm</field>
+        </record>
+
+        <record id="tacc2" model="workflow.transition">
+            <field name="act_from" ref="act_vehicle_dept"/>
+            <field name="act_to" ref="act_acc_wait"/>
+	        <field name="condition">wrong and check_attach()</field>
+	        <field name="signal">committee</field>
+        </record>
+
+        <record id="tacc3" model="workflow.transition">
+            <field name="act_from" ref="act_vehicle_dept"/>
+            <field name="act_to" ref="act_maintenace_dept"/>
+	    <field name="condition">check_attach()</field>
+	    <field name="signal">maintenace</field>
+        </record>
+
+        <record id="tacc4" model="workflow.transition">
+            <field name="act_from" ref="act_acc_wait"/>
+            <field name="act_to" ref="act_maintenace_dept"/>
+            <field name="condition">check_attach() and check_to_maintenace()</field>
+	    <field name="signal">maintenace</field>
+        </record>
+
+        <record id="tacc5" model="workflow.transition">
+            <field name="act_from" ref="act_maintenace_dept"/>
+            <field name="act_to" ref="act_acc_done"/>
+            <field name="condition">check_to_Done()</field>
+	    <field name="signal">done</field>
+        </record>
+
+        
+
+    </data>
+</openerp>

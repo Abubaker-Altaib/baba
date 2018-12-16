@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<menuitem id="account.menu_finance_receivables" name="Revenues"
+			parent="account.menu_finance" sequence="2" />
+		<menuitem id="account.menu_finance_payables" name="Expenses"
+			parent="account.menu_finance" sequence="3" />
+
+		<record id="account.action_cash_box_in" model="ir.actions.act_window">
+			<field name="groups_id"
+				eval="[(6,0,[ref('account_custom_wafi.group_no_wafi_account')])]" />
+		</record>
+		<record id="account.action_cash_box_out" model="ir.actions.act_window">
+			<field name="groups_id"
+				eval="[(6,0,[ref('account_custom_wafi.group_no_wafi_account')])]" />
+		</record>
+		<!-- Reports Menu -->
+		<record id="view_account_template_form" model="ir.ui.view">
+			<field name="name">account.account.template.form</field>
+			<field name="model">account.account.template</field>
+			<field name="inherit_id" ref="account.view_account_template_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//separator[@string='Default Taxes']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax,
+						account_custom_wafi.group_customer_tax
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='tax_ids']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax,
+						account_custom_wafi.group_customer_tax
+					</attribute>
+				</xpath>
+			</field>
+		</record>
+		<record id="view_account_chart_template_form" model="ir.ui.view">
+			<field name="name">account.chart.template.form</field>
+			<field name="model">account.chart.template</field>
+			<field name="inherit_id" ref="account.view_account_chart_template_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//separator[@string='Default Taxes']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax,
+						account_custom_wafi.group_customer_tax
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='tax_template_ids']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax,
+						account_custom_wafi.group_customer_tax
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='tax_code_root_id']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax,
+						account_custom_wafi.group_customer_tax
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='complete_tax_set']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax,
+						account_custom_wafi.group_customer_tax
+					</attribute>
+				</xpath>
+			</field>
+		</record>
+		<record id="view_account_fiscalyear_form" model="ir.ui.view">
+			<field name="name">account.fiscalyear.form</field>
+			<field name="model">account.fiscalyear</field>
+			<field name="inherit_id" ref="account.view_account_fiscalyear_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='state']" position="attributes">
+					<attribute name="statusbar_visible">draft,locked_temp,open_ext_period,close_ext_period,first_lock,done
+					</attribute>
+				</xpath>
+				<xpath expr="//button[@name='create_period3']" position="after">
+					<button name="action_locked_temporarily" states="draft"
+						string="Locked Temporarily" type="object" class="oe_highlight" />
+					<button
+						name="%(account_custom_wafi.action_open_extension_period_wizard)d"
+						states="locked_temp" string="Open Extension Period" type="action" />
+					<button name="action_close_extension_period" 
+						states="open_ext_period"
+						string="Close Extension Period" type="object" />
+					<button name="%(account_custom.action_account_pl_close)d"
+						states="close_ext_period" string="First Lock" type="action"
+						context="{'default_fiscalyear_id':active_id}" />
+					<button name="%(account.action_account_fiscalyear_close)d"
+						states="first_lock" string="Final Lock" type="action"
+						context="{'default_fy_id':active_id}" />
+					<button name="draft" states="cancel" string="Reset to Draft"
+						type="object" />
+				</xpath>
+				<xpath expr="//field[@name='name']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='code']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='company_id']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='end_journal_period_id']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='date_start']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='date_stop']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='period_ids']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}
+					</attribute>
+				</xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="view_move_form">
+			<field name="name">account.move.form.inherit</field>
+			<field name="model">account.move</field>
+			<field name="inherit_id" ref="account_custom.view_move_form1" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='line_id']/tree/field[@name='date_maturity']"
+					position="replace" />
+				<xpath expr="//field[@name='line_id']/tree/field[@name='partner_id']"
+					position="attributes">
+					<attribute name="string">Beneficiary</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_id']/tree/field[@name='name']"
+					position="attributes">
+					<attribute name="string">Description</attribute>
+				</xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="view_move_line_form">
+			<field name="name">account.move.form.inherit</field>
+			<field name="model">account.move.line</field>
+			<field name="inherit_id" ref="account.view_move_line_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='date_maturity']" position="replace" />
+				<xpath expr="//field[@name='partner_id']" position="attributes">
+					<attribute name="string">Beneficiary</attribute>
+				</xpath>
+				<xpath expr="//field[@name='name']" position="attributes">
+					<attribute name="string">Description</attribute>
+				</xpath>
+				<xpath expr="//group[@string='Taxes']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax,
+						account_custom_wafi.group_customer_tax
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='invoice']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_no_wafi_account
+					</attribute>
+				</xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="view_move_line_form2">
+			<field name="name">account.move.form.inherit</field>
+			<field name="model">account.move.line</field>
+			<field name="inherit_id" ref="account.view_move_line_form2" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='date_maturity']" position="replace" />
+				<xpath expr="//field[@name='partner_id']" position="attributes">
+					<attribute name="string">Beneficiary</attribute>
+				</xpath>
+				<xpath expr="//field[@name='name']" position="attributes">
+					<attribute name="string">Description</attribute>
+				</xpath>
+				<xpath expr="//field[@name='account_tax_id']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax,
+						account_custom_wafi.group_customer_tax
+					</attribute>
+				</xpath>
+
+			</field>
+		</record>
+		<record id="view_move_line_tree" model="ir.ui.view">
+			<field name="name">account.move.line.tree</field>
+			<field name="model">account.move.line</field>
+			<field name="inherit_id" ref="account.view_move_line_tree" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='date_maturity']" position="replace" />
+				<xpath expr="//field[@name='partner_id']" position="attributes">
+					<attribute name="string">Beneficiary</attribute>
+				</xpath>
+				<xpath expr="//field[@name='name']" position="attributes">
+					<attribute name="string">Description</attribute>
+				</xpath>
+				<xpath expr="//field[@name='account_tax_id']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax,
+						account_custom_wafi.group_customer_tax
+					</attribute>
+				</xpath>
+			</field>
+		</record>
+		<record id="view_account_form" model="ir.ui.view">
+			<field name="name">account.account.form</field>
+			<field name="model">account.account</field>
+			<field name="inherit_id" ref="account.view_account_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='tax_ids']" position="attributes">
+					<attribute name="groups">account_custom_wafi.group_supplier_tax,
+						account_custom_wafi.group_customer_tax
+					</attribute>
+				</xpath>
+				<xpath expr="//field[@name='tax_ids']" position="before">
+					<field name="ceiling" attrs="{'invisible':[('type','!=','liquidity')]}" />
+					<field name="min_ceiling"  />
+					<field name="payment_ceiling"  />
+				</xpath>
+			</field>
+		</record>
+		<act_window id="account.act_account_journal_2_account_invoice_opened"
+			name="Unpaid Invoices"
+			context="{'search_default_journal_id': [active_id], 'search_default_unpaid':1, 'default_journal_id': active_id}"
+			domain="[('journal_id','=', active_id)]" res_model="account.invoice"
+			src_model="account.journal" groups="account_custom_wafi.group_no_wafi_account" />
+
+		<record id="view_account_journal_form" model="ir.ui.view">
+			<field name="name">account.journal.form</field>
+			<field name="model">account.journal</field>
+			<field name="inherit_id" ref="account.view_account_journal_form" />
+			<field name="arch" type="xml">
+				<field name="entry_posted" position="after">
+					<field name="update_posted"/>
+				</field>
+				<xpath expr="//field[@name='group_invoice_lines']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="//page[@string='Cash Registers']" position="attributes">
+					<attribute name="attrs">{'invisible':[('type','not in',('cash'))]}
+					</attribute>
+				</xpath>
+
+				<xpath expr="//group[@string='Accounts']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+			</field>
+		</record>
+
+
+		<record id="ir_cron_module_update_notification_journal" model="ir.cron">
+            <field name="name">send notification</field>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+			<field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field eval="False" name="doall" />
+            <field eval="'account.journal'" name="model" />
+            <field eval="'check_ceiling'" name="function" />
+            <field eval="'(None,)'" name="args" />
+           
+        </record>
+
+		
+	</data>
+</openerp>

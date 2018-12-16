@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<document filename="Check.pdf">
+  <template pageSize="(792.0, 612.0)" title="Check" author="NCTR" allowSplitting="20">
+    <pageTemplate id="first">
+      <frame id="first" x1="0.0" y1="0.0" width="1010" height="440"/>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+    <blockTableStyle id="Check_Table">
+	<blockTopPadding length="0.0"/>
+    </blockTableStyle>
+    <blockTableStyle id="Internal_Check_Table">
+	<blockBottomPadding length="0.1"/>
+    </blockTableStyle>
+    <blockTableStyle id="body">
+	<blockValign value="CENTER"/>
+    </blockTableStyle>
+    <blockTableStyle id="voucher_table">
+	<blockValign value="CENTER"/>
+	<lineStyle kind="GRID" colorName="#D3D3D3"/>
+	<blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0"/>
+	<blockTopPadding length="5"/>
+	<blockBottomPadding length="5"/>
+    </blockTableStyle>
+    <blockTableStyle id="table">
+	<blockValign value="CENTER"/>
+	<blockTopPadding length="7"/>
+	<blockBottomPadding length="7"/>
+    </blockTableStyle>
+    <initialize>
+      <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="table_header" fontName="Helvetica-Bold" fontSize="10.0" leading="13" alignment="CENTER"/>
+    <paraStyle name="bold_paragraph" fontName="Helvetica-Bold" fontSize="10.0" leading="13" alignment="RIGHT"/>
+    <paraStyle name="paragraph1" fontName="Helvetica" fontSize="12.0" alignment="RIGHT" spaceBefore="3.0"/>
+    <paraStyle name="paragraph" fontName="Helvetica-Bold" fontSize="12.0" leading="13" alignment="RIGHT"/>
+    <paraStyle name="sub_paragraph" fontName="Helvetica-Bold" fontSize="10.0" leading="13" alignment="RIGHT" spaceBefore="4.0" spaceAfter="4.0"/>
+    <paraStyle name="sub" fontName="Helvetica" fontSize="10.0" leading="13" alignment="RIGHT" spaceBefore="4.0" spaceAfter="4.0"/>
+    <paraStyle name="Left_Side" fontName="Helvetica" fontSize="7" leading="13" alignment="RIGHT"/>
+    <paraStyle name="Left_Side_name" fontName="Helvetica-Bold" fontSize="5.8" leading="13" alignment="RIGHT"/>
+    <paraStyle name="amount_box" fontName="Helvetica-Bold" fontSize="12.0" leading="13" alignment="CENTER"/>
+    <paraStyle name="terp_header_Centre" fontName="Helvetica-Bold" fontSize="12.0" leading="19" alignment="CENTER" spaceBefore="1.0" spaceAfter="1.0"/>
+  </stylesheet>
+  <story>
+<para> <font color="white"> </font> </para>
+    <para>[[repeatIn(objects,'voucher')]] </para>
+
+    <blockTable style="Check_Table" colWidths="4.7cm,16.4cm">
+      <tr>
+		<td>
+          <blockTable style="Internal_Check_Table" colWidths="3.4cm,1.1cm" rowHeights="1.2cm,0.8cm,1.0cm,2.7cm">
+            <tr>
+              <td>
+                <para style="Left_Side">
+				   
+				</para>
+              </td>
+              <td> <para></para> </td>
+            </tr>
+	    	<tr>
+              <td> <para style="Left_Side_name">[[ voucher.partner_id.name ]]</para> </td>
+              <td> <para></para> </td>
+            </tr>
+	    	<tr>
+              <td>
+                <para style="Left_Side">[[ formatLang (voucher.amount) ]]</para>
+              </td>
+              <td> <para></para> </td>
+            </tr>
+	    	<tr>
+              <td> <para></para> </td>
+              <td> <para></para> </td>
+            </tr>
+          </blockTable>
+		</td>
+        <td>
+<para> <font color="white"> </font> </para>
+          <blockTable style="Internal_Check_Table" colWidths="2cm,12.5cm,1.9cm" rowHeights="1.7cm,1.0cm,0.9cm,0.9cm,1.1cm" >
+            <tr>
+              <td> <para></para> </td>
+              <td>
+                <para style="paragraph">
+				   [[ time.strptime(voucher.date,'%Y-%m-%d').tm_year]]/[[ time.strptime(voucher.date,'%Y-%m-%d').tm_mon]]/[[ time.strptime(voucher.date,'%Y-%m-%d').tm_mday]]
+				</para>
+              </td>
+              <td> <para></para> </td>
+            </tr>
+	    	<tr>
+              <td> <para></para> </td>
+              <td> <para style="paragraph">[[ voucher.partner_id.name ]]</para> </td>
+              <td> <para></para> </td>
+            </tr>
+	    	<tr>
+              <td> <para></para> </td>
+              <td>
+                <para  style="paragraph">
+					[[ len(voucher.amount_in_word) > 61 and voucher.amount_in_word[0:voucher.amount_in_word.rfind(" ",0,61)+1] ]]
+					[[ not(len(voucher.amount_in_word) > 61) and voucher.amount_in_word ]]
+				</para>
+              </td>
+              <td> <para></para> </td>
+            </tr>
+	    	<tr>
+              <td> <para></para> </td>
+              <td>
+                <para style="paragraph">[[ len(voucher.amount_in_word) > 61 and  voucher.amount_in_word[voucher.amount_in_word.rfind(" ",0,61)+1:len(voucher.amount_in_word)] ]]</para>
+              </td>
+              <td> <para></para> </td>
+            </tr>
+	    	<tr>
+              <td> <para></para> </td>
+              <td>
+		<para> <font color="white"> </font> </para>
+
+    <para> <font color="white"> </font> </para>
+    <para> <font color="white"> </font> </para>		<blockTable  style="Internal_Check_Table" colWidths="9.2cm,3.0cm" rowHeights="1.5cm">
+				  <tr>
+				    <td> <para></para> </td>
+				    <td> <para style="amount_box"> [[ formatLang (voucher.amount) ]]</para> </td>
+				  </tr>
+				</blockTable>
+              </td>
+              <td> <para></para> </td>
+            </tr>
+          </blockTable>
+		</td>
+      </tr>
+    </blockTable>
+  </story>
+</document>

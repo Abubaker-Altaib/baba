@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+	   <!-- Return Picking Reason-->
+	    <record id="view_stock_return_reason_form" model="ir.ui.view">
+            <field name="name">stock.return.reason.form</field>
+            <field name="model">stock.return.reason</field>
+            <field name="arch" type="xml">
+                <form string="Return Picking Reason" version='7.0'>
+                	<group>
+                    	<field name="code"/>
+                    	<field name="name"/>
+                    	<field name="active"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+	    <record id="view_stock_return_reason_tree" model="ir.ui.view">
+            <field name="name">stock.return.reason.tree</field>
+            <field name="model">stock.return.reason</field>
+            <field name="arch" type="xml">
+                <tree string="Return Picking Reason" >
+                	<field name="code"/>
+                	<field name="name"/>
+                	<field name="active"/>
+                </tree>
+            </field>
+        </record>
+	   <record id="action_stock_return_reason" model="ir.actions.act_window">
+            <field name="name">Return Picking Reason</field>
+            <field name="res_model">stock.return.reason</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a Reason Type.
+              </p>
+            </field>
+        </record>
+        <menuitem
+	        id="menu_return_reason_config"
+	        name="Return Reason"
+	        sequence="55"
+	        action="action_stock_return_reason" 
+	        parent="stock.menu_stock_configuration"/>
+    
+        <!-- Return Picking -->
+        <record id="view_stock_return_picking_form" model="ir.ui.view">
+            <field name="name">Return Picking</field>
+            <field name="model">stock.return.picking</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_stock_return_picking_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_state']" position="after">
+                	<field name="return_reason_id" />
+                    <field name="note"/>
+                </xpath>
+               <xpath expr="//button[@name='create_returns']" position="replace">
+				   <button string="Complete" name="return_complete"  type="workflow"/>
+               </xpath>
+            </field>
+        </record>  
+       <record id="view_stock_return_picking_form2" model="ir.ui.view">
+            <field name="name">Return Picking</field>
+            <field name="model">stock.return.picking</field>
+            <field name="priority" eval="20"/>
+            <field name="arch" type="xml">
+                <form string="Return Picking" version="7.0">
+                    <header>
+				        <button string="Complete" name="return_complete"  states="draft"/>
+						<button string="Confirm" name="return_confirm" states="complete"/>
+                        <button name="picking_ok" states="except_picking" string="Manually Corrected"/>
+						<button string="Cancel" name="return_cancel" states="complete" />
+                        <button name="action_cancel" states="except_picking,confirm" string="Cancel Order" type="object" />
+                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,complete,confirm,done" statusbar_colors='{"except_picking":"red","complete":"blue"}' readonly="1"/>
+					</header>
+	                <sheet>
+                    <div class="oe_title">
+						<h1><p><field name="name" /></p></h1>
+					</div>
+                    <group>
+                        <group>
+		                    <field name="date" readonly="1"/>
+		                    <field name="return_type" readonly="1"/>
+                            <field name="picking_id" readonly="1"/>
+                        </group>
+                        <group>
+		                    <field name="return_picking_id"/>
+		                    <field name="return_reason_id" readonly="1"/>
+		                    <field name="invoice_state" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                       <field colspan="4" name="product_return_moves" attrs="{'readonly': [('state','!=', 'except_picking') ]}">
+							<tree editable="top" string="Products">
+								<field name="product_id" />
+                                <field name="prodlot_id" groups="stock.group_production_lot"/>
+                                <field name="quantity" />
+							</tree>
+						</field>
+                        <field name="note" placeholder="Internl Notes ..."  nolabel="1" />
+                    </group>
+	             </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_stock_return_picking_tree" model="ir.ui.view">
+            <field name="name">Return Picking</field>
+            <field name="model">stock.return.picking</field>
+            <field name="arch" type="xml">
+                <tree colors="grey:state == 'cancel'" string="Return Picking">
+                    <field name="name"/>
+                    <field name="date" />
+                    <field name="return_reason_id"/>
+                    <field name="picking_id"/>
+                    <field name="return_picking_id"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        <record id="action_return_picking" model="ir.actions.act_window">
+            <field name="name">Return Picking</field>
+            <field name="res_model">stock.return.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="view_id" ref="view_stock_return_picking_tree"/>
+        </record>
+		<record model="ir.actions.act_window.view" id="action_return_picking_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_stock_return_picking_tree"/>
+            <field name="act_window_id" ref="action_return_picking"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_return_picking_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_stock_return_picking_form2"/>
+            <field name="act_window_id" ref="action_return_picking"/>
+        </record>
+        <menuitem action="action_return_picking" id="menu_action_return_picking" parent="stock.menu_stock_warehouse_mgmt" sequence="9"/>
+        
+        <!-- Stock Picking -->
+        <record id="view_picking_out_form" model="ir.ui.view">
+            <field name="name">stock.picking.out.form</field>
+            <field name="model">stock.picking.out</field>
+            <field name="inherit_id" ref="stock.view_picking_out_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_done']" position="after">
+                    <field name="return_reason_id" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+  	
+        <record id="view_picking_in_form" model="ir.ui.view">
+            <field name="name">stock.picking.in.form</field>
+            <field name="model">stock.picking.in</field>
+            <field name="inherit_id" ref="stock.view_picking_in_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date_done']" position="after">
+                    <field name="return_reason_id" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

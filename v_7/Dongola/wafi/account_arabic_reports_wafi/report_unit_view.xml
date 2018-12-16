@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record id="unit_reports_line_form" model="ir.ui.view">
+            <field name="name">unit.report.line</field>
+            <field name="model">unit.report.line</field>
+            <field name="arch" type="xml">
+                <form string="accounts" version="7.0">
+                    <group>
+                        <!--field name="name" /-->
+                        <field name="code" />
+                        <field name="closure" />
+                        <field name="with_value" />
+ 
+ 
+ 
+                    </group>
+                </form>
+            </field>
+        </record>
+
+
+
+
+
+        <record id="unit_report_form" model="ir.ui.view">
+            <field name="name">unit.report</field>
+            <field name="model">unit.report</field>
+            <field name="arch" type="xml">
+                <form string="report" version="7.0">
+                    <group>
+                        <field name="name"/>
+                        <field name="common"/>
+                        <field name="company_id"/>
+ 
+                    </group>
+ 
+                    <notebook>
+                        <page string="Lines">
+                            <field name="line_ids" widget="one2many_list">
+                                <tree editable="bottom">
+                                        <field name="account_id" />
+				        <field name="code" />
+				        <field name="name" />
+				        <field name="closure" />
+				        <field name="with_value" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        <record id="unit_report_action" model="ir.actions.act_window">
+            <field name="name">unit report</field>
+            <field name="res_model">unit.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="unit report configuration" action="" id="unit_report_menu_confg" parent="account.menu_finance_configuration" />
+        
+        <menuitem name="unit report" action="unit_report_action" id="unit_report_menu" parent="unit_report_menu_confg" />
+
+
+
+<!--########-->
+<record id="unit_report_type_form" model="ir.ui.view">
+            <field name="name">unit.report.type</field>
+            <field name="model">unit.report.type</field>
+            <field name="arch" type="xml">
+                <form string="report" version="7.0">
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+ 
+                    </group>
+                     
+                </form>
+            </field>
+        </record>
+        
+        <record id="unit_report_type_action" model="ir.actions.act_window">
+            <field name="name">unit report type</field>
+            <field name="res_model">unit.report.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+         <menuitem name="unit report " action="" id="unit_report_menu" parent="unit_report_menu_confg" />
+        <menuitem name="unit report type" action="unit_report_type_action" id="unit_report_type_menu" parent="unit_report_menu_confg" />
+    </data>
+</openerp>

@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+    <record model="ir.ui.view" id="view_account_asset_category_form_ntc">
+            <field name="name">account.asset.category.form</field>
+            <field name="model">account.asset.category</field>
+            <field name="inherit_id" ref="account_asset_custom.view_account_asset_category_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='prorata']" position="before">
+                    <field name="depreciation_rate"/>
+                </xpath>
+                <xpath expr="//page[@string='Depreciation Dates']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='method']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='method_progress_factor']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='prorata']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_account_asset_asset_form_ntc">
+            <field name="name">account.asset.asset.form</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset_custom.view_account_asset_asset_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='prorata']" position="before">
+                    <field name="depreciation_rate" readonly="1" />
+                </xpath>
+                <xpath expr="//field[@name='method']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='salvage_value']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='method_time']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='method_number']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='method_end']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <!--<xpath expr="//field[@name='method_period']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>-->
+                <xpath expr="//label[@for='method_period']" position="attributes"> 
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//div[@name='method_period']" position="attributes"> 
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//label[@for='method_time']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='method_progress_factor']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='prorata']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                
+                <xpath expr="//page[@string='Operation']" position="replace">
+	                <page string="Operation">
+                        <field name="history_ids">
+                            <tree string="Operation Lines" editable="top" colors="blue:state == 'draft';black:state == 'posted'">
+                                <field name="auto_move"  invisible="1" /> 
+                                <field name="type"  on_change="onchange_type(False,type,parent.category_id)" />
+                                <field name="date"/>
+                                <field name="amount"/>
+                                <field name="asset_value" invisible="1"/>
+                                <field name="account_id"  domain="[('type', '!=', 'view')]" invisible="1"/>
+                                <field name="name" invisible="1"/>
+                                
+                                <field name="state"/>
+                                <button name="create_operation_move"  attrs="{'invisible':[('state','in',('posted','reversed'))]}" string="Create Move" 
+                                    type="object" icon="gtk-execute"/>
+                                <!--<button name="%(account_asset_custom.wizard_operation_reverse)d"  attrs="{'invisible':['|',('state','!=','posted'),('type','=','initial')]}" 
+                                    icon="gtk-execute" string="Reverse Move" type="action"/>-->
+                            </tree>	
+                        </field>
+	                </page>
+                </xpath>
+            </field>
+    </record>
+
+	<record model="ir.ui.view" id="view_account_asset_asset_form_ntc2">
+		<field name="name">account.asset.asset.form</field>
+		<field name="model">account.asset.asset</field>
+		<field name="inherit_id" ref="account_asset.view_account_asset_asset_form"/>
+		<field name="arch" type="xml">
+		    <xpath expr="//button[@name='%(account_asset.action_asset_modify)d']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+            </xpath>
+		    
+        </field>
+    </record>
+</data>   
+</openerp>
+
+

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<menuitem id="menu_administrative_affairs_root" icon="terp-partner"
+			name="Admin Affairs" sequence="3" web_icon="images/pos.png"
+			web_icon_hover="images/pos-hover.png" 
+			groups="group_section_manager,fleet.group_fleet_manager,fleet.group_fleet_user,base_custom.group_general_department_manager,base_custom.group_department_manager,base_custom.group_general_hr_manager,base_custom.group_account_general_manager"/>
+
+		<menuitem id="admin_affairs_configuration_menu" parent="menu_administrative_affairs_root"
+			name="Configuration" groups="group_admin_affairs_it" sequence="5" />
+
+		<menuitem name="Reports" parent="menu_administrative_affairs_root"
+			id="main_menu_report" sequence="4" groups="group_admin_affair_manager"/>
+
+		<record id="admin_affairs_account_form" model="ir.ui.view">
+			<field name="name">admin_affairs.account.form</field>
+			<field name="model">admin_affairs.account</field>
+			<field name="arch" type="xml">
+				<form string="Accounting configuration" version="7.0">
+					<sheet>
+						<group col="4" colspan="2">
+							<field name="model_id" />
+							<field name="journal_id" domain="[('type','in',('purchase','sale'))]"/>
+							<field name="account_id" domain="['|',('user_type.report_type','=','expense'),('user_type.report_type','=','income')]"/>
+							<field name="analytic_id" domain="[('parent_id','!=',False),('type','=','normal')]"/>
+						</group>
+						<notebook colspan="4">
+							<page string="Notes">
+								<field name="notes" colspan="4" nolabel="1" />
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="admin_affairs_account_tree" model="ir.ui.view">
+			<field name="name">admin_affairs.account.tree</field>
+			<field name="model">admin_affairs.account</field>
+			<field name="arch" type="xml">
+				<tree string="Accounting configuration">
+					<field name="model_id" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="admin_affairs_account_filter" model="ir.ui.view">
+			<field name="name">admin_affairs.account.list.select</field>
+			<field name="model">admin_affairs.account</field>
+			<field name="arch" type="xml">
+				<search string="Search for configuration record">
+					<field name="model_id" />
+					<separator orientation="vertical" />
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Model" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'model_id'}" />
+						<separator orientation="vertical" />
+						<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="admin_affairs_account_action" model="ir.actions.act_window">
+			<field name="name">Accounting configuration</field>
+			<field name="res_model">admin_affairs.account</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="admin_affairs_account_filter" />
+		</record>
+
+		<menuitem id="accounting_configuration_menu" name="Accounting Configuration"
+			parent="admin_affairs_configuration_menu" action="admin_affairs_account_action" />
+
+		<record id="vehicle_category_form" model="ir.ui.view">
+			<field name="name">vehicle.category.form</field>
+			<field name="model">vehicle.category</field>
+			<field name="arch" type="xml">
+           		 <form string="Vehicle Category" version="7.0">
+           		 	    <sheet>
+                        	<group col="2">
+                            	<group>
+                            		<field name="name" />
+                            		<field name="license_cost" />
+                            	</group>
+                            </group>
+                        </sheet>
+           		 </form>
+           	</field>
+		</record>
+		<record id='vehicle_category_tree' model='ir.ui.view'>
+            <field name="name">vehicle.category.tree</field>
+            <field name="model">vehicle.category</field>
+            <field name="arch" type="xml">
+                <tree string="Vehicle Category" version="7.0">
+                        <field name="name" />
+                        <field name="license_cost" />                    
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_vehicle_category">
+            <field name="name">Vehicle Category</field>
+            <field name="res_model">vehicle.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new category. 
+              </p>
+              <p>
+              		Add a new category to vehicle and the cost of it's license
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="vehicle_categry_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vehicle_category_form"/>
+            <field name="act_window_id" ref="action_vehicle_category"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="vehicle_categry_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="vehicle_category_tree"/>
+            <field name="act_window_id" ref="action_vehicle_category"/>
+        </record>
+
+		<menuitem id="fleet.fleet_vehicle_log_contract_menu" name="Vehicle Services"
+			parent="fleet.fleet_vehicles" action="fleet.fleet_vehicle_log_contract_act"/>
+		 <menuitem  id="vehicle_category_menu" name="Vehicle Category" parent="fleet.fleet_configuration" 
+             action="action_vehicle_category" sequence="3"/>
+	</data>
+</openerp>

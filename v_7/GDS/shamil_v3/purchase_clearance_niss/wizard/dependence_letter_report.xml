@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="id_dependence_letter_report_view" model="ir.ui.view">
+            <field name="name">Dependence Letter Report Wizard Form</field>
+            <field name="model">dependence.letter.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Dependence Letter Report" version="7.0">
+        			<separator string="Dependence Letter Report" colspan="4"/>
+            			<group>
+
+                              <group col="4" colspan="2">
+
+                                   <field name="document_type" required="1"/>
+                                </group> 
+                                <group col="4" colspan="2">
+            			      <field name="request_clearance_ids" domain="[('state','in',['draft','recieve_document'])]"/>
+            			</group>
+            			</group>
+	    			<footer>
+          	    	<button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight" colspan="2"/>
+                        or
+			<button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link" colspan="2"/>
+                        	</footer>
+               </form>
+            </field>
+	    </record>
+
+        <record id="action_dependence_letter_report_wizard" model="ir.actions.act_window">
+            <field name="name">Action Dependence Letter Report Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">dependence.letter.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="id_dependence_letter_report_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Dependence Letter Report"
+                parent="purchase_report.menu_purchase_advance_reports"
+                action="action_dependence_letter_report_wizard"
+                id="menu_dependence_letter_report"
+                sequence="1" />
+
+    </data>
+</openerp>

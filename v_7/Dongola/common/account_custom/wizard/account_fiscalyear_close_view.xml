@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="view_account_fiscalyear_close_form"
+			model="ir.ui.view">
+			<field name="name">
+				account.fiscalyear.close.form.view
+			</field>
+			<field name="model">account.fiscalyear.close</field>
+			<field name="type">form</field>
+			<field name="inherit_id"
+				ref="account.view_account_fiscalyear_close" />
+			<field name="arch" type="xml">
+				<xpath expr="/form//field[@name='fy_id']"
+					position="replace">
+					<field name="company_id" invisible='1' />
+					<field name="fy_id" domain="[('state','=','done')]"
+						on_change="onchange_fiscalyear_id(fy_id,company_id)" />
+				</xpath>
+				<xpath expr="/form//field[@name='fy2_id']"
+					position="attributes">
+					<attribute name="domain">
+						[('state','!=','done'),('company_id','=',company_id)]
+					</attribute>
+				</xpath>
+				<xpath expr="/form//field[@name='journal_id']"
+					position="attributes">
+					<attribute name="domain">
+						[('type','=','situation'),('company_id','=',company_id)]
+					</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="account.action_account_fiscalyear_close"
+			model="ir.actions.act_window">
+			<field name="name">Generate Opening Entries</field>
+			<field name="res_model">account.fiscalyear.close</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id"
+				ref="view_account_fiscalyear_close_form" />
+			<field name="target">new</field>
+		</record>
+	</data>
+</openerp>

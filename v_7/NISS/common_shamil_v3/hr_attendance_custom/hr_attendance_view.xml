@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+       
+        <record model="ir.ui.view" id="view_hr_attendance_filter">
+            <field name="name">view_hr_attendance_filter</field>
+            <field name="model">hr.attendance</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Hr Attendance Search">
+                    <filter icon="terp-stock_align_left_24" string="My Attendances" domain="[('employee_id.user_id.id', '=', uid)]" />
+                    <separator orientation="vertical"/>
+                    <filter icon="terp-go-today" string="Today" name="today" domain="[('name::date','=',current_date)]" />
+                    <separator orientation="vertical"/>
+                    <field name="employee_id"/>
+                    <field name="name"/>
+                    <field name="action"/>
+                    <newline/>
+                    <group expand="0" string="Group By...">
+                        <filter name="employee" string="Employee" icon="terp-personal" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="Day" icon="terp-go-today" domain="[]" context="{'group_by':'day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <menuitem 
+            sequence="2" id="hr.menu_open_view_attendance_reason_new_config" parent="hr_custom.menu_hr_main_configuration" name="_atteAttendances"
+            />
+        <menuitem action="hr_attendance_original.open_view_attendance_reason" id="menu_open_view_attendance_reason" parent="hr.menu_open_view_attendance_reason_new_config"/>
+
+        <!--record id="hr_attendance_employee" model="ir.ui.view">
+            <field name="name">hr.employee.form1</field>
+            <field name="model">hr.employee</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr2_basic.hr2_inherit_employee"/>
+            <field name="arch" type="xml">
+                <field name="department_id" position="after">
+                    <group colspan="2">
+
+                        <button name="attendance_action_change" states="present" string="Sign Out" type="object" icon="gtk-go-forward" context="{'type':'sign_out'}" groups="base.group_hr_user"/>
+                        <button name="attendance_action_change" states="absent" string="Sign In" type="object" icon="gtk-go-back" context="{'type':'sign_in'}" groups="base.group_hr_user"/>
+                    </group>
+                         <field name="availability"/>
+			<field name="emp_attendance_no"/>
+                    <newline/>
+                </field>
+            </field>
+        </record-->
+
+    </data>
+</openerp>

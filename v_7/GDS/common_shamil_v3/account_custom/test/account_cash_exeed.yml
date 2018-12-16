@@ -1,0 +1,138 @@
+   
+- 
+  Creating a account.account parent record
+- 
+  !record {model: account.account, id: account_account_openingexpense0}:
+    code: '1230000'
+    company_id: base.main_company
+    currency_mode: current
+    level: 3
+    name: Opening Expense Account
+    parent_left: 31
+    parent_right: 32
+    type: view
+    user_type: account.data_account_type_expense 
+    
+- 
+  Creating a account.account child1 record
+- 
+  !record {model: account.account, id: account_account_opening0}:
+    code: '12300100'
+    company_id: base.main_company
+    currency_mode: current
+    level: 3
+    name: Opening Expense Account
+    parent_left: 31
+    parent_right: 32
+    parent_id: account_account_openingexpense0 
+    type: other
+    user_type: account.data_account_type_expense 
+    
+- 
+  Creating a account.account child2 record
+- 
+  !record {model: account.account, id: account_account_opening1}:
+    code: '22300100'
+    company_id: base.main_company
+    currency_mode: current
+    level: 3
+    name: Opening Expense Account
+    parent_left: 31
+    parent_right: 32
+    parent_id: account_account_openingexpense0 
+    type: other
+    user_type: account.data_account_type_expense 
+        
+- 
+  Creating a account.move record
+- 
+  !record {model: account.move, id: account_move_0}:
+    balance: 0.0
+    date: '2013-01-08'
+    journal_id: account.expenses_journal
+    line_id:
+      - account_id: account.a_pay
+        amount_currency: 0.0
+        analytic_account_id: account.analytic_administratif
+        analytic_lines:
+          - account_id: account.analytic_administratif
+            amount: 100.0
+            amount_currency: 0.0
+            date: '2013-01-08'
+            general_account_id: account_account_opening0
+            journal_id: account.exp
+            name: test move
+            unit_amount: 0.0
+            user_id: base.user_admin
+        credit: 100.0
+        date: '2013-01-08'
+        journal_id: account.expenses_journal
+        name: test move
+        partner_id: base.res_partner_desertic_hispafuentes
+        period_id: account.period_1
+        quantity: 0.0
+        state: valid
+        tax_amount: 0.0
+      - account_id: account_account_opening1
+        amount_currency: 0.0
+        analytic_account_id: account.analytic_administratif
+        analytic_lines:
+          - account_id: account.analytic_administratif
+            amount: -100.0
+            amount_currency: 0.0
+            date: '2013-01-08'
+            general_account_id: account_account_opening0
+            journal_id: account.exp
+            name: test move
+            unit_amount: 0.0
+            user_id: base.user_admin
+        date: '2013-01-08'
+        debit: 100.0
+        journal_id: account.expenses_journal
+        name: test move
+        period_id: account.period_1
+        quantity: 0.0
+        state: valid
+        tax_amount: 0.0
+    name: /
+    partner_id: base.res_partner_desertic_hispafuentes
+    period_id: account.period_1
+    state: draft
+
+- 
+  I write a move
+-     
+    
+  !python {model: account.move}: |
+    ctx= {}
+    move_id = [ref("account_move_0")]
+    line_ids = self.pool.get('account.move.line').search(cr, uid, [('move_id', '=', move_id)])
+    line = self.pool.get('account.move.line').browse(cr, uid, line_ids)
+    debit= credit= 0.0
+    for l in line:
+       if l.debit >0:
+         debit = 5000
+       elif l.credit >0:
+         credit = 5000
+       ctx= {
+       'debit': debit or 0.0,
+       'credit': credit or 0.0  
+       }
+       self.write(cr, uid, [ref("account_move_0")], ctx) 
+       
+         
+-       
+  I check debit new value"
+-
+ 
+       
+- 
+  I delete a move
+-     
+    
+  !python {model: account.move}: |
+    self.unlink(cr, uid, [ref("account_move_0")])
+- 
+  Move is deleted 
+-
+    

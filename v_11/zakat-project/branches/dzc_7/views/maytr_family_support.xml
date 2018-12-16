@@ -1,0 +1,87 @@
+<odoo>
+    <data>
+        <record id="maytr_family_support_tree" model="ir.ui.view">
+            <field name="name"> Maytr Family Support</field>
+            <field name="model">maytr.family.support</field>
+            <field name="arch" type="xml">
+                <tree>
+                <field name="order_ref"/>
+                <field name="date"/>
+                <field name="name"/>
+                <field name="maytr_no"/>
+                <field name="total_amount"/>
+                <field name="company_id"/>
+                <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="maytr_family_support_form" model="ir.ui.view">
+            <field name="name"> Maytr Family Support</field>
+            <field name="model">maytr.family.support</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                         <button name="action_confirm" string="Confirm" states="draft" type="object"
+                                class="oe_highlight"/> 
+                        <button name="action_set_draft" string="Update Information" states="done" type="object"
+                                class="oe_highlight"/>
+                         <button name="action_approve" string="Aprove" states="confirmed" type="object"
+                                class="oe_highlight"/> 
+                        <button name="action_done" string="Done" states="approval" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_cancle" states="draft,confirmed,approval" string="Cancel" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_set_draft" states="cancel" string="Set Draft" type="object"
+                                class="oe_highlight"/> 
+                        <field name="state" statusbar_visible="draft,confirmed,approval,done" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                    <group>
+                        <group>
+                            <field name="name" attrs="{'readonly':[('state','in', ['cancel', 'done'])]}" required="1"/>
+                            <field name="date" attrs="{'readonly':[('state','in', ['cancel', 'done'])]}" required="1"/>
+                            <field name="maytr_no"  readonly="1"/>
+                            <field name="company_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="order_ref"  readonly="1"/>
+                            <field name="state_id" required="1" attrs="{'readonly':[('state','in', ['cancel', 'done'])]}" domain="[('company_id','=',company_id)]"/>
+                            <field name="total_amount" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                      <page string="Maytrs">
+                        <field name="lines_ids" attrs="{'readonly':[('state','in', ['cancel', 'done'])]}">
+                            <tree editable="bottom">
+                                <field name="maytr_id" context="{'myter':parent.lines_ids}" required="1"/>
+                                <field name="amount" required="1"/>
+                                <field name="vaucher_id" attrs="{'column_invisible':[('parent.state','!=','done')]}"/>
+                            </tree>
+                        </field>
+                      </page>
+                    </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="maytr_family_support_action" model="ir.actions.act_window">
+            <field name="name">Maytr Family Support</field>
+            <field name="res_model">maytr.family.support</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="dzc7_maytr_menu"
+            name="Maytr Family Support"
+            parent="dzc7_menu"
+            sequence="2"
+            />
+
+        <menuitem id="dzc7_martyr_support"
+            name="Maytr Family Support"
+            parent="dzc7_maytr_menu"
+            action="maytr_family_support_action"/>
+    </data>
+</odoo>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	<record id="view_car_maint_allowances_archive_wiz" model="ir.ui.view">
+            <field name="name">car.maint.allowances.archive.wiz.form</field>
+            <field name="model">car.maint.allowances.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Compute Car Maintenance Allowances" version="7.0">
+                        <group  col="4" colspan="4">
+			    <field name="company_id"  />
+		            <field name="dep"  />
+			    <field name="date_from"   />
+			    <field name="date_to" />
+			    <field name="action_type" />
+                        </group>                    
+                    <footer>
+
+	 		<button name="compuete_allowances" string="Compute" type="object"  class="oe_highlight"
+				 attrs="{'invisible':[('action_type','!=','compute')]}" />
+	 		<button name="create_ratification" string="Create Voucher" type="object"   class="oe_highlight"
+				attrs="{'invisible':[('action_type','!=','transfer')]}"/>
+			<button icon='gtk-cancel' special="cancel" string="Close" />
+                    </footer>
+               
+                </form>
+            </field>
+        </record>
+
+        <record id="car_maint_allowances_archive_wiz_action" model="ir.actions.act_window">
+            <field name="name">Compute Car Maintenance Allowances</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">car.maint.allowances.wiz</field>
+            <field name="target">new</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">form</field>
+        </record>
+		
+	<menuitem
+            action="car_maint_allowances_archive_wiz_action"
+            id="car_maint_allowances_archive_wiz_menu"
+            parent="menu_car_maintenance_allowances"/>
+
+    </data>
+</openerp>
+

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="maintenance_department_tree_view" model="ir.ui.view">
+            <field name="name">maintenance.department.tree</field>
+            <field name="model">maintenance.department</field>
+            <field name="arch" type="xml">
+                <tree string="Maintenance Departments">
+                    <field name="name" />
+                    <field name="stock_location_id"/>
+                    <field name="company_id" groups="base.group_multi_company" />
+                </tree>
+            </field>
+        </record>
+        <record id="maintenance_department_form_view" model="ir.ui.view">
+            <field name="name">maintenance.department.form</field>
+            <field name="model">maintenance.department</field>
+            <field name="arch" type="xml">
+                <form string="Maintenance Departments">
+                    <group>
+                        <field name="name" required="1"/>
+                        <field name="department_id" required="1" />
+                        <field name="stock_location_id" required="1" domain="[('is_maintenance_location','=',True),('usage','=','internal')]" context="{'default_is_maintenance_location':True,'default_usage':'internal'}"/>
+                        <field name="location_dest_id" required="1" domain="[('is_maintenance_location','=',True),('usage','=','customer')]" context="{'default_is_maintenance_location':True,'default_usage':'customer'}"/>
+                        <field name="company_id" groups="base.group_multi_company" options="{'no_open':True, 'create': false, 'create_edit': false}" required="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="maintenance_department_action" model="ir.actions.act_window">
+            <field name="name">Maintenance Departments</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">maintenance.department</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem name="Vehicles Maintenance" parent="fleet.fleet_configuration" id="vehicles_maintenance" sequence="2" groups="group_maintenance_config"/>
+        <menuitem name="Maintenance Departments" id="menu_maintenance_department_tree_view" action="maintenance_department_action" parent="vehicles_maintenance" sequence="3"/>
+    </data>
+</openerp>

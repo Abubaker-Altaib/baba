@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	    <menuitem name="Loans Reports" parent="hr_custom.menu_hr_reports"  id="menu_loan_report" groups="base.group_loan_user,base.group_loan_manager"  />
+        <!-- loan employee Report -->
+         <record id="view_loans_emps" model="ir.ui.view">
+            <field name="name">loan emp report</field>
+            <field name="model">loans.emps.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Loans Employee Report" version="7.0">
+		            <group col="4" colspan="2">
+		                 <field name="company_id" colspan="4" widget="selection" groups="base.group_multi_company" />
+                         <field name="department_id" domain= "[('company_id','=',company_id)]"  on_change="onchange_employee(department_id)"/>
+                         <field name="loans" domain="['|',('company_ids','=',False),('company_ids', 'in', (company_id))]" />
+                         <field name="start_date"/>
+                    </group>
+	      	        <notebook>
+                  	    <page string="Employees">
+		                      <field name="employee_ids" on_change="onchange_employee(department_id)" nolabel="1"/> 
+                        </page>
+                     </notebook>
+                     <footer>
+		                 <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight" />
+                           or
+                         <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="loans_emps_action" model="ir.actions.act_window">
+            <field name="name">Loan Form</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">loans.emps.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+	
+	    <menuitem name="Loan Form" parent="menu_loan_report" action="loans_emps_action" id="menu_loan_form_emp_id"/>
+        <!--HR Loan Status-->
+
+          <record id="view_loan_status" model="ir.ui.view">
+            <field name="name"> Loans Status Report</field>
+            <field name="model">loan.status</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Loans Status Report" version="7.0">
+                   <group col="4" colspan="4">
+                        <field name="company_id" colspan="4" widget="selection" groups="base.group_multi_company"/>
+			<field name="loan" domain="['|',('company_ids','=',False),('company_ids', 'in', (company_id))]" colspan="4"/>
+			<field name="start_date"  />
+			<field name="end_date" />
+                   </group>
+			       <footer>
+		                 <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight" />
+                           or
+                         <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="emp_loan_status_action" model="ir.actions.act_window">
+            <field name="name">Loans Status Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">loan.status</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <menuitem name="Loans Status Report" parent="menu_loan_report" action="emp_loan_status_action" id="menu_loan_det_status_rep"/>
+
+
+          <!--====loans Details==-->
+
+        <record id="view_loan_det" model="ir.ui.view">
+            <field name="name">Loans Details Report</field>
+            <field name="model">loan.details</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Loans Deatails Report" version="7.0">
+                   <group col="4" colspan="4">
+				        <field name="company_id" colspan="4" widget="selection" groups="base.group_multi_company"/>
+				        <field name="month" />
+				        <field name="year" />
+                    </group>
+		            <footer>
+		                 <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight" />
+                           or
+                         <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+		    
+                </form>
+            </field>
+        </record>
+
+        <record id="emp_loan_det_action" model="ir.actions.act_window">
+            <field name="name">Loans Deatails Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">loan.details</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <menuitem name="Loans Deatails Report" parent="menu_loan_report" action="emp_loan_det_action" id="menu_loan_det_de_rep"/>
+
+           <!--Loans Situation-->
+          <record id="view_employees_loans" model="ir.ui.view">
+            <field name="name">Loans Situation Report</field>
+            <field name="model">loans.situation.rep</field>
+            <field name="arch" type="xml">
+                <form string="Loans Situation Report" version="7.0">
+                    <group>
+						<field name="company_id"  widget="selection" groups="base.group_multi_company"/>
+						<field name="loan_id"/>
+		                <field name="emp_id" colspan="4" nolabel="1" domain= "[('state','!=','refused'),('company_id','=',company_id)]"/>
+                    </group>   
+		            <footer>
+		                 <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight" />
+                           or
+                         <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="employees_loans_situation_rep_action" model="ir.actions.act_window">
+            <field name="name">Loans Situation Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">loans.situation.rep</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <!--menuitem name="Loans Situation Report" parent="menu_loan_report" 
+                     action="employees_loans_situation_rep_action"  id="menu_employees_loans_rep"/-->
+
+            <!--=====loans by deps=========-->
+           <record id="view_loan_by_deps" model="ir.ui.view">
+            <field name="name">Loans By Department Report</field>
+            <field name="model">loan.by.department</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Loans By Department Report" version="7.0">
+                    <group col="4" colspan="2">
+						<field name="company_id" colspan="4" widget="selection" groups="base.group_multi_company"/>
+						<field name="loan_id" colspan="4" domain="['|',('company_ids','=',False),('company_ids', 'in', (company_id))]" />
+                        <field name="start"  />
+		                <field name="to_date"  />
+                      </group>
+                      <notebook>
+			<page string="Departments" >
+			      <field name="department_id"  domain= "[('company_id','=',company_id)]" nolabel="1" colspan="4"/>
+                        </page>
+                      </notebook>
+
+		            <footer>
+		                 <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight" />
+                           or
+                         <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="emp_loan_by_deps_action" model="ir.actions.act_window">
+            <field name="name">Loans By Department Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">loan.by.department</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+	   <menuitem name="Loans By Department Report" parent="menu_loan_report" action="emp_loan_by_deps_action" id="menu_loan_dep_rep"/>
+<!--=========Employee loan situation report=========-->
+
+        <record id="view_loan_situation" model="ir.ui.view">
+            <field name="name">Loan Situation Report</field>
+            <field name="model">loan.situation</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Loan Situation Report" version="7.0">
+                    <group col="4" colspan="4">
+		        <field name="company_id" colspan="4" widget="selection" groups="base.group_multi_company" on_change="onchange_employee(company_id)"/>
+                    </group> 
+                    <notebook>
+			<page string="Employees" >
+                        	<field name="emp_id" nolabel="1" on_change="onchange_employee(company_id)"/>
+                        </page>
+                    </notebook>
+		            <footer>
+		                 <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight" />
+                           or
+                         <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="loan_situation_report_action" model="ir.actions.act_window">
+            <field name="name">Loan Situation Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">loan.situation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <menuitem name="Loan Situation Report" parent="menu_loan_report" action="loan_situation_report_action" id="menu_loan_situation_rep"/>
+
+            <!--=======Employee Loan==========-->
+           <record id="view_loan_employee_report" model="ir.ui.view">
+            <field name="name">Employee Loan Report</field>
+            <field name="model">employee.loan.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Employee Loan Report" version="7.0">
+                    <group>
+		                <field name="company_id" on_change="onchange_employee(company_id)" widget="selection" groups="base.group_multi_company"/>
+		                <field name="loan_id" domain="['|',('company_ids','=',False),('company_ids', 'in', (company_id))]"/>
+                    </group> 
+                    <notebook>
+                        <page string="Employees"> 
+                           <field name="employee_ids"  on_change="onchange_employee(company_id)" nolabel="1" />
+                        </page>
+                    </notebook>
+
+		            <footer>
+		                 <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight" />
+                           or
+                         <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               
+                </form>
+            </field>
+        </record>
+
+        <record id="emp_loans_report_action" model="ir.actions.act_window">
+            <field name="name">Employee Loans Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">employee.loan.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+	    <menuitem name="Employee Loans Report" parent="menu_loan_report" action="emp_loans_report_action" id="menu_emp_loans_rep"/>
+<!-- loan employee Rep -->
+
+         <!--record id="view_loans_emps" model="ir.ui.view">
+            <field name="name">loan employee report</field>
+            <field name="model">loan.emp.rep</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Loans Employee Report" version="7.0">
+                  <header>
+                    <button name="print_report" string="Print" type="object" icon="gtk-print" class="oe_highlight"/>
+                	or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                   </header>
+		    <group col="4" colspan="2">
+
+                         <field name="type" string="Type"/>
+                         <field name="emp_id" string="Employee(es)"/>
+                     </group>
+
+	      	     
+
+		      
+                </form>
+            </field>
+        </record>
+
+        <record id="loans_emp_rep_action" model="ir.actions.act_window">
+            <field name="name">loan emp rep</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">loan.emp.rep</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record-->
+<!--<menuitem name="Employees Loans Report" parent="menu_loan_report" action="loans_emp_rep_action" id="menu_emp_loan_rep"/-->
+<!--=============================-->
+<!--=====loans common rep=========-->
+
+           <record id="view_loan_common_rep" model="ir.ui.view">
+            <field name="name"> Loans Common Report</field>
+            <field name="model">common.loan.rep</field>
+            <field name="arch" type="xml">
+                <form string="Loans Common Report" version="7.0" >    
+                    <group col="4" colspan="4">
+						<field name="company_id" colspan="4" widget="selection" groups="base.group_multi_company" />
+						<field name="filter" colspan="4" />
+						<field name="month" />
+						<field name="year"/>
+                  </group>
+			      <notebook colspan="4">
+                    	<page string="Employees" attrs="{'invisible':[('filter','=','loan')]}" > 
+                           <field name="employee_ids" colspan="2" on_change="onchange_employee(company_id)" nolabel="1" attrs="{'invisible':[('filter','=','loan')],'required':[('filter','!=','loan')]}"/>
+                        </page>
+                    	<page string="Loans" attrs="{'invisible':[('filter','!=','loan')]}"> 
+                           <field name="loans_id" colspan="2"  domain="['|',('company_ids','=',False),('company_ids', 'in', (company_id))]" nolabel="1" attrs="{'invisible':[('filter','!=','loan')],'required':[('filter','=','loan')]}"/>
+                        </page>
+                    </notebook>
+                     <footer>
+		                 <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight" />
+                           or
+                         <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="loan_common_rep_action" model="ir.actions.act_window">
+            <field name="name">Loans Common Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">common.loan.rep</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <menuitem name="Loans Common Report" parent="menu_loan_report" action="loan_common_rep_action" id="menu_loan_common_rep"/>
+
+     </data>
+</openerp>

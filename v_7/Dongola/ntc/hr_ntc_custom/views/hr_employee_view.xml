@@ -1,0 +1,1214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<!-- Shortcuts -->
+        <record id="hr_holidays.act_hr_employee_holiday_request" model="ir.actions.act_window">
+            <field name="name">Leaves</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.holidays</field>
+            <field name="src_model">hr.employee</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_employee_id': [active_id], 'default_employee_id': active_id,
+            	'form_view_ref': 'hr_holidays.edit_holiday_new'}</field>
+            <field name="domain">[('type','=','remove'), ('holiday_status_id.absence','=',False),('holiday_status_id.permission','=',False)]</field>
+            <field name="view_id" ref="hr_holidays.view_holiday"/>
+        </record>
+		<!--record id="view_employee_form_ntc_inherit" model="ir.ui.view">
+			<field name="name">hr.employee.form.ntc.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr.view_employee_form" />
+			<field name="arch" type="xml">
+				
+				<xpath expr='//field[@name="bank_account_id"]' position="replace">
+					<field name="bank_name" />
+					<field name="bank_account_id" on_change="on_change_bank(bank_account_id)" domain="[('partner_id','=',address_id)]"/>
+				</xpath>
+				<xpath expr='//field[@name="address_home_id"]' position="attributes">
+				    <attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr='//field[@name="address_home_id"]' position="before">
+                    <field name="place_residence"/>
+                    <label for="home_1" string="Home Address"/>
+                    <div>
+                        <field name="home_1" placeholder="First Address"/>
+                        <field name="home_2" placeholder="Second Address"/>
+                        <div class="address_format">
+                            <field name="home_3" placeholder="Third Address" style="width: 40%%"/>
+                            <field name="home_4" placeholder="Fourth Address" style="width: 50%%"/>
+                        </div>
+                    </div>
+				</xpath>
+				
+
+				<xpath expr='//field[@name="otherid"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr='//group[@string="Birth"]' position="before">
+				    <group string="Health status">
+				        <field name="employee_health_status" widget="many2many_tags"/>
+				        
+				        <field name="blood_type"/>
+				    </group>
+				</xpath>
+
+			</field>
+		</record-->
+
+		<record id="loan_form_view_inherit" model="ir.ui.view">
+			<field name="name">hr.loan.form.inherit</field>
+			<field name="model">hr.loan</field>
+			<field name="inherit_id" ref="hr_loan.loan_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="addendum_install_no"]' position="attributes">
+					<attribute name="attrs">{'invisible': [('refund_from','in',['both','salary'])]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="adden_percentage_from"]' position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr='//form' position="attributes">
+					<attribute name='groups'>base.group_hr_user,base.group_loan_user,base.group_loan_manager</attribute>
+				</xpath>
+                 
+			</field>
+		</record>
+
+		<record id="hr_employee_loan_form_view_inherit" model="ir.ui.view">
+			<field name="name">hr.employee.loan.form.inherit</field>
+			<field name="model">hr.employee.loan</field>
+			<field name="inherit_id" ref="hr_loan.hr_employee_loan_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="salary_refund"]' position="attributes">
+					<attribute name="attrs">{'invisible': [('refund_from','in',['both'])]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="addendum_refund"]' position="attributes">
+					<attribute name="attrs">{'invisible': [('refund_from','in',['both'])]}</attribute>
+				</xpath>
+				<!--xpath expr='//field[@name="addendum_install_no"]' position="attributes">
+					<attribute name="attrs">{'invisible': [('refund_from','in',['both'])]}</attribute>
+				</xpath-->
+
+				<xpath expr='//button[@name="approve"]' position="after">
+				    <button string="Paid" name="paid" states="approved" class="oe_highlight" groups="base.group_loan_user" />
+				    <button string="Reject" name="reject" states="requested" class="oe_highlight" groups="base.group_loan_manager" />
+				    <button string="Set To Draft" name="set_to_draft" states="rejected" class="oe_highlight" type="object" groups="base.group_loan_manager,base.group_loan_user"/>
+				</xpath>
+
+				<xpath expr='//button[@name="approve"]' position="attributes">
+				    <attribute name="string">Approve</attribute>
+				    <attribute name="groups">base.group_loan_manager</attribute>
+				</xpath>
+				<xpath expr='//button[@name="suspend"]' position="attributes">
+				    <attribute name="groups">base.group_loan_user,base.group_hr_user</attribute>
+				</xpath>
+
+				<xpath expr='//field[@name="state"]' position="replace">
+					<field name="state" widget="statusbar" statusbar_colors='{"suspend":"red"}'
+                                   statusbar_visible="draft,requested,approved,paid,done"/>
+				</xpath>
+				<xpath expr="//sheet" position="after">
+					<div class="oe_chatter">
+	                    <!--field name="message_follower_ids" widget="mail_followers"/-->
+	                    <field name="message_ids" widget="mail_thread"/>
+	                </div>
+	            </xpath>
+	            <xpath expr='//field[@name="code"]' position="after">
+					<field name="active" groups="base.group_hr_user,base.group_loan_user"/>
+				</xpath>
+                 
+			</field>
+		</record>
+		
+        <record id="view_employee_form_ntc_inherit2" model="ir.ui.view">
+			<field name="name">hr.employee.form.ntc.inherit.custom</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_training.view_employee_training_form_inherit" />
+			<field name="arch" type="xml">
+			    <xpath expr='//field[@name="emp_code"]' position="before">
+					    <field name="fname" on_change="name_change(name,fname,sname,tname,lname)" required="1"/>
+					    <field name="sname" on_change="name_change(name,fname,sname,tname,lname)" required="1"/>
+					    <field name="tname" on_change="name_change(name,fname,sname,tname,lname)" required="1"/>
+					    <field name="lname" on_change="name_change(name,fname,sname,tname,lname)" required="1"/>
+				</xpath>
+				<xpath expr='//field[@name="emp_code"]' position="attributes">
+					<attribute name="on_change">onchange_code_custom(emp_code)</attribute>
+				</xpath>
+
+				<xpath expr='//field[@name="external_transfer"]' position="replace"/>
+				<xpath expr='//field[@name="emp_code"]' position="after">
+					<field name="external_transfer"/>
+				</xpath>
+				
+				<xpath expr='//field[@name="name"]' position="attributes">
+					<attribute name="readonly">1</attribute>
+				</xpath>
+
+				<xpath expr='//field[@name="birth_place"]' position="replace">
+                    <label for="country" string="Birth Place" attrs="{'invisible':[('external_transfer','!=','new')]}" />
+                    <div attrs="{'invisible':[('external_transfer','!=','new')]}">
+                        <field name="country" placeholder="Country"/>
+                        <div class="address_format">
+                            <field name="state_id" placeholder="state" style="width: 40%%"/>
+                            <field name="city_id" placeholder="City" style="width: 50%%"/>
+                        </div>
+                    </div>
+				</xpath>
+
+				<xpath expr='//field[@name="nationality_no"]' position="replace"/>
+				<xpath expr='//field[@name="nationality_date"]' position="replace"/>
+
+
+				<xpath expr="//field[@name='country_id']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='country_id']" position="after">
+					<field name="nationality_no" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+					<field name="nationality_date" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+					<field name="exp_nation_date" attrs="{'invisible':[('external_transfer','!=','new')]}"/>
+					<field name="nation" attrs="{'invisible':[('external_transfer','!=','new')]}"/>
+				</xpath>
+
+				<xpath expr="//field[@name='identification_id']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='passport_id']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='nationality_no']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='nationality_date']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='religion']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+
+				<xpath expr='//field[@name="identification_id"]' position="after">
+					<field name="identity" attrs="{'invisible':[('external_transfer','!=','new')]}"/>
+				</xpath>
+				
+				<xpath expr='//field[@name="passport_id"]' position="after">
+					<label for="pass_exp_date" string="passport dates" attrs="{'invisible':[('external_transfer','!=','new')]}"/>
+                    <div attrs="{'invisible':[('external_transfer','!=','new')]}">
+                        <div class="date_format">
+                            <field name="pass_exp_date" placeholder="exprtion date" style="width: 40%%"/>
+                            <field name="inval_pass_date" placeholder="inval date" style="width: 40%%"/>
+                        </div>
+                    </div>
+   					<field name="pass" attrs="{'invisible':[('external_transfer','!=','new')]}"/>
+				</xpath>
+
+				<xpath expr="//field[@name='birthday_certificate_id']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+
+				<xpath expr='//field[@name="birthday_certificate_id"]' position="after">
+					<field name="brth" attrs="{'invisible':[('external_transfer','!=','new')]}"/>
+				</xpath>
+				<xpath expr='//field[@name="nation_ser_date"]' position="after">
+					<field name="nation_serve"/>
+				</xpath>
+
+				<xpath expr='//notebook/page[@string="Qualifications"]/field/tree/field[@name="state"]' position="after">
+			        <field name="file" />
+			    </xpath>
+
+			    <xpath expr='//notebook/page[@string="Family Relations"]/field/tree/field[@name="state"]' position="after">
+			        <field name="file" />
+			    </xpath>
+
+				<xpath expr='//field[@name="blood_type"]' position="replace">
+					<field name="nearer_family"/>
+					<field name="family_phone"/>
+					<field name="nation_inval_date"/>
+					<!--field name="licen_data"/-->
+					<!--group string="Driving Licence">
+						<field name="licence_no"/>
+						<field name="licen_exp_date"/>
+						<field name="licen_inval_date"/>
+					</group-->
+				</xpath>
+
+
+				<xpath expr='//field[@name="lang"]' position="replace">
+                    <field name="lang2" widget="many2many_tags" />
+					<field name="training_no"/>
+				</xpath>
+				
+				<xpath expr='//field[@name="re_employment_date"]' position="attributes">
+				    <attribute name="attrs">{'invisible': [('state','=','draft')]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="user_id"]' position="attributes">
+				    <attribute name="groups">base.group_system</attribute>
+				</xpath>
+				<xpath expr='//field[@name="company_id"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+
+				<xpath expr="//field[@name='job_letter_date']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='job_letter_no']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='file_no']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+
+				<xpath expr="//field[@name='participate_date']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+
+				<xpath expr='//field[@name="previous_institute"]' position="replace"/>
+				<xpath expr='//label[@for="category_ids"]' position="replace"/>
+				<xpath expr='//field[@name="category_ids"]' position="replace"/>
+				<xpath expr='//field[@name="job_letter_date"]' position="after">
+				    
+				    <field name="transfer" attrs="{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','transfer')]}"/>
+				    <field name="previous_institute" attrs="{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','transfer')]}"/>
+				   <field name="side" attrs="{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','not in',['delegation','loaning'])]}"/>
+				    <field name="category_ids" attrs="{'readonly':[('state','not in', ('draft'))], 'invisible':[('external_transfer','!=','new')]}" widget="many2many_tags" placeholder="e.g. Part Time" groups="base.group_hr_user"/>
+				</xpath>
+				<xpath expr='//field[@name="category_ids"]' position="after">
+						<field name="re_emp"/>
+				</xpath>
+				<xpath expr='//field[@name="delegation"]' position="attributes">
+				    <attribute name="attrs">{'invisible': [('state','=','draft')],'readonly':True}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='analytic_ids']" position="attributes">
+				    <attribute name="attrs">{'readonly': [('state','not in','draft')]}</attribute>
+				</xpath>
+				
+				<xpath expr="//field[@name='sequence']" position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				
+				<xpath expr="//field[@name='end_date']" position="attributes">
+				    <attribute name="attrs">{'invisible': [('state','=','draft')]}</attribute>
+				</xpath>
+
+				<xpath expr="//group[@string='Active']/div" position="replace"/>
+				<xpath expr="//group[@string='Active']/label" position="replace"/>
+				
+				<xpath expr="//field[@name='first_employement_date']" position="after">
+					<label for="period" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+							<div>
+								<field name="period" class="oe_inline"
+									attrs="{'required':[('state','=', 'experiment')],'readonly':[('state','not in', ('draft'))]}" />
+								Months
+							</div>
+				</xpath>
+
+				<xpath expr='//field[@name="first_employement_date"]' position="replace"/>
+				<xpath expr='//field[@name="employment_date"]' position="before">
+					<field name="first_employement_date"
+							attrs="{'required':[('employee_type','=', 'employee')],'readonly':[('state','not in', ('draft'))]}" />
+
+					<field name="first_emp"/>
+				</xpath>
+
+				<xpath expr='//field[@name="employment_date"]' position="before">
+						<field name="employement_date1"/>
+				</xpath>
+
+				<xpath expr="//field[@name='employment_date']" position="attributes">
+				    <attribute name="on_change">onchange_start_date(employment_date)</attribute>
+				    <attribute name="string">تاريخ الخدمة المستديمة</attribute>
+				</xpath>
+
+				<xpath expr='//field[@name="bank_account_id"]' position="replace">
+					<field name="bank_name"/>
+					<field name="bank_account_id" on_change="on_change_bank(bank_account_id)" domain="[('partner_id','=',address_id)]"/>
+				</xpath>
+				<xpath expr='//field[@name="address_home_id"]' position="attributes">
+				    <attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr='//field[@name="address_home_id"]' position="before">
+                    <field name="place_residence"/>
+                    <label for="home_1" string="Home Address"/>
+                    <div>
+                        <field name="home_1" placeholder="First Address"/>
+                        <field name="home_2" placeholder="Second Address"/>
+                        <div class="address_format">
+                            <field name="home_3" placeholder="Third Address" style="width: 40%%"/>
+                            <field name="home_4" placeholder="Fourth Address" style="width: 50%%"/>
+                        </div>
+                    </div>
+				</xpath>
+
+				<!--xpath expr='//field[@name="otherid"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath-->
+				<xpath expr='//page[@string="Personal Information"]/group/group[@string="Contact Information"]' position="after">
+			   	 	<group string="Driving Licence">
+						<field name="licence_no"/>
+						<field name="licen_exp_date"/>
+						<field name="licen_inval_date"/>
+					</group>
+				</xpath>
+				<xpath expr='//group[@string="Birth"]' position="before">
+					
+				    <group string="Health status">
+				        <field name="employee_health_status" widget="many2many_tags"/>
+				        
+				        <field name="blood_type"/>
+				    </group>
+				</xpath>
+
+				<!--xpath expr='//page[@string="Qualifications"]' position="attributes" >
+					<attribute name='attrs'>{'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr='//page[@string="Family Relations"]' position="attributes" >
+					<attribute name='attrs'>{'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr='//page[@string="Analytic"]' position="attributes" >
+					<attribute name='attrs'>{'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr='//page[@string="Training"]' position="attributes" >
+					<attribute name='attrs'>{'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath-->
+
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_employee_form_inherit_payroll">
+			<field name="name">hr.employee.payroll.ntc.inherit.form</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_employee_form_inherit2" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='tax_exempted']" position="attributes">
+				    <attribute name="attrs">{'invisible': [('state','=','draft')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='tax']" position="attributes">
+				    <attribute name="attrs">{'readonly': [('state','not in','draft')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='bonus_date']" position="attributes">
+				    <attribute name="attrs">{'readonly': [('state','not in','draft')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='promotion_date']" position="attributes">
+				    <attribute name="attrs">{'readonly': [('state','not in','draft')]}</attribute>
+				</xpath>
+				<xpath expr="//field[@name='degree_id']" position="attributes">
+					<attribute name="domain">[('payroll_id','=',payroll_id)]</attribute>
+				</xpath>
+				<xpath expr="//field[@name='bonus_id']" position="attributes">
+					<attribute name="domain">[('payroll_id','=',payroll_id),('degree_id','=',degree_id)]</attribute>
+				</xpath>
+			</field>
+		</record>
+
+
+		<record model="ir.ui.view" id="view_qualification_inherit_form">
+			<field name="name">hr.qual.ntc.inherit.form</field>
+			<field name="model">hr.employee.qualification</field>
+			<field name="inherit_id" ref="hr_custom.hr_emp_qualification_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='emp_qual_id']"
+					position="replace">
+					<field name="emp_qual_type" domain="[('type','=','view')]" 
+					on_change="onchange_qualification(emp_qual_type)"/>
+					<field name="emp_qual_id" domain="[('emp_qual_id.parent_id','in','emp_qual_type')]" />
+				</xpath>
+			    
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_qualification_inherit_form2">
+			<field name="name">hr.qualification.inherit.form</field>
+			<field name="model">hr.qualification</field>
+			<field name="inherit_id" ref="hr_custom.hr_qualification_form_view" />
+			<field name="arch" type="xml">
+			<xpath expr='//field[@name="parent_id"]' position="attributes">
+				    <attribute name="attrs"> {'invisible': [('type','=','view')]} </attribute>
+				</xpath>
+			</field>
+
+			
+
+
+		</record> 
+	
+		<record model="ir.ui.view" id="hr_hr_employee_view_form_inhert">
+			<field name="name">hr.hr.employee.view.form.evaluation</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_evaluation.hr_hr_employee_view_form" />
+			<field name="arch" type="xml">
+			    <!--xpath expr='//group[@string="Appraisals"]' position="attributes">
+			        <attribute name="invisible">1</attribute>
+			    </xpath-->
+			    <xpath expr='//group[@string="Appraisals"]' position="replace"/>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_emp_qualification_form_inhert">
+			<field name="name">hr.employee.qualification.form.inhert</field>
+			<field name="model">hr.employee.qualification</field>
+			<field name="inherit_id" ref="hr_wafi.hr_emp_qualification_form_view" />
+			<field name="arch" type="xml">
+			    <xpath expr='//field[@name="specialization"]' position="after">
+			        <field name="file" />
+			    </xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_emp_family_form_inhert">
+			<field name="name">hr.employee.family.form.inhert</field>
+			<field name="model">hr.employee.family</field>
+			<field name="inherit_id" ref="hr_custom.hr_employee_family_view" />
+			<field name="arch" type="xml">
+			    <xpath expr='//field[@name="relation_name"]' position="after">
+			        <field name="file" />
+			    </xpath>
+			</field>
+		</record>
+	    <!--act_window
+			context="{'search_default_partner_id':[active_id], 'default_partner_id': active_id}"
+			id="act_employment_evaluation" name="Appraisal Plan"
+			res_model="hr_evaluation.plan" src_model="hr.employee"
+			view_type="form" view_mode="tree" -->
+
+	   
+	   <record id="view_employee_form_inherit2_ntc2" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="view_employee_form_ntc_inherit2" />
+			<field name="arch" type="xml">
+				<xpath expr='//page[@string="Public Information"]' position="replace" />
+				<xpath expr='//notebook/page[@string="Employee Salary"]' position="before" >
+					<page string="Public Information">
+	                                <group>
+	                                    <group string="Contact Information">
+	                                        <field name="address_id" on_change="onchange_address_id(address_id)"
+	                                            context="{'show_address': 1, 'default_customer': False}"
+	                                            options='{"always_reload": True, "highlight_first_line": True}' 
+						    attrs="{'readonly':[('state','!=','draft')]}"/>
+	                                        <field name="work_email" widget="email" attrs="{'readonly':[('state','!=','draft')]}"/>
+	                                        <field name="work_phone" attrs="{'readonly':[('state','!=','draft')]}"/>
+	                                        <field name="mobile_phone" attrs="{'readonly':[('state','!=','draft')]}"/>
+	                                        <field name="work_location" attrs="{'readonly':[('state','!=','draft')]}"/>
+	                                    </group>
+	                                    <group string="Position">
+	                                        <field name="department_id" on_change="onchange_department_id(department_id)"/>
+	                                        <field name="job_id" options='{"no_open": True}' domain="[('state','!=','old')]" 								context="{'form_view_ref': 'hr.view_hr_job_employee_form'}"/>
+	                                        <field name="parent_id"/>
+	                                        <field name="coach_id"/>
+	                                    </group>
+	                                    <group>
+	                                        <field name="company_id" groups="base.group_multi_company" 
+							on_change="onchange_company(company_id)"/>
+	                                        <field name="user_id" on_change="onchange_user(user_id)" string="Related User"/>
+	                                    </group>
+	                                </group>
+	                                <field name="notes" placeholder="Other Information ..." colspan="4"/>
+	                </page>
+	            </xpath>
+
+	             <field name="department_id" position="replace">
+					<field name="department_id" required="1"
+						attrs="{'readonly':[('state','not in', ('draft'))]}" on_change="onchange_department_id(department_id)"/>
+					<field name="dept_parent_id" invisible="1" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+				</field>
+				<field name="job_id" position="replace">
+					<field name="job_id" required="1"
+						attrs="{'readonly':[('state','not in', ('draft'))]}" />
+				</field>
+
+				<xpath expr='//page[@string="Public Information"]/group/group[@string="Contact Information"]' position="attributes">
+			   	 	<attribute name='attrs'>{'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr='//page[@string="Personal Information"]/group/group[@string="Contact Information"]' position="attributes">
+			   	 	<attribute name='attrs'>{'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr='//group[@string="Driving Licence"]' position="attributes">
+				    <attribute name='attrs'>{'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr='//group[@string="Health status"]' position="attributes">
+				    <attribute name='attrs'>{'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr='//group[@string="National Service Info"]' position="attributes">
+				    <attribute name='attrs'>{'invisible':[('external_transfer','!=','new')]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="external_transfer"]' position="after">
+			        <field name="curr_uid" invisible="1"/>
+			        <field name="curr_uid_hr" invisible="1"/>
+			    </xpath>
+				<xpath expr='//page[@string="HR Settings"]' position="attributes">
+			   	 	<attribute name='groups'>base.group_hr_user,purchase_ntc.group_internal_auditor</attribute>
+			   	 	<!--attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute-->
+				</xpath>
+				<xpath expr='//page[@string="Qualifications"]' position="attributes">
+			   	 	<attribute name='groups'>base.group_hr_user,purchase_ntc.group_internal_auditor</attribute>
+			   	 	<!--attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute-->
+				</xpath>
+				<xpath expr='//page[@string="Family Relations"]' position="attributes">
+			   	 	<attribute name='groups'>base.group_hr_user,purchase_ntc.group_internal_auditor</attribute>
+			   	 	<!--attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute-->
+				</xpath>
+				<xpath expr='//page[@string="Analytic"]' position="attributes">
+			   	 	<attribute name='groups'>base.group_hr_user,purchase_ntc.group_internal_auditor</attribute>
+			   	 	<!--attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute-->
+				</xpath>
+				<xpath expr='//page[@string="Training"]' position="attributes">
+			   	 	<attribute name='groups'>base.group_user</attribute>
+			   	 	<attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute>
+				</xpath>
+				<xpath expr='//page[@string="Personal Information"]' position="attributes">
+			   	 	<attribute name='groups'>base.group_hr_user,purchase_ntc.group_internal_auditor</attribute>
+			   	 	<!--attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute-->
+				</xpath>
+				<xpath expr='//page[@string="Employee Salary"]' position="attributes">
+			   	 	<attribute name='groups'>base.group_user</attribute>
+			   	 	<attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="emp_code"]' position="attributes">
+			   	 	<attribute name='groups'>base.group_hr_user</attribute>
+				</xpath>
+				<xpath expr='//field[@name="salary_suspend"]' position="attributes">
+			   	 	<attribute name='readonly'>1</attribute>
+				</xpath>
+				<xpath expr='//field[@name="substitution"]' position="attributes">
+			   	 	<attribute name='readonly'>1</attribute>
+				</xpath>
+				<field name="salary_total" position="after">
+					<field name="mile_allowance" attrs="{'readonly':[('state','not in', ('draft'))]}" />
+				</field>
+
+			</field>
+		</record>
+
+		<record id="hr_inherit_employee_leaves_ntc" model="ir.ui.view">
+			<field name="name">hr.employee.leave.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_holidays_custom.hr_inherit_employee_leaves" />
+			<field name="arch" type="xml">
+				<xpath expr="//button[@string='Leaves']" position="attributes">
+				    <attribute name="attrs">{'invisible': [('state','=','draft')]}</attribute>
+				    <attribute name='groups'>base.group_user</attribute>
+				</xpath>
+			</field>
+		</record>
+
+	   <record id="hr_hr_employee_view_form_ntc" model="ir.ui.view">
+		    <field name="name">hr.hr.employee.view.form</field>
+		    <field name="model">hr.employee</field>
+		    <field name="inherit_id" ref="hr_evaluation.hr_hr_employee_view_form"/>
+		    <field name="arch" type="xml">
+		    		<xpath expr="//button[@string='Appraisal Interviews']" position="attributes">
+					<!--attribute name="attrs">{'invisible': [('state','=','draft')]}</attribute-->
+					<attribute name="invisible">1</attribute>
+				</xpath>
+		    </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_employee_delegation_form_view">
+			<field name="name">hr.employee.delegation.form</field>
+			<field name="model">hr.employee.delegation</field>
+            <field name="inherit_id" ref="hr_loan.hr_employee_delegation_form_view"/>
+			<field name="arch" type="xml">
+                <field name="company_id" position="after">
+                	<label for="period"/>
+                	<div>
+	                   <field name="period" class="oe_inline" on_change="onchange_period(period,start_date)" /> 
+	                   years
+	               </div>
+				</field>
+
+				<xpath expr="//field[@name='start_date']" position="attributes">
+				    <attribute name="on_change">onchange_period(period,start_date)</attribute>
+				</xpath>
+				<xpath expr="//field[@name='loan']" position="attributes">
+				    <attribute name="on_change">onchange_loan(loan,loan_emp,employee_id)</attribute>
+				</xpath>
+				<xpath expr="//field[@name='employee_id']" position="attributes">
+				    <attribute name="on_change">onchange_loan(loan,loan_emp,employee_id)</attribute>
+				</xpath>
+				<xpath expr="//page[@string='Loans']" position="replace">
+				    <page string="Loans" attrs="{'invisible': [('loan', '!=', 'procedure')]}">
+						    <field name="loan_emp" domain="[('employee_id','=',employee_id)]">
+						    	<tree string="Employee Loans">
+				                    <field name="employee_id"/>
+									<field name="loan_id"  />
+									<field name="loan_amount"/>
+									<field name="installment_amount"/>
+									<field name="start_date"/>
+									<field name="end_date"/>
+				                    <field name="state" select="1" />
+				                    <button string="Request" name="request" states="draft" class="oe_highlight" icon="gtk-apply"/>
+				                    <button string="Approved" name="approve" states="requested" class="oe_highlight" icon="gtk-apply" />
+				                    <button string="Transfer" name="transfered" states="approved" class="oe_highlight" icon="gtk-apply" />
+				                    <button string="Suspend" name="suspend" states="paid"  class="oe_highlight" icon="gtk-apply" />
+							    </tree>
+							</field>
+					    </page>
+				</xpath>
+
+				<xpath expr='//button[@name="complete"]' position="attributes">
+				    <attribute name="string">HR Recommendation</attribute>
+				    <attribute name="groups">base.group_hr_user</attribute>
+				</xpath>
+				<xpath expr='//button[@name="confirm"]' position="attributes">
+				    <attribute name="string">Department Manager Recommendation</attribute>
+				    <attribute name="groups">base.group_department_manager</attribute>
+				</xpath>
+				<xpath expr='//button[@name="confirm"]' position="after">
+				    <button name="general_dep" string="General Department Manager Recommendation" states="confirm"
+						class="oe_highlight" groups="base_custom.group_general_department_manager" />
+					<button name="hr_finance_mg" string="Financial and Hummans Manager Approve" states="general_dep"
+						class="oe_highlight" groups="base_custom.group_general_hr_manager" />
+					<button name="hr_general_mg_cancel" string="Cancel" states="general_dep"
+						class="oe_highlight" groups="base_custom.group_general_hr_manager" />
+				</xpath>
+				<xpath expr='//button[@name="approve"]' position="attributes">
+				    <attribute name="string">General Manager Approve</attribute>
+				    <attribute name="states">hr_finance</attribute>
+				    <attribute name="groups">base_custom.group_account_general_manager</attribute>
+				</xpath>
+				<xpath expr='//button[@name="cancel"]' position="attributes">
+				    <attribute name="groups">base_custom.group_account_general_manager</attribute>
+				    <attribute name="states">hr_finance</attribute>
+				</xpath>
+
+				<field name="state" position="replace">
+					<field name="state" widget="statusbar"
+						statusbar_visible="draft,approve,done"
+						statusbar_colors='{"cancel":"red"}' />
+				</field>
+
+
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_department_view">
+			<field name="name">hr.department.form.inherit</field>
+			<field name="model">hr.department</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_custom.hr_department_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//sheet" position="replace">
+					<sheet>
+	                        <group col="4">
+	                            <field name="name"/>
+	                            <field name="cat_id" />
+	                            <field name="manager_id" on_change="onchange_manager(manager_id)"/>
+		                        <field name="pervious_manger_id" />
+		                        <field name="manager_user_id" required="1"/>
+	                            <field name="company_id" widget="selection" groups="base.group_multi_company"/>
+	                            <field name="parent_id"/>
+	                            <field name="analytic_account_id" />
+	                            <field name="active" />
+	                        </group>
+	                        <newline/>
+	                        <group col="4" colspan="4">
+									<notebook colspan="4">
+										<page string=" Employees">
+											<field name="employee_ids" nolabel="1">
+											</field>
+										</page>
+										<page string=" Child Departments">
+											<field name="child_ids" nolabel="1" readonly="1">
+											</field>
+										</page>
+										<page string=" Jobs">
+											<field name="job_ids" nolabel="1">
+											</field>
+										</page>
+									</notebook>
+							</group>
+	                    </sheet>
+                </xpath>
+                <xpath expr='//form' position="attributes">
+				    <attribute name="groups">base.group_hr_user</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<act_window
+			id="act_employee_all_loans"
+			name="Employee Loans"
+			res_model="hr.employee.loan"
+			src_model="hr.employee.delegation"
+			domain="[('employee_id','=', 'employee_id')]"
+			view_type="form"
+			view_mode="tree,form"/> 
+
+
+		<!-- Hr process archive -->
+		<record id="hr_process_archive_form_inherit_view" model="ir.ui.view">
+			<field name="name">hr.process.archive.inherit</field>
+			<field name="model">hr.process.archive</field>
+			<field name="inherit_id" ref="hr_wafi.hr_process_archive_form_inherit_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="to_hr_user"]' position="after">
+				    <button name="hr_mang_approve" string="HR approve" states="draft1"
+						class="oe_highlight" groups="base.group_hr_manager" />
+
+					<button name="hr_recomm" string="HR Recommendation" states="draft"
+						class="oe_highlight" groups="base.group_hr_user" />
+
+					<!--button name="hr_implement" string="HR Implementation" states="implement"
+						class="oe_highlight" groups="base.group_hr_user" /-->
+
+					<!--button name="reviewer_app" string="Reviewer Approve" states="hr_finance"
+						class="oe_highlight" groups="purchase_ntc.group_internal_auditor" /-->
+
+					<button name="hr_finance_recomm" string="Financial and Hummans Manager Recommendation" states="hr_manager" class="oe_highlight" groups="base_custom.group_general_hr_manager" />
+
+					<button name="cancel" string="Cancel" states="hr_manager,general_manag" groups="base_custom.group_general_hr_manager,base_custom.group_account_general_manager"
+						class="oe_highlight" />
+					<button name="general_mang" string="General Manager Approve" states="general_manag"
+						class="oe_highlight" groups="base_custom.group_account_general_manager"/>
+				</xpath>
+
+				<xpath expr='//button[@name="to_hr_user"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr='//button[@name="to_section_manager"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr='//button[@name="to_department_manager"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr='//button[@name="to_hr_manager"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr='//button[@name="to_minister"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr='//button[@name="to_service_manager"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr='//button[@name="to_council_ministers"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr='//button[@name="to_service_manager2"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr='//button[@name="to_unit_manager"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+
+				<xpath expr="//field[@name='state']" position="attributes">
+					<attribute name="statusbar_visible">draft,approved</attribute>
+				</xpath>
+
+				<xpath expr="//sheet" position="after">
+					<div class="oe_chatter">
+	                    <!--field name="message_follower_ids" widget="mail_followers"/-->
+	                    <field name="message_ids" widget="mail_thread"/>
+	                </div>
+	            </xpath>
+
+	            <xpath expr='//field[@name="previous"]' position="attributes">
+				    <attribute name="attrs">{'readonly':[('state','not in',['draft','hr_manager','draft1'])]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="reference"]' position="attributes">
+				    <attribute name="attrs">{'readonly':[('state','not in',['draft','hr_manager','draft1'])]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="promotion_type"]' position="attributes">
+				    <attribute name="attrs">{'readonly':[('state','not in',['draft','hr_manager','draft1'])]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="employee_id"]' position="attributes">
+				    <attribute name="attrs">{'readonly':[('state','not in',['draft','hr_manager','draft1'])]}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="associated_ids"]' position="attributes">
+				    <attribute name="attrs">{'readonly':[('state','not in',['draft','hr_manager','draft1'])]}</attribute>
+				</xpath>
+
+
+			</field>
+		</record>
+
+
+		<record id="view_department_cat_form" model="ir.ui.view">
+			<field name="name">hr.department.cat.form</field>
+			<field name="model">hr.department.cat</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_custom.view_department_cat_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//sheet" position="inside">
+					<label for="category_type" class="oe_edit_only" string="Category Type" />
+					<field name="category_type" />
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_department_cat_tree" model="ir.ui.view">
+			<field name="name">hr.department.cat.tree</field>
+			<field name="model">hr.department.cat</field>
+			<field name="type">tree</field>
+			<field name="inherit_id" ref="hr_custom.view_department_cat_tree" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='name']" position="after">
+					<field name="category_type" />
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_reemployment_form" model="ir.ui.view">
+			<field name="name">remployment.emlpyee.inherit</field>
+			<field name="model">hr.employee.reemployment</field>
+			<field name="inherit_id" ref="hr_wafi.view_reemployment_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="complete"]' position="attributes">
+				    <attribute name="string">HR Manager Recommendation</attribute>
+				    <attribute name="states">hr_finance</attribute>
+				    <attribute name="groups">base.group_hr_manager</attribute>
+				</xpath>
+				<xpath expr='//button[@name="confirm"]' position="attributes">
+				    <attribute name="string">Financial and Hummans Manager Approve</attribute>
+				    <attribute name="states">hr_finance</attribute>
+				    <attribute name="groups">base_custom.group_general_hr_manager</attribute>
+				</xpath>
+				<xpath expr='//button[@name="approve"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr='//button[@name="done"]' position="attributes">
+				    <attribute name="string">General Manager Approve</attribute>
+				    <attribute name="states">confirm</attribute>
+				    <attribute name="groups">base_custom.group_account_general_manager</attribute>
+				</xpath>
+
+				<xpath expr='//button[@name="cancel"]' position="attributes">
+				    <attribute name="groups">base_custom.group_account_general_manager</attribute>
+				    <attribute name="states">confirm</attribute>
+				</xpath>
+
+				<xpath expr="//field[@name='state']" position="attributes">
+					<attribute name="statusbar_visible">draft,done</attribute>
+				</xpath>
+
+			</field>
+		</record>
+
+		<record id="hr_job_form_inherit_view2" model="ir.ui.view">
+			<field name="name">hr.job.inherit</field>
+			<field name="model">hr.job</field>
+			<field name="inherit_id" ref="hr_wafi.hr_job_form_inherit_view2" />
+			<field name="arch" type="xml">
+				<xpath expr='//form' position="attributes">
+				    <attribute name="groups">base.group_hr_user</attribute>
+				</xpath>
+				<xpath expr="//field[@name='no_of_employee']" position="replace">
+					<field name="no_of_employee" groups="base.group_user" widget="integer"/>
+				</xpath>
+				<xpath expr="//field[@name='expected_employees']" position="attributes">
+				    <attribute name="widget">integer</attribute>
+				</xpath>
+				
+				<xpath expr="//page[@string='Departments']" position="before">
+				    <page string="Employees">
+							<field colspan="4" name="employee_ids" nolabel="1" readonly="1" />
+					</page>
+					<page string="Departments">
+							<field colspan="4" name="dep_ids" nolabel="1"/>
+					</page>
+					
+				</xpath>
+				<xpath expr="//page[4][@string='Departments']" position="attributes">
+				    <attribute name="string">Jobs Number for Departments</attribute>
+				</xpath>
+				<xpath expr="//page[4]" position="after">
+				    <page string="Courses">
+							<field colspan="4" name="course_ids" nolabel="1"/>
+					</page>
+				</xpath>
+				<!--xpath expr="//field[@name='deparment_ids']/tree/field[@name='department_id']" position="replace">
+					<field name="department_id" domain="[('id','in',parent.dep_ids)]"/>
+				</xpath-->
+			</field>
+		</record>
+
+		<record id="view_employee_filter_inherit" model="ir.ui.view">
+			<field name="name">Employees inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="type">search</field>
+			<field name="inherit_id" ref="hr_custom.view_employee_filter_inherit" />
+			<field name="arch" type="xml">
+				<xpath expr='//filter[@string="General Department"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+				</xpath>
+				
+			</field>
+		</record>
+
+        <delete model="ir.actions.act_window" id="hr.action2" />
+        <delete model="ir.actions.act_window" id="hr_custom.act_employment_termination" />
+        <delete model="ir.actions.act_window" id="hr_custom.act_employee_all_processes" />
+        <delete model="ir.values" id="hr_attendance_original.hr_attendance_month_values" />
+        <delete model="ir.values" id="hr_attendance_custom.hr_attendance_month_values" />
+        <delete model="ir.values" id="hr_attendance_original.hr_attendance_week_values" />
+        <delete model="ir.values" id="hr_attendance_original.hr_attendance_error_values" />
+        <delete model="ir.values" id="hr_attendance_custom.hr_attendance_error_values" />
+        <delete model="ir.actions.act_window" id="hr_attendance_custom.print_employee_attendance_view" />
+        <delete model="ir.actions.act_window" id="hr_violation_punishment.act_employee_all_violation" />
+        <delete model="ir.values" id="hr_holidays.hr_holidays_summary_employee_value" />
+        <delete model="ir.actions.report.xml" id="hr_custom.registering_id" />
+        <delete model="ir.actions.report.xml" id="hr_custom.certificate_id" />
+        <delete model="ir.actions.report.xml" id="hr_custom.new_user" />
+        <delete model="ir.actions.report.xml" id="hr_payroll_custom.employment_notification_id" />
+
+        <!--act_window
+			id="action2" name="Subordinate Hierarchy"
+			res_model="hr.employee" src_model="hr.employee" domain="[('id','in',active_ids)]"
+			view_type="form" view_mode="tree" view_id="hr.view_partner_tree2"/-->
+
+		<!--act_window
+			context="{'search_default_partner_id':[active_id], 'default_partner_id': active_id}"
+			id="hr_custom.act_employment_termination" name="Termination"
+			res_model="hr.employment.termination" src_model="hr.employee" domain="[('employee_id','=', active_id)]"
+			view_type="form" view_mode="tree"/-->
+
+		<!--act_window
+			context="{'search_default_partner_id':[active_id], 'default_partner_id': active_id}"
+			id="hr_custom.act_employee_all_processes" name="Employee Processes" res_model="hr.process.archive"
+			src_model="hr.employee" domain="[('employee_id','=', active_id)]"
+			view_type="form" view_mode="tree,form" /-->
+
+
+		<!--record model="ir.values" id="hr_attendance_custom.hr_attendance_month_values">
+            <field name="model_id" ref="hr.model_hr_employee" />
+            <field name="name">Attendances By Month</field>
+            <field name="key2">client_print_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('hr_attendance_custom.action_hr_attendance_month'))" />
+            <field name="key">action</field>
+            <field name="model">hr.employee</field>
+        </record-->
+
+        <!--record model="ir.values" id="hr_attendance_original.hr_attendance_week_values">
+            <field name="model_id" ref="hr.model_hr_employee" />
+            <field name="name">Attendances By Week</field>
+            <field name="key2">client_print_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('hr_attendance_original.action_hr_attendance_week'))" />
+            <field name="key">action</field>
+            <field name="model">hr.employee</field>
+        </record-->
+
+        <!--record model="ir.values" id="hr_attendance_custom.hr_attendance_error_values">
+            <field name="model_id" ref="hr.model_hr_employee" />
+            <field name="object" eval="1" />
+            <field name="name">Attendance Error Report</field>
+            <field name="key2">client_print_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('hr_attendance_custom.action_hr_attendance_error'))" />
+            <field name="key">action</field>
+            <field name="model">hr.employee</field>
+        </record-->
+
+        <!--act_window name="Attendance Report"
+            res_model="employee.attendance"
+            src_model="hr.employee"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"
+            id="hr_attendance_custom.print_employee_attendance_view"/-->
+
+        <!--act_window
+			context="{'search_default_partner_id':[active_id], 'default_partner_id': active_id}"
+			id="act_employment_evaluation" name="Appraisal Plan"
+			res_model="hr_evaluation.plan" src_model="hr.employee"
+			view_type="form" view_mode="tree" /-->
+
+		<!-- violation Shortcut in Employee view -->
+		<!--act_window id="act_employee_all_violation" name="Employee Violation"
+			res_model="hr.employee.violation" src_model="hr.employee"
+			domain="[('employee_id','=', active_id)]" view_type="form"
+			view_mode="tree,form" /-->
+
+
+		<!--record model="ir.values" id="hr_holidays.hr_holidays_summary_employee_value">
+            <field name="model_id" ref="hr.model_hr_employee" />
+            <field name="name">Leaves Summary</field>
+            <field name="key2">client_print_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('hr_holidays.action_hr_holidays_summary_employee'))" />
+            <field name="key">action</field>
+            <field name="model">hr.employee</field>
+        </record-->
+
+        <!--report
+            auto="False" 
+            id="hr_custom.registering_id" 
+            model="hr.employee" name="worker.registering" 
+            rml="hr_custom/report/worker_registering.rml" 
+            string=" Worker Registration Form"  
+            header="True"/> 
+
+        <report auto="False" 
+            id="hr_custom.certificate_id" 
+            model="hr.employee" 
+            name="certificate" 
+            rml="hr_custom/report/certificate.rml" 
+            string=" Certificate Whom It May Concern"  
+            header="True"/>
+
+        <report auto="False" 
+            id="hr_custom.new_user" 
+            model="hr.employee" 
+            name="new_user" 
+            rml="hr_custom/report/new_user.rml" 
+            string=" User Form"  
+            header="True"/-->
+
+        <!--report auto="False"
+            id="hr_payroll_custom.employment_notification_id" 
+            model="hr.employee" 
+            name="employment.notification" 
+            rml="hr_payroll_custom/report/employment_notification.rml"
+            string=" Employment Notification"  header="True"/-->
+
+        <!--report auto="False" 
+            id="hr_custom.hr_report_job" 
+            menu="False" 
+            model="hr.employee" 
+            name="hr.employee.jobs" 
+            file="hr_ntc_custom/report/hr_job_eport.rml"
+            report_type="pdf" 
+            string="Employee Report" 
+            header="True"/-->
+
+
+
+        <record id="view_hr_job_update" model="ir.ui.view">
+            <field name="name">hr.job.update.form</field>
+            <field name="model">hr.job.wiz.update</field>
+            <field name="arch" type="xml">
+                <form string="Update jobs Departments and Degrees" version="7.0">
+                    <footer>
+                        <button name="update_depertment" string="Update Departments" type="object" class="oe_highlight" />
+                        <button name="update_degree" string="Update Degrees" type="object" class="oe_highlight" />
+                        <button name="update_job_dep_num" string="Update Jobs Number for Departments" type="object" class="oe_highlight" />
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+	    <act_window name="Update jobs Departments"
+	            res_model="hr.job.wiz.update"
+	            src_model="hr.job"
+	            view_mode="form"
+	            target="new"
+	            key2="client_action_multi"
+	            id="action_hr_job_update"/>
+
+	    <record id="hr_employee_family_view" model="ir.ui.view">
+			<field name="name">hr.employee.family.inherit</field>
+			<field name="model">hr.employee.family</field>
+			<field name="inherit_id" ref="hr_wafi.hr_employee_family_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="family_complete"]' position="attributes">
+				    <attribute name="string">HR Approve</attribute>
+				</xpath>
+				<xpath expr='//button[@name="family_approved"]' position="attributes">
+				    <attribute name="string">HR Manager Approve</attribute>
+				    <attribute name="states">complete</attribute>
+				</xpath>
+				<xpath expr='//button[@name="family_rejected"]' position="attributes">
+				    <attribute name="states">complete</attribute>
+				    <attribute name="groups">base.group_hr_manager</attribute>
+				</xpath>
+				<!--xpath expr="//button[@name='family_complete']" position="after">
+					<button string="Reviewer Approve" name="family_review" states="complete"
+						type="object" class="oe_highlight" groups="purchase_ntc.group_internal_auditor" />
+				</xpath-->
+				<xpath expr="//sheet" position="after">
+					<div class="oe_chatter">
+	                    <!--field name="message_follower_ids" widget="mail_followers"/-->
+	                    <field name="message_ids" widget="mail_thread"/>
+	                </div>
+	            </xpath>
+			</field>
+		</record>
+
+		<record id="hr_process_archive_filter" model="ir.ui.view">
+			<field name="name">hr.process.archive.filter</field>
+			<field name="model">hr.process.archive</field>
+			<field name="inherit_id" ref="hr_custom.hr_process_archive_filter" />
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<xpath expr='//group' position="before">
+				    <field name="employee_id"/>
+				    <field name="date"/>
+				    <field name="approve_date"/>
+				</xpath>
+				<xpath expr='//filter[@string="Status"]' position="after">
+				    <filter string="Approve Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'approve_date'}" />
+					<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+				</xpath>
+				
+			</field>
+		</record>
+
+		<!-- Recruit -->
+		<record id="view_recruit_form" model="ir.ui.view">
+            <field name="name">hr.employee.form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_recruit_form_inherit" />
+            <field name="arch" type="xml">
+            	<xpath expr="//page[@string='Personal Information']" position="attributes">
+					<attribute name="groups">base.group_user</attribute>
+				</xpath>
+				<xpath expr="//page[@string='HR Settings']" position="attributes">
+					<attribute name="groups">base.group_user</attribute>
+				</xpath>
+				<xpath expr="//button[@name='approve']" position="attributes">
+					<attribute name="groups">base.group_hr_user,hr_ntc_custom.group_recruit_manager</attribute>
+				</xpath>
+				<xpath expr="//button[@name='refuse']" position="attributes">
+					<attribute name="groups">base.group_hr_user,hr_ntc_custom.group_recruit_manager</attribute>
+				</xpath>
+				<xpath expr="//button[@name='set_to_draft']" position="attributes">
+					<attribute name="groups">base.group_hr_user,hr_ntc_custom.group_recruit_manager</attribute>
+				</xpath>
+				<xpath expr="//field[@name='category_ids']" position="attributes">
+					<attribute name="groups">base.group_hr_user,hr_ntc_custom.group_recruit_manager</attribute>
+				</xpath>
+				<xpath expr="//label[@for='category_ids']" position="attributes">
+					<attribute name="groups">base.group_hr_user,hr_ntc_custom.group_recruit_manager</attribute>
+				</xpath>
+				<xpath expr="//field[@name='degree_id']" position="attributes">
+					<attribute name="domain">[('payroll_id','=',payroll_id)]</attribute>
+				</xpath>
+				<xpath expr="//field[@name='bonus_id']" position="attributes">
+					<attribute name="domain">[('payroll_id','=',payroll_id),('degree_id','=',degree_id)]</attribute>
+				</xpath>
+                
+            </field>
+        </record>
+
+        <!--contractor -->
+		<record id="view_contractor_form_inherit" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_contractor_form_inherit" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='degree_id']" position="attributes">
+					<attribute name="domain">[('payroll_id','=',payroll_id)]</attribute>
+				</xpath>
+				<xpath expr="//field[@name='bonus_id']" position="attributes">
+					<attribute name="domain">[('payroll_id','=',payroll_id),('degree_id','=',degree_id)]</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<!--trainee -->
+		<record id="view_trainee_form_inherit" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_trainee_form_inherit" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='degree_id']" position="attributes">
+					<attribute name="domain">[('payroll_id','=',payroll_id)]</attribute>
+				</xpath>
+				<xpath expr="//field[@name='bonus_id']" position="attributes">
+					<attribute name="domain">[('payroll_id','=',payroll_id),('degree_id','=',degree_id)]</attribute>
+				</xpath>
+			</field>
+		</record>
+		
+
+	</data>
+</openerp>
+

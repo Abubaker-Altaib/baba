@@ -1,0 +1,800 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Top menu item -->
+		<menuitem id="hr_mission_menu" name="Missions Settings"
+			parent="hr.menu_hr_configuration" />
+
+		<menuitem id="menu_mission" name="Missions" parent="hr.menu_hr_root"
+			sequence="4"
+			groups="base.group_hr_overview,base.group_hr_manager,base.group_hr_user" />
+
+		<!--_________________________________________________Mission Category ________________________________________-->
+		<record model="ir.ui.view" id="hr_mission_category_form_view">
+			<field name="name">hr.mission.category.form</field>
+			<field name="model">hr.mission.category</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Mission Setting" version="7.0">
+					<sheet>
+						<label for="name" class="oe_edit_only" string="Missions category" />
+						<h1>
+							<field name="name" class="oe_inline" placeholder="Mission"
+								style="width: 6em" />
+							-
+							<field name="code" class="oe_inline" placeholder="Code" />
+						</h1>
+						<group>
+							<field name="type" required="1" />
+							<field name="place"  attrs="{'required':[('type','=','view')],'invisible':[('type','!=','view')]}"/>
+							<field name="cat_type"  invisible="1"/>
+							<field name="parent_id" attrs="{'required':[('type','=','normal')],'invisible':[('type','!=','normal')]}" on_change="onchange_parent_id(parent_id)" domain="[('type','=','view'),('cat_type','=','1')]"
+								 context="{'form_view_ref':'hr_mission.hr_mission_category_form_view','default_cat_type':'1','default_type':'view','default_company_id':company_id}"/>
+						</group>
+						<notebook colspan="4">
+							<page string="Allowance"  attrs="{'invisible':[('type','!=','normal')]}">
+								<group>
+								 <field name="allowance_id" attrs="{'required':[('type','=','normal')]}" domain="[('name_type','=','allow')]"/>
+								</group>
+							</page>
+							<page string="Details"  attrs="{'invisible':[('type','!=','normal')]}">
+								<group>
+									<!--field name="destination"
+										attrs="{'required':[('type','=','normal')]}" /-->
+									<field name="company_id" groups="base.group_multi_company"
+										widget="selection" />
+									<field name="currency" />
+									<field name="fees_currency_id" />
+								<field name="validate" />
+
+								</group>
+							</page>
+							<page string="Accounts" attrs="{'invisible':[('type','!=','view')]}" >
+								<group>
+									<field name="journal_id" />
+									<field name="account_analytic_id" />
+									<field name="mission_account_id" attrs="{'required':[('type','=','view')]}"/>
+									<field name="fees_account_id" attrs="{'required':[('type','=','view')]}"/>
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_mission_category_tree_view">
+			<field name="name">hr.mission.category.tree</field>
+			<field name="model">hr.mission.category</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Missions category">
+					<field name="code" select="1" />
+					<field name="name" />
+					<field name="parent_id" />
+					<field name="type" />
+				</tree>
+			</field>
+		</record>
+		<record id="hr_mission_category_tree" model="ir.actions.act_window">
+			<field name="name">Missions</field>
+			<field name="res_model">hr.mission.category</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_mission_category_tree_view" />
+			<field name="domain">[('cat_type','=','1')]</field>
+			<field name="context">{'default_cat_type':'1'}</field>
+		</record>
+
+		<record id="action_mission_category_form" model="ir.actions.act_window.view">
+		    <field eval="3" name="sequence"/>
+		    <field name="view_mode">form</field>
+		    <field name="view_id" ref="hr_mission_category_form_view"/>
+		    <field name="act_window_id" ref="hr_mission_category_tree"/>
+		</record>
+
+		<record id="action_mission_category_tree" model="ir.actions.act_window.view">
+		    <field eval="2" name="sequence"/>
+		    <field name="view_mode">tree</field>
+		    <field name="view_id" ref="hr_mission_category_tree_view"/>
+		    <field name="act_window_id" ref="hr_mission_category_tree"/>
+		</record>
+		<menuitem id="hr_mission_tree_menu" name="Missions category"
+			parent="hr_mission_menu" action="hr_mission_category_tree" />
+
+
+		<!--___________________________________Operation Category ______________________________________________-->
+
+		<record model="ir.ui.view" id="hr_operation_category_form_view">
+			<field name="name">hr.operation.category.form</field>
+			<field name="model">hr.mission.category</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Operation Setting" version="7.0">
+					<sheet>
+						<label for="name" class="oe_edit_only" string="Operation category" />
+						<h1>
+							<field name="name" class="oe_inline" placeholder="Operation"
+								style="width: 6em" />
+							-
+							<field name="code" class="oe_inline" placeholder="Code" />
+						</h1>
+						<group>
+							<field name="type" required="1" />
+							<field name="place" attrs="{'required':[('type','=','view')],'invisible':[('type','!=','view')]}"/>
+							<field name="cat_type"  invisible="1"/>
+							<field name="parent_id" attrs="{'required':[('type','=','normal')],'invisible':[('type','!=','normal')]}" on_change="onchange_parent_id(parent_id)" domain="[('type','=','view'),('cat_type','=','2')]"
+								 context="{'form_view_ref':'hr_mission.hr_operation_category_form_view','default_cat_type':'2','default_type':'view','default_company_id':company_id}"/>
+						</group>
+						<notebook colspan="4">
+							<page string="Allowance"  attrs="{'invisible':[('type','!=','normal')]}">
+								<group>
+								 <field name="allowance_id" attrs="{'required':[('type','=','normal')]}" domain="[('name_type','=','allow')]"/>
+								</group>
+							</page>
+							<page string="Details"  attrs="{'invisible':[('type','!=','normal')]}">
+								<group>
+									<!--field name="destination"
+										attrs="{'required':[('type','=','normal')]}" /-->
+									<field name="company_id" groups="base.group_multi_company"
+										widget="selection" />
+									<field name="currency" />
+									<field name="fees_currency_id" />
+								<field name="validate" />
+
+								</group>
+							</page>
+							<page string="Accounts" attrs="{'invisible':[('type','!=','view')]}" >
+								<group>
+									<field name="journal_id" />
+									<field name="account_analytic_id" />
+									<field name="mission_account_id" attrs="{'required':[('type','=','view')]}"/>
+									<field name="fees_account_id" attrs="{'required':[('type','=','view')]}"/>
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_operation_category_tree_view">
+			<field name="name">hr.operation.category.tree</field>
+			<field name="model">hr.mission.category</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Operation category">
+					<field name="code" select="1" />
+					<field name="name" />
+					<field name="parent_id" />
+					<field name="type" />
+				</tree>
+			</field>
+		</record>
+		<record id="hr_operation_category_actions" model="ir.actions.act_window">
+			<field name="name">Operations</field>
+			<field name="res_model">hr.mission.category</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_operation_category_tree_view" />
+			<field name="domain">[('cat_type','=','2')]</field>
+			<field name="context">{'default_cat_type':'2'}</field>
+		</record>
+
+		<record id="action_operation_category_form" model="ir.actions.act_window.view">
+		    <field eval="3" name="sequence"/>
+		    <field name="view_mode">form</field>
+		    <field name="view_id" ref="hr_operation_category_form_view"/>
+		    <field name="act_window_id" ref="hr_operation_category_actions"/>
+		</record>
+
+		<record id="action_operation_category_tree" model="ir.actions.act_window.view">
+		    <field eval="2" name="sequence"/>
+		    <field name="view_mode">tree</field>
+		    <field name="view_id" ref="hr_operation_category_tree_view"/>
+		    <field name="act_window_id" ref="hr_operation_category_actions"/>
+		</record>
+		<menuitem id="hr_operation_menu" name="Operations category"
+			parent="hr_mission_menu" action="hr_operation_category_actions" />
+
+
+		<!--_________________________________________Transmission Category _____________________________________-->
+
+		<record model="ir.ui.view" id="hr_transmission_category_form_view">
+			<field name="name">hr.transmission.category.form</field>
+			<field name="model">hr.mission.category</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Transmission Setting" version="7.0">
+					<sheet>
+						<label for="name" class="oe_edit_only" string="Transmission category" />
+						<h1>
+							<field name="name" class="oe_inline" placeholder="Transmission"
+								style="width: 6em" />
+							-
+							<field name="code" class="oe_inline" placeholder="Code" />
+						</h1>
+						<group>
+							<field name="type" required="1" />
+							<field name="place" attrs="{'required':[('type','=','view')],'invisible':[('type','!=','view')]}"/>
+							<field name="cat_type"  invisible="1"/>
+							<field name="parent_id" attrs="{'required':[('type','=','normal')],'invisible':[('type','!=','normal')]}" on_change="onchange_parent_id(parent_id)" domain="[('type','=','view'),('cat_type','=','3')]"
+								 context="{'form_view_ref':'hr_mission.hr_transmission_category_form_view','default_cat_type':'3','default_type':'view','default_company_id':company_id}"/>
+							<field name="company_id" groups="base.group_multi_company"
+										widget="selection" />
+						</group>
+						
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_transmission_category_tree_view">
+			<field name="name">hr.transmission.category.tree</field>
+			<field name="model">hr.mission.category</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Transmission category">
+					<field name="code" select="1" />
+					<field name="name" />
+					<field name="parent_id" />
+					<field name="type" />
+				</tree>
+			</field>
+		</record>
+		<record id="hr_transmission_category_actions" model="ir.actions.act_window">
+			<field name="name">Transmissions</field>
+			<field name="res_model">hr.mission.category</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_transmission_category_tree_view" />
+			<field name="domain">[('cat_type','=','3')]</field>
+			<field name="context">{'default_cat_type':'3'}</field>
+		</record>
+
+		<record id="action_transmission_category_form" model="ir.actions.act_window.view">
+		    <field eval="3" name="sequence"/>
+		    <field name="view_mode">form</field>
+		    <field name="view_id" ref="hr_transmission_category_form_view"/>
+		    <field name="act_window_id" ref="hr_transmission_category_actions"/>
+		</record>
+
+		<record id="action_transmission_category_tree" model="ir.actions.act_window.view">
+		    <field eval="2" name="sequence"/>
+		    <field name="view_mode">tree</field>
+		    <field name="view_id" ref="hr_transmission_category_tree_view"/>
+		    <field name="act_window_id" ref="hr_transmission_category_actions"/>
+		</record>
+		<menuitem id="hr_transmission_menu" name="Transmission category"
+			parent="hr_mission_menu" action="hr_transmission_category_actions" />
+
+
+
+
+
+<!--  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Employee Mission>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+
+		<record model="ir.ui.view" id="hr_employee_mission_form_view">
+			<field name="name">hr.employee.mission.form</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Employee Missions" version="7.0">
+					<header>
+						<button string="Complete" name="complete_mission" states="draft"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+						<button string="Confirm" name="confirm_mission" states="completed"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+						<button string="Validate" name="validate_mission" states="confirmed"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+						<button string="Approve" name="approve_mission" states="validated"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+						<button string="Reject" name="reject_mission"
+							states="completed,confirmed,validated,approved" groups="base.group_hr_manager,base.group_hr_user"
+							icon="gtk-cancel" />
+						<button string="Set to Draft" name="set_to_draft_mission" type="object" states="rejected"
+							groups="base.group_hr_manager,base.group_hr_user" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,completed,confirmed,approved" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<p>
+									<field name="name" />
+								</p>
+							</h1>
+						</div>
+						<group col="2" colspan="4">
+						
+							<group>
+								<field name="mission_place" required="1" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+								<field name="mission_place_id" required="1" domain="[('place','=',mission_place),('type','=','view'),('cat_type','=','1')]" context="{'form_view_ref':'hr_mission.hr_mission_category_form_view','default_cat_type':'1','default_type':'view','default_place':mission_place}" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+								<field name="mission_id"
+									domain="['|','!',('company_id','=',company_id),('company_id','=',False),('type','=','normal'),('cat_type','=','1'),('parent_id','=',mission_place_id)]"
+									attrs="{'readonly':[('state','not in',('draft'))]}" context="{'form_view_ref':'hr_mission.hr_mission_category_form_view','default_cat_type':'1','default_type':'normal','default_parent_id':mission_place_id}"/>
+                                <field name="department_id" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <field name="mission_leader" domain="[('state','=','approved')]" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+							</group>
+							<group col="4">
+								<label for="days" string="Duration" />
+								<field name="start_date" class="oe_inline" on_change="onchange_date(start_date, end_date, days,'start_date')" required="1" nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}"/><label string="-" class="oe_inline" />
+								<field name="end_date" on_change="onchange_date(start_date, end_date, days,'end_date')" required="1" nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}" class="oe_inline" />
+								<field name="days" class="oe_inline" on_change="onchange_date(start_date, end_date, days,'days')" 
+										attrs="{'readonly':[('state','not in',('draft'))]}"/>
+
+								
+							</group>
+							
+
+						
+							<group>
+
+								<field name="company_id" widget="selection" groups="base.group_multi_company" invisible="1"/>
+								<field name="transport" invisible="1" />
+                                <field name="mission_fee"
+									attrs="{'readonly':[('state','not in',('draft'))]}" />
+								<!--field name="percentage"
+									attrs="{'readonly':[('state','in',('approved','rejected'))]}" /-->
+
+								
+
+								<field name="voucher_id" attrs="{'invisible':['|',('voucher_id','=',False),('voucher_id','=',0)]}"/>
+								<field name="fees_voucher_id" attrs="{'invisible':['|',('fees_voucher_id','=',False),('fees_voucher_id','=',0)]}"/>
+
+							</group>
+								
+						</group>
+						<notebook colspan="4">
+							<page string="Employees"
+								attrs="{'readonly':[('state','not in',('draft'))]}">
+									<button string="Recalculate" name="recalcuate_days"
+									attrs="{'invisible':[('state','in',('approved','rejected'))]}"
+									class="oe_link oe_edit_only" icon="terp-stock_format-scientific"
+									type="object" groups="base.group_hr_user" />
+								
+								<field colspan="4" name="mission_line"
+									context="{'default_type':'1','default_mission_fees':mission_fee,'default_start_date':start_date,'default_end_date':end_date,'default_days':days}"
+									nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}">
+									<tree editable="top" string="Employee mission">
+										<field name="employee_id" domain="[('state','=','approved')]" colspan="4"
+									on_change="onchange_employee(employee_id,parent.mission_id,parent.start_date,parent.end_date,context)" />
+										<field name="type"   invisible="1"/>
+										<field name="days" on_change="onchange_line_date(start_date, end_date, days,'days')"/>
+										<field name="mission_amounts"/>
+										<field name="mission_fees"/>
+										<field name="start_date" on_change="onchange_line_date(start_date, end_date, days,'start_date')" invisible="0"/>
+										<field name="end_date" on_change="onchange_line_date(start_date, end_date, days,'end_date')"  invisible="0" />
+										<field name="notes"/>
+									</tree>
+								</field>
+							</page>
+							<page string="Purpose">
+								<group>
+									<field name="purpose" nolabel="1" required="1" />
+								</group>
+							</page>
+							<!--page string="Travel Path">
+								<group>
+									<field name="travel_path" nolabel="1" />
+								</group>
+							</page-->
+							<page string="Notes">
+								<group>
+									<field nolabel="1" name="notes" placeholder="Other Information ..."
+										colspan="4" />
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_employee_mission_tree_view">
+			<field name="name">hr.employee.mission.tree</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Missions">
+					<field name="name" />
+					<field name="mission_id" />
+					<field name="days" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+		<record id="hr_employee_mission_tree" model="ir.actions.act_window">
+			<field name="name">Employee Missions</field>
+			<field name="res_model">hr.employee.mission</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="hr_employee_mission_tree_view" />
+			<field name="domain">[('type','=','1')]</field>
+			<field name="context">{'default_type':'1'}</field>
+		</record>
+
+		<record id="action_mission_form" model="ir.actions.act_window.view">
+		    <field eval="3" name="sequence"/>
+		    <field name="view_mode">form</field>
+		    <field name="view_id" ref="hr_employee_mission_form_view"/>
+		    <field name="act_window_id" ref="hr_employee_mission_tree"/>
+		</record>
+
+		<record id="action_mission_tree" model="ir.actions.act_window.view">
+		    <field eval="2" name="sequence"/>
+		    <field name="view_mode">tree</field>
+		    <field name="view_id" ref="hr_employee_mission_tree_view"/>
+		    <field name="act_window_id" ref="hr_employee_mission_tree"/>
+		</record>
+
+		<!-- Missions search -->
+
+		<record id="hr_emp_mission_filter" model="ir.ui.view">
+			<field name="name">hr.employee.mission.filter</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Missions">
+					<group col='8' colspan='4'>
+						<separator orientation="vertical" />
+						<field name="mission_id" widget="selection">
+						</field>
+						<separator orientation="vertical" />
+						<field name="start_date"></field>
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<menuitem id="hr_employee_missions_tree_menu" name="Employee Missions"
+			parent="menu_mission" action="hr_employee_mission_tree" sequence="1" />
+
+		<!-- Shortcuts -->
+
+		<act_window domain="[('employee_id','=',active_id),('type','=','1')]" id="act_hr_employee_mission"
+			name="missions" res_model="hr.employee.mission.line" src_model="hr.employee" />
+
+
+<!--  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Employee Operation>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+
+		<record model="ir.ui.view" id="hr_employee_operation_form_view">
+			<field name="name">hr.employee.operation.form</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Employee Operation" version="7.0">
+					<header>
+						<button string="Complete" name="complete_mission" states="draft"
+							groups="base.group_hr_user" icon="gtk-apply" />
+						<button string="Confirm" name="confirm_mission" states="completed"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+						<button string="Validate" name="validate_mission" states="confirmed"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+						<button string="Approve" name="approve_mission" states="validated"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+						<button string="Reject" name="reject_mission"
+							states="completed,confirmed,validated,approved" groups="base.group_hr_manager,base.group_hr_user"
+							icon="gtk-cancel" />
+						<button string="Set to Draft" name="set_to_draft_mission" type="object" states="rejected"
+							groups="base.group_hr_manager,base.group_hr_user" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,completed,confirmed,approved" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<p>
+									<field name="name" />
+								</p>
+							</h1>
+						</div>
+						<group col="2" colspan="4">
+						
+							<group>
+								<field name="mission_id" string="Operation sector" 
+									domain="['|','!',('company_id','=',company_id),('company_id','=',False),('type','=','normal'),('cat_type','=','2')]"
+									attrs="{'readonly':[('state','not in',('draft'))]}" context="{'form_view_ref':'hr_mission.hr_operation_category_form_view','default_cat_type':'2'}"/>
+                                <field name="department_id" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <field name="mission_leader" required="1" attrs="{'readonly':[('state','not in',('draft'))]}" domain="[('state','=','approved')]"/>
+                                <field name="service_type" required="1" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+							</group>
+							<group col="4">
+								<label for="days" string="Duration"/>
+								<field name="start_date" class="oe_inline" on_change="onchange_date(start_date, end_date, days,'start_date')" required="1" nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}"/><label string="-" class="oe_inline" />
+								<field name="end_date" on_change="onchange_date(start_date, end_date, days,'end_date')" nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}" class="oe_inline" />
+								<field name="days" class="oe_inline" on_change="onchange_date(start_date, end_date, days,'days')"
+										attrs="{'readonly':[('state','not in',('draft'))]}"/>
+							</group>
+										
+							<group>
+
+								<field name="company_id" widget="selection" groups="base.group_multi_company" invisible="1"/>
+								<field name="transport" invisible="1" />
+								<field name="voucher_id" attrs="{'invisible':[('voucher_id','=',False)]}"/>
+
+							</group>
+								
+						</group>
+						<notebook colspan="4">
+							<page string="Employees"
+								attrs="{'readonly':[('state','not in',('draft'))]}">
+									<button string="Recalculate" name="recalcuate_days"
+									attrs="{'invisible':[('state','in',('approved','rejected'))]}"
+									class="oe_link oe_edit_only" icon="terp-stock_format-scientific"
+									type="object" groups="base.group_hr_user" />
+								
+								<field colspan="4" name="mission_line"
+									context="{'default_type':'2','default_start_date':start_date,'default_end_date':end_date}"
+									nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}">
+									<tree editable="top" string="Employee mission">
+										<field name="employee_id" colspan="4"
+									on_change="onchange_employee(employee_id,parent.mission_id,parent.start_date,parent.end_date,context)" />
+										<field name="days" on_change="onchange_line_date(start_date, end_date, days,'days')"/>
+										<field name="mission_amounts"   string="Operation amount"/>
+										<field name="start_date" on_change="onchange_line_date(start_date, end_date, days,'start_date')" invisible="0"/>
+										<field name="end_date"  on_change="onchange_line_date(start_date, end_date, days,'end_date')" invisible="0" />
+										<field name="notes" />
+									</tree>
+								</field>
+							</page>
+							<page string="Notes">
+								<group>
+									<field nolabel="1" name="notes" placeholder="Other Information ..."
+										colspan="4" />
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_employee_operation_tree_view">
+			<field name="name">hr.employee.operation.tree</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Operation">
+					<field name="name" string="Operation name"/>
+					<field name="mission_id"/>
+					<field name="days" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+		
+
+		<record id="hr_employee_operation_action" model="ir.actions.act_window">
+			<field name="name">Employee Operation</field>
+			<field name="res_model">hr.employee.mission</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" eval="False"/>
+			<field name="domain">[('type','=','2')]</field>
+			<field name="context">{'default_type':'2'}</field>
+		</record>
+
+		<record id="action_operation_form" model="ir.actions.act_window.view">
+		    <field eval="3" name="sequence"/>
+		    <field name="view_mode">form</field>
+		    <field name="view_id" ref="hr_employee_operation_form_view"/>
+		    <field name="act_window_id" ref="hr_employee_operation_action"/>
+		</record>
+
+		<record id="action_operation_tree" model="ir.actions.act_window.view">
+		    <field eval="2" name="sequence"/>
+		    <field name="view_mode">tree</field>
+		    <field name="view_id" ref="hr_employee_operation_tree_view"/>
+		    <field name="act_window_id" ref="hr_employee_operation_action"/>
+		</record>
+
+		<!-- Missions search -->
+
+		<record id="hr_emp_operation_filter" model="ir.ui.view">
+			<field name="name">hr.employee.operation.filter</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search operation">
+					<group col='8' colspan='4'>
+						<separator orientation="vertical" />
+						<field name="mission_id" widget="selection">
+						</field>
+						<separator orientation="vertical" />
+						<field name="start_date"></field>
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<menuitem id="hr_employee_operation_tree_menu" name="Employee Operation"
+			parent="menu_mission" action="hr_employee_operation_action" sequence="1" />
+
+		<!-- Shortcuts -->
+
+		<act_window domain="[('employee_id','=',active_id),('type','=','2')]" id="act_hr_employee_operation"
+			name="Operation" res_model="hr.employee.mission.line" src_model="hr.employee" />
+
+
+
+<!--  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Employee Transmission>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+
+		<record model="ir.ui.view" id="hr_employee_transmission_form_view">
+			<field name="name">hr.employee.transmission.form</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Employee Transmissions" version="7.0">
+					<header>
+						<button string="Confirmation" name="confirm_transmission" states="draft"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+
+						<button string="Pending" name="pending" states="open"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+
+						<button string="Open" name="open" states="pending"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+
+						<button string="Close" name="close_transmission" states="open"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+						<button string="Reject" name="reject_transmission"
+							states="open" groups="base.group_hr_manager,base.group_hr_user"
+							icon="gtk-cancel" />
+						<button string="Set to Draft" name="set_to_draft_mission" type="object" states="rejected,close"
+							groups="base.group_hr_manager,base.group_hr_user" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,open,close" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<p>
+									<field name="name" />
+								</p>
+							</h1>
+						</div>
+						<group col="2" colspan="4">
+						
+							<group>
+								<field name="mission_id" string="station"
+									domain="['|','!',('company_id','=',company_id),('company_id','=',False),('type','=','normal'),('cat_type','=','3')]"
+									attrs="{'readonly':[('state','not in',('draft'))]}" context="{'form_view_ref':'hr_mission.hr_transmission_category_form_view','default_cat_type':'3'}"/>
+                                <field name="department_id" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <field name="mission_place" string="Transmission place" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                                <field name="expense_type" attrs="{'readonly':[('state','not in',('draft'))],'invisible':[('mission_place','!=','outside')]}"/>
+							</group>
+							<group col="4">
+								<label for="days" string="Duration" />
+								<field name="start_date" class="oe_inline" on_change="onchange_date(start_date, end_date, days,'start_date')" required="1" nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}"/><label string="-" class="oe_inline" />
+								<field name="end_date" on_change="onchange_date(start_date, end_date, days,'end_date')" required="1" nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}" class="oe_inline" />
+								<field name="days" class="oe_inline" on_change="onchange_date(start_date, end_date, days,'days')"
+										attrs="{'readonly':[('state','not in',('draft'))]}"/>
+							</group>
+							
+
+						
+							<group>
+
+								<field name="company_id" widget="selection" groups="base.group_multi_company" invisible="1"/>
+								<field name="voucher_id" attrs="{'invisible':[('voucher_id','=',False)]}"/>
+							</group>
+								
+						</group>
+						<group>
+
+							<field name="dept_report" />
+						</group>
+						<notebook colspan="4">
+							<page string="Employees"
+								attrs="{'readonly':[('state','not in',('draft'))]}">
+									<button string="Recalculate" name="recalcuate_days"
+									attrs="{'invisible':[('state','in',('approved','rejected'))]}"
+									class="oe_link oe_edit_only" icon="terp-stock_format-scientific"
+									type="object" groups="base.group_hr_user" />
+								
+								<field colspan="4" name="mission_line"
+									context="{'default_type':'3','default_start_date':start_date,'default_end_date':end_date}"
+									nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}">
+									<tree editable="top" string="Employee mission">
+										<field name="employee_id" colspan="4"
+									on_change="onchange_employee(employee_id,parent.mission_id,parent.start_date,parent.end_date,context)" />
+										<field name="days" on_change="onchange_line_date(start_date, end_date, days,'days')"/>
+										<field name="start_date" on_change="onchange_line_date(start_date, end_date, days,'start_date')" invisible="0"/>
+										<field name="end_date"  on_change="onchange_line_date(start_date, end_date, days,'end_date')" invisible="0" />
+										<field name="notes" />
+									</tree>
+								</field>
+							</page>
+							<page string="Informations">
+								<group>
+									<field name="address" nolabel="1" placeholder="Enter the address" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+									<field name="phone" nolabel="1" placeholder="Enter the phone Number" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+								</group>
+							</page>
+							<page string="Notes">
+								<group>
+									<field nolabel="1" name="notes" placeholder="Other Information ..."
+										colspan="4" />
+								</group>
+							</page>
+							<page string="Illness">
+								<group>
+									<field nolabel="1" name="illness"  />
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_employee_transmission_tree_view">
+			<field name="name">hr.employee.transmission.tree</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Transmissions">
+					<field name="name" string="Transmission name"/>
+					<field name="mission_id" />
+					<field name="days" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+		<record id="hr_employee_transmission_action" model="ir.actions.act_window">
+			<field name="name">Employee Transmissions</field>
+			<field name="res_model">hr.employee.mission</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" eval="False"/>
+			<field name="domain">[('type','=','3')]</field>
+			<field name="context">{'default_type':'3'}</field>
+		</record>
+
+		<record id="action_transmission_form" model="ir.actions.act_window.view">
+		    <field eval="3" name="sequence"/>
+		    <field name="view_mode">form</field>
+		    <field name="view_id" ref="hr_employee_transmission_form_view"/>
+		    <field name="act_window_id" ref="hr_employee_transmission_action"/>
+		</record>
+
+		<record id="action_transmission_tree" model="ir.actions.act_window.view">
+		    <field eval="2" name="sequence"/>
+		    <field name="view_mode">tree</field>
+		    <field name="view_id" ref="hr_employee_transmission_tree_view"/>
+		    <field name="act_window_id" ref="hr_employee_transmission_action"/>
+		</record>
+
+		
+
+		<!-- Missions search -->
+
+		<record id="hr_emp_transmission_filter" model="ir.ui.view">
+			<field name="name">hr.employee.transmission.filter</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search Transmissions">
+					<group col='8' colspan='4'>
+						<separator orientation="vertical" />
+						<field name="mission_id" widget="selection">
+						</field>
+						<separator orientation="vertical" />
+						<field name="start_date"></field>
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<menuitem id="hr_employee_transmissions_tree_menu" name="Employee Transmissions"
+			parent="menu_mission" action="hr_employee_transmission_action" sequence="2" />
+
+		<!-- Shortcuts -->
+
+		<act_window domain="[('employee_id','=',active_id),('type','=','3')]" id="act_hr_employee_transmission"
+			name="transmissions" res_model="hr.employee.mission.line" src_model="hr.employee" />
+
+
+	</data>
+</openerp>

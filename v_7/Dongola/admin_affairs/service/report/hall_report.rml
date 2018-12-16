@@ -1,0 +1,197 @@
+<document filename="maintenance_purchase.pdf">
+	<template pageSize="(595.0,842.0)" title="Car Maintenance Purchase"
+		author="NCTR" allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="1.3cm" y1="0.9cm" height="28cm" width="19cm" />
+		</pageTemplate>
+	</template>
+	
+	<stylesheet>
+		<blockTableStyle id="Table4">
+			<blockValign value="CENETR" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#e6e6e6" start="0,0" stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#2F4F4F" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table3">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table5">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+
+		<paraStyle name="P5" fontName="Helvetica-Bold" fontSize="14.0" 
+			leading="5" alignment="CENTER" spaceBefore="20.0" spaceAfter="20.0" />
+		<paraStyle name="P6" fontName="Helvetica-Bold" fontSize="10.0"
+			leading="10" alignment="RIGHT" spaceBefore="6.0" spaceAfter="6.0" />
+		<paraStyle name="P11" rightIndent="0.0" leftIndent="0.0"
+			fontName="Helvetica" fontSize="10.0" leading="10" alignment="RIGHT"
+			spaceBefore="0.0" spaceAfter="0.0" />
+		<paraStyle name="col_Right" fontName="Helvetica-Bold"
+			fontSize="14" leading="17" alignment="RIGHT" spaceBefore="25.0"
+			spaceAfter="25.0" />
+		<paraStyle name="content" fontName="Helvetica" fontSize="11.0" 
+			leading="5" alignment="CENTER" spaceBefore="20.0" spaceAfter="20.0" />
+
+			<paraStyle name="content-right" fontName="Helvetica" fontSize="11.0" 
+			leading="5" alignment="RIGHT" spaceBefore="20.0" spaceAfter="20.0" />
+
+			<paraStyle name="content-left" fontName="Helvetica" fontSize="11.0" 
+			leading="5" alignment="LEFT" spaceBefore="20.0" spaceAfter="20.0" />
+
+
+			<paraStyle name="P111" rightIndent="0.0" leftIndent="0.0"
+			fontName="Helvetica" fontSize="10.0" leading="5" alignment="RIGHT"
+			spaceBefore="0.0" spaceAfter="0.0" />
+    			<paraStyle name="P34" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica-Bold" fontSize="14.0" leading="30" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+		<images />
+	</stylesheet>
+
+	<story>
+		<para style="P5">[[ repeatIn(objects,'req') ]]</para>
+    		<para style="P34">الإدارة العامة للموارد البشرية والمالية</para>
+    		<para style="P34">إدارة الخدمات العامة</para>
+    		<para style="P34">فـــاتـــورة مبدئـــية</para>
+		<blockTable colWidths="400,80.0" style="Table5">
+			<tr>
+				<td>
+					<para style="P11">[[ req.name ]]</para>
+				</td>
+				<td>
+					<para style="P11"> النمرة :</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="P11">[[ time.strftime('%d-%m-%Y') ]]</para>
+				</td>
+				<td>
+					<para style="P11"> التاريخ : </para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="P11">[[ req.partner_name ]]</para>
+				</td>
+				<td>
+					<para style="P11">السادة / </para>
+				</td>
+			</tr>
+		</blockTable>
+
+		<para style="P5"> الموضوع /تكلفة إيجار  [[ req.cost_subtype_id.name ]]</para>
+
+		<para style="content"> باﻹشارة للموضوع أعلاه افيدكم بأن تكلفة إيجار  [[ req.cost_subtype_id.name ]]  ﻷيام</para>
+		<blockTable colWidths="200.0,200.0,45.0" style="Table4">
+			<tr>
+				<td>
+					<para style="P6">النهاية</para>
+				</td>
+				<td>
+					<para style="P6">البداية</para>
+				</td>
+				<td>
+					<para style="P6">#</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				    <para style="P6">[[ repeatIn(req.hall_registrations,'registration') ]][[ registration.date_stop ]]</para>
+				</td>
+				<td>
+					<para style="P6">[[ registration.date_start ]]</para>
+				</td>
+				<td>
+					<para style="P6"><seq id="L2"/></para>
+				</td>
+			</tr>
+			
+		</blockTable>
+
+		<para style="content"> بتكلفة [[ formatLang(req.sum_cost)]] جنيه</para>
+		<para style="content">  ([[convert(req.sum_cost)]]) </para>
+		
+		<blockTable colWidths="200.0,45.0" style="Table4">
+			<tr>
+
+				<td>
+					<para style="P6">الخدمات المتوفرة</para>
+				</td>
+				<td>
+					<para style="P6">#</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="P6">[[ repeatIn(req.cost_ids,'service') ]][[ service.cost_subtype_id.name ]]</para>
+				</td>
+				<td>
+					<para style="P6"><seq id="L3"/></para>
+				</td>
+			</tr>
+			
+		</blockTable>
+		<para style="content"> و جزاكم الله خيراً </para>
+		<para style="content-left">الخـــــتم</para>
+
+		<blockTable colWidths="100,380.0" style="Table5">
+			<tr>
+				<td>
+					<para style="P111"></para>
+				</td>
+				<td>
+					<para style="P111"> ملحوظة</para>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<para style="P111"></para>
+				</td>
+				<td>
+					<para style="P111"> - يتم السداد بشيك باسم الهيئة القومية للإتصالات</para>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<para style="P111"></para>
+				</td>
+				<td>
+					<para style="P111">- يتم السداد في فترة أقصاها 24 ساعة</para>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<para style="P111"></para>
+				</td>
+				<td>
+					<para style="P111">- إن لم يتم السداد لن يسمح بإستخدام القاعة</para>
+				</td>
+			</tr>
+		</blockTable>
+
+		<para>
+			<seqReset id="L2"/>
+		</para>
+		<para>
+			<seqReset id="L3"/>
+		</para>
+	</story>
+</document>

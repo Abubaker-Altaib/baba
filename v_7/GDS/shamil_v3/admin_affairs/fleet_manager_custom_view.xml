@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+		<menuitem id="fleet.menu_fleet_manager" 
+                          name="Fleet Management" 
+                          parent="menu_administrative_affairs_root" 
+                          sequence="2"/>
+           	<record model="ir.ui.view" id="view_fleet_vehicle_form_inherit">
+			<field name="name">fleet.vehicle.form.inherit</field>
+			<field name="model">fleet.vehicle</field>
+                        <field name="inherit_id" ref="fleet.fleet_vehicle_form"/>
+			<field name="arch" type="xml">
+			 <div class="oe_right oe_button_box" position="replace"/>
+            	       <field name="state_id" position="replace">
+                            <!--field name="state"  widget="statusbar" clickable="True" invisible="1"/-->
+                        </field>
+                        <xpath expr="/form/header" position="inside">
+			       <button name="confirmed" states="draft" string="Confirmed" confirm="Are you sure you want to Confirm this request?"/>			       <button name="cancel" states="draft,confirmed" string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to Cancel this request?" />
+                               <button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>            		      <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancel"/>
+                        </xpath>
+                        <xpath expr="//field[@name='tag_ids']" position="after">
+				<field name="status" />
+                        </xpath>
+                        <xpath expr="/form/sheet" position="inside">
+                            <notebook>
+                             <page string="Vehicle Details" >
+                             <group>
+                              <group>
+                                <field name="year" widget="selection"/>
+				<field name="type" />
+				<field name="machine_no" attrs="{'required':[('ownership','in',('owned','mile'))],'invisible':['|',('ownership','=','rented'),('type','=','generator')]}" />
+				<field name="machine_capacity"/>
+                              </group>
+                              <group>
+				<field name="department_id" />
+				<field name="employee_id" />
+                                <field name="ownership" />
+                               <field name="status" />
+                              </group>
+                              </group>
+			      </page>
+			      <page string="Maintainace" >
+                                  <group>
+				       <field name="primarymeter" />
+				       <field name="startodometer" />
+				       <field name="cmil" />
+				       <field name="bmil" />
+				       <field name="bdate" />
+                                  </group>
+			      </page>
+                              <page string="Notes">
+				   <field name="notes" />
+			     </page>
+                          </notebook>
+		       </xpath>				                                         
+	            </field>
+		</record>
+
+           	<record model="ir.ui.view" id="view_fleet_vehicle_tree_inherit">
+			<field name="name">fleet.vehicle.tree.inherit</field>
+			<field name="model">fleet.vehicle</field>
+                        <field name="inherit_id" ref="fleet.fleet_vehicle_tree"/>
+			<field name="arch" type="xml">
+                        <xpath expr="/tree" position="inside">
+				<field name="department_id" />
+				<field name="year" />
+				<field name="state" />
+            		</xpath>
+                        </field>
+		</record>
+
+		
+
+		<record id="view_fleet_vehicle_filter" model="ir.ui.view">
+			<field name="name">fleet.vehicle.select</field>
+			<field name="model">fleet.vehicle</field>
+			<field name="arch" type="xml">
+				<search string="Fleet Vehicle">
+					<group col="10" colspan="4">
+						<field name="name" />
+						<field name="type"/>
+						<field name="department_id" widget="selection"/>
+					</group>
+					<newline />
+					<group expand="0" string="Group by...">
+						<filter string="Ownership" domain="[]" context="{'group_by':'ownership'}" />
+						<separator orientation="vertical" />
+						<filter string="Department" domain="[]" context="{'group_by':'department_id'}" />
+                                                <separator orientation="vertical" />
+						<filter string="Type" domain="[]" context="{'group_by':'type'}" />
+						<separator orientation="vertical" />
+						<filter string="Model" domain="[]" context="{'group_by':'model'}" />
+                                                <separator orientation="vertical" />
+						<filter string="name" domain="[]" context="{'group_by':'name'}" />
+                                                <separator orientation="vertical" />
+						<filter string="year" domain="[]" context="{'group_by':'year'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+                <record id="fleet_vehicles_form_inherit_act" model="ir.actions.act_window">
+			<field name="name">Vehicles</field>
+			<field name="res_model">fleet.vehicle</field>
+			<field name="view_mode">kanban,tree,form</field>
+			<field name="search_view_id" ref="view_fleet_vehicle_filter" />
+		</record>
+
+                <record id="fleet_vehicles_form_inherit_act_config" model="ir.actions.act_window">
+			<field name="name">Vehicles</field>
+			<field name="res_model">fleet.vehicle</field>
+			<field name="view_mode">tree,form</field>
+			<field name="search_view_id" ref="view_fleet_vehicle_filter" />
+		</record>
+
+                <menuitem id="fleet.menu_fleet_vehicles" 
+                          name="Vehicles"
+			  parent="menu_admin_affairs_operations" 
+                          action="fleet_vehicles_form_inherit_act" />
+	
+                <menuitem id="fleet.fleet_vehicle_model_brand_menu" 
+			  parent="vehicle_configuration" 
+                          action="fleet_vehicles_form_inherit_act_config" />
+
+                <menuitem action="fleet.fleet_vehicle_model_act"                
+                          parent="vehicle_configuration" 
+                          id="fleet_vehicle_model_menu" 
+                          groups="base.group_no_one"/>
+
+                <menuitem action="fleet.fleet_vehicle_model_brand_act" 
+                          parent="vehicle_configuration" 
+                          id="fleet_vehicle_model_brand_menu" 
+                          groups="base.group_no_one"/>
+
+                <!--menuitem id="fleet.menu_fleet_vehicles" 
+                          name="Vehicles"
+			  parent="menu_admin_affairs_operations" 
+                          action="fleet_vehicles_form_inherit_act" /-->
+    </data>
+</openerp>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model='ir.ui.view' id='fleet_vehicle_log_contract_request_form'>
+            <field name="name">fleet.vehicle.log.contract.form1</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+                <form string="Service Request" version="7.0">
+                	<header>
+                        <button name="request" states="draft"
+                            string="Request" type="object" icon="gtk-convert" />
+                        <button type="object" name="draft" states="request" string="Set To Draft" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm_sm"/>
+                	</header>
+                     <sheet>
+                        <group col="2">
+                            <group>
+                            	
+                            	<field name="name" class="oe_inline" string="Contract Reference"/>
+                            	<field name="cost_subtype_id" required="1" domain="[('category','not in',('contract','service','both','license','insurance','building'))]"
+                                 attrs="{'readonly':[('state','not in',('draft'))]}"
+                                 on_change="onchange_service_type(cost_subtype_id)"
+                                 context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}"/>
+                            	
+                            </group>
+                            <group>
+                            	<field name="department_id" class="oe_inline" required="1" string="Department" attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                            </group>
+                            <group>
+                            	<field name="date"  required="1" 
+                                    attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                            	<field name="start_date" 
+                                    attrs="{'readonly':[('state','not in',('draft'))]}"/>
+								<field name="expiration_date" 
+                                    attrs="{'readonly':[('state','not in',('draft'))]}"/>
+                            </group>
+                            <group>
+                            	<field name="insurer_id"
+                                 attrs="{'readonly':[('state','not in',('draft'))]}"/>
+								<field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                                <field name="sum_cost" string="Total Cost" />
+                            </group>
+                            <field name="cat_subtype" invisible='1'/>
+                            <group attrs="{'invisible':[('cat_subtype','!=','hall')]}" >
+                                <field name="start_time"         attrs="{'required':[('cat_subtype','=','hall')]}" widget="float_time"/>
+                                <field name="end_time"           attrs="{'required':[('cat_subtype','=','hall')]}" widget="float_time"/>
+                                <field name="first_booking_date" attrs="{'required':[('cat_subtype','=','hall')]}"/>
+                                <field name="booking_frequency"  attrs="{'required':[('cat_subtype','=','hall')]}"/>
+                                <field name="hall_type" attrs="{'invisible':[('cat_subtype','!=','hall')],'readonly':[('state','not in',('draft','affairs_mg'))]}"/>
+
+                                <field name="out_hall" on_change="onchange_out_hall(out_hall)"
+                                    attrs="{'invisible':[('cat_subtype','!=','hall')],'readonly':[('state','not in',('draft','affairs_mg'))]}"/>
+                                <field name="addtion_notes" required="1"
+                                    attrs="{'invisible':[('cat_subtype','!=','hall')],'readonly':[('state','not in',('draft','affairs_mg'))]}"/>
+                            </group>
+                        </group>
+                       <notebook>
+                       	<page string="Included Services" >
+								<group>
+									<field name="cost_ids" 
+									nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}">
+										<tree version="7.0" editable='top'>
+											<field name="cost_subtype_id" string="Service"
+											domain="['|',('parent_id','=',False),('parent_id','=',parent.cost_subtype_id),('category','not in',('contract','service','both','license','insurance','building'))]" on_change="onchange_service(cost_subtype_id)"/>
+											<field name="quantity" string="Quantity" />
+                                            <field name="amount" string="Indicative Cost"  on_change="onchange_value(amount,quantity)"/>
+                                            <field name="total" string="Total" sum="Price"/>
+										</tree>
+
+									</field>
+								</group>
+						</page>
+                            
+                            <page string="Notes">
+                                <group>
+                                    <field name="notes" required="1" nolabel="1"
+                                    attrs="{'readonly':[('state','not in',('draft','request'))]}" />
+                                </group>
+                            </page>
+                      </notebook>
+                    </sheet>
+                  
+                </form>
+               
+            </field>
+		</record>
+		 <record model='ir.ui.view' id='fleet_vehicle_log_contract_request_tree'>
+            <field name="name">fleet.vehicle.log.contract.tree1</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Service Request" version="7.0">
+                    <field name="name" string="Contract Reference" />
+                    <field name="department_id"/>
+                    <field name="cost_subtype_id" />
+                    <field name="date" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+		   <record model="ir.actions.act_window" id="service_request_action">
+            <field name="name">Service Request</field>
+            <field name="res_model">fleet.vehicle.log.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state','in',('draft','request')),('cat_subtype','not in',('contract','service','both','license','insurance','building'))]</field>
+           
+        </record>
+
+		<record id="view_service_request_filter" model="ir.ui.view">
+			<field name="name">fleet.vehicle.log.contract.list.select</field>
+			<field name="model">fleet.vehicle.log.contract</field>
+			<field name="arch" type="xml">
+				<search string="Search for Service request Record">
+					
+					<field name="department_id" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="cost_subtype_id" colspan="1"/>
+					<separator orientation="vertical" />
+                     <field name="state" select="1"/>
+                     <separator orientation="vertical" />
+				
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Department" icon="terp-personal"
+							domain="[]" context="{'group_by':'department_id'}" />
+							<filter string="Service Type" icon="terp-personal"
+							domain="[]" context="{'group_by':'cost_subtype_id'}" />
+							<filter string="Date" icon="terp-personal"
+							domain="[]" context="{'group_by':'date'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+					
+
+					</group>
+
+				</search>
+			</field>
+		</record>
+        <record model="ir.actions.act_window.view" id="service_request_form_action">
+            <field name="view_mode">form</field>
+
+            <field name="view_id" ref="fleet_vehicle_log_contract_request_form"/>
+            <field name="act_window_id" ref="service_request_action"/>
+        </record>
+		  <record model="ir.actions.act_window.view" id="service_request_action_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="fleet_vehicle_log_contract_request_tree"/>
+            <field name="act_window_id" ref="service_request_action"/>
+        </record>
+		<!--menuitem id="service_request_menu" name="Service Request" sequence="1"
+			parent="admin_affairs_service_menu" action="service_request_action" groups="admin_affairs.group_section_manager" /-->
+        </data>
+    </openerp>
+

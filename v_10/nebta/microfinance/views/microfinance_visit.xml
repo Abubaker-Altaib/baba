@@ -1,0 +1,725 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Finance Extra Order Form,Tree View & Action -->
+        <record id="view_finance_extra_order_form" model="ir.ui.view">
+            <field name="name">finance.extra..order.form</field>
+            <field name="model">finance.extra.order</field>
+            <field name="arch" type="xml">
+                <form string="Microfinance Visit">
+                    <header>
+                        <button name="action_create_extra_order" string="Confirm Extra Order" context="{'exo_id':id}"
+                                states="draft" type="object" class="btn-primary" groups="microfinance.group_officer"/>
+
+                        <button name="act_su_recommend" groups="microfinance.group_supervisor" string="Recommend"
+                                states="approval_recommended" type="object" class="oe_highlight"/>
+
+                        <button name="act_br_recommend" groups="microfinance.group_branch_manager" string="Recommend"
+                                type="object" class="oe_read_only"
+                                attrs="{'invisible':[('status','!=','br_recommend')]}"/>
+                        <button name="act_op_recommend" groups="microfinance.group_operation_manager" string="Recommend"
+                                type="object" class="oe_read_only"
+                                attrs="{'invisible':[('status','!=','op_recommend')]}"/>
+                        <button name="act_approved" string="Approve" type="object" class="oe_read_only"
+                                attrs="{'invisible':[('status','!=','approved')]}"/>
+                        <button name="act_cancel" string="Cancel order" class="oe_read_only"
+                                states="waiting_visit,visit_complete,su_recommend,br_recommend,op_recommend"
+                                type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,approved"/>
+
+                        <field name="status" invisible="1"/>
+
+
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <group col="4" colspan="4" string="Extra Order Data">
+                            <field name="order_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="partner_id"/>
+                            <field name="user_id"/>
+                            <field name="company_id"/>
+                            <field name="visit_id"/>
+                            <field name="formula_clone"/>
+                            <field name="murabaha_selection" widget="radio"
+                                   attrs="{'invisible': [('formula_clone', 'not in',['murabaha','buying_murabaha'])],'required': [('formula_clone', 'in',['murabaha','buying_murabaha'])]}"></field>
+
+                            <field name="portfolio_id"/>
+                            <field name="approval_id"
+                                   attrs="{'invisible':[('order_id', '=', False)], 'readonly':[('state','!=','draft')]}"/>
+                            <field name="new_amount"
+                                   attrs="{'invisible':[('approval_id', '=', False)],'readonly':[('state','!=','draft')]}"/>
+                            <field name="new_formula_clone"
+                                   attrs="{'invisible':[('approval_id', '=', False)],'readonly':[('state','!=','draft')]}"/>
+                            <field name="new_murabaha_selection" widget="radio"
+                                   attrs="{'invisible': [('new_formula_clone', 'not in',['murabaha','buying_murabaha'])],'required': [('new_formula_clone', 'in',['murabaha','buying_murabaha'])]}"></field>
+                            <field name="new_approval" attrs="{'invisible':[('state', '=', 'draft')]}"/>
+                            <field name="formula" invisible="1"/>
+                            <field name="new_formula" invisible="1"/>
+                        </group>
+
+                    </sheet>
+
+
+                </form>
+            </field>
+        </record>
+
+        <record id="micro_finance_extra_order_tree" model="ir.ui.view">
+            <field name="name">finance.extra.order.tree</field>
+            <field name="model">finance.extra.order</field>
+            <field name="arch" type="xml">
+                <tree string="Microfinance Extra Order">
+                    <field name="name"/>
+                    <field name="order_id"/>
+                    <field name="partner_id"/>
+                    <field name="new_formula"/>
+                    <field name="new_amount"/>
+                    <field name="user_id"/>
+                    <field name="company_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="micro_finance_extra_order_action" model="ir.actions.act_window">
+            <field name="name">Finance Extra Order</field>
+            <field name="res_model">finance.extra.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem id="menu_micro_extra_order" name="Extra Order" sequence="5" parent="menu_finance_operation"
+                  action="micro_finance_extra_order_action"/>
+
+
+        <!-- Search view for Visit -->
+        <record id="finance_visit_search" model="ir.ui.view">
+            <field name="name">finance.visit.search</field>
+            <field name="model">finance.visit</field>
+            <field name="arch" type="xml">
+                <search string="Search Visit">
+                    <field name="order_id"/>
+                    <field name="user_id"/>
+                    <field name="company_id"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Finance guarantee Form,Tree View & Action -->
+        <record id="view_finance_visit_form" model="ir.ui.view">
+            <field name="name">finance.visit.form</field>
+            <field name="model">finance.visit</field>
+            <field name="arch" type="xml">
+                <form string="Microfinance Visit" create="false" delete="false">
+                    <header>
+                        <button name="action_open_order" string="Back To Order" type="object" class="btn-primary"
+                                groups="microfinance.group_officer"/>
+                        <button name="action_done" string="Done" states="draft" type="object" class="oe_highlight"
+                                groups="microfinance.group_officer"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name"/>
+                            <field name="order_id" options="{'no_open': True}"/>
+                            <field name="date" attrs="{'readonly':[('state','in',['done','cancel'])]}"/>
+                            <field name="partner_id" attrs="{'readonly':[('state','in',['done','cancel'])]}"/>
+                            <field name="user_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="product_id" context="{'order_id':order_id}" required="1"
+                                   attrs="{'readonly':[('state','in',['done','cancel'])]}"/>
+                            <field name="project_status" invisible="1"/>
+
+
+                        </group>
+                        <group>
+                            <group string="Current Situation" attrs="{'invisible':[('project_status', '!=', 'exist')]}">
+                                <field name="current_sale" attrs="{'readonly':[('state','in',['done','cancel'])]}"/>
+                                <field name="current_prof" attrs="{'readonly':[('state','in',['done','cancel'])]}"/>
+                            </group>
+                            <group string="Expected after Finance">
+                                <field name="avg_sale" attrs="{'readonly':[('state','in',['done','cancel'])]}"/>
+                                <field name="avg_prof" attrs="{'readonly':[('state','in',['done','cancel'])]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Asset">
+                                <field name="asset_line_ids" attrs="{'readonly':[('state','in',['done','cancel'])]}"
+                                       widget="one2many_list">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="asset_type"/>
+                                        <field name="number"/>
+                                        <field name="market_value"/>
+                                    </tree>
+                                </field>
+                                <group col="6" colspan="6">
+                                    <field name="fix_value"/>
+                                    <field name="current_value"/>
+                                    <field name="asset_value"/>
+                                </group>
+                            </page>
+                            <page string="Recommendations">
+                                <field name="approve_ids" string="Recommendation"
+                                       attrs="{'readonly':[('state','in',['done','cancel'])]}"
+                                       context="{'default_company_id':company_id,'id':id}">
+                                    <tree>
+                                        <field name="project_id"/>
+                                        <field name="formula"/>
+                                        <field name="amount" sum="Total"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="view_micro_finance_visit_tree" model="ir.ui.view">
+            <field name="name">finance.visit.tree</field>
+            <field name="model">finance.visit</field>
+            <field name="arch" type="xml">
+                <tree string="Microfinance Visit" create="false" delete="false">
+                    <field name="date"/>
+                    <field name="order_id"/>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="micro_finance_visit_action" model="ir.actions.act_window">
+            <field name="name">Finance Visit</field>
+            <field name="res_model">finance.visit</field>
+            <field name="domain">[]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_micro_finance_visite" name="Visit" sequence="4" parent="menu_finance_visit"
+                  action="micro_finance_visit_action"/>
+
+        <!-- Search view for approval -->
+        <record id="finance_approval_search" model="ir.ui.view">
+            <field name="name">finance.approval.search</field>
+            <field name="model">finance.approval</field>
+            <field name="arch" type="xml">
+                <search string="Search approval">
+                    <field name="name"/>
+                    <field name="user_id"/>
+                    <field name="company_id"/>
+                </search>
+            </field>
+        </record>
+
+
+        <!-- -->
+        <!-- Re-scheduel Wizard Form View Action -->
+        <record id="finance_rescheduel_wiz_view" model="ir.ui.view">
+            <field name="name">Re-Sescheduel Wizard</field>
+            <field name="model">finance.approval.reschedule.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Approval Re-Schedule">
+                    <group>
+                        <field name="re_scheduel_amount"/>
+                        <field name="inst_date"/>
+                        <field name="profit"/>
+                        <field name="assest"/>
+                        <field name="formula" invisible="1"/>
+                        <field name="installment_no"/>
+                        <field name="payment_method_id"/>
+                        <field name="grace_period"/>
+                    </group>
+                    <footer>
+                        <button string="ReScheduel" name="action_re_scheduel" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="finance_rescheduel_wiz_action">
+            <field name="name">Re-Schedule</field>
+            <field name="res_model">finance.approval.reschedule.wiz</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <!-- Approval Form,Tree View & Action -->
+        <record id="view_finance_approval_form" model="ir.ui.view">
+            <field name="name">finance.approval.form</field>
+            <field name="model">finance.approval</field>
+            <field name="arch" type="xml">
+                <form string="Approval" create="false" delete="false">
+                    <header>
+                        <button name="action_open_order" string="Back To Order" type="object" class="btn-primary"/>
+                        <button name="create_installment" string="Create Installments" states="paid" type="object"
+                                class="oe_highlight" groups="microfinance.group_officer"/>
+                        <button name="act_recommend" string="Recommend" type="object" states="draft"
+                                class="oe_highlight"/>
+                        <button name="action_re_scheduel" context="{'re_sche':id}" string="Re_Scheduel" type="object"
+                                states="in_progress" class="oe_highlight" groups="microfinance.group_branch_manager"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,recommend,approved,done"/>
+                    </header>
+                    <sheet>
+                        <group string="Project Info">
+                            <group>
+                                <field name="name"/>
+                                <field name="order_no"/>
+                                <field name="user_id"/>
+                                <label string="Payment Type"/>
+                                <div>
+                                    <field name="trust_receipt"
+                                           attrs="{'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    <label for="trust_receipt"/>
+                                    <br/>
+                                    <field name="check"
+                                           attrs="{'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    <label for="check"/>
+                                    <br/>
+                                    <field name="electronic"
+                                           attrs="{'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    <label for="electronic"/>
+                                    <br/>
+                                    <field name="permanent_payment"
+                                           attrs="{'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    <label for="permanent_payment"/>
+                                </div>
+                                <field name="approval_type"
+                                       attrs="{'invisible': [('approval_type', '!=','extra_order')]}"/>
+                            </group>
+                            <group>
+                                <field name="company_id" invisible="1"/>
+                                <field name="project_id"
+                                       options="{'no_open': True,  'no_quick_create': True, 'no_create_edit' : True}"
+                                       attrs="{'readonly':[('state','not in',['draft','recommend'])]}"
+                                       required="1"/>
+                                <field name="formula" attrs="{'readonly':[('state','not in',['draft','recommend'])]}"
+                                       invisible="1"/>
+                                <field name="formula_clone"
+                                       attrs="{'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                <field name="murabaha_selection" widget="radio"
+                                       attrs="{'invisible': [('formula_clone', 'not in',['murabaha','buying_murabaha'])],'required': [('formula_clone', 'in',['murabaha','buying_murabaha'])]}"></field>
+                                <field name="mudarba_type" widget="radio"
+                                       attrs="{'invisible': [('formula', '!=','mudarba')],'required': [('formula', '=','mudarba')]}"/>
+                                <field name="calc_type" widget="radio"
+                                       attrs="{'invisible': [('formula', '!=','dec_murabaha')]}"/>
+                                <field name="company_currency_id" invisible="1"/>
+                            </group>
+                        </group>
+                        <group string="Digital Input info">
+
+                            <group>
+                                <field name="approve_amount"
+                                       attrs="{'readonly':[('state','not in',['draft','recommend','approved'])]}"/>
+                                <field name="capital"
+                                       attrs="{'invisible': [('formula', 'not in', ('mudarba','musharka','salam','muzaraa'))],
+                                    'required': [('formula', 'in', ('mudarba','musharka','salam','muzaraa'))],
+                                    'readonly':[('state','not in',['draft','recommend'])]}"/>
+
+                                <field name="profit_margin"
+                                       attrs="{'invisible':[('formula','in',['gard_hassan','salam','mudarba','muzaraa','musharka'])],
+                                    'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                <field name="installment_no"
+                                       attrs="{'invisible':[('formula','in',['salam','mudarba','muzaraa','musharka'])],
+                                    'readonly':[('state','not in',['draft','recommend'])]}"/>
+
+                            </group>
+                            <group>
+                                <field name="payment_method_id"
+                                       attrs="{'required':[('formula','not in',['salam','mudarba','muzaraa','musharka'])],
+                                            'invisible':[('formula','in',['salam','mudarba','muzaraa','musharka'])],
+                                            'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                <label for="grace_period" class="oe_inline"/>
+                                <div class="o_row">
+                                    <field name="grace_period"
+                                           attrs="{'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    Months
+                                </div>
+                                <label for="payment_period" class="oe_inline"/>
+                                <div>
+                                    <field name="payment_period"/>
+                                    Months
+                                    <field name="payment_days"/>
+                                    Days
+                                </div>
+
+                            </group>
+                            <group attrs="{'invisible': [('formula', 'not in', ('muzaraa','salam'))]}">
+                                <label for="crop_id"/>
+                                <div>
+                                    <field name="crop_id" style="width:70%"
+                                           attrs="{'required': [('formula', 'in', ('muzaraa','salam'))],
+                                        'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    <field name="uom" style="width:30%"
+                                           attrs="{'required': [('formula', 'in', ('muzaraa','salam'))],
+                                        'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                </div>
+                                <field name="crop_price"
+                                       attrs="{'required': [('formula', 'in', ('muzaraa','salam'))],
+                                'readonly':[('state','not in',['draft','recommend'])]}"/>
+                            </group>
+                            <group attrs="{'invisible': [('formula', 'not in', ('muzaraa','salam'))]}">
+                                <field name="expected_production"
+                                       attrs="{'required': [('formula', 'in', ('muzaraa','salam'))],
+                                'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                <field name="expected_price"
+                                       attrs="{'required': [('formula', 'in', ('muzaraa','salam'))],
+                                'readonly':[('state','not in',['draft','recommend'])]}"/>
+                            </group>
+                            <group attrs="{'invisible': [('formula', 'not in', ('mudarba','musharka', 'muzaraa', 'salam'))]}">
+                                <field name="expected_profit"
+                                       attrs="{'invisible': [('formula', 'not in', ('mudarba','musharka'))],
+                                    'required': [('formula', 'in', ('mudarba','musharka'))],
+                                    'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                <label string="Percentage"/>
+                                <div class="o_row">
+                                    <label for="org_percentage"/>
+                                    :
+                                    <label for="customer_percentage"/>
+                                    <label string=":"
+                                           attrs="{'invisible': [('formula', 'not in', ('musharka', 'muzaraa'))]}"/>
+                                    <label for="third_percentage"
+                                           attrs="{'invisible': [('formula', 'not in', ('musharka', 'muzaraa'))]}"/>
+                                </div>
+                                <label string=""/>
+                                <div class="o_row">
+                                    <field name="org_percentage"
+                                           attrs="{'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    :
+                                    <field name="customer_percentage"
+                                           attrs="{'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    <label string=":"
+                                           attrs="{'invisible': [('formula', 'not in', ('musharka', 'muzaraa'))]}"/>
+                                    <field name="third_percentage"
+                                           attrs="{'invisible': [('formula', 'not in', ('musharka', 'muzaraa'))],
+                                    'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                </div>
+                            </group>
+                        </group>
+                        <group string="Computation">
+                            <group>
+                                <field name="ins_after_profit"
+                                       attrs="{'invisible': [('formula', 'not in',('fixed_murabaha','gard_hassan','mugawla','estisnaa','ejara','dec_murabaha'))]}"/>
+                                <field name="residual_approval"
+                                       attrs="{'invisible': [('approval_type', '!=','extra_order')]}"/>
+
+                                <field name="total_funding"
+                                       attrs="{'invisible': [('formula', 'not in',('fixed_murabaha','dec_murabaha','mugawla','estisnaa','ejara'))]}"/>
+                                <field name="org_profit"
+                                       attrs="{'invisible': [('formula', 'not in', ('mudarba','musharka'))]}"/>
+                                <field name="third_profit"
+                                       attrs="{'invisible': [('formula', 'not in', ('musharka'))]}"/>
+                                <field name="org_share" attrs="{'invisible': [('formula', 'not in', ('muzaraa'))]}"/>
+                                <field name="org_qty"
+                                       attrs="{'invisible': [('formula', 'not in',('salam','muzaraa'))]}"/>
+                                <field name="org_amount"
+                                       attrs="{'invisible': [('formula', 'not in',('salam','muzaraa'))]}"/>
+                                <field name="third_qty" attrs="{'invisible': [('formula', 'not in', ('muzaraa'))]}"/>
+
+                            </group>
+                            <group>
+                                <field name="ins_before_profit"
+                                       attrs="{'invisible': [('formula', '!=','dec_murabaha')]}"/>
+                                <field name="profit"
+                                       attrs="{'invisible': [('formula', 'not in',('fixed_murabaha','dec_murabaha','mugawla','estisnaa','ejara'))]}"/>
+                                <field name="ins_profit" attrs="{'invisible': [('formula', '!=','dec_murabaha')]}"/>
+                                <field name="custumer_profit"
+                                       attrs="{'invisible': [('formula', 'not in', ('mudarba','musharka'))]}"/>
+                                <field name="customer_share"
+                                       attrs="{'invisible': [('formula', 'not in', ('muzaraa'))]}"/>
+                                <field name="customer_qty"
+                                       attrs="{'invisible': [('formula', 'not in', ('salam','muzaraa'))]}"/>
+                                <field name="customer_amount"
+                                       attrs="{'invisible': [('formula', 'not in',('salam','muzaraa'))]}"/>
+                                <field name="third_amount" attrs="{'invisible': [('formula', 'not in',('muzaraa'))]}"/>
+                            </group>
+
+                        </group>
+                        <notebook>
+                            <page string="Finance">
+                                <group col="4" colspan="4">
+                                    <field name="amount" widget='monetary'
+                                           options="{'currency_field': 'company_currency_id'}"/>
+                                    <field name="downpayment"
+                                           attrs="{'invisible':[('hide', '=', True)],'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    <field name="insurance_amount"
+                                           attrs="{'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    <field name="insurance_partner_id"
+                                           attrs="{'required':[('insurance_amount','>',0)],
+                                    'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    <field name="expenses"
+                                           attrs="{'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    <field name="expense_partner_id"
+                                           attrs="{'readonly':[('state','not in',['draft','recommend'])]}"/>
+                                    <field name="hide" attrs="{'readonly':[('state','not in',['draft','recommend'])]}"
+                                           invisible="1"/>
+                                </group>
+                            </page>
+                            <page string="Payments">
+                                <field name="payment_ids" attrs="{'readonly':[('state','not in',['approved'])]}">
+                                    <tree editable="buttom">
+                                        <field name="benaficiary_id"
+                                               attrs="{'readonly':[('state','not in',['draft'])],'required':[('type','in',('cash','check'))]}"/>
+                                        <field name="amount" sum="Total" attrs="{'readonly':[('state','not in',['draft'])]}"/>
+                                        <field name="date" attrs="{'readonly':[('state','not in',['draft'])]}"/>
+                                        <field name="type" attrs="{'readonly':[('state','not in',['draft'])]}"/>
+                                        <field name="state"/>
+                                        <button string="Complete" states="draft" icon="fa-check-circle" name="complete"
+                                                type="object" class="oe_highlight"/>
+                                        <button string="Receive" icon="fa-download"
+                                                attrs="{'invisible':['|',('state','in',['draft','receive','done']),'&amp;',('type','in',[False,'check','cash']),('payment_state','in',[False,'draft','reconciled'])]}"
+                                                name="receive" type="object" class="oe_highlight"/>
+                                        <button string="Done" states="receive" icon="fa-check-square-o" name="done"
+                                                type="object" class="oe_highlight"/>
+                                        <field name="payment_state" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Installment">
+                                <field name="installment_ids" readonly="1">
+                                    <tree>
+                                        <field name="installment_no"/>
+                                        <field name="due_date"/>
+                                        <field name="amount_before_profit"/>
+                                        <field name="profit_amount"/>
+                                        <field name="amount" sum="Amount"/>
+                                        <field name="receive_amount" sum="Received"/>
+                                        <field name="residual" sum="Residual"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="view_finance_approval_tree" model="ir.ui.view">
+            <field name="name">finance.approval.tree</field>
+            <field name="model">finance.approval</field>
+            <field name="arch" type="xml">
+                <tree string="Approval" create="false" delete="false">
+                    <field name="order_no"/>
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                    <field name="company_id"/>
+                    <field name="project_id"/>
+                    <field name="formula"/>
+                    <field name="amount"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="finance_approval_action" model="ir.actions.act_window">
+            <field name="name">Approvals</field>
+            <field name="res_model">finance.approval</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_finance_approval" name="Approval" sequence="5" parent="menu_finance_visit"
+                  action="finance_approval_action"/>
+
+
+        <!-- Installments -->
+        <record id="view_finance_installments_filter" model="ir.ui.view">
+            <field name="name">finance.installments.select</field>
+            <field name="model">finance.installments</field>
+            <field name="arch" type="xml">
+                <search string="Search Installments">
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                    <field name="company_id"/>
+
+                    <filter name="to_pay" string="To Pay" domain="[('state', 'in', ('delay','adverse'))]"/>
+                    <filter name="f_draft" string="Not In Periode" domain="[('state', '=', 'draft')]"/>
+                    <filter name="f_delay" string="In Periode" domain="[('state', '=', 'delay')]"/>
+                    <filter name="f_adverse" string="Adverse" domain="[('state', '=', 'adverse')]"/>
+                    <filter name="f_done" string="Done" domain="[('state', '=', 'done')]"/>
+
+                    <group string="Group By">
+                        <filter name="partner_id" string="Customer" context="{'group_by':'partner_id'}"/>
+                        <filter string="Branch" context="{'group_by':'company_id'}"/>
+                        <filter string="Due Date" context="{'group_by':'due_date'}"/>
+
+
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_finance_installment_tree" model="ir.ui.view">
+            <field name="name">finance.installments.tree</field>
+            <field name="model">finance.installments</field>
+            <field name="arch" type="xml">
+                <tree string="Approval" create="false" delete="false">
+                    <field name="partner_id"/>
+                    <field name="installment_no"/>
+                    <field name="due_date"/>
+                    <field name="date"/>
+                    <field name="profit_amount" sum='Total Profit'/>
+                    <field name="amount_before_profit" sum="Total Before Profit"/>
+                    <field name="amount" sum="Total"/>
+                    <field name="receive_amount"/>
+                    <field name="residual"/>
+                    <field name="state"/>
+                    <button name="pay" string="Pay" attrs="{'invisible':[('state','in','done')]}" type="object"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="finance_installment_action" model="ir.actions.act_window">
+            <field name="name">Customers Installments</field>
+            <field name="res_model">finance.installments</field>
+            <field name="context">{ 'search_default_to_pay': True, }</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <menuitem id="menu_finance_installment" name="Customers Installments" sequence="5"
+                  parent="account.menu_finance_receivables" action="finance_installment_action"/>
+
+        <!-- Installment Payment -->
+        <record id="view_installment_payment_wizard" model="ir.ui.view">
+            <field name="name">finance.installment.payment.wizard</field>
+            <field name="model">account.payment</field>
+            <field name="arch" type="xml">
+                <form string="Installment Payment">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="partner_id" readonly='1'/>
+                                <field name="amount"/>
+                                <field name="journal_id" required="1"/>
+                                <field name="hide_payment_method" invisible="1"/>
+                                <field name="payment_method_id" string=" " widget="radio"
+                                       attrs="{'invisible': [('hide_payment_method', '=', True)]}"/>
+                                <field name="payment_method_code" invisible="1"/>
+                                <field name="payment_type" invisible='1'/>
+                                <field name="partner_type" invisible='1'/>
+                            </group>
+                            <group>
+                                <field name="payment_date" readonly='1'/>
+                                <field name="communication"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="installment_post" class="oe_highlight" string="Confirm" type="object"
+                                confirm="Confirm Payment Process?"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <!--inherit account payment to make jornal_id required -->
+        <record id="view_account_payment_form_inherit" model="ir.ui.view">
+            <field name="name">view.account.payment.form.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="payment.view_account_payment_form_inherit_payment"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='journal_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                    <attribute name="attrs">{'readonly':[('state','=','posted')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='payment_type']" position="after">
+                    <field name="beneficiary_id"
+                           attrs="{'readonly':[('is_approval','!=',False)],'invisible':[('portfolio','!=',False)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='payment_type']" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('is_approval','!=',False),('state','=','posted')]}
+                    </attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_type']" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('is_approval','!=',False),('state','=','posted')]}
+                    </attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('is_approval','!=',False),('state','=','posted')]}
+                    </attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='amount']" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('is_approval','!=',False),('state','=','posted')]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//field[@name='payment_date']" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('is_approval','!=',False),('state','=','posted')]}
+                    </attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='communication']" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('is_approval','!=',False),('state','=','posted')]}
+                    </attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='payment_transaction_id']" position="attributes">
+                    <attribute name="attrs">{'readonly':['|',('is_approval','!=',False),('state','=','posted')]}
+                    </attribute>
+                </xpath>
+
+
+                <xpath expr="//field[@name='amount']" position="after">
+                    <field name="is_approval" invisible="1"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="view_account_supplier_payment_tree_inherit" model="ir.ui.view">
+            <field name="name">account.payment.tree.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_supplier_payment_tree"/>
+            <field name="arch" type="xml">
+
+                <field name="name" position="after">
+                    <field name="beneficiary_id"/>
+                </field>
+
+            </field>
+        </record>
+
+        <!-- Update State Schedular -->
+        <record model="ir.cron" id="update_installment_state">
+            <field name="name">Update Installments States</field>
+            <field name="model">finance.installments</field>
+            <field name="function">update_state</field>
+            <field name="interval_type">days</field>
+            <field name="interval_number">1</field>
+            <field name="active" eval="True"/>
+        </record>
+
+
+    </data>
+</odoo>

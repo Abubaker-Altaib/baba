@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="id_sale_order_cancel_wiz_view" model="ir.ui.view">
+            <field name="name">Sale Order Cancel Wizard Form</field>
+            <field name="model">sale.order.cancel</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Sale Order Cancel Wizard" version="7.0">
+        			<separator string="Sale Order Cancel" colspan="4"/>
+            			<group>
+
+            			<group col="4" colspan="4">
+            				<field name="from_date"/>
+            				<field name="to_date" />
+            			</group>
+            			<group col="4" colspan="4">
+            				<!--field name="shop_id" /--> <!-- ('state','&lt;&gt;','purchase')]-->
+            		    		<!--field name="state"  /-->
+            				<field name="cancel_type" />
+                        	</group>
+            			<group col="4" colspan="4">
+            				<field name="order_cancel_lines" domain="[('state','=',cancel_type),('date_order','&gt;=',from_date),('date_order','&lt;=',to_date),('print_order','=',False)]"/>
+            			</group>
+            			</group>
+	    			<footer>
+	 		<button name="order_cancel" string="Execute" type="object" 
+                               class="oe_highlight"/>
+                        or
+			<button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link" colspan="2"/>
+                        	</footer>
+               </form>
+            </field>
+	    </record>
+
+        <record id="action_sale_order_cancel_wiz" model="ir.actions.act_window">
+            <field name="name">Cancel From Sale Order </field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.cancel</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="id_sale_order_cancel_wiz_view"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem
+                parent="base.menu_base_partner" 
+               id="menu_act_sale_order_cancel"
+               name="Sale Order Cancellation"
+			   groups="cooperative_sale.group_co_operative_sales_admin" 
+                />
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Cancel Sale orders"
+                parent="menu_act_sale_order_cancel"
+                action="action_sale_order_cancel_wiz"
+                id="act_sale_order_cancel"
+                />
+
+    </data>
+</openerp>

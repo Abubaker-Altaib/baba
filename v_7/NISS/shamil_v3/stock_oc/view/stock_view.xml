@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="exchange_order_form" model="ir.ui.view">
+            <field name="name">exchange.order.form</field>
+            <field name="model">exchange.order</field>
+            <field name="inherit_id" ref="stock_exchange_NISS.view_exchange_order_form_inherit"/>
+            <field name="arch" type="xml">
+                <field name="location_dest_id" position="after">
+                    <field name="executing_stock" attrs="{'invisible':[('executing_agency','in',['admin','tech','arms', False])],                             'required':[('executing_agency','not in',['admin','tech','arms']),('state','=','confirmed_oc')], 'readonly':[('state','!=','confirmed_oc')]}" />
+                    <field name="recieved_location_id" attrs="{'invisible':['|',('executing_agency','in',['admin','tech','arms', False]), ('executing_stock','!=','hq')], 'required':[('executing_stock','=','hq'),('state','=','confirmed_oc')], 'readonly':[('state','!=','confirmed_oc')]}" domain="[('usage','=','internal'),('executing_agency','=',executing_agency)]" groups="stock_oc.oc_group_exchange_branch"/>
+                    <field name="is_oc_hq" invisible="1" />
+                    <field name="is_oc_hq_app" invisible="1" /></field>
+                <xpath expr="//button[@name='exchange_confirm']" position="after">
+                    <button name="exchange_confirm_oc" attrs="{'invisible':['|',('executing_agency','in',['admin','tech','arms']),('state','!=','draft')]}" string="Department Manager Approve" icon="gtk-go-forward" groups="stock_oc.oc_group_exchange_department"/>
+                    <button name="exchange_cancel_draft_oc" attrs="{'invisible':['|',('executing_agency','in',['admin','tech','arms']),('state','!=','draft')]}" string="Cancel" icon="gtk-cancel" confirm="Are you sure you want to cancel this request?" groups="stock_oc.oc_group_exchange_department"/>
+                    <button name="exchange_approve_oc" states="confirmed_oc" string="Baranch Manager Approve" icon="gtk-go-forward" groups="stock_oc.oc_group_exchange_branch"/>
+                    <button name="exchange_cancel_confirmed_oc" states="confirmed_oc" string="Cancel" icon="gtk-cancel" groups="stock_oc.oc_group_exchange_branch"/>
+                    <button name="action_process_oc" string="Process" attrs="{'invisible':['|','|',('executing_agency','in',['admin','tech','arms']),('state','!=','approved_oc')]}" type="object" icon="gtk-go-forward" groups="stock_oc.group_exchange_approved_oc"/>
+                </xpath>
+                <xpath expr="//button[@name='exchange_confirm']" position="replace">
+                    <button name="exchange_confirm" attrs="{'invisible': [('is_oc_hq','!=',True)]}" string="Confirm Exchange Order" icon="gtk-go-forward" groups="stock_exchange.group_exchange_department"/>
+                </xpath>
+                <xpath expr="//button[@name='action_process']" position="replace">
+                    <button name="action_process" states="approved" string="Process" type="object" icon="gtk-go-forward"/>
+                </xpath>
+                <xpath expr="//button[@name='exchange_cancel']" position="attributes">
+                    <attribute name="states">draft,confirmed,category_manager,request_hq</attribute>
+                    <attribute name="groups">stock_exchange.group_exchange_approved,stock_exchange.group_exchange_approved2,stock_exchange.group_exchange_department,stock_exchange.group_exchange_department_g</attribute>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="attributes">
+                    <attribute name="statusbar_visible">draft,done,cancel,wait_purchase</attribute>
+                </xpath>
+                <xpath expr="//button[@string='ADD Pakage']" position="attributes">
+                    <attribute name="states">draft,confirmed,confirmed_oc</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="attributes">
+                    <attribute name="attrs">{'required':[('state','in',['confirmed','confirmed_oc']),('executing_stock','=','company_stock')], 'readonly':[('state','not in',('request_hq','confirmed','confirmed_oc'))],'invisible':[('state','=','confirmed_oc'),('executing_stock','!=','company_stock')]}</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="cus_view_exchange_order_form">
+            <field name="name">Exchange Order</field>
+            <field name="model">exchange.order</field>
+            <field name="inherit_id" ref="account_asset_custody_niss.cus_view_exchange_order_form"/>
+            <field name="arch" type="xml">
+                <!--xpath expr="//field[@name='office']" position="attributes">
+                    <attribute name="attrs">{'invisible' : [('custody','=',False)] , 'required' : [('custody','=',True)],'readonly':[('state','not in',('draft','confirmed','confirmed_oc'))] }</attribute>
+                </xpath-->
+                <xpath expr="//field[@name='custody_type']" position="attributes">
+                    <attribute name="attrs">{'invisible' : [('custody','=',False)] , 'required' : [('custody','=',True)],'readonly':[('state','not in',('draft','confirmed','confirmed_oc'))] }</attribute>
+                </xpath>
+                <xpath expr="//field[@name='employee_to']" position="attributes">
+                    <attribute name="attrs">{'invisible' : [('custody','=',False)] , 'required' : [('custody_type','=','personal')],'readonly':[('state','not in',('draft','confirmed','confirmed_oc'))]}</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_stock_picking_out_inherit" model="ir.ui.view">
+            <field name="name">view.stock.picking.out.inherit</field>
+            <field name="model">stock.picking.out</field>
+            <field name="inherit_id" ref="stock_niss.view_stock_picking_out_inherit"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="executing_agency" position="after">
+                    <field name="executing_stock" readonly="1" attrs="{'invisible':[('executing_agency','in',['admin','tech','arms', False])]}" /></field>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="inherit_stock_exchang_order_tree">
+            <field name="name">Exchange Order TREE Inherit</field>
+            <field name="model">exchange.order</field>
+            <field name="inherit_id" ref="stock_exchange_purchase_requestion.inherit_stock_exchang_order_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree[@string='Exchange Order']/field[@name='total_amount']" position="replace">
+                    <field name="total_amount" invisible="1" sum="Total Amount" groups="analytic.group_analytic_accounting"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="store_order_tree">
+            <field name="name">Exchange Order TREE Inherit</field>
+            <field name="model">exchange.order</field>
+            <field name="inherit_id" ref="stock_exchange.store_order_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree[@string='Exchange Order']/field[@name='total_amount']" position="replace">
+                    <field name="total_amount" invisible="1" sum="Total Amount" groups="analytic.group_analytic_accounting"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

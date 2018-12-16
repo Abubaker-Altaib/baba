@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model='ir.ui.view' id='hr_promotions_tree'>
+        <field name="name">hr.promotions.tree</field>
+        <field name="model">hr.promotions</field>
+        <field name="arch" type="xml">
+            <tree string="Promotions" decoration-danger="state in ('canceled')" decoration-info="state in ('approved')" >
+                <field name="name"/>
+                <field name='employee_id'/>
+                <field name='date'/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="hr_promotions_form">
+        <field name="name">hr.promotions.form</field>
+        <field name="model">hr.promotions</field>
+        <field name="arch" type="xml">
+            <form string="Promotions">
+                <header>
+                    <button name="approve_promotions"  string="Approve" states="draft,canceled" type="object" icon="icon"/>
+                    <button name="cancel_promotions" states="approved" string="Cancel" type="object" icon="icon"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approved"/>
+                </header>
+                <sheet>
+                     <div class="oe_title">
+                        <h1><field name="name" attrs="{'invisible':[('name','=','/')]}"/></h1>
+                        <h2 class="o_row">
+                          <group colspan="4">
+                            <div>
+                                <label for="employee_id" class="oe_edit_only"/>
+                                <field name="employee_id" attrs="{'readonly': [('state', '=','approved')]}"   class="oe_inline"/>
+                            </div>
+                            <div>
+                                <label for="date" class="oe_edit_only"/>
+                                <field name="date" attrs="{'readonly': [('state', '=','approved')]}"  placeholder="Date"  class="oe_inline"/>
+                            </div>
+                        </group>
+                       </h2>
+                    </div>
+
+                    <group>
+                        <group>
+                         <field name="current_levle_id"  attrs="{'readonly': [('state', '=','approved')],'required': [('state', 'in',('draft','canceled'))]}" options="{'no_create_edit': True, 'no_open': True}"
+                                />
+                            <field name="current_grade_id"  attrs="{'readonly': [('state', '=','approved')],'required': [('state', 'in',('draft','canceled'))]}"  options="{'no_create_edit': True, 'no_open': True}"  domain="[('type','=','grade'),('parent_id','=',current_levle_id)]"/>
+
+                            <field name="current_degree_id" attrs="{'readonly': [('state', '=','approved')],'required': [('state', 'in',('draft','canceled'))]}"  options="{'no_create_edit': True, 'no_open': True}" domain="[('type','=','degree'),('parent_id','=',current_grade_id)]"/>
+                        </group>
+                        <group>
+                            <field name="new_levle_id"  options="{'no_create_edit': True, 'no_open': True}" attrs="{'readonly': [('state', '=','approved')],'required': [('state', 'in',('draft','canceled'))]}" />
+
+                            <field name="new_grade_id"  attrs="{'readonly': [('state', '=','approved')],'required': [('state', 'in',('draft','canceled'))]}"
+                                 options="{'no_create_edit': True, 'no_open': True}" domain="[('type','=','grade'),('parent_id','=',new_levle_id)]"/>                                
+                            <field name="new_degree_id"  attrs="{'readonly': [('state', '=','approved')],'required': [('state', 'in',('draft','canceled'))]}"
+                                 options="{'no_create_edit': True, 'no_open': True}" domain="[('type','=','degree'),('parent_id','=',new_grade_id)]"/>
+                        </group>
+                        <separator string="Nots" />
+                        <field name="nots" attrs="{'readonly': [('state', '=','approved')]}"/>
+                        </group>
+
+                </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+            </form>
+        </field>
+    </record>
+
+     <record model='ir.ui.view' id='hr_bonus_tree'>
+        <field name='name'>hr.bonus.tree</field>
+        <field name='model'>hr.bonus</field>
+        <field name='arch' type='xml'>
+            <tree string='Annual Bonus' decoration-danger="state in ('canceled')" decoration-info="state in ('approved')">
+                <field name='name'/>
+                <field name='date'/>
+                <field name="structure_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="hr_bonus_form">
+        <field name="name">hr.bonus.form</field>
+        <field name="model">hr.bonus</field>
+        <field name="arch" type="xml">
+            <form string="Annual Bonus">
+                <header>
+                    <button name="approve_bonuses"  string="Approve" states="draft,canceled" type="object" icon="icon"/>
+                    <button name="cancel_bonuses"  string="Cancel" states="approved" type="object" icon="icon"/>
+                    <button name="compute_candidates" icon="fa-globe text-primary" states="draft,canceled" string="Get Candidates Employee" type="object"  />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approved"/>
+                </header>
+                <sheet>
+                     <div class="oe_title" string="Refrance">
+                            <h1><field name="name" attrs="{'invisible':[('name','=','/')]}"/></h1>
+                    </div>
+                   <group>
+                   <group>
+                        
+                        <field name="structure_id" attrs="{'readonly': [('state', '=','approved')]}"  options="{'no_create_edit': True, 'no_open': True}"  domain="[('type','=','structure')]"/>
+                        <field name="levle_ids" widget="many2many_tags" options="{'no_create':1,'no_open':1}" attrs="{'readonly': [('state', '=','approved')]}" domain="[('parent_id','=',structure_id),('type','=','level')]"/>
+                    </group>
+                    <group>
+                        <field name='date' attrs="{'readonly': [('state', '=','approved')]}"/>
+                        <field name="margin" attrs="{'readonly': [('state', '=','approved')]}"/>
+                        <field name="approval_date" attrs="{'invisible': [('state', '!=','approved')],'readonly': [('state', '=','approved')]}" />
+                    </group>
+                    
+                    </group>
+                    <field name="bonus_lines" attrs="{'readonly': [('state', 'in',('approved','draft','canceled'))],'invisible': [('bonus_lines', '=',[])],}" >
+                            <tree decoration-danger="state in ('canceled')" decoration-success="state in ('approved')" decoration-info="same_dgree == True">
+                            <field name="same_dgree" invisible="1"/>
+                            <field name="employee_id"/>
+                            <field name="levle_id"/>
+                            <field name="grade_id"/>
+                            <field name="current_degree_id"/>
+                            <field name="new_degree_id"/>
+                            <field name="state"/>
+                            <button name="approve_bonuses" icon="fa-check text-success" type="object" />
+                            <button name="cancel_bonuses" icon="fa-times text-danger" type="object" />
+                            
+                            </tree>
+                        </field>
+                     <separator string="Nots" />
+                    <field name="nots"/>
+                </sheet>
+                  <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+            </form>
+        </field>
+    </record>
+    <record id="hr_promotions_action" model="ir.actions.act_window">
+        <field name="name">Promotions</field>
+        <field name="res_model">hr.promotions</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="hr_bonus_action" model="ir.actions.act_window">
+        <field name="name">Annual Bonus</field>
+        <field name="res_model">hr.bonus</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="hr_promotions_menu_root" name="Action" parent="hr_payroll.menu_hr_payroll_root" />
+    <menuitem id="hr_promotions_menu"  parent="hr_promotions_menu_root" action="hr_promotions_action"/>
+    <menuitem id="hr_bonus_menu"  parent="hr_promotions_menu_root" action="hr_bonus_action"/>
+</odoo>
+

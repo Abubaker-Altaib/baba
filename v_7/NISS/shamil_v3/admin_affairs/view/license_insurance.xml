@@ -1,0 +1,411 @@
+<openerp>
+	<data>
+	    <!--Vehicles Insurance  -->      
+	    
+		<!--report auto="False" menu="False" id="vehicle_insurance" model="fleet.vehicle.log.contract" 
+               name="veh_insurance" rml="addons/service/report/vehicles_insurance_report.rml" 
+               string="Print Vehicle Insurance" /-->
+    <act_window name="Vehicle Log Contract Create"
+            res_model="vehicle.log.contract.create"
+            src_model="fleet.vehicle.log.contract"
+            view_mode="form"
+            target="new"
+            key2="client_action_multi"
+            multi="True"
+            id="log_contract_create_act"/>
+               
+		<record id="vehicle_insurance_form" model="ir.ui.view">
+		<field name="name">vehicle.insurance.form</field>
+		<field name="model">fleet.vehicle.log.contract</field>
+		<field name="arch" type="xml">
+	    	<form string="Vehicles Insurance" version="7.0">
+	           	<header>
+
+                    <button icon="gtk-cancel" type="object" name="draft"
+                        states="confirm" string=" Set to Draft" class="oe_highlight" groups="admin_affairs.group_fleet_set_to_draft"/>
+
+                    <button type="object" name="confirm" states="draft" string="Confirm"
+                         class="oe_highlight" groups="admin_affairs.group_fleet_user_hq"/>
+                    <button type="action" name="%(admin_affairs.log_contract_create_act)d"
+                        states="draft" string="Enter Vehicles" class="oe_highlight" groups="admin_affairs.group_fleet_user_hq" context="{'category': category}"/>
+
+                    <button type="object" name="update_lines" states="draft" string="Update Vehicles"
+                         class="oe_highlight" groups="admin_affairs.group_fleet_user_hq"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open"/>					
+            	</header>
+	            <sheet>
+	                <h1>
+		               <label for="name" string="Reference"/>
+			           <field name="name" class="oe_inline" readonly="1"/>
+				    </h1>
+	                <group>
+	                   <group>
+	                        <!--field name="cost_subtype_id"  required="1" domain="[('category','=','insurance')]" 
+	                            attrs="{'readonly':[('state','not in',('draft',))],
+	                                    'required':[('state','=','draft')]}"
+	                                    on_change="onchange_service_type(cost_subtype_id)"
+	                                    context="{'form_view_ref': 'service.fleet_service_type_form_inherit'}"/-->
+
+                            
+                            <!--field name="department_id" attrs="{'readonly':[('state','!=','draft')],
+                                                                'required':[('state','=','draft')]}"/-->
+                            <field name="category"  invisible = "1"
+                               attrs="{'readonly':[('state','!=','draft')]}" />
+                            <field name="insurance_type"  required = "1"
+                               attrs="{'readonly':[('state','!=','draft')]}" />
+                            <field name="insurer_id"  required = "1"
+                               attrs="{'readonly':[('state','!=','draft')]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                            <field name="purchaser_id" attrs="{'readonly':[('state','not in',('draft',))],}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                        	<field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                        	<!--field name="cat_subtype" readonly="1" invisible="1"/-->
+                        	         
+	                    </group>
+	                    <group>
+                            <field name="date"   string="Request Date" widget="date"
+                                   attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')]}"/>
+                            <field name="start_date" string="Insurance Date" 
+                                   attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')]}"/>
+	                        <field name="expiration_date"  string="End Date" 
+	                               attrs="{'readonly':[('state','!=','draft')],'required':[('state','=','draft')]}"/>
+                          <field name="amount" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <!--field name="payment_method" invisible='1'/-->
+                            
+                             <!--field name="amount"   invisible='1' />
+                             <field name="sum_cost" string="Total Costs" readonly ="1"/-->
+	                    </group>
+	                </group>
+	                
+	                <notebook>
+	                    <!--page string="Details">
+                            <button name='department_vehicle' attrs="{'invisible':[('state','!=','draft')]}" type="object" string="Import Vehicle" confirm="this will override the current lines"/>
+	                        <group>
+	                            <field name="cost_ids" attrs="{'readonly':[('state','!=','draft')]}"
+	                                nolabel="1" on_change="on_change_indic_cost(cost_ids)">
+	                                <tree version="7.0" editable='top'>
+	                                    <field name="vehicle_id" domain="[('ownership','=','owned'),('status','=','active')]" required="1"/>
+	                                    <field name="vehicle_cost"  required= "1"/>
+	                                    <field name="amount" sum="Cost" string="Cost" required= "1"/>
+	                                </tree>
+	                            </field>
+	                        </group>
+	                        
+	                      
+	                    </page>
+
+                        <page string="Payments" >
+                                <group>
+                                    <field name="generated_cost_ids" 
+                                        nolabel="1" sum="total">
+                                        <tree version="7.0" editable="bottom" create='false'>
+                                            <field name="date" readonly="1"/>
+                                            <field name="voucher_id" colspan="4" nolabel="1" readonly="1"/>
+                                            <field name="amount" string="Amount" readonly="0"/>
+                                            <field name="total" sum="total" />
+                                        </tree>
+                                    </field>
+                                </group>
+                        </page-->
+
+                        <page string="Vehicles">
+                            <field colspan="4" name="line_ids" attrs="{'readonly':[('state','!=','draft')]}">
+                                <tree editable="top">
+                                    <field name="vehicle_id" domain="[('state','=','confirm'),('status','=','active')]" on_change="onchange_vehicle_id(vehicle_id)"  context="{'model':'fleet.vehicle.log.contract.line','line_id':parent.line_ids}" required="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                    <field name="type" readonly="1" />
+                                    <field name="model_id" readonly="1" />
+                                    <field name="department_id" readonly="1" options="{'no_open':True, 'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}" />
+                                    <field name="driver" readonly="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                    <field name="vin_sn" readonly="1" />
+                                    <field name="license_plate" readonly="1" />
+                                    <field name="fuel_type" readonly="1" />
+                                    <field name="status" readonly="1" />
+                                    <field name="new_license_plate" invisible="1" />
+                                    <field name="amount" />
+                                </tree>
+                            </field>
+                        </page>
+
+                        <!--page string="Vehicles">
+                            <field colspan="4" name="vehicles_ids" domain="[('state','=','confirm')]" attrs="{'readonly':[('state','!=','draft')]}" />
+                       </page-->
+
+	                       
+	                </notebook>
+	                <group string="Notes">
+	                      <field name="notes" nolabel="1" placeholder="Write here all other information relative to this contract" />
+	                </group>
+	               </sheet>
+	           </form>
+            </field>
+        </record>
+        
+	    <record id='vehicle_insurance_tree' model='ir.ui.view' >
+            <field name="name">vehicle.insurance.tree</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Vehicles Insurance" version="7.0">
+                    <field name="name" string="Reference"/>
+                    <field name="start_date"  string="Insurance Date" />
+                    <field name="expiration_date" string="End Date"/>
+                    <field name="insurance_type"/>
+                    <field name="insurer_id" />
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="vehicle_insurance_filter" model="ir.ui.view">
+            <field name="name">vehicle_insurance_filter</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+              <search string="Vehicles Insurance">
+                <field name="name" />
+                <field name="start_date" />
+                <field name="expiration_date" />
+                <field name="insurance_type" />
+                <field name="insurer_id" />
+                <field name="state" />
+                <field name="purchaser_id" />
+                <field name="company_id"/>
+                <separator orientation="vertical" />
+                <newline/>
+                <group expand="0" string="Group By..." colspan="4" col="10">
+                  <filter string="Reference" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'name'}" />
+                  <separator orientation="vertical" />
+                  <filter string="Insurance Date" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'start_date'}" />
+                  <separator orientation="vertical" />
+                  <filter string="End Date" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'expiration_date'}" />
+                  <separator orientation="vertical" />
+                  <filter string="Insurance Type" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'insurance_type'}" />
+                    <separator orientation="vertical" />
+                  <filter string="Partner" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'insurer_id'}" />
+                  <separator orientation="vertical" />
+                  <filter string="Contractor" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'purchaser_id'}" />
+                  <separator orientation="vertical" />
+                  <filter string="Company" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'company_id'}" />
+                  <separator orientation="vertical" />
+                  <filter string="State" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'state'}" />
+                  <separator orientation="vertical" />
+                  <!--filter string="Vehicles" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'vehicles_ids'}" /-->
+                </group>
+              </search>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_vehicle_insurance">
+            <field name="name">Vehicles Insurance</field>
+            <field name="res_model">fleet.vehicle.log.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('category','=','insurance')]</field>
+            <!--field name="context">{'default_payment_method':'voucher','action':'service.vehicle_insurance_menu'}</field-->
+            <field name="context">{'default_category':'insurance'}</field>
+            <field name="search_view_id" ref="vehicle_insurance_filter" />
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create  insurance . 
+              </p>
+              <p>
+              		Add a new Insurance to specific vehicle(s).
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="vehicle_insurance_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vehicle_insurance_form"/>
+            <field name="act_window_id" ref="action_vehicle_insurance"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="vehicle_insurance_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="vehicle_insurance_tree"/>
+            <field name="act_window_id" ref="action_vehicle_insurance"/>
+        </record>
+		 <menuitem  id="vehicle_insurance_menu" name="Vehicles Insurance" parent="fleet.fleet_vehicles" 
+             action="action_vehicle_insurance" sequence="11" groups="admin_affairs.group_fleet_user_hq,admin_affairs.group_fleet_set_to_draft"/>
+             
+             
+       <!--Vehicles License  -->      
+             
+    <record id="vehicle_license_form" model="ir.ui.view">
+		<field name="name">vehicle.license.form</field>
+		<field name="model">fleet.vehicle.log.contract</field>
+		<field name="arch" type="xml">
+	    	<form string="Vehicles License" version="7.0">
+	           	<header>
+                    <button icon="gtk-cancel" type="object" name="draft"
+                        states="confirm" string=" Set to Draft" class="oe_highlight" groups="admin_affairs.group_fleet_set_to_draft"/>
+
+                    <button type="object" name="confirm" states="draft" string="Confirm"
+                         class="oe_highlight" groups="admin_affairs.group_fleet_user_hq"/>
+
+                    <button type="action" name="%(admin_affairs.log_contract_create_act)d"
+                        states="draft" string="Enter Vehicles" class="oe_highlight" groups="admin_affairs.group_fleet_user_hq" context="{'category': category}"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+
+            	</header>
+	            <sheet>
+	                <h1>
+		               <label for="name" string="Reference"/>
+			           <field name="name" class="oe_inline" readonly="1"/>
+				    </h1>
+	                <group>
+	                   <group>
+                          <field name="category" invisible="1" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}" />
+                           <field name="insurer_id" invisible="1"
+                               attrs="{'readonly':[('state','!=','draft')]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                        	<field name="purchaser_id" attrs="{'readonly':[('state','not in',('draft'))]}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}" />
+                        	<field name="company_id" readonly="1" groups="base.group_multi_company"/>
+	                    </group>
+	                    <group>
+                            <field name="date" widget="date" attrs="{'readonly':[('state','not in',('draft',))],'required':[('state','=','draft')]}"/>
+                            <field name="start_date"  attrs="{'readonly':[('state','not in',('draft'))],'required':[('state','=','draft')]}"/>
+	                          <field name="expiration_date"  
+	                           	attrs="{'readonly':[('state','not in',('draft'))],'required':[('state','=','draft')]}"/>
+                            <field name="amount" attrs="{'readonly':[('state','!=','draft')]}" />
+	                    </group>
+	                </group>
+	                
+	                <notebook>
+
+                      <page string="Vehicles">
+                          <field colspan="4" name="line_ids" attrs="{'readonly':[('state','!=','draft')]}">
+                              <tree editable="top">
+                                  <field name="vehicle_id" domain="[('state','=','confirm'),('status','=','active')]" on_change="onchange_vehicle_id(vehicle_id)"  context="{'model':'fleet.vehicle.log.contract.line','line_id':parent.line_ids}" options="{'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}" required="1"/>
+                                  <field name="type" readonly="1" />
+                                  <field name="model_id" readonly="1" />
+                                  <field name="department_id" readonly="1" options="{'no_open':True, 'limit': 10, 'create': false, 'create_edit': false, 'search_more':True, 'm2o_dialog': True}"/>
+                                  <field name="driver" readonly="1" />
+                                  <field name="vin_sn" readonly="1" />
+                                  <field name="license_plate" readonly="1" />
+                                  <field name="fuel_type" readonly="1" />
+                                  <field name="status" readonly="1" />
+                                  <field name="new_license_plate" required="1" />
+                                  <field name="amount" />
+                              </tree>
+                          </field>
+                      </page>
+
+                        <!--page string="Vehicles">
+                            <field colspan="4" name="vehicles_ids" domain="[('state','=','confirm')]" attrs="{'readonly':[('state','!=','draft')]}" />
+                       </page-->
+	                       
+	                </notebook>
+	                <group string="Notes">
+	                      <field name="notes" nolabel="1" placeholder="Write here all other information relative to this contract" />
+	                </group>
+	               </sheet>
+	           </form>
+            </field>
+        </record>
+        
+	    <record id='vehicle_license_tree' model='ir.ui.view' >
+            <field name="name">vehicle.license.tree</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+                <tree string="Vehicles License" version="7.0">
+                    <field name="name" string="Reference"/>
+                    <field name="start_date"  />
+                    <field name="expiration_date"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="vehicle_license_filter" model="ir.ui.view">
+            <field name="name">vehicle_license_filter</field>
+            <field name="model">fleet.vehicle.log.contract</field>
+            <field name="arch" type="xml">
+              <search string="Vehicles License">
+                <field name="name" />
+                <field name="date" />
+                <field name="start_date" />
+                <field name="expiration_date" />
+                <field name="state" />
+                <field name="purchaser_id" />
+                <field name="company_id"/>
+                <separator orientation="vertical" />
+                <newline/>
+                <group expand="0" string="Group By..." colspan="4" col="10">
+                  <filter string="Reference" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'name'}" />
+                  <separator orientation="vertical" />
+                  <filter string="Date" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'date'}" />
+                  <separator orientation="vertical" />
+                  <filter string="Start Date" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'start_date'}" />
+                  <separator orientation="vertical" />
+                  <filter string="End Date" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'expiration_date'}" />
+                  <separator orientation="vertical" />
+                  <filter string="Contractor" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'purchaser_id'}" />
+                  <separator orientation="vertical" />
+                  <filter string="Company" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'company_id'}" />
+                  <separator orientation="vertical" />
+                  <filter string="State" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'state'}" />
+                  <separator orientation="vertical" />
+                  <!--filter string="Vehicles" icon="terp-stock_effects-object-colorize"
+                    domain="[]" context="{'group_by':'vehicles_ids'}" /-->
+                </group>
+              </search>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_vehicle_license">
+            <field name="name">Vehicles License</field>
+            <field name="res_model">fleet.vehicle.log.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('category','=','license')]</field>
+            <field name="context">{'default_category':'license'}</field>
+            <field name="search_view_id" ref="vehicle_license_filter" />
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create  license . 
+              </p>
+              <p>
+              		Add a new license to specific vehicle(s).
+              </p>
+            </field>
+        </record>
+        <record model="ir.actions.act_window.view" id="vehicle_license_act_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="vehicle_license_form"/>
+            <field name="act_window_id" ref="action_vehicle_license"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="vehicle_license_act_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="vehicle_license_tree"/>
+            <field name="act_window_id" ref="action_vehicle_license"/>
+        </record>
+        
+        <menuitem  id="vehicle_license_menu" name="Vehicles License" parent="fleet.fleet_vehicles" 
+             action="action_vehicle_license" sequence="11" groups="admin_affairs.group_fleet_user_hq,admin_affairs.group_fleet_set_to_draft"/>
+
+        
+
+        
+	</data>
+</openerp>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	<record id="view_renew_rented_cars" model="ir.ui.view">
+            <field name="name">renew.rented.cars.form</field>
+            <field name="model">renew.rented.cars</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Renew Rented Cars">
+            	  <group col="5" colspan="6">            
+		    <field name="company_id" colspan="4" />
+                    <!--field name="department_id" colspan="2" domain ="[('company_id','=',company_id)]"/-->
+                    <newline/>
+		    <field name="date_of_rent" colspan="2" />
+            	    <field name="date_of_return" colspan="2"/>
+                    <newline/>
+                    <field name="car_ids" colspan="6" domain="[('company_id','=',company_id),('ownership','=','rented'),('status','=','inactive')]"/>
+            	  </group>            
+                    <newline/>
+		    <group col="4" colspan="6">
+			<button icon='gtk-cancel' special="cancel" string="Close" colspan="2" />
+	 		<button name="renew" string="Renew" type="object" colspan="2" icon="gtk-execute"/>
+		    </group>
+               
+                </form>
+            </field>
+        </record>
+
+        <record id="renew_rented_cars_action" model="ir.actions.act_window">
+            <field name="name">Renew Rented Cars</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">renew.rented.cars</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+		
+	<menuitem
+            action="renew_rented_cars_action"
+            id="renew_rented_cars_action_menu"
+            parent="menu_rented_cars_allowances" sequence="3"/>
+
+    </data>
+</openerp>
+

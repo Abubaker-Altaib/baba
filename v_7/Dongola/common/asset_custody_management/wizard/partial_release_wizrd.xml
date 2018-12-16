@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+       <record id="view_create_custody_release_request" model="ir.ui.view">
+            <field name="name">Create Custody Release Request</field>
+            <field name="model">create.custody.release.request</field>
+            <field name="arch" type="xml">
+                   <form string="Release/Replace Operation" version="7.0">
+                      <group col="2" colspan="2">
+                         <group >
+              	         <field name="department_id" required="1" on_change="change_department(department_id)"/>
+              	         <field name="operation_date" readonly="1"/>
+                      </group>
+                      <group >
+              	         <field name="operation_type" required="1" />
+                       </group>
+                         <newline />
+			      <field colspan="4" name="rel_custody_ids" mode="tree" attrs="{'invisible' : [('operation_type','!=','release')]}">
+				     <tree editable="bottom" string="Custody Lines" create="false">
+				          <field name="custody_id" readonly="1"/>
+				          <field name="name" readonly="1"/>
+				          <field name="employee_id" readonly="1"/>
+				          <field name="return_this" />
+				     </tree>
+			      </field>
+                              <field colspan="4" name="rep_custody_ids" mode="tree" attrs="{'invisible' : [('operation_type','!=','replace')]}">
+				     <tree editable="bottom" string="Custody Lines" create="false">
+				          <field name="custody_id" readonly="1"/>
+				          <field name="name" readonly="1"/>
+				          <field name="employee_id" readonly="1"/>
+				          <field name="new_employee_id" domain="[('department_id','=', parent.department_id)]"/>
+				     </tree>
+			      </field>
+                      </group>
+                              <footer>
+				  <button string="Create Release Order" name="create_release_order"  type="object" attrs="{'invisible' : [('operation_type','!=','release')]}" icon="STOCK_EXECUTE" confirm="Are you sure you want to apply this operation"/>
+				  <button string="Assign" name="custody_assign"  type="object" attrs="{'invisible' : [('operation_type','!=','replace')]}" icon="STOCK_EXECUTE" confirm="Are you sure you want to apply this operation"/>
+                                  <button string="Cancel" special="cancel" icon="gtk-cancel"/>
+                             </footer>
+                   </form>
+            </field>
+        </record>
+
+
+
+               <record id="action_create_custody_release_request" model="ir.actions.act_window">
+                       <field name="name">Action For Release/Replace Operation</field>
+                       <field name="res_model">create.custody.release.request</field>
+                       <field name="view_type">form</field>
+                       <field name="view_mode">form</field>
+                       <field name="view_id" ref="view_create_custody_release_request"/>
+                       <field name="target">new</field>
+                </record>
+       
+		
+
+      <menuitem
+
+            id="menu_custodies_operations"
+            parent="menu_account_pact_root"
+            name="Custodies Operations" 
+            sequence="2"  />
+
+       <menuitem
+            action="action_create_custody_release_request"
+            id="menu_action_create_custody_release_request"
+            parent="menu_custodies_operations"
+            name="Custody Release Wizard"
+            sequence="1" />
+            
+    </data>
+</openerp>

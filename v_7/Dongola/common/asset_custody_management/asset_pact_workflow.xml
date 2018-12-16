@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<openerp>
+  <data>
+    <!--Work Flow Intialization-->
+    <record id="id_pact_order_workflow" model="workflow">
+       <field name="name">Pact Order WorkFlow</field>
+       <field name="osv">asset.pact.order</field>
+       <field name="on_create">True</field>
+    </record>
+    <!--Work Flow Activites Intialization-->
+    <record id="id_wkf_pact_order_draft" model="workflow.activity">
+        <field name="wkf_id" ref="id_pact_order_workflow"/>
+        <field name="flow_start">True</field>
+        <field name="name">draft</field>
+    </record>
+    <record id="id_wkf_pact_order_confirm" model="workflow.activity">
+        <field name="wkf_id" ref="id_pact_order_workflow"/>
+        <field name="name">confirm</field>
+        <field name="kind">function</field>
+        <field name="action">confirm()</field>
+   </record>
+   <record id="id_wkf_pact_order_approve" model="workflow.activity">
+        <field name="wkf_id" ref="id_pact_order_workflow"/>
+        <field name="name">approve</field>
+        <field name="kind">function</field>
+        <field name="action">approve()</field>
+   </record>
+   <record id="id_wkf_pact_order_approve_dept" model="workflow.activity">
+        <field name="wkf_id" ref="id_pact_order_workflow"/>
+        <field name="name">approve_dept</field>
+        <field name="kind">function</field>
+        <field name="action">approve_dept()</field>
+   </record>
+   <record id="id_wkf_pact_order_approve_support" model="workflow.activity">
+        <field name="wkf_id" ref="id_pact_order_workflow"/>
+        <field name="name">approve_support</field>
+        <field name="kind">function</field>
+        <field name="action">approve_support()</field>
+   </record>
+   <record id="id_wkf_pact_order_assign" model="workflow.activity">
+       <field name="wkf_id" ref="id_pact_order_workflow"/>
+       <field name="name">assign</field>
+       <field name="kind">function</field>
+       <field name="flow_stop">True</field>
+       <field name="action">assign()</field>
+   </record>
+
+   <record id="id_wkf_pact_order_cancel" model="workflow.activity">
+       <field name="wkf_id" ref="id_pact_order_workflow"/>
+       <field name="name">cancel</field>
+       <field name="kind">function</field>
+       <field name="action">cancel()</field>
+   </record>
+  <!--Work Flow Transitions Intialization-->
+  <record id="id_wkf_pact_order_draft_confirm" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_pact_order_draft" />
+     <field name="act_to" ref="id_wkf_pact_order_confirm" />
+     <field name="signal">confirm</field>
+  </record>
+  <record id="id_wkf_pact_order_confirm_approve" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_pact_order_confirm" />
+     <field name="act_to" ref="id_wkf_pact_order_approve" />
+     <field name="signal">approve</field>
+  </record>
+  <record id="id_wkf_pact_order_approve_approve_support" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_pact_order_approve" />
+     <field name="act_to" ref="id_wkf_pact_order_approve_dept" />
+     <field name="signal">approve_dept</field>
+  </record>
+  <record id="id_wkf_pact_order_approve_dept_approve_support" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_pact_order_approve_dept" />
+     <field name="act_to" ref="id_wkf_pact_order_approve_support" />
+     <field name="signal">approve_support</field>
+  </record>
+  <record id="id_wkf_order_approve_support_assign" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_pact_order_approve_support" />
+     <field name="act_to" ref="id_wkf_pact_order_assign" />
+     <field name="signal">assign</field>
+  </record>
+  
+
+  <record id="id_wkf_pact_order_draft_cancel" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_pact_order_draft" />
+     <field name="act_to" ref="id_wkf_pact_order_cancel" />
+     <field name="signal">cancel</field>
+   </record>
+   <record id="id_wkf_pact_order_confirm_cancel" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_pact_order_confirm" />
+     <field name="act_to" ref="id_wkf_pact_order_cancel" />
+     <field name="signal">cancel</field>
+   </record>
+   <record id="id_wkf_pact_order_approve_cancel" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_pact_order_approve" />
+     <field name="act_to" ref="id_wkf_pact_order_cancel" />
+     <field name="signal">cancel</field>
+   </record>
+    <record id="id_wkf_pact_order_approve_dept_cancel" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_pact_order_approve_dept" />
+     <field name="act_to" ref="id_wkf_pact_order_cancel" />
+     <field name="signal">cancel</field>
+   </record>
+   <record id="id_wkf_pact_order_approve_support_cancel" model="workflow.transition">
+     <field name="act_from" ref="id_wkf_pact_order_approve_support" />
+     <field name="act_to" ref="id_wkf_pact_order_cancel" />
+     <field name="signal">cancel</field>
+   </record>
+   
+  </data>
+</openerp>

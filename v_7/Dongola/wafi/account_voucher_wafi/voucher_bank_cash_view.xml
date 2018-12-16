@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_bank_and_cash_form">
+			<field name="name">account.voucher.bank_and_cash.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher_custom.view_bank_and_cash_form" />
+			<field name="arch" type="xml">
+				<button name="cancel_voucher" string="Cancel Voucher" type="object"
+					position="replace">
+					<button name="cancel_voucher" string="Cancel Voucher" type="object"
+						states="close" groups="account.group_account_manager" />
+					<button name="cancel_voucher" string="Cancel Voucher" type="object"
+						states="confirm" groups="account.group_account_manager"
+						attrs="{'invisible': ['|',('operation_type','!=','treasury'),('state','!=','post')]}" />
+					<button name="cancel_voucher_state" string="Cancel Voucher"
+						type="object" states="review" groups="account_custom.group_account_auditor" />
+					<button name="action_cancel_draft" states="review" type="object"
+						string="Set to Draf" />
+					<button name="complete_close" string="Complete"
+						attrs="{'invisible': ['|',('operation_type','!=','bank'),('state','!=','draft')]}"
+						groups="account_voucher_custom.group_account_expense_order" />
+					<button name="complete_review" string="Complete"
+						attrs="{'invisible': ['|',('operation_type','=','bank'),('state','!=','draft')]}"
+						groups="account_voucher_custom.group_account_expense_order" />
+					<button name="close_confirm" string="Close"
+						attrs="{'invisible': ['|',('operation_type','!=','bank'),('state','!=','close')]}"
+						groups="account.group_account_manager" />
+					<button name="confirm_review" string="Confirm"
+						attrs="{'invisible': ['|',('operation_type','!=','bank'),('state','!=','confirm')]}" />
+					<button name="confirm_pay" string="Confirm"
+						attrs="{'invisible': ['|',('operation_type','not in',['treasury','petty']),('state','!=','confirm')]}" />
+					<button name="review_post" string="Review"
+						attrs="{'invisible': ['|',('operation_type','in',['treasury','petty']),('state','!=','review')]}"
+						groups="account_custom.group_account_auditor" />
+					<button name="review_confirm" string="Review"
+						attrs="{'invisible': ['|',('operation_type','not in',['treasury','petty']),('state','!=','review')]}"
+						groups="account_custom.group_account_auditor" />
+					<button name="pay_receive" string="Pay" states="pay"
+						groups="account_voucher_custom.group_account_expense_pay" />
+					<button name="receive_post" string="Receive" states="receive"
+						groups="account_voucher_custom.group_account_expense_pay" />
+					<button name="post_done" string="Done" states="posted"
+						groups="account_custom.group_account_controller" />
+				</button>
+				<xpath expr="//field[@name='state']" position="attributes">
+					<attribute name="statusbar_visible">draft,done</attribute>
+				</xpath>
+				<button name="cancel_voucher" string="Cancel Voucher" states="draft,proforma"
+					position="replace" />
+				<button name="proforma_voucher" position="replace" />
+				<xpath expr="//button[@name='action_cancel_draft']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="view_petty_cash_form">
+			<field name="name">account.voucher.petty.cash.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher_custom.view_petty_cash_form" />
+			<field name="arch" type="xml">
+				<header position="replace">
+					<header>
+						<button name="cancel_voucher" string="Cancel Voucher" type="object"
+							states="complete,close,confirm" icon="gtk-cancel" />
+						<button name="action_draft_voucher" states="complete,close,confirm"
+							type="object" string="Set to Draft" icon="terp-stock_effects-object-colorize" />
+						<button name="complete_confirm" string="Complete" states="draft"
+							groups="account_voucher_custom.group_account_expense_order" />
+						<button name="confirm_pay" string="Confirm" states="confirm" />
+						<button name="pay_receive" string="Pay" states="pay"
+							groups="account_voucher_custom.group_account_expense_pay" />
+						<button name="receive_post" string="Receive" states="receive"
+							groups="account_voucher_custom.group_account_expense_pay" />
+						<button name="post_done" string="Done" states="posted"
+							icon="gtk-go-forward" groups="account_custom.group_account_controller" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,complete,confirm,pay,receive,posted,done" />
+					</header>
+				</header>
+			</field>
+		</record>
+	</data>
+</openerp>

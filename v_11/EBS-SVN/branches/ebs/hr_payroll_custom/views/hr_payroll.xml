@@ -1,0 +1,67 @@
+<odoo>
+	<record id="view_hr_payroll_structure_inherit" model="ir.ui.view">
+		<field name="name">Salay Structure Inherit</field>
+		<field name="model">hr.payroll.structure</field>
+		<field name="inherit_id" ref="hr_payroll.view_hr_employee_grade_form"/>
+		<field name="arch" type="xml">
+			<notebook position="inside">
+				<page string="Margin Details">
+					<group col="2">
+						<div>
+							<label for="min_limit"/>
+							<field name="min_limit" class="oe_inline"/>
+						</div>
+						<div>
+							<label for="max_limit"/>
+							<field name="max_limit" class="oe_inline"/>
+						</div>
+						<div>
+							<label for="increase_rate"/>
+							<field name="increase_rate" class="oe_inline"/>%
+						</div>
+						<div>
+							<label for="margin_time"/>
+							<field name="margin_time" class="oe_inline"/>Days
+						</div>
+					</group>
+				</page>
+			</notebook>
+		</field>
+	</record>
+
+	<record id="view_hr_salary_rule_inherit" model="ir.ui.view">
+		<field name="name">Salary Rule Inherit</field>
+		<field name="model">hr.salary.rule</field>
+		<field name="inherit_id" ref="hr_payroll.hr_salary_rule_form"/>
+		<field name="arch" type="xml">
+			<field name="amount_select" position="before">
+				<field name="rule_type" required="1"/><newline/>
+			</field>
+		</field>
+	</record>
+
+	<!-- add tab share detalis in payslib view -->
+   <record id="hr_payslip_form_inherit_view2" model="ir.ui.view">
+        <field name="name">hr.payslip.inherit.form2</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="before">
+                <field name="share_line_ids" invisible="1"/>
+            </xpath>
+            <notebook position="inside">
+                <page string="Share Details">
+                    <field name="share_line_ids">
+                        <tree>
+                            <field name="employee_id"/>
+							<field name="amount"/>
+							<field name="state"/>
+			
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!--
+    ======================
+    building
+    ======================
+    -->
+        <record id="view_building_building_form" model="ir.ui.view">
+            <field name="name">building.building.form</field>
+            <field name="model">building.building</field>
+            <field name="arch" type="xml">
+                <form string="building" version="7.0">
+                    <sheet>
+                    <field name="image_medium" widget="image" class="oe_avatar oe_left"/>
+                    <div class="oe_title">
+                            <div class="oe_edit_only">
+                                <label for="name" string="Name"/>
+                            </div>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                    <group col="6" colspan="4">
+                        <field name="parent_id"/>
+                        <field name="partner_id" select="1"/>
+                        <field name="manager_id" />
+                        <field name="address_id" />
+                        <field name="price"/>
+                        <field name="company_id" select="1" widget="selection" groups="base.group_multi_company"/>
+		</group>
+					<notebook colspan="4">
+					<page string ="Building lines">
+						<field colspan="4" name="item_ids" nolabel="1" mode="tree"> 
+                                <tree editable="bottom" string="Items">
+                                    <field name="item_id" on_change="onchange_item_id(item_id)"/>
+                                    <field name="qty" />
+                                    <field name="price" />
+                                    <field name="price_subtotal" />
+                                    <field name="name" />
+                                </tree>
+                        </field>   
+                        </page>  
+                        <page string="Notes">
+				<field name="note" colspan="4" nolabel="1" />
+			</page>               
+                </notebook>
+                </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="menu_building_building_tree" model="ir.ui.view">
+            <field name="name">building.building.tree</field>
+            <field name="model">building.building</field>
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree string="Companies">
+                    <field name="complete_name"/>
+                    <field name="price"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Product Kanban View  -->
+
+        <record model="ir.ui.view" id="building_kanban_view">
+            <field name="name">building Kanban</field>
+            <field name="model">building.building</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="image_small"/>
+                    <field name="price"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_vignette oe_semantic_html_override">
+                                <a type="open"><img t-att-src="kanban_image('building.building', 'image_medium', record.id.value)" class="oe_kanban_image"/></a>
+                                <div class="oe_kanban_details">
+                                    <h4>
+                                        <a type="open">
+                                             <field name="name"/>
+                                        </a>
+                                    </h4>
+                                    <div name="tags"/>
+                                    <ul>
+                                        <li>Price: <field name="price"></field></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+         <record id="view_building_filter" model="ir.ui.view">
+            <field name="name">Buildings</field>
+            <field name="model">building.building</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Buildings">
+                    <field name="name"/>
+                    <field name="partner_id" />
+                    <field name="price"/>
+                </search>
+             </field>
+         </record>
+
+        <record id="open_module_tree_building" model="ir.actions.act_window">
+            <field name="name">Buildings</field>
+            <field name="res_model">building.building</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="search_view_id" ref="view_building_filter"/>
+            <field name="help">Your Company's Building Structure is used to manage all documents related to employees by buildings: expenses and timesheet validation, leaves management, recruitments, etc.</field>
+        </record>
+     
+     
+     
+     	<!--  Buildings Structure -->
+     <record id="view_building_structure" model="ir.ui.view">
+            <field name="name">building.building.structure</field>
+            <field name="model">building.building</field>
+            <!--field name="type">tree</field-->
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree string="Building structure">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+ <record id="open_view_building_structure" model="ir.actions.act_window">
+            <field name="name">Building Structure</field>
+            <field name="res_model">building.building</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="view_building_structure"/>
+            <field name="domain">[('parent_id','=',False)]</field>
+        </record>
+
+	<!-- item category Form,Tree View & Action -->
+       <record id="view_item_item_form" model="ir.ui.view">
+			<field name="name">item.item.form</field>
+			<field name="model">item.item</field>
+			<field name="arch" type="xml">
+				<form string="Items">
+				<field name="code" />
+				<field name="name" />
+				<field name="type" />
+				<field name="parent_id" domain="[('type', '=', 'view'),('id', '!=', id)]" />
+				</form>
+			</field>
+		</record>
+
+		<record id="view_item_item_tree" model="ir.ui.view">
+			<field name="name">item.item.tree</field>
+			<field name="model">item.item</field>
+			<field name="arch" type="xml">
+				<tree string="Items">
+					<field name="code"/>
+					<field name="name"/>
+					<field name="type"/>
+				</tree>
+			</field>
+		</record>
+       	
+       	<record id="item_item_form_action" model="ir.actions.act_window">
+            <field name="name">Items</field>
+			<field name="res_model">item.item</field>
+			<field name="domain">[]</field>
+		</record>     
+        <!-- Menu -->		
+
+       <menuitem id="menu_building_management_root" name="Building Management" sequence="1" groups="group_building_user,group_building_manager"/>
+
+       <menuitem id="menu_building_management_operations"  name="Building Operation" parent="menu_building_management_root" sequence="1" groups="group_building_user,group_building_manager"/>
+
+       <menuitem id="menu_building_management_buildings"  name="Buildings" parent="menu_building_management_root" sequence="2" />
+
+       <menuitem action="open_view_building_structure" id="menu_open_view_building_structure" parent="menu_building_management_buildings" sequence="1"/>
+
+       <menuitem action="open_module_tree_building" id="menu_building_management_sub_menu" parent="menu_building_management_buildings" sequence="2" />
+
+       <menuitem id="menu_building_management_report"  name="Reports" parent="menu_building_management_root" sequence="4" groups="group_building_user,group_building_manager"/>       
+
+       <menuitem id="menu_building_management_config"  name="Configuration" parent="menu_building_management_root" sequence="5" groups="group_building_manager"/>       
+
+       <menuitem action="item_item_form_action" id="menu_item_item" parent="menu_building_management_config" sequence="5" />
+
+        </data>
+</openerp>

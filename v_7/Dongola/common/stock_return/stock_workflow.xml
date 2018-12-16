@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      <record id="return_picking" model="workflow">
+            <field name="name">Return Picking Basic Workflow</field>
+            <field name="osv">stock.return.picking</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="act_draft" model="workflow.activity">
+            <field name="wkf_id" ref="return_picking"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+        </record>
+        <record id="act_complete" model="workflow.activity">
+            <field name="wkf_id" ref="return_picking"/>
+            <field name="name">complete</field>
+            <field name="kind">function</field>
+            <field name="action">complete_returns()</field>
+        </record>
+        <record id="act_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="return_picking"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">create_returns()</field>
+        </record>
+        <record id="act_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="return_picking"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="flow_stop">True</field>
+            <field name="action">write({'state':'cancel'})</field>
+        </record>
+
+        <record id="act_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="return_picking"/>
+            <field name="name">confirmed</field>
+            <field name="kind">subflow</field>
+            <field name="subflow_id" search="[('osv','=','stock.picking')]"/>
+            <field name="action">create_returns()</field>
+        </record>
+       <record id="act_except" model="workflow.activity">
+            <field name="wkf_id" ref="return_picking"/>
+            <field name="name">except_picking</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'except_picking'})</field>
+        </record>
+        <record id="act_done" model="workflow.activity">
+            <field name="wkf_id" ref="return_picking"/>
+            <field name="name">done</field>
+            <field name="action">write({'state':'done'})</field>
+            <field name="kind">function</field>
+            <field name="flow_stop">True</field>
+            <field name="signal_send">subflow.delivery_done</field>
+        </record>
+     
+
+        <record id="trans_draft_complete" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_complete"/>
+            <field name="signal">return_complete</field>
+        </record>
+
+        <record id="trans_complete_confirmed" model="workflow.transition">
+            <field name="act_from" ref="act_complete"/>
+            <field name="act_to" ref="act_confirmed"/>
+            <field name="signal">return_confirm</field>
+        </record>
+        <record id="trans_complete_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_complete"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">return_cancel</field>
+        </record>
+
+        <record id="trans_confirmed_except" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed"/>
+            <field name="act_to" ref="act_except"/>
+            <field name="signal">subflow.cancel</field>
+        </record>
+    
+        <record id="trans_confirmed_done" model="workflow.transition">
+            <field name="act_from" ref="act_confirmed"/>
+            <field name="act_to" ref="act_done"/>
+            <field name="signal">subflow.done</field>
+        </record>
+        <record id="trans_except_done" model="workflow.transition">
+            <field name="act_from" ref="act_except"/>
+            <field name="act_to" ref="act_done"/>
+            <field name="signal">picking_ok</field>
+        </record>
+
+        
+
+    </data>
+</openerp>

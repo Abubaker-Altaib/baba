@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+         <record id="purchase_new_page" model="ir.ui.view">
+            <field name="name">purchase_new_page</field>
+            <field name="model">purchase.order</field>
+	    <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+            <!--field name="pricelist_id" position="after">
+	          <field name="currency_id" colspan="2" readonly="1"/>                 
+            </field-->
+
+            <button name="purchase_cancel" position="after" >
+                <button name="create_supplier_invoive" confirm="Do you want to create supplier invoice?" type="object" states="draft" string="Create Invoice" groups="purchase_foreign.group_purchase_order_foreign_create_invoice" />
+            </button>
+
+
+
+
+
+            <xpath expr="/form/sheet/notebook/page[@string='Purchase Order']" position="after">
+                <page string="Extra Costs" >
+	               <field colspan="4" name="purchase_bills" nolabel="1">
+			   <tree editable="bottom" string="Cost Lines">
+				<field name="bill_date" colspan="2" />
+				<field name="partner_id" colspan="2" />
+				<field name="bill_amount" colspan="2" required="1" />
+				<field name="description" colspan="4" required="1" />
+			   </tree>
+			</field>
+                  </page>   
+                  <newline/>
+                  <group>
+                        <field name="bills_amoun_total" colspan="2" />
+                  </group>
+            </xpath>
+            <field name="amount_tax" position="after">
+	         <field name="purchase_type" readonly="1" attrs="{'invisible':[('purchase_type','!=','foreign')]}"/> 
+	         <field name="freight" colspan="2" attrs="{'invisible':[('purchase_type','!=','foreign')]}" /> 
+		 <field name="packing" colspan="1" attrs="{'invisible':[('purchase_type','!=','foreign')]}"/>
+            </field>
+           </field>                                						            
+         </record>
+
+
+	 <record id="billing_type_form" model="ir.ui.view">
+	     <field name="name">billing.type.form</field>
+	     <field name="model">bill.type</field>
+       	     <field name="type">form</field>
+	     <field name="arch" type="xml">
+	        <form string="Bills Types">
+		   <field name="name" colspan="2" />
+		   <field name="active" colspan="2" />
+		   <field name="property_type_journal" colspan="2" />
+		   <field name="property_type_account" colspan="2" />							
+	        </form>
+	     </field>
+	</record>
+
+	<record id="purchase_billing_form" model="ir.ui.view">
+	     <field name="name">purchase.billing.form</field>
+	     <field name="model">purchase.bills</field>
+	     <field name="type">form</field>
+	     <field name="arch" type="xml">
+		<form string="Bills Information">
+		   <notebook colspan="4">
+			<page string="Bills Information">
+			   <field name="bill_date" colspan="2" />
+			   <field name="bill_no" colspan="2" />
+			   <field name="partner_id" colspan="2" />
+			   <field name="bill_amount" colspan="2" required="1" />
+			   <field name="type" colspan="2" required="1" widget="selection"/>
+			   <field name="description" colspan="4" required="1" />							
+			</page>
+		   </notebook>
+		</form>
+	     </field>
+	</record>
+		
+	<record id="purchase_bill_type_tree" model="ir.ui.view">
+	     <field name="name">bill.type.tree</field>
+     	     <field name="model">bill.type</field>
+	     <field name="type">tree</field>
+	     <field name="arch" type="xml">
+		<tree string="Bills Types">
+		    <field name="name" select="1" />
+		    <field name="active" colspan="2" select="1"/>
+	        </tree>
+	     </field>
+        </record>		
+ 		
+	<record id="purchase_billing_tree" model="ir.ui.view">
+		<field name="name">purchase.billing.tree</field>
+		<field name="model">purchase.bills</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+		       <tree string="Bills Information">
+			     <field name="bill_date" />
+			     <field name="bill_amount" />
+			     <field name="description" />
+		       </tree>
+		</field>
+	</record>
+		
+	<record id="purchase_line_new_page" model="ir.ui.view">
+                <field name="name">purchase_line_new_page</field>
+                <field name="model">purchase.order.line</field>
+	        <field name="inherit_id" ref="purchase.purchase_order_line_form"/>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                       <xpath expr="/form/sheet/group/group/field[@name='price_unit']" position="after">
+                              <field name="extra_cost" colspan="2"/> 
+                              <field name="price_unit_total" colspan="2"/>
+                              <field name="price_unit_packing" colspan="2"/>
+                              <field name="price_unit_freight" colspan="2"/>                                						                              						
+                      </xpath>          
+                </field>
+	</record>
+
+	<record id="bill_type_action" model="ir.actions.act_window">
+		<field name="name">Purchase Bill Type</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">bill.type</field>
+                <field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+	</record>
+		
+        <menuitem id="configuration_foreign_purchase" name ="Foreign Purchase" parent="purchase.menu_purchase_config_purchase" />
+        <menuitem id="foreign_purchase_menu" name ="Foreign Purchase" parent="base.menu_purchase_root" sequence="2" />
+          
+<!-- Incoterms -->
+        <menuitem id="menu_Incoterms_foreign_purchase" name="Incoterms"
+            parent="configuration_foreign_purchase"
+            action="stock.action_incoterms_tree"/>
+<!-- Payment Terms -->
+
+	<menuitem id="menu_payment_term_foreign_purchase" name="Payment Term"
+            parent="configuration_foreign_purchase"
+            action="account.action_payment_term_form"/>
+
+
+<!-- Packing -->
+        <record id="product_pak_form_action" model="ir.actions.act_window">
+            <field name="name">Packing</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.packaging</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+          <menuitem id="menu_product_Packing_name" name="Packing"
+            parent="configuration_foreign_purchase"
+            action="product_pak_form_action" />
+
+<!-- bills types -->
+          <menuitem id="menu_bill_types_name" name="Bill Types"
+            parent="configuration_foreign_purchase"
+            action="bill_type_action" />
+
+       <!--act_window
+           domain="[('purchase_order_ref', '=', active_id)]"
+           id="act_purchase_order_letter_of_credit_link"
+           name="Letter Of Credit"
+           res_model="purchase.letter.of.credit"
+           src_model="purchase.order"/-->
+   </data>
+</openerp>

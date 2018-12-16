@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_vehicles_sale_report" model="ir.ui.view">
+            <field name="name">Vehicles Sale Report</field>
+            <field name="model">vehicle.sale.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Vehicles Sale Report" version="7.0">
+                    <group>
+                    <group>
+                        <field name="type" required="1" />
+                        <field name="sale_type" required="1" />
+                    </group>
+                    <group>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                    </group>
+                    </group>
+                   
+                
+                            <group>
+                                <field name='model_ids' attrs="{'invisible':[('type','!=','model')]}"/>
+                            </group>
+			    <group>
+                            	<field name='type_ids' attrs="{'invisible':[('type','!=','type')]}"/>
+			    </group>
+                            
+
+                    <footer>
+                        <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight"/>                                or                                                                                                                        
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_wizard_vehicles_sale_report" model="ir.actions.act_window">
+            <field name="name">Vehicles Sale Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">vehicle.sale.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_vehicles_sale_report"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem name="Vehicles Sale Report" parent="admin_affairs.fleet_report_menu" action="action_wizard_vehicles_sale_report" id="menu_wizard_vehicles_sale_report" />
+    </data>
+</openerp>

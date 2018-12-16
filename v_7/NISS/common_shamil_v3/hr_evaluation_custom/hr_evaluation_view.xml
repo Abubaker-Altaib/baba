@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+             <menuitem id="hr.menu_hr_configuration" name="Configuration" 
+			parent="hr.menu_hr_root" groups="base.group_hr_manager,base.group_hr_user" sequence="50"/>
+             <menuitem name="Tools" id="base.menu_tools" sequence="120" groups="base.group_hr_manager,base.group_hr_user"/>
+
+             <menuitem name="Surveys" id="menu_surveys" parent="base.menu_tools" sequence="2" groups="base.group_hr_manager,base.group_hr_user"/>
+        
+             <menuitem name="Reporting" parent="base.menu_tools" id="base.menu_lunch_reporting" sequence="6"/>
+             <menuitem name="Reporting" id="menu_reporting" parent="menu_surveys" sequence="60"/>
+             <menuitem id="base.next_id_10" name="Survey" parent="base.menu_reporting" sequence="1" groups="base.group_hr_manager,base.group_hr_user"/>
+  
+		<!-- plan phase -->
+		<record id="view_hr_evaluation_plan_phase_form" model="ir.ui.view">
+			<field name="name">evaluation.form.inherit</field>
+			<field name="model">hr_evaluation.plan.phase</field>
+			<field name="inherit_id"
+				ref="hr_evaluation.view_hr_evaluation_plan_phase_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='sequence']"
+					position="after">
+					<field name="percentage" />
+				</xpath>
+			</field>
+		</record>
+		<record id="view_hr_evaluation_plan_phase_tre" model="ir.ui.view">
+			<field name="name">hr_evaluation.plan.phase.tree.inherit</field>
+			<field name="model">hr_evaluation.plan.phase</field>
+			<field name="inherit_id" ref="hr_evaluation.view_hr_evaluation_plan_phase_tree" />
+			<field name="arch" type="xml">
+				<field name="wait" position="after">
+					<field name="percentage" />
+				</field>
+			</field>
+		</record>
+
+		<!-- Add fields survey.response.line -->
+
+		<record id="view_survey_response_line_form_inherit"
+			model="ir.ui.view">
+			<field name="name">survey.response.line.form.inherit</field>
+			<field name="model">survey.response.line</field>
+			<field name="inherit_id"
+				ref="survey.survey_response_line_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='date_create']"
+					position="after">
+					<field name="result" />
+					<field name="full_mark" />
+				</xpath>
+			</field>
+		</record>
+
+
+		<!-- Add fields survey.response -->
+
+		<record id="view_survey_response_form_inherit"
+			model="ir.ui.view">
+			<field name="name">survey.response.form.inherit</field>
+			<field name="model">survey.response</field>
+			<field name="inherit_id" ref="survey.survey_response_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='response_type']"
+					position="after">
+					<field name="result" />
+				</xpath>
+			</field>
+		</record>
+		<!-- Grade -->
+
+		<record model="ir.ui.view" id="view_apparaisal_grade_form">
+			<field name="name">apparaisal.grade.form</field>
+			<field name="model">hr.apparaisal.grade</field>
+			<field name="arch" type="xml">
+				<form string="Appraisal Plan" version="7.0">
+					<group col="4">
+						<field name="name" />
+						<field name="min" />
+						<field name="max" />
+					</group>
+				</form>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="view_apparaisal_grade_tree">
+			<field name="name">apparaisal.grade.tree</field>
+			<field name="model">hr.apparaisal.grade</field>
+			<field name="arch" type="xml">
+				<tree string="Appraisal Plan">
+					<field name="name" />
+					<field name="min" />
+					<field name="max" />
+				</tree>
+			</field>
+		</record>
+		<record model="ir.actions.act_window"
+			id="open_view_apparaisal_grade_tree">
+			<field name="name">Appraisal Grade</field>
+			<field name="res_model">hr.apparaisal.grade</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		<!--Evaluation Interview -->
+		<record id="view_hr_evaluation_interview_form_inherit" model="ir.ui.view">
+			<field name="name">hr.evaluation.interview.form.inherit</field>
+			<field name="model">hr.evaluation.interview</field>
+			<field name="inherit_id"
+				ref="hr_evaluation.view_hr_evaluation_interview_form" />
+			<field name="arch" type="xml">
+
+				 <xpath expr="//field[@name='survey_id']" position="replace">
+
+						<field name="phase_id"  on_change="onchange_phase_id(phase_id)"/>
+						<field name="survey_id" on_change="onchange_survey_id(phase_id,survey_id)"/>
+			   </xpath>    
+               <xpath expr="//field[@name='response']" position="after">
+					<field name="result"/>
+				</xpath>  
+				<xpath expr="//field[@name='evaluation_id']" position="replace">
+                        <field name="evaluation_id" string="Appraisal Plan" on_change="onchange_evaluation_id(phase_id,evaluation_id)"/>
+				</xpath>                  
+			</field>
+		</record>
+		<record model="ir.ui.view" id="view_hr_evaluation_interview_tree">
+            <field name="name">hr_evaluation.interview.tree</field>
+            <field name="model">hr.evaluation.interview</field>
+            <field name="inherit_id"
+				ref="hr_evaluation.view_hr_evaluation_interview_tree" />
+            <field name="arch" type="xml">
+                
+                <xpath expr="//field[@name='survey_id']" position="before">
+						<field name="phase_id"   />
+			   </xpath>   
+               <xpath expr="//field[@name='response']" position="after">
+					<field name="result"/>
+				</xpath>         
+                    
+            </field>
+        </record>
+
+		<!--Survey Page -->
+		
+ 		<record id="survey_form1" model="ir.ui.view"> 
+			<field name="name">survey_form</field>
+			<field name="model">survey</field>
+			<field name="inherit_id" ref="survey.survey_form" />
+			<field name="arch" type="xml">
+				<field name="question"  position="after">
+					<field name="weight"/>
+				</field>
+			</field>
+		</record>
+
+		<record id="survey_question_column_heading_tree"
+			model="ir.ui.view">
+			<field name="name">
+				survey_question_column_heading_tree
+			</field>
+			<field name="model">survey.question.column.heading</field>
+			<field name="inherit_id"
+				ref="survey.survey_question_column_heading_tree" />
+			<field name="arch" type="xml">
+				<field name="title" position="after">
+					<field name="rating_weight" />
+
+				</field>
+			</field>
+		</record>
+
+		<record id="survey_question_form1" model="ir.ui.view">
+			<field name="name">survey_question_form</field>
+			<field name="model">survey.question</field>
+			<field name="inherit_id" ref="survey.survey_question_form" />
+			<field name="arch" type="xml">
+				<field name="tot_resp" position="after">
+					<field name="weight"/>
+					</field>
+				</field>
+		</record>
+        <record model="ir.ui.view" id="view_hr_evaluation_form">
+            <field name="name">hr_evaluation.evaluation.form</field>
+            <field name="model">hr_evaluation.evaluation</field>
+            <field name="inherit_id" ref="hr_evaluation.view_hr_evaluation_form" />
+            <field name="arch" type="xml">
+               <field name="rating" position="before">
+                   <field name="result"/>
+               </field>  
+               <xpath expr="//field[@name='survey_id']" position="replace">
+
+						<field name="phase_id" required="1" domain="[('plan_id','=',parent.plan_id)]" on_change="onchange_phase_id(phase_id)"/>
+						<field name="survey_id" on_change="onchange_phase_id(phase_id)"/>
+			   </xpath>   
+               <xpath expr="//field[@name='response']" position="after">
+					<field name="result"/>
+				</xpath>                           
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_hr_evaluation_tree">
+            <field name="name">hr_evaluation.evaluation.tree</field>
+            <field name="model">hr_evaluation.evaluation</field>
+            <field name="inherit_id" ref="hr_evaluation.view_hr_evaluation_tree" />
+            <field name="arch" type="xml">
+                <field name="rating" position="before">
+                    <field name="result"/>
+                </field> 
+            </field>
+        </record>
+
+
+		<menuitem id="menu_apparaisal_root" name="Apparaisal"
+			parent="hr.menu_hr_configuration" sequence="7" />
+		<menuitem id="menu_open_view_apparaisal_grade_tree"
+			name="Apparaisal Grade" parent="menu_apparaisal_root"
+			action="open_view_apparaisal_grade_tree" sequence="1" />
+		<menuitem parent="menu_apparaisal_root"
+			id="hr_evaluation.menu_open_view_hr_evaluation_plan_tree"
+			action="hr_evaluation.open_view_hr_evaluation_plan_tree"
+			sequence="2" />
+	</data>
+</openerp>

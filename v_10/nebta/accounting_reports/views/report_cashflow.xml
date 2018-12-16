@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_cashflow">
+    <t t-call="report.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="report.internal_layout">
+                <div class="page">
+
+		<style>
+		#table_layout {
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 18px;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+
+		#table_layout td, #table_layout th {
+		    border: 1px solid #ddd;
+                    text-align: right;
+		    padding: 8px;
+		}
+
+		#table_layout tr:nth-child(even){background-color: #f2f2f2;}
+
+		#table_layout tr:hover {background-color: #ddd;}
+
+		#table_layout th {
+		    padding-top: 12px;
+		    padding-bottom: 12px;
+		    text-align: right;
+		    background-color: #008080;
+		    color: white;
+		}
+              
+
+		#final_calculations {
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 18px;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+		#final_calculations tr:hover {background-color: #ddd;}
+
+		#final_calculations tr:nth-child(even){background-color: #f2f2f2;}
+
+		#final_calculations td {
+		    border: 1px solid #ddd;
+		    padding: 8px;
+		    padding-top: 12px;
+		    padding-bottom: 12px;
+		    text-align: right;
+                    font-weight: bold;
+
+		}
+		.mini_header {
+		    padding-top: 12px;
+		    padding-bottom: 12px;
+		    text-align: right;
+                    font-weight: bold;
+		    background-color: #DBD5D5;
+
+		}
+		
+		.filters {
+
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 16px;
+		    border-collapse: collapse;
+		    width: 100%;
+		} 
+		
+		.title {
+
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 24px;
+                    color: #008080;
+                    font-weight: bold;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+
+		.detail_num {
+
+		    font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+		    font-size: 18px;
+                    font-weight: bold;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+
+		</style>
+
+
+
+                <center>
+                    <h2 class="title" t-esc="data['account_report_id'][1]"/>
+                </center>
+                    <br/>
+                    <br/>
+                    <div class="filters">
+                        <div class="col-xs-4">
+                            <strong>Target Moves:</strong>
+                            <p>
+                                <span t-if="data['target_move'] == 'all'">All Entries</span>
+                                <span t-if="data['target_move'] == 'posted'">All Posted Entries</span>
+                            </p>
+                        </div>
+
+                        <div class="col-xs-4">
+                            <p>
+                                <t t-if="data['date_from']"><strong>Date from :</strong> <span t-esc="data['date_from']"/><br/></t>
+                                <t t-if="data['date_to']"><strong>Date to :</strong> <span t-esc="data['date_to']"/></t>
+                            </p>
+                        </div>
+                    </div>
+                   <br/>
+                    <br/><br/><br/>
+<!--   -->
+
+                    <table id="table_layout" class="table table-condensed" t-if="data['debit_credit'] == 1 and not data['allow_summation'] == 1 and not data['with_details']">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th class="text-right">Debit</th>
+                                <th class="text-right">Credit</th>
+                                <th class="text-right">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td  style="white-space: text-nowrap;">
+                                        <span t-att-style="style" t-esc="a.get('debit')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <td  style="white-space: text-nowrap;">
+                                        <span t-att-style="style" t-esc="a.get('credit')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <td  style="white-space: text-nowrap;">
+                                        <span t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                </t>
+                                    
+                            </tr>
+                              <!--tr>
+                                  <th><strong>Total</strong><span t-att-style="style"/></th>
+
+                            <th><t  t-esc="sum(l.get('debit') for l in get_account_lines if l.get('level') > 3 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+
+                            <th><t  t-esc="sum(l.get('credit') for l in get_account_lines if l.get('level') > 3 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+
+                            <th><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') > 3 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                              </tr-->
+
+
+                        </tbody>
+                    </table> 
+<!--   -->
+                 
+                    <table id="table_layout" class="table table-condensed" t-if="not data['enable_filter'] and not data['debit_credit'] and not data['cash_flow_template'] and not data['allow_summation'] == 1  and not data['with_details'] and not data['owner_equity']">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td><span t-if=" a.get('level') &gt; 1" t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                </t>
+                            </tr>
+                              <!--tr>
+                            <th><strong>Total</strong><span t-att-style="style"/></th>
+                            <th><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') > 3 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                              </tr-->
+
+                        </tbody>
+                    </table> 
+                      
+
+
+                    <table id="table_layout" class="table table-condensed" t-if="data['enable_filter'] == 1 and not data['debit_credit'] and  not data['allow_summation'] == 1 and not data['with_details']">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th class="text-right">Balance</th>
+                                <th class="text-right"><span t-esc="data['label_filter']"/></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..'"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td><span t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                    <td><span t-att-style="style" t-esc="a.get('balance_cmp')"/></td>
+                                </t>
+                            </tr>
+                              <!--tr>
+                            <th><strong>Total</strong><span t-att-style="style"/></th>
+                            <th><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') > 3 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                            <th><t  t-esc="sum(l.get('balance_cmp') for l in get_account_lines if l.get('level') > 3 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                              </tr-->
+                        </tbody>
+                    </table>
+
+            <!-- Cash Flow Statement-->
+            <!-- level > 1 ==>Display balance-->
+            <!-- level < 1 ==>Do not Display balance-->
+
+                    <table id="table_layout" class="table table-condensed" t-if="data['cash_flow_template'] == 1 and not data['enable_filter'] and not data['debit_credit'] and not data['with_details']">
+                        <thead>
+                            <tr>
+                               <th>Name</th>
+                               <th class="text-left">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td class="text-left"><span t-if=" a.get('level') &gt; 1" t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                </t>
+                            </tr>
+                            <tr>
+                                <th>Net increase or decrease of cash:</th>
+				<th><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+				t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+
+                            </tr>
+<tr>
+                                
+                               <td>Cash balance at the begining of period/year: <span t-att-style="style"/> </td>
+                               <td> <t t-att-style="style" t-esc="get_initial_balance" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+
+                            </tr>
+
+                            <tr>
+                               <td>Cash balance at the end of period/year: <span t-att-style="style"/> </td>
+                               <td> <t t-att-style="style" t-esc="(get_initial_balance+sum(l.get('balance') for l in get_account_lines if l.get('level') > 3 ))" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                            </tr>
+                          
+
+                        </tbody>
+                    </table>
+
+            <!-- Profit & loss-->                   
+
+<!--   -->
+
+                    <table id="table_layout" class="table table-condensed" t-if="data['debit_credit'] == 1 and  data['allow_summation'] == 1 and not data['with_details']" >
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th class="text-right">Debit</th>
+                                <th class="text-right">Credit</th>
+                                <th class="text-right">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td  style="white-space: text-nowrap;">
+                                        <span t-att-style="style" t-esc="a.get('debit')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <td  style="white-space: text-nowrap;">
+                                        <span t-att-style="style" t-esc="a.get('credit')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <td  style="white-space: text-nowrap;">
+                                        <span t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                </t>
+                                    
+                            </tr>
+                              <tr>
+                                  <th><strong>profit / loss</strong><span t-att-style="style"/></th>
+
+                            <th><t  t-esc="sum(l.get('debit') for l in get_account_lines if l.get('level') > 3 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+
+                            <th><t  t-esc="sum(l.get('credit') for l in get_account_lines if l.get('level') > 3 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+
+                            <th><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') > 3 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                              </tr>
+
+
+                        </tbody>
+                    </table> 
+<!--_______________________________________________________profit and lost______________________________________________________________-->
+
+<!-- level(font)-> 1 Display title with out balance  -->
+<!-- level(font)-> 1 Display title with out balance  -->
+<!--  profit and lost with out comparazon -->
+
+                 
+                    <table id="table_layout" class="table table-condensed" t-if="data['allow_summation'] == 1 and not data['enable_filter'] and not data['debit_credit'] and not data['cash_flow_template'] and not data['with_details']">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td><span t-if=" a.get('level') &gt; 1" t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                </t>
+                            </tr>
+                              <tr>
+                            <th><strong>profit / loss</strong><span t-att-style="style"/></th>
+                            <th><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                              </tr>
+
+                        </tbody>
+                    </table> 
+                      
+<!--  profit and lost With Comparason-->
+
+                    <table id="table_layout" class="table table-condensed" t-if=" data['allow_summation'] == 1 and data['enable_filter'] == 1 and not data['debit_credit'] and not data['with_details'] ">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th class="text-right">Balance</th>
+                                <th class="text-right"><span t-esc="data['label_filter']"/></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td><span t-if=" a.get('level') &gt; 1" t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+
+                                    <td><span  t-if=" a.get('level') &gt; 1" t-att-style="style" t-esc="a.get('balance_cmp')" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                </t>
+                            </tr>
+                              <tr>
+                            <th><strong>profit / loss</strong><span t-att-style="style"/></th>
+                            <th><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                            <th><t  t-esc="sum(l.get('balance_cmp') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                              </tr>
+                        </tbody>
+                    </table>
+
+<!--  Change Owner Equity -->
+                 
+                    <table id="table_layout" class="table table-condensed" t-if="data['owner_equity'] == 1 and not data['enable_filter'] and not data['debit_credit'] and not data['cash_flow_template'] and not data['with_details']">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Capital</th>
+                                <th>Retained profits</th>
+                                <th>Totals</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="mini_header">
+                            
+		                    <td><strong>Balance in </strong><span  t-set="style" t-esc="data['date_from']" t-value="'font-weight: bold;'"/></td>
+		                    <td><span  t-esc="o._get_equity_initial_balance()" t-set="style"
+	t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}" t-value="'font-weight: bold;'"/></td>
+
+		                    <td><span  t-esc="o._get_retained_profits_initial_balance()"  t-set="style"
+	t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}" t-value="'font-weight: bold;'"/></td>
+
+		                    <td><span t-esc="(o._get_equity_initial_balance() + o._get_retained_profits_initial_balance())" t-set="style" 
+	t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}" t-value="'font-weight: bold;'"/></td>
+
+                            </tr>
+
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td>
+                                         <span t-att-style="style" t-esc="a.get('capital_balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+			            <td>
+					<span t-att-style="style" t-esc="a.get('income_balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+                                    <td>
+					<span t-att-style="style" t-esc="(a.get('capital_balance') + a.get('income_balance'))" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+                                </t>
+                            </tr>
+
+
+                           <tr class="mini_header" >
+                            
+		                    <td><strong>Balance in </strong><span  t-set="style" t-esc="data['date_to']" t-value="'font-weight: bold;'"/></td>
+		                    <td><span  t-esc="(o._get_equity_initial_balance() + sum(l.get('capital_balance') for l in get_account_lines if l.get('level') > 2))" t-set="style"
+	t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}" t-value="'font-weight: bold;'"/></td>
+
+		                    <td><span  t-esc="(o._get_retained_profits_initial_balance() + sum(l.get('income_balance') for l in get_account_lines if l.get('level') > 2))"  t-set="style"
+	t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}" t-value="'font-weight: bold;'"/></td>
+
+		                    <td><span t-esc="(o._get_equity_initial_balance() + o._get_retained_profits_initial_balance()) + (o._get_retained_profits_initial_balance() + sum(l.get('capital_balance')+(l.get('income_balance')) for l in get_account_lines if l.get('level') > 2))" t-set="style" 
+	t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}" t-value="'font-weight: bold;'"/></td>
+
+                            </tr>
+                        </tbody>
+                    </table> 
+                      
+                  
+
+<!-- detail-->
+
+                    <table id="table_layout" class="table table-condensed" t-if="not data['enable_filter'] and not data['debit_credit'] and not data['cash_flow_template'] and not data['allow_summation'] == 1 and data['with_details'] == 1">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Detail Number</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('detail_number')"/>
+                                    </td>
+                                    <td><span t-if=" a.get('level') &gt; 1" t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                </t>
+                            </tr>
+                              <!--tr>
+                            <th><strong>Total</strong><span t-att-style="style"/></th>
+                            <th><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') > 3 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                              </tr-->
+
+                        </tbody>
+                    </table> 
+                      
+
+ <p style="page-break-before:always;"> </p> 
+<div t-if="not data['enable_filter'] and not data['debit_credit'] and not data['cash_flow_template'] and not data['allow_summation'] == 1 and data['with_details'] == 1">
+
+
+                <center>
+                    <h2  class="title"> Details </h2>
+                </center>
+<br/><br/>
+                <div t-foreach="get_account_details_lines" t-as="e">
+                <div class="detail_num" >
+                            <p>
+                                <t ><strong>Detail Number :(</strong> ) <br/></t>
+                            </p>
+                </div>
+
+                    
+
+                    <table id="table_layout" class="table table-condensed" t-if=" not data['debit_credit'] and data['with_details'] == 1 ">
+                        <thead>
+                            <tr>
+                                <th>Name</th>                            
+                                <th class="text-right">Current Balance</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="e" t-as="a">
+                                <t t-if="a['level'] != 0 and a.get('detail_balance') &gt; 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..'"/>
+                                        <span t-att-style="style" t-esc="a.get('detail_name')"/>                        
+                                        
+                                    </td>
+                                    <td><span  t-att-style="style" t-esc="a.get('detail_balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+
+                                </t>
+                            </tr>
+                              <tr>
+                            <th><strong>Total</strong><span t-att-style="style"/></th>
+                            <th><t  t-esc="sum(l.get('detail_balance') for l in e )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                            
+                              </tr>
+                        </tbody>
+                        
+                    </table>
+<br/><br/>
+                    
+                </div>
+
+                </div>
+
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+
+<!--template id="minimal_layout_inherit" inherit_id="report.minimal_layout">
+      <xpath expr="//head" position="inside">
+             <link rel='stylesheet' href="/accounting_reports/static/src/css/style.css"/>
+      </xpath>
+</template-->
+</odoo>

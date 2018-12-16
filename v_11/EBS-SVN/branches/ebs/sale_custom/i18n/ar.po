@@ -1,0 +1,5060 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* sale_management
+#	* sale_crm
+#	* sale_timesheet
+#	* sale_order_dates
+#	* sale_margin
+#	* sale_custom
+#	* sales_team
+#	* sale
+#	* sale_stock
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-28 09:32+0000\n"
+"PO-Revision-Date: 2018-06-28 09:32+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sale_timesheet
+#: code:addons/sale_timesheet/models/account_invoice.py:32
+#: code:addons/sale_timesheet/models/project.py:26
+#, python-format
+msgid "\n"
+"                <p class=\"oe_view_nocontent_create\">\n"
+"                    Click to record timesheets.\n"
+"                </p><p>\n"
+"                    You can register and track your workings hours by project every\n"
+"                    day. Every time spent on a project will become a cost and can be re-invoiced to\n"
+"                    customers if required.\n"
+"                </p>\n"
+"            "
+msgstr "\n"
+"                <p class=\"oe_view_nocontent_create\">\n"
+"                    انقر لتسجيل الجداول الزمنية.\n"
+"                </p><p>\n"
+"                    يمكنك تسجيل وتتبع ساعات العمل الخاصة بك لكل مشروع في كل\n"
+"                    يوم. كل زمن يتم قضاؤه على المشروع سوف يصبح تكلفة ويمكن إعادة إصدار فاتورة الى\n"
+"                    الزبائن إذا لزم الأمر.\n"
+"                </p>\n"
+"            "
+
+#. module: sale
+#: model:mail.template,body_html:sale.email_template_edi_sale
+msgid "\n"
+"<p>Dear ${object.partner_id.name}\n"
+"% set access_action = object.with_context(force_website=True).get_access_action()\n"
+"% set is_online = access_action and access_action['type'] == 'ir.actions.act_url'\n"
+"% set doc_name = 'quotation' if object.state in ('draft', 'sent') else 'order confirmation'\n"
+"% set pay_sign_name =  object.get_portal_confirmation_action()\n"
+"% set access_name = is_online and object.state in ('draft', 'sent') and pay_sign_name in ('pay', 'sign') and 'Accept and %s online' % pay_sign_name or 'View %s' % doc_name\n"
+"% set access_url = is_online and object.get_mail_url() or ''\n"
+"\n"
+"% if object.partner_id.parent_id:\n"
+"    (<i>${object.partner_id.parent_id.name}</i>)\n"
+"% endif\n"
+",</p>\n"
+"<p>\n"
+"Here is\n"
+"% if ctx.get('proforma')\n"
+"in attachment, your pro-forma invoice\n"
+"% else\n"
+"the ${doc_name} <strong>${object.name}</strong>\n"
+"% endif\n"
+"% if object.origin:\n"
+"(with reference: ${object.origin} )\n"
+"% endif\n"
+"amounting in <strong>${object.amount_total} ${object.pricelist_id.currency_id.name}</strong>\n"
+"from ${object.company_id.name}.\n"
+"</p>\n"
+"\n"
+"% if is_online and not ctx.get('proforma'):\n"
+"    <br/><br/>\n"
+"    <center>\n"
+"        <a href=\"${access_url}\" style=\"background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;\" class=\"o_default_snippet_text\">${access_name}</a>\n"
+"        <br/><br/><br/>\n"
+"        <span style=\"color:#888888\">(or view attached PDF)</span>\n"
+"    </center>\n"
+"    <br/>\n"
+"% endif\n"
+"\n"
+"<p>You can reply to this email if you have any questions.</p>\n"
+"<p>Thank you,</p>\n"
+"\n"
+"<p style=\"color:#888888;\">\n"
+"% if object.user_id and object.user_id.signature:\n"
+"    ${object.user_id.signature | safe}\n"
+"% endif\n"
+"</p>\n"
+""
+msgstr "\n"
+"<p>Dear ${object.partner_id.name}\n"
+"% set access_action = object.with_context(force_website=True).get_access_action()\n"
+"% set is_online = access_action and access_action['type'] == 'ir.actions.act_url'\n"
+"% set doc_name = 'quotation' if object.state in ('draft', 'sent') else 'order confirmation'\n"
+"% set pay_sign_name =  object.get_portal_confirmation_action()\n"
+"% set access_name = is_online and object.state in ('draft', 'sent') and pay_sign_name in ('pay', 'sign') and 'Accept and %s online' % pay_sign_name or 'View %s' % doc_name\n"
+"% set access_url = is_online and object.get_mail_url() or ''\n"
+"\n"
+"% if object.partner_id.parent_id:\n"
+"    (<i>${object.partner_id.parent_id.name}</i>)\n"
+"% endif\n"
+",</p>\n"
+"<p>\n"
+"Here is\n"
+"% if ctx.get('proforma')\n"
+"in attachment, your pro-forma invoice\n"
+"% else\n"
+"the ${doc_name} <strong>${object.name}</strong>\n"
+"% endif\n"
+"% if object.origin:\n"
+"(with reference: ${object.origin} )\n"
+"% endif\n"
+"amounting in <strong>${object.amount_total} ${object.pricelist_id.currency_id.name}</strong>\n"
+"from ${object.company_id.name}.\n"
+"</p>\n"
+"\n"
+"% if is_online and not ctx.get('proforma'):\n"
+"    <br/><br/>\n"
+"    <center>\n"
+"        <a href=\"${access_url}\" style=\"background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;\" class=\"o_default_snippet_text\">${access_name}</a>\n"
+"        <br/><br/><br/>\n"
+"        <span style=\"color:#888888\">(or view attached PDF)</span>\n"
+"    </center>\n"
+"    <br/>\n"
+"% endif\n"
+"\n"
+"<p>يمكنك الرد على هذا البريد الإلكتروني إذا كان لديك أي أسئلة..</p>\n"
+"<p>شكرا لك,</p>\n"
+"\n"
+"<p style=\"color:#888888;\">\n"
+"% if object.user_id and object.user_id.signature:\n"
+"    ${object.user_id.signature | safe}\n"
+"% endif\n"
+"</p>\n"
+""
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_product_product_sales_count
+#: model:ir.model.fields,field_description:sale.field_product_template_sales_count
+msgid "# Sales"
+msgstr "عدد المبيعات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_invoice_count
+msgid "# of Invoices"
+msgstr "عدد الفواتير"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_report_nbr
+msgid "# of Lines"
+msgstr "عدد السطور"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_count
+msgid "# of Orders"
+msgstr "عدد الطلبيات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_partner_sale_order_count
+#: model:ir.model.fields,field_description:sale.field_res_users_sale_order_count
+msgid "# of Sales Order"
+msgstr "عدد طلبات البيع"
+
+#. module: sale
+#: model:mail.template,report_name:sale.email_template_edi_sale
+msgid "${(object.name or '').replace('/','_')}${object.state == 'draft' and '_draft' or ''}"
+msgstr "${(object.name or '').replace('/','_')}${object.state == 'draft' and '_draft' or ''}"
+
+#. module: sale
+#: model:mail.template,subject:sale.email_template_edi_sale
+msgid "${object.company_id.name} ${object.state in ('draft', 'sent') and 'Quotation' or 'Order'} (Ref ${object.name or 'n/a' })"
+msgstr "${object.company_id.name} ${object.state in ('draft', 'sent') and 'Quotation' or 'Order'} (Ref ${object.name or 'n/a' })"
+
+#. module: sale
+#: model:mail.template,subject:sale.mail_template_data_notification_email_sale_order
+msgid "${object.subject}"
+msgstr "${object.subject}"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_invoice_layouted
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "&amp;bull;"
+msgstr "&amp;bull;"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_orders
+msgid "&amp;nbsp;"
+msgstr "&amp;nbsp;"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "&amp;nbsp;<span>on</span>&amp;nbsp;"
+msgstr "&amp;nbsp;<span>on</span>&amp;nbsp;"
+
+#. module: sale_management
+#. openerp-web
+#: code:addons/sale_management/static/src/js/tour.js:79
+#, python-format
+msgid "<b>Invite salespeople or managers</b> via email.<br/><i>Enter one email per line.</i>"
+msgstr "<b>دعوة مندوبي المبيعات أو المديرين</b> عبر البريد الالكتروني.<br/><i>أدخل بريدًا إلكترونيًا واحدًا في كل سطر.</i>"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "<b>Total</b>"
+msgstr "<b>المجموع</b>"
+
+#. module: sale
+#: model:mail.template,body_html:sale.mail_template_data_notification_email_sale_order
+msgid "<html>\n"
+"                <head></head>\n"
+"                % set record = ctx.get('record')\n"
+"                % set company = record and record.company_id or user.company_id\n"
+"                <body style=\"margin: 0; padding: 0;\">\n"
+"                <table border=\"0\" width=\"100%\" cellpadding=\"0\" bgcolor=\"#ededed\" style=\"padding: 20px; background-color: #ededed\" summary=\"o_mail_notification\">\n"
+"                    <tbody>\n"
+"\n"
+"                      <!-- HEADER -->\n"
+"                      <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                          <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#875A7B\" style=\"min-width: 590px; background-color: rgb(135,90,123); padding: 20px;\">\n"
+"                            <tr>\n"
+"                              <td valign=\"middle\">\n"
+"                                  <span style=\"font-size:20px; color:white; font-weight: bold;\">\n"
+"                                      ${object.record_name}\n"
+"                                  </span>\n"
+"                              </td>\n"
+"                              <td valign=\"middle\" align=\"right\">\n"
+"                                  <img src=\"/logo.png?company=${company.id}\" style=\"padding: 0px; margin: 0px; height: auto; width: 80px;\" alt=\"${company.name}\">\n"
+"                              </td>\n"
+"                            </tr>\n"
+"                          </table>\n"
+"                        </td>\n"
+"                      </tr>\n"
+"\n"
+"                      <!-- CONTENT -->\n"
+"                      <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                          <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#ffffff\" style=\"min-width: 590px; background-color: rgb(255, 255, 255); padding: 20px;\">\n"
+"                            <tbody>\n"
+"                              <td valign=\"top\" style=\"font-family:Arial,Helvetica,sans-serif; color: #555; font-size: 14px;\">\n"
+"                                ${object.body | safe}\n"
+"                              </td>\n"
+"                            </tbody>\n"
+"                          </table>\n"
+"                        </td>\n"
+"                      </tr>\n"
+"\n"
+"                      <!-- FOOTER -->\n"
+"                      <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                          <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#875A7B\" style=\"min-width: 590px; background-color: rgb(135,90,123); padding: 20px;\">\n"
+"                            <tr>\n"
+"                              <td valign=\"middle\" align=\"left\" style=\"color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;\">\n"
+"                                ${company.name}<br/>\n"
+"                                ${company.phone or ''}\n"
+"                              </td>\n"
+"                              <td valign=\"middle\" align=\"right\" style=\"color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;\">\n"
+"                                % if company.email:\n"
+"                                <a href=\"mailto:${company.email}\" style=\"text-decoration:none; color: white;\">${company.email}</a><br/>\n"
+"                                % endif\n"
+"                                % if company.website:\n"
+"                                    <a href=\"${company.website}\" style=\"text-decoration:none; color: white;\">\n"
+"                                        ${company.website}\n"
+"                                    </a>\n"
+"                                % endif\n"
+"                              </td>\n"
+"                            </tr>\n"
+"                          </table>\n"
+"                        </td>\n"
+"                      </tr>\n"
+"                      <tr>\n"
+"                        <td align=\"center\">\n"
+"                            Powered by <a target=\"_blank\" href=\"https://www.odoo.com\">Odoo</a>.\n"
+"                        </td>\n"
+"                      </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"                </body>\n"
+"                </html>\n"
+"            "
+msgstr "<html>\n"
+"                <head></head>\n"
+"                % set record = ctx.get('record')\n"
+"                % set company = record and record.company_id or user.company_id\n"
+"                <body style=\"margin: 0; padding: 0;\">\n"
+"                <table border=\"0\" width=\"100%\" cellpadding=\"0\" bgcolor=\"#ededed\" style=\"padding: 20px; background-color: #ededed\" summary=\"o_mail_notification\">\n"
+"                    <tbody>\n"
+"\n"
+"                      <!-- HEADER -->\n"
+"                      <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                          <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#875A7B\" style=\"min-width: 590px; background-color: rgb(135,90,123); padding: 20px;\">\n"
+"                            <tr>\n"
+"                              <td valign=\"middle\">\n"
+"                                  <span style=\"font-size:20px; color:white; font-weight: bold;\">\n"
+"                                      ${object.record_name}\n"
+"                                  </span>\n"
+"                              </td>\n"
+"                              <td valign=\"middle\" align=\"right\">\n"
+"                                  <img src=\"/logo.png?company=${company.id}\" style=\"padding: 0px; margin: 0px; height: auto; width: 80px;\" alt=\"${company.name}\">\n"
+"                              </td>\n"
+"                            </tr>\n"
+"                          </table>\n"
+"                        </td>\n"
+"                      </tr>\n"
+"\n"
+"                      <!-- CONTENT -->\n"
+"                      <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                          <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#ffffff\" style=\"min-width: 590px; background-color: rgb(255, 255, 255); padding: 20px;\">\n"
+"                            <tbody>\n"
+"                              <td valign=\"top\" style=\"font-family:Arial,Helvetica,sans-serif; color: #555; font-size: 14px;\">\n"
+"                                ${object.body | safe}\n"
+"                              </td>\n"
+"                            </tbody>\n"
+"                          </table>\n"
+"                        </td>\n"
+"                      </tr>\n"
+"\n"
+"                      <!-- FOOTER -->\n"
+"                      <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                          <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#875A7B\" style=\"min-width: 590px; background-color: rgb(135,90,123); padding: 20px;\">\n"
+"                            <tr>\n"
+"                              <td valign=\"middle\" align=\"left\" style=\"color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;\">\n"
+"                                ${company.name}<br/>\n"
+"                                ${company.phone or ''}\n"
+"                              </td>\n"
+"                              <td valign=\"middle\" align=\"right\" style=\"color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;\">\n"
+"                                % if company.email:\n"
+"                                <a href=\"mailto:${company.email}\" style=\"text-decoration:none; color: white;\">${company.email}</a><br/>\n"
+"                                % endif\n"
+"                                % if company.website:\n"
+"                                    <a href=\"${company.website}\" style=\"text-decoration:none; color: white;\">\n"
+"                                        ${company.website}\n"
+"                                    </a>\n"
+"                                % endif\n"
+"                              </td>\n"
+"                            </tr>\n"
+"                          </table>\n"
+"                        </td>\n"
+"                      </tr>\n"
+"                      <tr>\n"
+"                        <td align=\"center\">\n"
+"                            Powered by <a target=\"_blank\" href=\"https://www.odoo.com\">Odoo</a>.\n"
+"                        </td>\n"
+"                      </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"                </body>\n"
+"                </html>\n"
+"            "
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<i class=\"fa fa-arrow-circle-right\"/> Accept &amp; Sign"
+msgstr "<i class=\"fa fa-arrow-circle-right\"/> Accept &amp; Sign"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<i class=\"fa fa-check-circle\"/> Signed"
+msgstr "<i class=\"fa fa-check-circle\"/> Signed"
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.action_orders_upselling
+msgid "<i>Example: pre-paid service offers for which the customer have\n"
+"                to buy an extra pack of hours, because he used all his support\n"
+"                hours.</i>"
+msgstr "<i>مثال: عروض الخدمات المدفوعة مقدمًا التي تجب على العميل\n"
+"                شراء حزمة إضافية من الساعات ، لأنه استخدم كل ساعاته \n"
+"                المدعومة.</i>"
+
+#. module: sale_management
+#. openerp-web
+#: code:addons/sale_management/static/src/js/tour.js:60
+#, python-format
+msgid "<p><b>Print this quotation.</b> If not yet done, you will be requested to set your company data and to select a document layout.</p>"
+msgstr "<p><b>قم بطباعة هذه الفاتورة.</b> إذا لم يتم ذلك ، فستتم مطالبتك بتعيين بيانات شركتك وتحديد تنسيق مستند.</p>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_orders
+msgid "<span class=\"hidden-xs\">Sales Order #</span>\n"
+"                      <span class=\"visible-xs\">Ref.</span>"
+msgstr "<span class=\"hidden-xs\">امر طلب #</span>\n"
+"                      <span class=\"visible-xs\">مرجع.</span>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_orders
+msgid "<span class=\"label label-danger\"><i class=\"fa fa-fw fa-warning\"/><span class=\"hidden-xs\"> Problem</span></span>"
+msgstr "<span class=\"label label-danger\"><i class=\"fa fa-fw fa-warning\"/><span class=\"hidden-xs\"> مشكلة</span></span>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_orders
+msgid "<span class=\"label label-default hidden-xs\"><i class=\"fa fa-fw fa-check\"/><span class=\"hidden-xs\"> Done</span></span>"
+msgstr "<span class=\"label label-default hidden-xs\"><i class=\"fa fa-fw fa-check\"/><span class=\"hidden-xs\"> تم</span></span>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_quotations
+msgid "<span class=\"label label-default\"><i class=\"fa fa-fw fa-clock-o\"/> Expired</span>"
+msgstr "<span class=\"label label-default\"><i class=\"fa fa-fw fa-clock-o\"/> منتهي الصلاحية</span>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_quotations
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<span class=\"label label-default\"><i class=\"fa fa-fw fa-remove\"/> Cancelled</span>"
+msgstr "<span class=\"label label-default\"><i class=\"fa fa-fw fa-remove\"/> ملغي</span>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<span class=\"label label-default\"><i class=\"fa fa-fw fa-remove\"/> Done</span>"
+msgstr "<span class=\"label label-default\"><i class=\"fa fa-fw fa-remove\"/> تم</span>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<span class=\"label label-info orders_label_text_align\"><i class=\"fa fa-fw fa-clock-o\"/> Waiting</span>"
+msgstr "<span class=\"label label-info orders_label_text_align\"><i class=\"fa fa-fw fa-clock-o\"/> انتظار</span>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_orders
+msgid "<span class=\"label label-info\"><i class=\"fa fa-fw fa-clock-o\"/><span class=\"hidden-xs\"> Invoiced</span></span>"
+msgstr "<span class=\"label label-info\"><i class=\"fa fa-fw fa-clock-o\"/><span class=\"hidden-xs\"> فوترة</span></span>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<span class=\"label label-success orders_label_text_align\"><i class=\"fa fa-fw fa-check\"/> Paid</span>"
+msgstr "<span class=\"label label-success orders_label_text_align\"><i class=\"fa fa-fw fa-check\"/> مدفوع</span>"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.project_project_view_kanban_inherit_sale_timesheet
+msgid "<span class=\"o_label\">Overview</span>"
+msgstr "<span class=\"o_label\">نظرة عامة</span>"
+
+#. module: sale_crm
+#: model:ir.ui.view,arch_db:sale_crm.crm_case_form_view_oppor
+msgid "<span class=\"o_stat_text\"> Orders</span>"
+msgstr "الطلبات"
+
+#. module: sale_crm
+#: model:ir.ui.view,arch_db:sale_crm.crm_case_form_view_oppor
+msgid "<span class=\"o_stat_text\"> Quotation(s) </span>"
+msgstr "<span class=\"o_stat_text\"> تسعيرة </span>"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_salesteams_view_kanban
+msgid "<span>New</span>"
+msgstr "<span>جديد</span>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "<span>Pro-Forma Invoice # </span>"
+msgstr "<span>الفاتورة الأولية # </span>"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_salesteams_view_kanban
+msgid "<span>Reporting</span>"
+msgstr "<span>التقارير</span>"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_salesteams_view_kanban
+msgid "<span>View</span>"
+msgstr "<span>عرض</span>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<strong>Contact</strong>"
+msgstr "<strong>اتصال</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "<strong>Date Ordered:</strong>"
+msgstr "<strong>تاريخ الطلب:</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<strong>Date:</strong>"
+msgstr "<strong>التاريخ:</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<strong>Expiration Date:</strong>"
+msgstr "<strong>تاريخ الانتهاء:</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "<strong>Fiscal Position Remark:</strong>"
+msgstr "<strong>ملاحظة الموقف المالى:</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<strong>Invoices</strong>"
+msgstr "<strong>فواتير</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<strong>Invoicing Address</strong>"
+msgstr "<strong>عنوان الفواتير</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "<strong>Payment Terms:</strong>"
+msgstr "<strong>شروط الدفع:</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<strong>Product</strong>"
+msgstr "<strong>منتج</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<strong>Quantity</strong>"
+msgstr "<strong>الكمية</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "<strong>Quotation Date:</strong>"
+msgstr "<strong>تاريخ الفاتورة:</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "<strong>Salesperson:</strong>"
+msgstr "<strong>مندوب مبيعات:</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<strong>Shipping Address</strong>"
+msgstr "<strong>عنوان الشحن</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_invoice_document_inherit_sale
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "<strong>Shipping address:</strong>"
+msgstr "<strong>عنوان الشحن:</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_invoice_layouted
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "<strong>Subtotal: </strong>"
+msgstr "<strong>الإجمالي الفرعي: </strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "<strong>Subtotal</strong>"
+msgstr "<strong>الإجمالي الفرعي</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "<strong>Total</strong>"
+msgstr "<strong>الإجمالي</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "<strong>Unit Price</strong>"
+msgstr "<strong>سعر الوحدة</strong>"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "<strong>Your Reference:</strong>"
+msgstr "<strong>مرجعك:</strong>"
+
+#. module: sale
+#: selection:res.config.settings,sale_pricelist_setting:0
+msgid "A single sales price per product"
+msgstr "سعر مبيعات واحد لكل منتج"
+
+#. module: sale
+#: model:res.groups,name:sale.group_warning_sale
+msgid "A warning can be set on a product or a customer (Sale)"
+msgstr "يمكن تعيين تحذير على منتج أو عميل (بيع)"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Ability to select a package type in sales orders and to force a quantity that is a multiple of the number of units per package."
+msgstr "القدرة على تحديد نوع الحزمة في أوامر المبيعات وإلحاق كمية متعددة من عدد الوحدات لكل حزمة."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "Accept &amp; Sign"
+msgstr "قبول &amp; رمز"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_advance_payment_inv_deposit_account_id
+msgid "Account used for deposits"
+msgstr "الحساب المستخدم للودائع"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_active
+msgid "Active"
+msgstr "نشط"
+
+#. module: sales_team
+#: model:ir.actions.act_window,name:sales_team.mail_activity_type_action_config_sales
+msgid "Activity Types"
+msgstr "انواع النشاط"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_pagebreak
+msgid "Add pagebreak"
+msgstr "أضف فاصل صفحة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_subtotal
+msgid "Add subtotal"
+msgstr "اضافة اجمالي فرعي"
+
+#. module: sale
+#: model:res.groups,name:sale.group_delivery_invoice_address
+msgid "Addresses in Sales Orders"
+msgstr "عناوين فى أوامر البيع"
+
+#. module: sale
+#: code:addons/sale/wizard/sale_make_invoice_advance.py:156
+#, python-format
+msgid "Advance: %s"
+msgstr "تقدم: %s"
+
+#. module: sale
+#: model:ir.actions.act_window,name:sale.report_all_channels_sales_action
+#: model:ir.ui.menu,name:sale.report_all_channels_sales
+msgid "All Channels Sales Orders"
+msgstr "جميع أوامر مبيعات القنوات"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_all_channels_sales_view_pivot
+#: model:ir.ui.view,arch_db:sale.report_all_channels_sales_view_search
+msgid "All Channels Sales Orders Analysis"
+msgstr "تحليل جميع أوامر بيع القنوات"
+
+#. module: sale
+#: model:ir.model,name:sale.model_report_all_channels_sales
+msgid "All sales orders grouped by sales channels"
+msgstr "جميع طلبات المبيعات مجمعة حسب قنوات المبيعات"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Allow manual discounts on order lines"
+msgstr "السماح بالتخفيضات اليدوية على خطوط الطلب"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Allows you to send Pro-Forma Invoice to your customers"
+msgstr "السماح لك بارسال فاتورة اولية لعملائك"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_res_config_settings_group_proforma_sales
+msgid "Allows you to send pro-forma invoice."
+msgstr "السماح لك بارسال فاتورة اولية."
+
+#. modules: sale, sale_custom
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+msgid "Amount"
+msgstr "المبلغ"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_amt_invoiced
+#: model:ir.model.fields,field_description:sale.field_sale_report_amt_invoiced
+msgid "Amount Invoiced"
+msgstr "المبلغ المفوتر"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_amt_to_invoice
+#: model:ir.model.fields,field_description:sale.field_sale_report_amt_to_invoice
+msgid "Amount To Invoice"
+msgstr "مبلغ الفاتورة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_crm_team_quotations_amount
+msgid "Amount of quotations to invoice"
+msgstr "عدد الفواتير للفوترة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_analytic_account_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_analytic_account_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_analytic_account_id
+msgid "Analytic Account"
+msgstr "مركز التكلفة"
+
+#. module: sale
+#: model:res.groups,name:sale.group_analytic_accounting
+msgid "Analytic Accounting for Sales"
+msgstr "الحسابات التحليلية للمبيعات"
+
+#. modules: sale_timesheet, sale
+#: model:ir.model,name:sale.model_account_analytic_line
+#: model:ir.model,name:sale_timesheet.model_account_analytic_line
+msgid "Analytic Line"
+msgstr "البند التحليلي"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_analytic_tag_ids
+msgid "Analytic Tags"
+msgstr "العلامات التحليلية"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_salesteams_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: sale
+#: selection:product.template,expense_policy:0
+msgid "At cost"
+msgstr "بتكلفة"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.menu_variants_action
+msgid "Attribute Values"
+msgstr "قيم السمات"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.menu_attribute_action
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Attributes"
+msgstr "صفات"
+
+#. module: sales_team
+#: selection:crm.team,dashboard_graph_type:0
+msgid "Bar"
+msgstr "شريط"
+
+#. module: sales_team
+#: code:addons/sales_team/models/crm_team.py:269
+#, python-format
+msgid "Big Pretty Button :)"
+msgstr "زر كبير جميل :)"
+
+#. module: sale_timesheet
+#: selection:account.analytic.line,timesheet_invoice_type:0
+msgid "Billable Fixed"
+msgstr "فوترة ثابتة"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_view_search
+msgid "Billable Hours"
+msgstr "ساعات الفوترة"
+
+#. module: sale_timesheet
+#: selection:account.analytic.line,timesheet_invoice_type:0
+msgid "Billable Time"
+msgstr "زمن الفوترة"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_account_analytic_line_timesheet_invoice_type
+msgid "Billable Type"
+msgstr "نوع الفوترة"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "Billable fixed"
+msgstr "فوترة ثابتة"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "Billable time"
+msgstr "زمن الفوترة"
+
+#. module: sale_timesheet
+#: model:ir.filters,name:sale_timesheet.timesheet_filter_billing
+msgid "Billing Rate"
+msgstr "معدل الفوترة"
+
+#. module: sale
+#: selection:product.template,sale_line_warn:0
+#: selection:res.partner,sale_warn:0
+msgid "Blocking Message"
+msgstr "حجب الرسالة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Boost your sales with two kinds of discount programs: promotions and coupon codes. Specific conditions can be set (products, customers, minimum purchase amount, period). Rewards can be discounts (% or amount) or free products."
+msgstr "تعزيز المبيعات الخاصة بك مع نوعين من برامج الخصم: الترقيات وأكواد القسيمة. يمكن تحديد شروط معينة (المنتجات ، العملاء ، الحد الأدنى لمبلغ الشراء ، الفترة). المكافآت يمكن أن تكون خصومات (% or كمية) او منتجات مجانية."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_configuration_search_view
+msgid "Breaks Page"
+msgstr "فواصل الصفحة"
+
+#. module: sale_timesheet
+#: model:ir.actions.act_window,name:sale_timesheet.timesheet_action_billing_report
+#: model:ir.ui.menu,name:sale_timesheet.menu_timesheet_billing_analysis
+msgid "By Billing Rate"
+msgstr "بمعدل الفوترة"
+
+#. module: sale
+#: model:ir.filters,name:sale.filter_isale_report_product
+msgid "By Product"
+msgstr "بالمنتج"
+
+#. module: sale
+#: model:ir.filters,name:sale.filter_sale_report_salespersons
+msgid "By Salespersons"
+msgstr "برجل البيع"
+
+#. module: sale
+#: model:ir.filters,name:sale.filter_sale_report_salesteam
+msgid "By Salesteam"
+msgstr "حسب فريق المبيعات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_qty_delivered_updateable
+msgid "Can Edit Delivered"
+msgstr "يمكن تحرير المستلمات"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+#: model:ir.ui.view,arch_db:sale.view_sale_advance_payment_inv
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: sale
+#: selection:sale.order,state:0
+#: selection:sale.report,state:0
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.product_menu_catalog
+msgid "Catalog"
+msgstr "الاعدادات"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_user_id
+msgid "Channel Leader"
+msgstr "قائد القناة"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_member_ids
+msgid "Channel Members"
+msgstr "أعضاء القناة"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_team_type
+msgid "Channel Type"
+msgstr "نوع القناه"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_crm_team_use_quotations
+msgid "Check this box if you send quotations to your customers rather than confirming orders straight away. This will add specific action buttons to your dashboard."
+msgstr "حدد هذا المربع لارسال الفواتير لعملائك بدلاً من تأكيد الطلبات فورًا. سيضيف هذا أزرار إجراءات محددة على لوحة المعلومات."
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_crm_team_use_invoices
+msgid "Check this box to set an invoicing target for this sales channel."
+msgstr "حدد هذا المربع لتعيين هدف الفواتير لقناة المبيعات هذه."
+
+#. module: sale_management
+#. openerp-web
+#: code:addons/sale_management/static/src/js/tour.js:33
+#, python-format
+msgid "Click here to add some lines to your quotations."
+msgstr "انقر هنا لإضافة بعض الخطوط إلى الفواتير الخاصة بك."
+
+#. module: sales_team
+#: model:ir.actions.act_window,help:sales_team.crm_team_salesteams_act
+#: model:ir.actions.act_window,help:sales_team.sales_team_config_action
+msgid "Click here to define a new sales channel."
+msgstr "انقر هنا لتعريف قناة مبيعات جديدة."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.crm_team_salesteams_view_kanban
+msgid "Click to define a target"
+msgstr "انقر لتحديد الهدف"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_color
+msgid "Color Index"
+msgstr "اللون"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_report_commercial_partner_id
+msgid "Commercial Entity"
+msgstr "الكيان التجارى"
+
+#. module: sale_order_dates
+#: model:ir.model.fields,field_description:sale_order_dates.field_sale_order_commitment_date
+msgid "Commitment Date"
+msgstr "تاريخ الإلتزام"
+
+#. module: sale
+#: model:ir.model,name:sale.model_res_company
+msgid "Companies"
+msgstr "المؤسسات"
+
+#. modules: sales_team, sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_company_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_company_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_company_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_company_id
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_company_id
+msgid "Company"
+msgstr "المؤسسة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Compute shipping costs and ship with DHL"
+msgstr "حساب تكاليف الشحن والهبوط مع شركة دي إتش إل"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Compute shipping costs and ship with FedEx"
+msgstr "احسب تكاليف الشحن وقم بالشحن باستخدام FedEx"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Compute shipping costs and ship with UPS"
+msgstr "حساب تكاليف الشحن والهبوط مع شركة يو بي إس"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Compute shipping costs and ship with USPS"
+msgstr "حساب تكاليف الشحن والهبوط مع USPS"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Compute shipping costs and ship with bpost"
+msgstr "حساب تكاليف الشحن والهبوط مع bpost"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Compute shipping costs on orders"
+msgstr "حساب تكاليف الشحن على الترتيب"
+
+#. modules: sales_team, sale
+#: model:ir.ui.menu,name:sale.menu_sale_config
+#: model:ir.ui.menu,name:sales_team.menu_sale_config
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: sale_management
+#. openerp-web
+#: code:addons/sale_management/static/src/js/tour.js:75
+#, python-format
+msgid "Configuration options are available in the Settings app."
+msgstr "تتوفر خيارات التهيئة في تطبيق الإعدادات."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Confirm Sale"
+msgstr "تأكيد البيع"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_confirmation_date
+#: model:ir.model.fields,field_description:sale.field_sale_report_confirmation_date
+msgid "Confirmation Date"
+msgstr "تاريخ التأكيد"
+
+#. modules: sales_team, sale
+#: model:ir.model,name:sale.model_res_partner
+#: model:ir.model,name:sales_team.model_res_partner
+msgid "Contact"
+msgstr "اتصال"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_dashboard_graph_model
+msgid "Content"
+msgstr "المحتوى"
+
+#. modules: sale_timesheet, sale_margin
+#: model:ir.model.fields,field_description:sale_margin.field_sale_order_line_purchase_price
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "Cost"
+msgstr "التكلفة"
+
+#. module: sale_timesheet
+#: model:ir.actions.act_window,name:sale_timesheet.timesheet_action_report_cost_revenue
+#: model:ir.ui.menu,name:sale_timesheet.menu_timesheet_report_cost_revenue
+msgid "Costs and Revenues"
+msgstr "التكاليف والايرادات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_sale_coupon
+msgid "Coupons & Promotions"
+msgstr "كوبونات والترقيات"
+
+#. module: sale_management
+#: model:ir.ui.view,arch_db:sale_management.sale_order_view_form
+msgid "Create Invoice"
+msgstr "إنشاء فاتورة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sale_advance_payment_inv
+msgid "Create Invoices"
+msgstr "إنشاء الفواتير"
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.act_res_partner_2_sale_order
+#: model:ir.actions.act_window,help:sale.action_orders
+#: model:ir.actions.act_window,help:sale.action_orders_salesteams
+#: model:ir.actions.act_window,help:sale.action_quotations
+#: model:ir.actions.act_window,help:sale.action_quotations_salesteams
+msgid "Create a Quotation, the first step of a new sale."
+msgstr "أنشئ تسعيرة ، وهي الخطوة الأولى في عملية بيع جديدة."
+
+#. module: sale_timesheet
+#: selection:product.template,service_tracking:0
+msgid "Create a new project but no task"
+msgstr "إنشاء مشروع جديد ولكن لا توجد مهمة"
+
+#. module: sale_timesheet
+#: selection:product.template,service_tracking:0
+msgid "Create a task in a new project"
+msgstr "قم بإنشاء مهمة في مشروع جديد"
+
+#. module: sale_timesheet
+#: selection:product.template,service_tracking:0
+msgid "Create a task in an existing project"
+msgstr "قم بإنشاء مهمة في مشروع موجود"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sale_advance_payment_inv
+msgid "Create and View Invoices"
+msgstr "إنشاء وعرض الفواتير"
+
+#. modules: sales_team, sale
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_create_uid
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_create_uid
+#: model:ir.model.fields,field_description:sale.field_sale_order_create_uid
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_create_uid
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. modules: sales_team, sale
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_create_date
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_create_date
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_create_date
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_create_date
+msgid "Creation Date"
+msgstr "تاريخ الإنشاء"
+
+#. modules: sales_team, sale_timesheet, sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_currency_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_currency_id
+#: model:ir.model.fields,field_description:sale_timesheet.field_hr_employee_currency_id
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_all_channels_sales_view_search
+msgid "Current Year Sales"
+msgstr "مبيعات السنة الحالية"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_order_partner_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_partner_id
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+msgid "Customer"
+msgstr "العميل"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_group_sale_delivery_address
+msgid "Customer Addresses"
+msgstr "عناوين العميل"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_client_order_ref
+msgid "Customer Reference"
+msgstr "مرجع العميل"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_deposit_taxes_id
+msgid "Customer Taxes"
+msgstr "ضرائب العميل"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.res_partner_menu
+msgid "Customers"
+msgstr "العملاء"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_delivery_dhl
+msgid "DHL"
+msgstr "DHL"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_view_form
+msgid "Dashboard"
+msgstr "لوحات المعلومات"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_dashboard_button_name
+msgid "Dashboard Button"
+msgstr "زر لوحة المعلومات"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_dashboard_graph_data
+msgid "Dashboard Graph Data"
+msgstr "بيانات الرسم البياني للوحة المعلومات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_date_order
+#: model:ir.model.fields,field_description:sale.field_sale_report_date
+msgid "Date Order"
+msgstr "ترتيب التواريخ"
+
+#. module: sale_order_dates
+#: model:ir.model.fields,help:sale_order_dates.field_sale_order_requested_date
+msgid "Date by which the customer has requested the items to be delivered.\n"
+"When this Order gets confirmed, the Delivery Order's expected date will be computed based on this date and the Company's Security Delay.\n"
+"Leave this field empty if you want the Delivery Order to be processed as soon as possible. In that case the expected date will be computed using the default method: based on the Product Lead Times and the Company's Security Delay."
+msgstr "التاريخ الذي طلب العميل تسليم المنتجات فيه.\n"
+"عند تأكيد هذا الأمر، سيتم احتساب التاريخ المتوقع للتسليم انطلاقاً من تاريخ التأكيد وفترة الأمان في التسليم.\n"
+"اترك هذا الحقل فارغاً إذا كنت ترغب في معالجة أمر التسليم في أقرب وقت ممكن. في تلك الحالة، سيتم احتساب التاريخ باستخدام الطريقة الافتراضية: بناء على الزمن الاستباقي للمنتج وفترة الأمان للتسليم في الشركة."
+
+#. module: sale_order_dates
+#: model:ir.model.fields,help:sale_order_dates.field_sale_order_commitment_date
+msgid "Date by which the products are sure to be delivered. This is a date that you can promise to the customer, based on the Product Lead Times."
+msgstr "التاريخ الذي تضمن تسليم المنتجات فيه. هذا التاريخ هو الذي ستخبر العميل به، اعتماداً على إعدادات الزمن الاستباقي في المنتج."
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_order_create_date
+msgid "Date on which sales order is created."
+msgstr "تاريخ إنشاء أمر المبيعات"
+
+#. module: sale_order_dates
+#: model:ir.model.fields,help:sale_order_dates.field_sale_order_effective_date
+msgid "Date on which the first Delivery Order was created."
+msgstr "التاريخ الذي تم إنشاء أول أمر تسليم فيه."
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_order_confirmation_date
+msgid "Date on which the sales order is confirmed."
+msgstr "التاريخ الذي تم فيه تأكيد أمر المبيعات."
+
+#. module: sales_team
+#: selection:crm.team,dashboard_graph_group:0
+msgid "Day"
+msgstr "يوم"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_use_sale_note
+msgid "Default Terms & Conditions"
+msgstr "الشروط والأحكام الافتراضية"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_company_sale_note
+msgid "Default Terms and Conditions"
+msgstr "الشروط والأحكام الافتراضية"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_res_config_settings_default_deposit_product_id
+msgid "Default product used for payment advances"
+msgstr "المنتج الافتراضي المستخدم لدفع السلف"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_qty_delivered
+msgid "Delivered"
+msgstr "تم التسليم"
+
+#. module: sale
+#: code:addons/sale/models/sale.py:816
+#: model:ir.ui.view,arch_db:sale.view_order_form
+#, python-format
+msgid "Delivered Quantity"
+msgstr "الكمية المسلمة"
+
+#. module: sale
+#: selection:product.template,invoice_policy:0
+msgid "Delivered quantities"
+msgstr "الكميات المسلمة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_account_invoice_partner_shipping_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_partner_shipping_id
+msgid "Delivery Address"
+msgstr "عنوان التسليم"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_customer_lead
+msgid "Delivery Lead Time"
+msgstr "الوقت اللازم للتسليم"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_account_invoice_partner_shipping_id
+msgid "Delivery address for current invoice."
+msgstr "عنوان التسليم للفاتورة الحالية."
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_order_partner_shipping_id
+msgid "Delivery address for current sales order."
+msgstr "عنوان التسليم لأوامر البيع الحالية."
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_default_deposit_product_id
+msgid "Deposit Product"
+msgstr "إيداع المنتج"
+
+#. module: sale,sale_custom
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_name
+#: model:ir.ui.view,arch_db:sale.report_invoice_layouted
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+msgid "Description"
+msgstr "الوصف"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Design standardized offers"
+msgstr "تصميم عروض موحدة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_invoice_layouted
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "Disc.(%)"
+msgstr "نسبة الخصم (%)"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_discount
+msgid "Discount (%)"
+msgstr "الخصم (%)"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_product_pricelist_discount_policy
+msgid "Discount Policy"
+msgstr "سياسة الخصم"
+
+#. module: sale
+#: selection:product.pricelist,discount_policy:0
+msgid "Discount included in the price"
+msgstr "الخصم مضمن في السعر"
+
+#. module: sale
+#: model:res.groups,name:sale.group_discount_per_so_line
+msgid "Discount on lines"
+msgstr "خصم على الخطوط"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_group_discount_per_so_line
+msgid "Discounts"
+msgstr "الخصومات"
+
+#. modules: sales_team, sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_display_name
+#: model:ir.model.fields,field_description:sale.field_report_sale_report_saleproforma_display_name
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_display_name
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_display_name
+#: model:ir.model.fields,field_description:sale.field_sale_order_display_name
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_display_name
+#: model:ir.model.fields,field_description:sale.field_sale_report_display_name
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: sale_timesheet
+#: selection:product.template,service_tracking:0
+msgid "Don't create task"
+msgstr "لا تنشئ مهمة"
+
+#. module: sale
+#: code:addons/sale/wizard/sale_make_invoice_advance.py:84
+#, python-format
+msgid "Down Payment"
+msgstr "الدفعة الأولى"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_amount
+msgid "Down Payment Amount"
+msgstr "المبلغ المدفوع مقدما"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_product_id
+msgid "Down Payment Product"
+msgstr "منتج الدفع المقدم"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Down Payments"
+msgstr "المدفوعات الاولى"
+
+#. module: sale
+#: selection:sale.advance.payment.inv,advance_payment_method:0
+msgid "Down payment (fixed amount)"
+msgstr "دفعة أولى (مبلغ ثابت)"
+
+#. module: sale
+#: selection:sale.advance.payment.inv,advance_payment_method:0
+msgid "Down payment (percentage)"
+msgstr "الدفعة الأولى (نسبة مئوية)"
+
+#. module: sale
+#: code:addons/sale/wizard/sale_make_invoice_advance.py:81
+#, python-format
+msgid "Down payment of %s%%"
+msgstr "دفعة أولى من %s%%"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_order_line_is_downpayment
+msgid "Down payments are made when creating invoices from a sales order. They are not copied when duplicating a sales order."
+msgstr "يتم إجراء دفعات مقدمة عند إنشاء فواتير من أمر مبيعات. لا يتم نسخها عند تكرار طلب مبيعات."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+msgid "Download"
+msgstr "تحميل"
+
+#. module: sale
+#: selection:sale.report,state:0
+msgid "Draft Quotation"
+msgstr "تسعيرة'مسودة'"
+
+#. module: sale_order_dates
+#: model:ir.model.fields,field_description:sale_order_dates.field_sale_order_effective_date
+msgid "Effective Date"
+msgstr "تاريخ السريان"
+
+#. module: sale
+#: model:ir.model,name:sale.model_mail_compose_message
+msgid "Email composition wizard"
+msgstr "معالج تكوين رسالة بريد الالكتروني"
+
+#. module: sale_timesheet
+#: model:ir.model,name:sale_timesheet.model_hr_employee
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_validity_date
+msgid "Expiration Date"
+msgstr "تاريخ الانتهاء"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+msgid "Extended Filters"
+msgstr "الفلاتر التفصيلية"
+
+#. module: sale
+#: code:addons/sale/models/sale.py:799
+#, python-format
+msgid "Extra line with %s "
+msgstr "خط إضافي مع %s "
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_favorite_user_ids
+msgid "Favorite Members"
+msgstr "الأعضاء المفضلين"
+
+#. module: sales_team
+#: model:ir.model.fields,help:sales_team.field_crm_team_is_favorite
+msgid "Favorite teams to display them in the dashboard and access them easily."
+msgstr "الفرق المفضلة لعرضها في لوحة المعلومات والوصول إليها بسهولة."
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_delivery_fedex
+msgid "FedEx"
+msgstr "FedEx"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_fiscal_position_id
+msgid "Fiscal Position"
+msgstr "الوضع المالي"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "Fixed"
+msgstr "ثابت"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_view_search
+msgid "Fixed Price Projects"
+msgstr "مشاريع الأسعار الثابتة"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.product_template_search_view_sale_timesheet
+msgid "Fixed price services"
+msgstr "خدمات الأسعار الثابتة"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_view_form
+msgid "Follow this salesteam to automatically track the events associated to users of this team."
+msgstr "تابع هذا الفريق لتصلك تنبيهات بكافة الأنشطة المقترنة بأعضاءه."
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.action_account_invoice_report_salesteam
+msgid "From this report, you can have an overview of the amount invoiced to your customer. The search tool can also be used to personalise your Invoices reports and so, match this analysis to your needs."
+msgstr "من هذا التقرير ، يمكنك الحصول على نظرة عامة على المبلغ الذي تم تحرير فاتورة به لعميلك. يمكن أيضًا استخدام أداة البحث لتخصيص تقارير الفواتير الخاصة بك ، لذلك قم بمطابقة هذا التحليل مع احتياجاتك."
+
+#. module: sale
+#: selection:sale.order,invoice_status:0
+#: selection:sale.order.line,invoice_status:0
+msgid "Fully Invoiced"
+msgstr "فواتير كاملة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+msgid "Future Activities"
+msgstr "نشاطات مستقبلية"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Get warnings in orders for products or customers"
+msgstr "الحصول على تحذيرات في طلبات المنتجات أو العملاء"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_view_form
+msgid "Graph"
+msgstr "الرسم البياني"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_report_weight
+msgid "Gross Weight"
+msgstr "الوزن الإجمالي"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_all_channels_sales_view_search
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+#: model:ir.ui.view,arch_db:sale.view_sales_order_line_filter
+msgid "Group By"
+msgstr "تجميع حسب"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_configuration_search_view
+msgid "Group By Name"
+msgstr "تقسيم حسب الاسم"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_salesteams_search
+msgid "Group By..."
+msgstr "تقسيم حسب..."
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_dashboard_graph_group
+msgid "Group by"
+msgstr "تقسيم حسب"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "Hours"
+msgstr "الساعات"
+
+#. module: sales_team
+#: model:ir.model.fields,help:sales_team.field_crm_team_dashboard_graph_group
+msgid "How this channel's dashboard graph will group the results."
+msgstr "كيفية تجميع الرسم البياني للوحة البيانات الخاصة بهذه القناة للنتائج."
+
+#. modules: sales_team, sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_id
+#: model:ir.model.fields,field_description:sale.field_report_sale_report_saleproforma_id
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_id
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_id
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: sales_team
+#: model:ir.model.fields,help:sales_team.field_res_partner_team_id
+#: model:ir.model.fields,help:sales_team.field_res_users_team_id
+msgid "If set, this sales channel will be used for sales and assignations related to this partner"
+msgstr "If set, this sales channel will be used for sales and assignations related to this partner"
+
+#. module: sales_team
+#: model:ir.model.fields,help:sales_team.field_crm_team_active
+msgid "If the active field is set to false, it will allow you to hide the sales channel without removing it."
+msgstr "اذا كان هذا الحقل غير نشط ، سيتم استخدام قناة المبيعات هذه للمبيعات والتخصيصات المتعلقة بهذا الشريك."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "If the sale is locked, you can not modify it anymore. However, you will still be able to invoice or deliver."
+msgstr "إذا تم إغلاق عملية البيع ، فلا يمكنك تعديلها بعد الآن. ومع ذلك ، ستظل قادرًا على إصدار الفاتورة أو التسليم."
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_order_line_product_image
+msgid "Image of the product variant (Big-sized image of product template if false). It is automatically resized as a 1024x1024px image, with aspect ratio preserved."
+msgstr "صورة متغير المنتج (صورة بحجم كبير من قالب المنتج إذا كان خطأ). يتم تغيير حجمها تلقائيًا كصورة 1024x1024 بكسل ، مع الحفاظ على نسبة العرض إلى الارتفاع."
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_deposit_account_id
+msgid "Income Account"
+msgstr "حساب الدخل"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Insert your terms & conditions here..."
+msgstr "أدخل الشروط والأحكام الخاصة بك هنا..."
+
+#. module: sale
+#: code:addons/sale/controllers/portal.py:216
+#, python-format
+msgid "Invalid order"
+msgstr "طلب غير صالح"
+
+#. modules: sale_timesheet, sale, sale_crm
+#: model:ir.model,name:sale.model_account_invoice
+#: model:ir.model,name:sale_crm.model_account_invoice
+#: model:ir.model,name:sale_timesheet.model_account_invoice
+#: model:ir.model.fields,field_description:sale_timesheet.field_account_analytic_line_timesheet_invoice_id
+msgid "Invoice"
+msgstr "الفاتورة"
+
+#. module: sale
+#: code:addons/sale/models/account_invoice.py:52
+#, python-format
+msgid "Invoice %s paid"
+msgstr "الفاتورة %s مدفوعة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_partner_invoice_id
+msgid "Invoice Address"
+msgstr "عنوان الفاتورة"
+
+#. module: sale
+#: model:mail.message.subtype,name:sale.mt_salesteam_invoice_confirmed
+msgid "Invoice Confirmed"
+msgstr "الفاتورة مؤكدة"
+
+#. module: sale
+#: model:mail.message.subtype,name:sale.mt_salesteam_invoice_created
+msgid "Invoice Created"
+msgstr "الفاتورة انشأت"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: sale
+#: model:ir.model,name:sale.model_account_invoice_line
+msgid "Invoice Line"
+msgstr "بند الفاتورة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_invoice_lines
+msgid "Invoice Lines"
+msgstr "سطور الفاتورة"
+
+#. module: sale
+#: model:ir.actions.act_window,name:sale.action_view_sale_advance_payment_inv
+msgid "Invoice Order"
+msgstr "أمر فاتورة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sale_advance_payment_inv
+msgid "Invoice Sales Order"
+msgstr "فاتورة أمر بيع"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_invoice_status
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_invoice_status
+msgid "Invoice Status"
+msgstr "حالات الفاتورة"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_order_partner_invoice_id
+msgid "Invoice address for current sales order."
+msgstr "عنوان الفاتورة لأمر البيع الحالي"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_product_product_service_policy
+#: model:ir.model.fields,field_description:sale_timesheet.field_product_template_service_policy
+msgid "Invoice based on"
+msgstr "الفاتورة على أساس"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,help:sale_timesheet.field_account_analytic_line_timesheet_invoice_id
+msgid "Invoice created from the timesheet"
+msgstr "الفاتورة التي تم إنشاؤها من الجدول الزمني"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_crm_team_invoiced
+msgid "Invoice revenue for the current month. This is the amount the sales channel has invoiced this month. It is used to compute the progression ratio of the current and target revenue on the kanban view."
+msgstr "إيرادات الفاتورة للشهر الحالي. هذا هو المبلغ الذي أصدرته قناة المبيعات هذا الشهر. يتم استخدامه لحساب نسبة التقدم للعائدات الحالية والمستهدفة على طريقة عرض kanban."
+
+#. module: sale
+#: selection:res.config.settings,default_invoice_policy:0
+msgid "Invoice what is delivered"
+msgstr "فوترة ما تم استلامه"
+
+#. module: sale
+#: selection:res.config.settings,default_invoice_policy:0
+msgid "Invoice what is ordered"
+msgstr "فوترة ما تم طلبه"
+
+#. module: sale
+#: selection:sale.advance.payment.inv,advance_payment_method:0
+msgid "Invoiceable lines"
+msgstr "خطوط قابلة للفوترة"
+
+#. module: sale
+#: selection:sale.advance.payment.inv,advance_payment_method:0
+msgid "Invoiceable lines (deduct down payments)"
+msgstr "خطوط غير قابلة للفوترة (خصم الدفعة الأولى)"
+
+#. modules: sale_timesheet, sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_qty_invoiced
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "Invoiced"
+msgstr "مفوتر"
+
+#. module: sale
+#: code:addons/sale/models/sale.py:817
+#: model:ir.ui.view,arch_db:sale.view_order_form
+#, python-format
+msgid "Invoiced Quantity"
+msgstr "الكمية المفوترة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_crm_team_invoiced
+msgid "Invoiced This Month"
+msgstr "فوترة هذا الشهر"
+
+#. module: sale_crm
+#: model:ir.model.fields,field_description:sale_crm.field_res_users_target_sales_invoiced
+msgid "Invoiced in Sales Orders Target"
+msgstr "فوترة في أوامر المبيعات المستهدفة"
+
+#. modules: sales_team, sale
+#: model:ir.actions.act_window,name:sale.action_invoice_salesteams
+#: model:ir.model.fields,field_description:sale.field_sale_order_invoice_ids
+#: model:ir.ui.view,arch_db:sale.crm_team_salesteams_view_kanban
+#: model:ir.ui.view,arch_db:sale.view_order_form
+#: selection:crm.team,dashboard_graph_model:0
+msgid "Invoices"
+msgstr "الفواتير"
+
+#. module: sale
+#: model:ir.actions.act_window,name:sale.action_account_invoice_report_salesteam
+msgid "Invoices Analysis"
+msgstr "تحليل الفواتير"
+
+#. module: sale
+#: model:ir.model,name:sale.model_account_invoice_report
+msgid "Invoices Statistics"
+msgstr "إحصائيات الفواتير"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sale_advance_payment_inv
+msgid "Invoices will be created in draft so that you can review\n"
+"                        them before validation."
+msgstr "سيتم إنشاء الفواتير في المسودة بحيث يمكنك مراجعتها\n"
+"                       قبل التحقق."
+
+#. module: sale
+#: code:addons/sale/models/sales_team.py:96
+#, python-format
+msgid "Invoices: Untaxed Total"
+msgstr "الفواتير: المجموع غير الخاضع للضريبة"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.menu_sale_invoicing
+#: model:ir.ui.view,arch_db:sale.crm_team_salesteams_view_kanban
+#: model:ir.ui.view,arch_db:sale.product_template_form_view_invoice_policy
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Invoicing"
+msgstr "الفواتير"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_product_product_invoice_policy
+#: model:ir.model.fields,field_description:sale.field_product_template_invoice_policy
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_default_invoice_policy
+msgid "Invoicing Policy"
+msgstr "سياسة الفواتير"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_crm_team_invoiced_target
+msgid "Invoicing Target"
+msgstr "الفواتير المستهدفة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "Invoicing address:"
+msgstr "عنوان الفواتير:"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "Invoicing and shipping address:"
+msgstr "الفوترة وعنوان الشحن:"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_is_downpayment
+msgid "Is a down payment"
+msgstr "هو دفعة أولى"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_is_expired
+msgid "Is expired"
+msgstr "منتهي الصلاحية"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_sale_order_line_is_service
+msgid "Is service"
+msgstr "هو الخدمة"
+
+#. module: sale_margin
+#: model:ir.model.fields,help:sale_margin.field_sale_order_margin
+msgid "It gives profitability by calculating the difference between the Unit Price and the cost."
+msgstr "تعطي الاحتمالية بحساب الفرق بين سعر الوحدة والتكلفة"
+
+#. modules: sales_team, sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales___last_update
+#: model:ir.model.fields,field_description:sale.field_report_sale_report_saleproforma___last_update
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv___last_update
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category___last_update
+#: model:ir.model.fields,field_description:sale.field_sale_order___last_update
+#: model:ir.model.fields,field_description:sale.field_sale_order_line___last_update
+#: model:ir.model.fields,field_description:sale.field_sale_report___last_update
+#: model:ir.model.fields,field_description:sales_team.field_crm_team___last_update
+msgid "Last Modified on"
+msgstr "آخر تعديل في"
+
+#. module: sales_team
+#: selection:crm.team,dashboard_graph_period:0
+msgid "Last Month"
+msgstr "الشهر الماضي"
+
+#. modules: sales_team, sale
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_write_uid
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_write_uid
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_write_uid
+#: model:ir.model.fields,field_description:sale.field_sale_order_write_uid
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. modules: sales_team, sale
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_write_date
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_write_date
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_write_date
+#: model:ir.model.fields,field_description:sale.field_sale_order_write_date
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: sales_team
+#: selection:crm.team,dashboard_graph_period:0
+msgid "Last Week"
+msgstr "الاسبوع الماضي"
+
+#. module: sales_team
+#: selection:crm.team,dashboard_graph_period:0
+msgid "Last Year"
+msgstr "السنة الماضية"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+msgid "Late Activities"
+msgstr "الأنشطة المتأخرة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_account_invoice_line_layout_category_sequence
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_layout_category_sequence
+msgid "Layout Sequence"
+msgstr "تسلسل تخطيط"
+
+#. module: sale_crm
+#: model:ir.model,name:sale_crm.model_crm_lead
+msgid "Lead/Opportunity"
+msgstr "عرض/فرصة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Let your customers log in to see their documents"
+msgstr "اسمح لعملائك بتسجيل الدخول للاطلاع على مستنداتهم"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Let your customers sign &amp; pay online"
+msgstr "اسمح لعملائك بالتوقيع &amp; ادفع عبر الإنترنت"
+
+#. module: sale_management
+#. openerp-web
+#: code:addons/sale_management/static/src/js/tour.js:18
+#, python-format
+msgid "Let's create a new quotation.<br/><i>Note that colored buttons usually point to the next logical actions.</i>"
+msgstr " إنشاء تسعيرة جديدة.<br/><i>لاحظ أن الأزرار الملونة تشير عادة إلى الإجراءات المنطقية التالية.</i>"
+
+#. module: sales_team
+#: selection:crm.team,dashboard_graph_type:0
+msgid "Line"
+msgstr "خط"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Line subtotals in sales orders"
+msgstr "مجموع المجاميع الفرعية في أوامر المبيعات"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Lock"
+msgstr "اغلاق"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_auto_done_setting
+msgid "Lock Confirmed Orders"
+msgstr "اغلاق الاوامر المؤكدة"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Locked"
+msgstr "مقلق"
+
+#. module: sale_crm
+#: model:ir.ui.view,arch_db:sale_crm.sale_view_inherit123
+msgid "Log in the chatter from which opportunity the order originates"
+msgstr "سجل في المحادثة من أي فرصة تنشأ الطلب"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Manage promotion &amp; coupon programs"
+msgstr "إدارة الترويج &amp; برامج القسيمة"
+
+#. module: sales_team
+#: model:res.groups,name:sales_team.group_sale_manager
+msgid "Manager"
+msgstr "المدير"
+
+#. module: sale
+#: selection:product.template,service_type:0
+msgid "Manually set quantities on order"
+msgstr "تعيين الكميات يدويا على النظام"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_product_product_service_type
+#: model:ir.model.fields,help:sale.field_product_template_service_type
+msgid "Manually set quantities on order: Invoice based on the manually entered quantity, without creating an analytic account.\n"
+"Timesheets on contract: Invoice based on the tracked hours on the related timesheet.\n"
+"Create a task and track hours: Create a task on the sales order validation and track the work hours."
+msgstr "تعيين الكميات يدوياً على الترتيب: فاتورة تستند إلى الكمية المدخلة يدويًا ، دون إنشاء ‫مركز التكلفة.\n"
+"الجداول الزمنية على العقد: الفاتورة على أساس الساعات المتعقبة في الجدول الزمني ذي الصلة.\n"
+"إنشاء مهمة وتعقب الساعات: قم بإنشاء مهمة على التحقق من صحة أمر المبيعات وتتبع ساعات العمل."
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_order_validity_date
+msgid "Manually set the expiration date of your quotation (offer), or it will set the date automatically based on the template if online quotation is installed."
+msgstr "قم بتعيين تاريخ انتهاء صلاحية عرض الأسعار (عرض) يدويًا ، أو سيتم تعيين التاريخ تلقائيًا استنادًا إلى النموذج إذا تم تثبيت عرض الأسعار عبر الإنترنت."
+
+#. module: sale_margin
+#: model:ir.model.fields,field_description:sale_margin.field_sale_order_line_margin
+#: model:ir.model.fields,field_description:sale_margin.field_sale_order_margin
+#: model:ir.model.fields,field_description:sale_margin.field_sale_report_margin
+msgid "Margin"
+msgstr "الهامش"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_sale_margin
+msgid "Margins"
+msgstr "الهوامش"
+
+#. module: sale
+#: model:sale.layout_category,name:sale.sale_layout_cat_2
+msgid "Material"
+msgstr "مواد"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_partner_sale_warn_msg
+#: model:ir.model.fields,field_description:sale.field_res_users_sale_warn_msg
+msgid "Message for Sales Order"
+msgstr "رسالة لأمر المبيعات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_product_product_sale_line_warn_msg
+#: model:ir.model.fields,field_description:sale.field_product_template_sale_line_warn_msg
+msgid "Message for Sales Order Line"
+msgstr "رسالة لخط أمر المبيعات"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.product_template_search_view_sale_timesheet
+msgid "Milestone services"
+msgstr "خدمات المعلم"
+
+#. module: sale_timesheet
+#: selection:product.template,service_policy:0
+msgid "Milestones (manually set quantities on order)"
+msgstr "معالم (تعيين الكميات يدوياً حسب الطلب)"
+
+#. module: sales_team
+#: selection:crm.team,dashboard_graph_group:0
+msgid "Month"
+msgstr "شهر"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_multi_sales_price
+msgid "Multiple Sales Prices per Product"
+msgstr "أسعار مبيعات متعددة لكل منتج"
+
+#. module: sale
+#: selection:res.config.settings,multi_sales_price_method:0
+#: selection:res.config.settings,sale_pricelist_setting:0
+msgid "Multiple prices per product (e.g. customer segments, currencies)"
+msgstr "أسعار متعددة لكل منتج (مثل شرائح العملاء والعملات)"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+msgid "My Activities"
+msgstr "نشاطاتي"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_salesteams_search
+msgid "My Favorites"
+msgstr "مفضلتي"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+msgid "My Orders"
+msgstr "طلباتي"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_line_filter
+msgid "My Sales Order Lines"
+msgstr "خطوط أوامر البيع الخاصة بى"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_name
+#: model:ir.ui.view,arch_db:sale.report_configuration_search_view
+msgid "Name"
+msgstr "الاسم"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center_name
+msgid "name"
+msgstr "اسم المركز"
+
+#. module: sale
+#: code:addons/sale/models/sale.py:115
+#: code:addons/sale/models/sale.py:275
+#: code:addons/sale/models/sale.py:277
+#: code:addons/sale/models/sale.py:279
+#, python-format
+msgid "New"
+msgstr "جديد"
+
+#. modules: sale, sale_crm
+#: model:ir.actions.act_window,name:sale.action_quotation_form
+#: model:ir.ui.view,arch_db:sale_crm.crm_case_form_view_oppor
+msgid "New Quotation"
+msgstr "تسعيرة جديدة"
+
+#. module: sale
+#: selection:product.template,expense_policy:0
+msgid "No"
+msgstr "لا"
+
+#. module: sale
+#: selection:product.template,sale_line_warn:0
+#: selection:res.partner,sale_warn:0
+msgid "No Message"
+msgstr "لا رسالة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "No longer edit orders once confirmed"
+msgstr "لا يمكن التعديل على الاوامر بعد التاكيد"
+
+#. module: sale_timesheet
+#: selection:account.analytic.line,timesheet_invoice_type:0
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "No task found"
+msgstr "لم يتم العثور على مهمة"
+
+#. module: sale_timesheet
+#: selection:account.analytic.line,timesheet_invoice_type:0
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "Non Billable"
+msgstr "غير قابل للفوترة"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_view_search
+msgid "Non Billable Hours"
+msgstr "ساعات غير قابلة للفوترة"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "Non billable"
+msgstr "غير قابل للفوترة"
+
+#. module: sales_team
+#: code:addons/sales_team/models/crm_team.py:255
+#, python-format
+msgid "Not Defined"
+msgstr "غير معرف"
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.action_quotations
+#: model:ir.actions.act_window,help:sale.action_quotations_salesteams
+msgid "Note that once a Quotation becomes a Sales Order, it will be moved\n"
+"                from the Quotations list to the Sales Order list."
+msgstr "لاحظ أنه بمجرد أن يصبح التسعير أمر مبيعات ، سيتم نقله\n"
+"                من قائمة الأسعار إلى قائمة ترتيب المبيعات."
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.act_res_partner_2_sale_order
+#: model:ir.actions.act_window,help:sale.action_orders_salesteams
+msgid "Note that once a Quotation becomes a Sales Order, it will be moved from the Quotations list to the Sales Order list."
+msgstr "لاحظ أنه بمجرد أن يصبح عرض الأسعار أمر مبيعات ، سيتم نقله من قائمة الأسعار إلى قائمة ترتيب المبيعات."
+
+#. module: sale
+#: selection:sale.order,invoice_status:0
+#: selection:sale.order.line,invoice_status:0
+msgid "Nothing to Invoice"
+msgstr "لا شيء على الفاتورة"
+
+#. module: sale_crm
+#: model:ir.model.fields,field_description:sale_crm.field_crm_lead_sale_number
+msgid "Number of Quotations"
+msgstr "عدد الفواتير"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_order_line_customer_lead
+msgid "Number of days between the order confirmation and the shipping of the products to the customer"
+msgstr "عدد الأيام بين تأكيد أمر البيع وبدء شحن المنتجات إلى العميل"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_crm_team_quotations_count
+msgid "Number of quotations to invoice"
+msgstr "عدد الفواتير للفوترة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_crm_team_sales_to_invoice_count
+msgid "Number of sales to invoice"
+msgstr "عدد المبيعات للفاتورة"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_account_invoice_timesheet_count
+msgid "Number of timesheets"
+msgstr "عدد الجداول الزمنية"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,help:sale_timesheet.field_product_product_service_tracking
+#: model:ir.model.fields,help:sale_timesheet.field_product_template_service_tracking
+msgid "On Sales order confirmation, this product can generate project and/or task. From thoses, you can track the service you are selling."
+msgstr "في تأكيد أمر المبيعات ، يمكن لهذا المنتج إنشاء مشروع و / أو مهمة. من هذه ، يمكنك تتبع الخدمة التي تقوم ببيعها."
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.action_orders
+msgid "Once the quotation is confirmed, it becomes a sales order.\n"
+"                    You'll be able to invoice it and collect payments.\n"
+"                    From the <i>Sales Orders</i> menu, you can track delivery\n"
+"                    orders or services."
+msgstr "بمجرد تأكيد الفاتورة ، يصبح أمر مبيعات.\n"
+"                    ستتمكن من الحصول على فاتورة وجمع الدفعات.\n"
+"                    من <i>طلبات المبيعات</i> القائمة ، يمكنك تتبع توصيل\n"
+"                    الاوامر أو الخدمات."
+
+#. module: sale_management
+#. openerp-web
+#: code:addons/sale_management/static/src/js/tour.js:55
+#, python-format
+msgid "Once your quotation is ready, you can save, print or send it by email."
+msgstr "بمجرد أن تكون الفاتورة الخاصة بك جاهزًة ، يمكنك حفظها أو طباعتها أو إرسالها عبر البريد الإلكتروني."
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_sale_payment
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_portal_confirmation
+msgid "Online Signature & Payment"
+msgstr "التوقيع على الانترنت والدفع"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_portal_confirmation_options
+msgid "Online Signature & Payment options"
+msgstr "خيارات التوقيع والدفع عبر الإنترنت"
+
+#. module: sale
+#. openerp-web
+#: code:addons/sale/static/src/js/sale.js:32
+#, python-format
+msgid "Only Integer Value should be valid."
+msgstr "يمكنك استخدام الأعداد الطبيعية فقط."
+
+#. module: sale
+#: code:addons/sale/controllers/portal.py:209
+#, python-format
+msgid "Operation not allowed"
+msgstr "العملية غير مسموح بها"
+
+#. module: sale_crm
+#: model:ir.model.fields,field_description:sale_crm.field_sale_order_opportunity_id
+msgid "Opportunity"
+msgstr "فرصة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_home_menu_sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+#: model:ir.ui.view,arch_db:sale.view_sales_order_line_filter
+msgid "Order"
+msgstr "الأمر"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "Order #"
+msgstr "رقم الطلبية"
+
+#. module: sale
+#: code:addons/sale/controllers/portal.py:86
+#: code:addons/sale/controllers/portal.py:138
+#: model:ir.model.fields,field_description:sale.field_sale_order_date_order
+#: model:ir.ui.view,arch_db:sale.portal_my_orders
+#: model:ir.ui.view,arch_db:sale.portal_my_quotations
+#: model:ir.ui.view,arch_db:sale.view_order_tree
+#, python-format
+msgid "Order Date"
+msgstr "التاريخ"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+msgid "Subject"
+msgstr "الموضوع"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Order Line Sections"
+msgstr "أقسام خط الطلب"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_order_line
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Order Lines"
+msgstr "التفاصيل"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+msgid "Order Month"
+msgstr "شهر الأمر"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_tree
+msgid "Order Number"
+msgstr "رقم الطلب"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_name
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_order_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_name
+#: model:ir.model.fields,field_description:sale.field_sale_report_name
+msgid "Order Reference"
+msgstr "المرجع"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_state
+msgid "Order Status"
+msgstr "حالة الطلب"
+
+#. module: sale
+#: code:addons/sale/controllers/portal.py:218
+#, python-format
+msgid "Order is not in a state requiring customer validation."
+msgstr "النظام ليس في حالة تتطلب التحقق من صحة العميل."
+
+#. module: sale
+#: code:addons/sale/controllers/portal.py:225
+#, python-format
+msgid "Order signed by %s"
+msgstr "طلب موقّع بواسطة %s"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.crm_team_salesteams_view_kanban
+msgid "Order to Invoice"
+msgstr "طلب للفوترة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Ordered Qty"
+msgstr "الكمية المطلوبة"
+
+#. module: sale
+#: code:addons/sale/models/sale.py:813
+#: model:ir.ui.view,arch_db:sale.view_order_form
+#, python-format
+msgid "Ordered Quantity"
+msgstr "الكمية المطلوبة"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_product_product_invoice_policy
+#: model:ir.model.fields,help:sale.field_product_template_invoice_policy
+msgid "Ordered Quantity: Invoice based on the quantity the customer ordered.\n"
+"Delivered Quantity: Invoiced based on the quantity the vendor delivered (time or deliveries)."
+msgstr "الكمية المطلوبة: الفاتورة بناء على الكمية التي طلبها العميل.\n"
+"الكمية التي تم تسليمها: فواتير استنادًا إلى الكمية التي قدمها البائع (الوقت أو الشحنات))."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+msgid "Ordered date of the sales order"
+msgstr "تاريخ أمر من أوامر المبيعات"
+
+#. modules: sale_timesheet, sale
+#: selection:product.template,invoice_policy:0
+#: selection:product.template,service_policy:0
+msgid "Ordered quantities"
+msgstr "الكميات المطلوبة"
+
+#. modules: sale, sale_crm
+#: model:ir.ui.menu,name:sale.menu_sale_order
+#: model:ir.ui.menu,name:sale.sale_order_menu
+#: model:ir.model.fields,field_description:sale_crm.field_crm_lead_order_ids
+msgid "Orders"
+msgstr "الطلبيّات"
+
+#. module: sale
+#: model:ir.actions.act_window,name:sale.action_orders_to_invoice
+#: model:ir.ui.menu,name:sale.menu_sale_order_invoice
+#: model:ir.ui.view,arch_db:sale.crm_team_salesteams_view_kanban
+msgid "Orders to Invoice"
+msgstr "طلبات للفوترة"
+
+#. module: sale
+#: model:ir.actions.act_window,name:sale.action_orders_upselling
+#: model:ir.ui.menu,name:sale.menu_sale_order_upselling
+msgid "Orders to Upsell"
+msgstr "طلبيات الى الارتقاء بالصفقة"
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.action_orders_upselling
+msgid "Orders to upsell are orders having products with an invoicing\n"
+"                policy based on <i>ordered quantities</i> for which you have\n"
+"                delivered more than what have been ordered."
+msgstr "طلبات الشراء هي طلبات شراء منتجات بنظام الفواتير\n"
+"                السياسة على أساس <i>الكميات المطلوبة</i> التي لديك\n"
+"                تسليم أكثر من ما تم طلبه."
+
+#. module: sale_management
+#. openerp-web
+#: code:addons/sale_management/static/src/js/tour.js:13
+#, python-format
+msgid "Organize your sales activities with the <b>Sales Management app</b>."
+msgstr "تنظيم انشطة المبيعات الخاصة بك مع <b>تطبيق إدارة المبيعات</b>."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Other Information"
+msgstr "معلومات أخرى"
+
+#. module: sale_timesheet
+#: code:addons/sale_timesheet/models/project.py:45
+#, python-format
+msgid "Overview"
+msgstr "نظرة عامة"
+
+#. module: sale
+#: model:ir.actions.report,name:sale.action_report_pro_forma_invoice
+msgid "PRO-FORMA Invoice"
+msgstr "الفاتورة الأولية"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_partner_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_partner_id
+msgid "Partner"
+msgstr "الشريك"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_country_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_country_id
+msgid "Partner Country"
+msgstr "بلد الشريك"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+msgid "Partner's Country"
+msgstr "بلد الشريك"
+
+#. module: sale
+#: selection:res.config.settings,portal_confirmation_options:0
+msgid "Payment"
+msgstr "دفع"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Payment Acquirers"
+msgstr "طُرق الدفع الإلكتروني"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_payment_term_id
+msgid "Payment Terms"
+msgstr "شروط الدفع"
+
+#. module: sale
+#: model:res.groups,name:sale.group_sale_layout
+msgid "Personalize sales order and invoice report"
+msgstr "أمر مبيعات شخصي وتقرير فاتورة"
+
+#. modules: sales_team, sale_crm
+#: code:addons/sale_crm/models/crm_team.py:12
+#: selection:crm.team,dashboard_graph_model:0
+#, python-format
+msgid "Pipeline"
+msgstr "خط انابيب"
+
+#. module: sale
+#: code:addons/sale/models/sale.py:353
+#, python-format
+msgid "Please define an accounting sales journal for this company."
+msgstr "يرجى تحديد دفتر مبيعات محاسبة لهذه الشركة."
+
+#. module: sale
+#: code:addons/sale/models/sale.py:907
+#, python-format
+msgid "Please define income account for this product: \"%s\" (id:%d) - or for its category: \"%s\"."
+msgstr "يرجى تحديد حساب الدخل لهذا المنتج: \"%s\" (id:%d) - أو لفئتها: \"%s\"."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_invoice_layouted
+msgid "Price"
+msgstr "السعر"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_price_reduce
+msgid "Price Reduce"
+msgstr "تخفيض السعر"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_price_reduce_taxexcl
+msgid "Price Reduce Tax excl"
+msgstr "سعر تقليل الاستثناء الضريبي"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_price_reduce_taxinc
+msgid "Price Reduce Tax inc"
+msgstr "سعر تقليل الدخل الضريبي"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_price_subtotal
+msgid "Price Subtotal"
+msgstr "المجموع الفرعي للسعر"
+
+#. module: sale
+#: selection:res.config.settings,sale_pricelist_setting:0
+msgid "Price computed from formulas (discounts, margins, roundings)"
+msgstr "السعر المحسوب من الصيغ (الخصومات ، الهوامش ، الدرجات)"
+
+#. module: sale
+#: model:ir.model,name:sale.model_product_pricelist
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_pricelist_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_pricelist_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_pricelist_id
+msgid "Pricelist"
+msgstr "قائمة الأسعار"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_order_pricelist_id
+msgid "Pricelist for current sales order."
+msgstr "قائمة الأسعار لأمر البيع الحالي"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_multi_sales_price_method
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_sale_pricelist_setting
+#: model:ir.ui.menu,name:sale.menu_product_pricelist_main
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Pricelists"
+msgstr "قوائم الاسعار"
+
+#. module: sale
+#: selection:res.config.settings,multi_sales_price_method:0
+msgid "Prices computed from formulas (discounts, margins, roundings)"
+msgstr "الأسعار المحسوبة من الصيغ (الخصومات ، الهوامش ، الدرجات)"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Pricing"
+msgstr "التسعير"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+msgid "Print"
+msgstr "طباعة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_group_proforma_sales
+msgid "Pro-Forma Invoice"
+msgstr "الفاتورة الأولية"
+
+#. module: sale
+#: model:res.groups,name:sale.group_proforma_sales
+msgid "Pro-forma Invoices"
+msgstr "الفواتير الاولية"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+msgid "Process Type"
+msgstr "نوع اﻹجراء"
+
+#. module: sale
+#: model:ir.model,name:sale.model_product_product
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_product_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_product_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_product_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_product_id
+#: model:ir.ui.view,arch_db:sale.view_sales_order_line_filter
+msgid "Product"
+msgstr "المنتج"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Product Catalog"
+msgstr "بيان المنتج"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_categ_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_categ_id
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+msgid "Product Category"
+msgstr "فئة المنتج"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_product_image
+msgid "Product Image"
+msgstr "صورة المنتج"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_product_qty
+msgid "Product Quantity"
+msgstr "كمية المنتج"
+
+#. modules: sale_timesheet, sale
+#: model:ir.model,name:sale.model_product_template
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_product_tmpl_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_product_tmpl_id
+#: model:ir.model,name:sale_timesheet.model_product_template
+msgid "Product Template"
+msgstr "قالب المنتج"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.menu_product
+#: model:ir.ui.menu,name:sale.menu_products
+msgid "Product Variants"
+msgstr "موديلات المنتج"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Product used for down payments"
+msgstr "المنتج المستخدم للدفعات المقدمة"
+
+#. modules: sale_timesheet, sale
+#: model:ir.ui.menu,name:sale.menu_product_template_action
+#: model:ir.ui.menu,name:sale.prod_config_main
+#: model:ir.actions.act_window,name:sale_timesheet.product_template_action_fixed
+#: model:ir.actions.act_window,name:sale_timesheet.product_template_action_milestone
+#: model:ir.actions.act_window,name:sale_timesheet.product_template_action_time_based
+msgid "Products"
+msgstr "الخدمات"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "Profitability"
+msgstr "الربحية"
+
+#. module: sale_timesheet
+#: model:ir.model,name:sale_timesheet.model_project_project
+#: model:ir.model.fields,field_description:sale_timesheet.field_product_product_project_id
+#: model:ir.model.fields,field_description:sale_timesheet.field_product_template_project_id
+msgid "Project"
+msgstr "المشروع"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_sale_order_project_project_id
+msgid "Project associated to this sale"
+msgstr "مشروع مرتبط بهذا البيع"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.view_order_form_inherit_sale_timesheet
+msgid "Project(s) Overview"
+msgstr "نظرة عامة على المشاريع"
+
+#. module: sale_timesheet
+#: code:addons/sale_timesheet/models/sale_order.py:107
+#: model:ir.model.fields,field_description:sale_timesheet.field_sale_order_project_ids
+#, python-format
+msgid "Projects"
+msgstr "المشروعات"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,help:sale_timesheet.field_sale_order_project_ids
+msgid "Projects used in this sales order."
+msgstr "المشاريع المستخدمة في أمر المبيعات هذا."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_line_tree
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_report_qty_delivered
+msgid "Qty Delivered"
+msgstr "الكمية المسلمة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_report_qty_invoiced
+msgid "Qty Invoiced"
+msgstr "الكمية المفوترة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_report_product_uom_qty
+msgid "Qty Ordered"
+msgstr "الكمية المطلوبة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_report_qty_to_invoice
+msgid "Qty To Invoice"
+msgstr "الكمية للفوترة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Quantities to invoice from sales orders"
+msgstr "كميات للفوترة من أوامر المبيعات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_product_uom_qty
+#: model:ir.ui.view,arch_db:sale.report_invoice_layouted
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Quantity:"
+msgstr "الكمية:"
+
+#. modules: sale_order_dates, sale_timesheet, sale, sale_margin, sale_crm
+#: model:ir.model,name:sale.model_sale_order
+#: model:ir.ui.view,arch_db:sale.crm_team_salesteams_view_kanban
+#: model:ir.ui.view,arch_db:sale.portal_my_home_menu_sale
+#: model:ir.ui.view,arch_db:sale.portal_order_page
+#: model:ir.ui.view,arch_db:sale.view_quotation_tree
+#: selection:sale.order,state:0
+#: model:ir.actions.act_window,name:sale_crm.sale_action_quotations_new
+#: model:ir.model,name:sale_crm.model_sale_order
+#: model:ir.model,name:sale_margin.model_sale_order
+#: model:ir.model,name:sale_order_dates.model_sale_order
+#: model:ir.model,name:sale_timesheet.model_sale_order
+msgid "Quotation"
+msgstr "الفاتورة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_quotations
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "Quotation #"
+msgstr "الفاتورة #"
+
+#. module: sale
+#: model:ir.actions.report,name:sale.action_report_saleorder
+msgid "Quotation / Order"
+msgstr "الفاتورة / الطلب"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_quotation_tree
+msgid "Quotation Date"
+msgstr "تاريخ الفاتورة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_quotation_tree
+msgid "Quotation Number"
+msgstr "مرجع الفاتورة"
+
+#. module: sale
+#: selection:sale.order,state:0
+#: selection:sale.report,state:0
+msgid "Quotation Sent"
+msgstr "تم إرسال الفاتورة"
+
+#. module: sale
+#: model:mail.message.subtype,description:sale.mt_order_confirmed
+msgid "Quotation confirmed"
+msgstr "تمت الموافقة على  الفاتورة"
+
+#. module: sale
+#: model:mail.message.subtype,description:sale.mt_order_sent
+#: model:mail.message.subtype,name:sale.mt_order_sent
+#: model:mail.message.subtype,name:sale.mt_salesteam_order_sent
+msgid "Quotation sent"
+msgstr "تم إرسال الفاتورة"
+
+#. modules: sale, sale_crm
+#: code:addons/sale/models/sales_team.py:101
+#: model:ir.actions.act_window,name:sale.action_quotations
+#: model:ir.actions.act_window,name:sale.action_quotations_salesteams
+#: model:ir.model.fields,field_description:sale.field_crm_team_use_quotations
+#: model:ir.ui.view,arch_db:sale.crm_team_salesteams_view_kanban
+#: model:ir.ui.view,arch_db:sale.portal_my_home_menu_sale
+#: model:ir.ui.view,arch_db:sale.portal_my_home_sale
+#: model:ir.ui.view,arch_db:sale.portal_my_quotations
+#: model:ir.ui.view,arch_db:sale.sale_order_view_search_inherit_quotation
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+#: model:ir.actions.act_window,name:sale_crm.sale_action_quotations
+#: model:ir.ui.menu,name:sale_crm.sale_order_menu_quotations_crm
+#, python-format
+msgid "Quotations"
+msgstr "الفواتير"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Quotations &amp; Orders"
+msgstr "الفواتير &amp; الطلبات"
+
+#. module: sale
+#: model:ir.actions.act_window,name:sale.action_order_report_quotation_salesteam
+msgid "Quotations Analysis"
+msgstr "تحليل الفاتورة "
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.sale_order_view_search_inherit_quotation
+msgid "Quotations Sent"
+msgstr "الفواتير المرسلة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_website_quote
+msgid "Quotations Templates"
+msgstr "قوالب الفواتير"
+
+#. module: sale
+#: model:ir.actions.act_window,name:sale.act_res_partner_2_sale_order
+msgid "Quotations and Sales"
+msgstr "الفواتير  والمبيعات"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "Rates"
+msgstr "معدلات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_product_product_expense_policy
+#: model:ir.model.fields,field_description:sale.field_product_template_expense_policy
+msgid "Re-Invoice Expenses"
+msgstr "اعادة فوترة المصروفات"
+
+#. module: sale
+#: code:addons/sale/controllers/portal.py:87
+#: code:addons/sale/controllers/portal.py:139
+#, python-format
+msgid "Reference"
+msgstr "مرجع"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_order_origin
+msgid "Reference of the document that generated this sales order request."
+msgstr "مرجع المستند الذي أصدر طلب أمر المبيعات هذا"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_reply_to
+msgid "Reply-To"
+msgstr "رد على"
+
+#. module: sale
+#: model:ir.actions.act_window,name:sale.report_configuration_action
+#: model:ir.ui.view,arch_db:sale.report_configuration_form_view
+#: model:ir.ui.view,arch_db:sale.report_configuration_tree_view
+msgid "Report Configuration"
+msgstr "اعدادات التقرير"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.Report_configuration
+msgid "Report Layout Categories"
+msgstr "فئات تنسيق التقرير"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.menu_sale_report
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Reporting"
+msgstr "التقارير"
+
+#. module: sale_order_dates
+#: model:ir.model.fields,field_description:sale_order_dates.field_sale_order_requested_date
+msgid "Requested Date"
+msgstr "تاريخ الطلب"
+
+#. module: sale_order_dates
+#: code:addons/sale_order_dates/models/sale_order.py:57
+#, python-format
+msgid "Requested date is too soon!"
+msgstr "التاريخ المطلوب قريب جداً!"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_account_analytic_line_timesheet_revenue
+msgid "Revenue"
+msgstr "إيرادات"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,help:sale_timesheet.field_project_project_sale_line_id
+msgid "Sale order line from which the project has been created. Used for tracability."
+msgstr "خط طلب البيع الذي تم إنشاء المشروع منه. يستخدم للتتبع."
+
+#. module: sale_crm
+#: model:ir.actions.act_window,name:sale_crm.sale_action_orders
+msgid "Sale orders"
+msgstr "اوامر البيع"
+
+#. modules: sales_team, sale
+#: model:ir.ui.menu,name:sale.menu_report_product_all
+#: model:ir.ui.menu,name:sale.sale_menu_root
+#: model:ir.ui.view,arch_db:sale.crm_team_salesteams_view_kanban
+#: model:ir.ui.view,arch_db:sale.product_form_view_sale_order_button
+#: model:ir.ui.view,arch_db:sale.product_template_form_view_sale_order_button
+#: model:ir.ui.view,arch_db:sale.res_partner_view_buttons
+#: model:ir.ui.view,arch_db:sale.sale_order_view_search_inherit_quotation
+#: model:ir.ui.view,arch_db:sale.sale_order_view_search_inherit_sale
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+#: selection:crm.team,dashboard_graph_model:0
+#: model:crm.team,name:sales_team.team_sales_department
+#: selection:crm.team,team_type:0
+msgid "Sales"
+msgstr "المبيعات"
+
+#. module: sale
+#: model:ir.model,name:sale.model_sale_advance_payment_inv
+msgid "Sales Advance Payment Invoice"
+msgstr "فاتورة الدفع المقدم للمبيعات"
+
+#. module: sale
+#: model:ir.actions.act_window,name:sale.action_order_report_all
+#: model:ir.actions.act_window,name:sale.action_order_report_so_salesteam
+#: model:ir.ui.view,arch_db:sale.view_order_product_graph
+#: model:ir.ui.view,arch_db:sale.view_order_product_pivot
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+msgid "Sales Analysis"
+msgstr "تحليل المبيعات"
+
+#. modules: sales_team, sale, sale_crm
+#: model:ir.model,name:sale.model_crm_team
+#: model:ir.model.fields,field_description:sale.field_account_invoice_report_team_id
+#: model:ir.model.fields,field_description:sale.field_account_invoice_team_id
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_team_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_team_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_team_id
+#: model:ir.ui.view,arch_db:sale.account_invoice_groupby_inherit
+#: model:ir.ui.view,arch_db:sale.report_all_channels_sales_view_search
+#: model:ir.ui.view,arch_db:sale.view_account_invoice_report_search_inherit
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+#: model:ir.model,name:sale_crm.model_crm_team
+#: model:ir.model,name:sales_team.model_crm_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_name
+#: model:ir.model.fields,field_description:sales_team.field_res_partner_team_id
+#: model:ir.model.fields,field_description:sales_team.field_res_users_sale_team_id
+#: model:ir.model.fields,field_description:sales_team.field_res_users_team_id
+#: model:ir.ui.view,arch_db:sales_team.crm_team_view_form
+#: model:ir.ui.view,arch_db:sales_team.crm_team_view_tree
+msgid "Sales Channel"
+msgstr "قناة المبيعات"
+
+#. module: sales_team
+#: model:ir.model.fields,help:sales_team.field_res_users_sale_team_id
+msgid "Sales Channel the user is member of. Used to compute the members of a sales channel through the inverse one2many"
+msgstr "قناة المبيعات التي يكون المستخدم عضوًا فيها. تستخدم لحساب أعضاء قناة المبيعات من خلال one2many معكوس"
+
+#. modules: sales_team, sale
+#: model:ir.ui.menu,name:sale.report_sales_team
+#: model:ir.ui.menu,name:sale.sales_team_config
+#: model:ir.actions.act_window,name:sales_team.crm_team_salesteams_act
+#: model:ir.actions.act_window,name:sales_team.sales_team_config_action
+msgid "Sales Channels"
+msgstr "قنوات المبيعات"
+
+#. module: sale
+#: selection:sale.report,state:0
+msgid "Sales Done"
+msgstr "مبيعات منجزة"
+
+#. module: sale
+#: model:ir.filters,name:sale.filter_sale_report_sales_funnel
+msgid "Sales Funnel"
+msgstr "مراحل البيع"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Sales Information"
+msgstr "بيانات المبيعات"
+
+#. modules: sale_timesheet, sale
+#: model:ir.model.fields,field_description:sale.field_res_partner_sale_order_ids
+#: model:ir.model.fields,field_description:sale.field_res_partner_sale_warn
+#: model:ir.model.fields,field_description:sale.field_res_users_sale_order_ids
+#: model:ir.model.fields,field_description:sale.field_res_users_sale_warn
+#: model:ir.ui.view,arch_db:sale.view_order_form
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+#: model:res.request.link,name:sale.req_link_sale_order
+#: selection:sale.order,state:0
+#: selection:sale.report,state:0
+#: model:ir.ui.view,arch_db:sale_timesheet.view_sale_service_inherit_form2
+msgid "Sales Order"
+msgstr "طلب المبيعات"
+
+#. module: sale
+#: model:mail.message.subtype,name:sale.mt_order_confirmed
+#: model:mail.message.subtype,name:sale.mt_salesteam_order_confirmed
+msgid "Sales Order Confirmed"
+msgstr "تأكيد طلب المبيعات"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_project_task_sale_line_id
+#: model:ir.ui.view,arch_db:sale_timesheet.view_sale_service_inherit_form2
+msgid "Sales Order Item"
+msgstr "عنصر طلب المبيعات"
+
+#. modules: sale_order_dates, sale_timesheet, sale, sale_margin
+#: model:ir.model,name:sale.model_sale_order_line
+#: model:ir.model.fields,field_description:sale.field_account_analytic_line_so_line
+#: model:ir.model.fields,field_description:sale.field_product_product_sale_line_warn
+#: model:ir.model.fields,field_description:sale.field_product_template_sale_line_warn
+#: model:ir.model,name:sale_margin.model_sale_order_line
+#: model:ir.model,name:sale_order_dates.model_sale_order_line
+#: model:ir.model,name:sale_timesheet.model_sale_order_line
+#: model:ir.model.fields,field_description:sale_timesheet.field_project_project_sale_line_id
+msgid "Sales Order Line"
+msgstr "بند طلب البيع"
+
+#. module: sale
+#: model:ir.actions.act_window,name:sale.action_product_sale_list
+#: model:ir.model.fields,field_description:sale.field_account_invoice_line_sale_line_ids
+#: model:ir.ui.view,arch_db:sale.view_order_form
+#: model:ir.ui.view,arch_db:sale.view_order_line_tree
+msgid "Sales Order Lines"
+msgstr "سطور طلب المبيعات"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_line_filter
+msgid "Sales Order Lines ready to be invoiced"
+msgstr "خطوط طلب البيع جاهزة للفوترة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_line_filter
+msgid "Sales Order Lines related to a Sales Order of mine"
+msgstr "خطوط طلبات البيع ذات الصلة بطلبات البيع الخاصة بى"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,help:sale_timesheet.field_sale_order_line_is_service
+msgid "Sales Order item should generate a task and/or a project, depending on the product settings."
+msgstr "يجب أن يؤدي بند طلب المبيعات إلى إنشاء مهمة و / أو مشروع ، بناءً على إعدادات المنتج."
+
+#. module: sale
+#: code:addons/sale/models/sales_team.py:102
+#: model:ir.actions.act_window,name:sale.action_orders
+#: model:ir.actions.act_window,name:sale.action_orders_salesteams
+#: model:ir.actions.act_window,name:sale.action_orders_to_invoice_salesteams
+#: model:ir.ui.menu,name:sale.menu_sales_config
+#: model:ir.ui.view,arch_db:sale.crm_team_salesteams_view_kanban
+#: model:ir.ui.view,arch_db:sale.portal_my_home_menu_sale
+#: model:ir.ui.view,arch_db:sale.portal_my_home_sale
+#: model:ir.ui.view,arch_db:sale.portal_my_orders
+#: model:ir.ui.view,arch_db:sale.view_order_tree
+#: model:ir.ui.view,arch_db:sale.view_sale_order_calendar
+#: model:ir.ui.view,arch_db:sale.view_sale_order_graph
+#: model:ir.ui.view,arch_db:sale.view_sale_order_pivot
+#: model:ir.actions.act_window,name:sale_custom.action_bank_card_orders
+#, python-format
+msgid "Sales Orders"
+msgstr "اوامر البيع"
+
+#. modules: sale, sale_margin
+#: model:ir.model,name:sale.model_sale_report
+#: model:ir.model,name:sale_margin.model_sale_report
+msgid "Sales Orders Statistics"
+msgstr "إحصائيات طلبات البيع"
+
+#. module: sale
+#: selection:product.template,expense_policy:0
+msgid "Sales price"
+msgstr "سعر المبيعات"
+
+#. module: sale
+#: code:addons/sale/models/sales_team.py:94
+#, python-format
+msgid "Sales: Untaxed Total"
+msgstr "المبيعات: المجموع غير الخاضع للضريبة"
+
+#. modules: sales_team, sale
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_user_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_salesman_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_user_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_user_id
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+#: model:ir.ui.view,arch_db:sale.view_sales_order_line_filter
+#: selection:crm.team,dashboard_graph_group:0
+msgid "Salesperson"
+msgstr "مسئول المبيعات"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_view_form
+msgid "Salesteam name..."
+msgstr "اسم فريق المبيعات..."
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_salesteams_search
+msgid "Salesteams Search"
+msgstr "بحث فريق المبيعات"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_dashboard_graph_period
+msgid "Scale"
+msgstr "مقياس"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_configuration_search_view
+msgid "Search Name"
+msgstr "اسم البحث"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+#: model:ir.ui.view,arch_db:sale.view_sales_order_line_filter
+msgid "Search Sales Order"
+msgstr "ابحث في طلب المبيعات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_account_invoice_line_layout_category_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_layout_category_id
+msgid "Section"
+msgstr "جزء"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_group_sale_layout
+msgid "Sections on Sales Orders"
+msgstr "اجزاء على طلبات المبيعات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_access_token
+msgid "Security Token"
+msgstr "رمز الأمان"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,help:sale_timesheet.field_product_product_project_id
+#: model:ir.model.fields,help:sale_timesheet.field_product_template_project_id
+msgid "Select a non billable project on which tasks can be created. This setting must be set for each company."
+msgstr "حدد مشروعًا غير قابل للفوترة حول المهام التي يمكن إنشاؤها. يجب تعيين هذا الإعداد لكل شركة."
+
+#. module: sale_management
+#. openerp-web
+#: code:addons/sale_management/static/src/js/tour.js:38
+#, python-format
+msgid "Select a product, or create a new one on the fly. The product will define the default sales price (that you can change), taxes and description automatically."
+msgstr "حدد منتجًا ، أو أنشئ منتجًا جديدًا . سيحدد المنتج سعر البيع الافتراضي (الذي يمكنك تغييره) والضرائب والوصف تلقائيًا."
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_product_product_sale_line_warn
+#: model:ir.model.fields,help:sale.field_product_template_sale_line_warn
+#: model:ir.model.fields,help:sale.field_res_partner_sale_warn
+#: model:ir.model.fields,help:sale.field_res_users_sale_warn
+msgid "Selecting the \"Warning\" option will notify user with the message, Selecting \"Blocking Message\" will throw an exception with the message and block the flow. The Message has to be written in the next field."
+msgstr "اختيار \"تحذير\" الخيار سوف يخطر المستخدم مع الرسالة ، واختيار \"حجب الرسالة\" سوف بطرح استثناء مع رسالة ومنع التدفق. يجب كتابة الرسالة في الحقل التالي."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Sell and purchase products in different units of measure"
+msgstr "بيع وشراء المنتجات في وحدات قياس مختلفة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_website_sale_digital
+msgid "Sell digital products - provide downloadable content on your customer portal"
+msgstr "بيع المنتجات الرقمية - توفير محتوى قابل للتنزيل على بوابة العملاء الخاصة بك"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Sell products by multiple of unit # per package"
+msgstr "بيع المنتجات عن طريق مضاعفة وحدة # لكل حزمة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Send PRO-FORMA Invoice"
+msgstr "ارسال الفاتورة الأولية"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Send a product-specific email once the invoice is paid"
+msgstr "إرسال بريد إلكتروني خاص بالمنتج بمجرد دفع الفاتورة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Send by Email"
+msgstr "ارسال بالبريد"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Sending an email is useful if you need to share specific information or content about a product (instructions, rules, links, media, etc.). Create and set the email template from the product detail form (in Sales tab)."
+msgstr "يعد إرسال بريد إلكتروني مفيدًا إذا كنت بحاجة إلى مشاركة معلومات أو محتوى محدد حول منتج ما (تعليمات ، قواعد ، روابط ، وسائط ، إلخ). إنشاء قالب البريد الإلكتروني وتعيينه من نموذج تفاصيل المنتج (في علامة التبويب المبيعات)."
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_sequence
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_sequence
+msgid "Sequence"
+msgstr "تسلسل"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_product_product_service_tracking
+#: model:ir.model.fields,field_description:sale_timesheet.field_product_template_service_tracking
+msgid "Service Tracking"
+msgstr "تتبع الخدمة"
+
+#. modules: sale, sale_custom
+#: model:ir.ui.menu,name:sale.menu_product_template_action
+#: model:sale.layout_category,name:sale.sale_layout_cat_1
+#: code:addons/sale_custom/models/models.py:19
+#: model:ir.actions.act_window,name:sale_custom.product_template_action
+#: model:ir.ui.view,arch_db:sale_custom.channel_form_view
+#, python-format
+msgid "Services"
+msgstr "الخدمات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_crm_team_use_invoices
+msgid "Set Invoicing Target"
+msgstr "تعيين الفواتير المستهدفة"
+
+#. module: sale
+#. openerp-web
+#: code:addons/sale/static/src/js/sale.js:25
+#, python-format
+msgid "Set an invoicing target: "
+msgstr "حدد هدف الفواتير: "
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Set multiple prices per product, automated discounts, etc."
+msgstr "تعيين عدة أسعار لكل منتج ، خصومات تلقائية ، إلخ."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Set product attributes (e.g. color, size) to sell variants"
+msgstr "عيّن سمات المنتج (مثل اللون والحجم) لبيع المتغيرات"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Set specific billing and shipping addresses"
+msgstr "تعيين عناوين محددة للفوترة والشحن"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Set to Quotation"
+msgstr "تعيين للتسعيرة"
+
+#. modules: sales_team, sale
+#: model:ir.actions.act_window,name:sale.action_sale_config_settings
+#: model:ir.ui.menu,name:sale.menu_sale_general_settings
+#: model:ir.ui.view,arch_db:sales_team.crm_team_salesteams_view_kanban
+msgid "Settings"
+msgstr "الإعدادات"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Setup default terms and conditions in your sales settings ..."
+msgstr "إعداد الشروط والأحكام الافتراضية في إعدادات المبيعات الخاصة بك ..."
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.res_config_settings_view_form
+msgid "Setup your fixed price services"
+msgstr "قم بإعداد خدمات أسعارك الثابتة"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.res_config_settings_view_form
+msgid "Setup your milestone services"
+msgstr "قم بإعداد خدماتك الرئيسية"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.res_config_settings_view_form
+msgid "Setup your time-based services"
+msgstr "قم بإعداد خدماتك المستندة إلى الوقت"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Shipping"
+msgstr "الشحن"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_delivery
+msgid "Shipping Costs"
+msgstr "تكاليف الشحن"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+msgid "Show all records which has next action date is before today"
+msgstr "عرض جميع السجلات التي لها تاريخ اتخاذ الإجراء التالي قبل اليوم"
+
+#. module: sale
+#: model:res.groups,comment:sale.group_show_price_total
+msgid "Show line subtotals with taxes included (B2C)"
+msgstr "إظهار المجاميع الفرعية للخط مع الضرائب المشمولة (B2C)"
+
+#. module: sale
+#: model:res.groups,comment:sale.group_show_price_subtotal
+msgid "Show line subtotals without taxes (B2B)"
+msgstr "إظهار المجاميع الفرعية بدون ضرائب (B2B)"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Show margins on orders"
+msgstr "إظهار الهوامش على الطلبات"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_is_favorite
+msgid "Show on dashboard"
+msgstr "عرض على لوحة المعلومات"
+
+#. module: sale
+#: selection:product.pricelist,discount_policy:0
+msgid "Show public price & discount to the customer"
+msgstr "عرض السعر العام والخصم للعميل"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Show standard terms &amp; conditions on orders"
+msgstr "إظهار الشروط القياسية &amp; شروط على الطلبات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_group_show_price_subtotal
+msgid "Show subtotal"
+msgstr "إظهار الإجمالي الفرعي"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_group_show_price_total
+msgid "Show total"
+msgstr "إظهار المجموع"
+
+#. module: sale
+#: selection:res.config.settings,portal_confirmation_options:0
+msgid "Signature"
+msgstr "التوقيع"
+
+#. module: sale
+#: code:addons/sale/controllers/portal.py:211
+#, python-format
+msgid "Signature is missing."
+msgstr "التوقيع مفقود."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Sort products in sections with subtotals and page-breaks"
+msgstr "تصنيف المنتجات في الأقسام ذات المجاميع الفرعية و فواصل الصفحات"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_origin
+msgid "Source Document"
+msgstr "مستند المصدر"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_product_email_template
+msgid "Specific Email"
+msgstr "البريد الإلكتروني المحدد"
+
+#. module: sale
+#: code:addons/sale/controllers/portal.py:88
+#: code:addons/sale/controllers/portal.py:140
+#, python-format
+msgid "Stage"
+msgstr "مرحلة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_state
+#: model:ir.model.fields,field_description:sale.field_sale_report_state
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_price_subtotal
+#: model:ir.ui.view,arch_db:sale.invoice_form_inherit_sale
+msgid "Subtotal"
+msgstr "المجموع"
+
+#. module: sale_crm
+#: model:ir.model.fields,field_description:sale_crm.field_crm_lead_sale_amount_total
+msgid "Sum of Orders"
+msgstr "مجموع الطلبات"
+
+#. module: sale_crm
+#: model:ir.model.fields,field_description:sale_crm.field_sale_order_tag_ids
+msgid "Tags"
+msgstr "الوسوم"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_crm_team_invoiced_target
+msgid "Target of invoice revenue for the current month. This is the amount the sales channel estimates to be able to invoice this month."
+msgstr " إيرادات الفاتورة المستهدف للشهر الحالي. هذا هو المبلغ الذي تقدره قناة المبيعات حتى تتمكن من إصدار فاتورة هذا الشهر."
+
+#. module: sale_timesheet
+#: model:ir.model,name:sale_timesheet.model_project_task
+#: model:ir.model.fields,field_description:sale_timesheet.field_sale_order_line_task_id
+msgid "Task"
+msgstr "المهمة"
+
+#. module: sale_timesheet
+#: code:addons/sale_timesheet/models/sale_order.py:234
+#, python-format
+msgid "Task Created (%s): <a href=# data-oe-model=project.task data-oe-id=%d>%s</a>"
+msgstr "تم انشاء المهمة (%s): <a href=# data-oe-model=project.task data-oe-id=%d>%s</a>"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,help:sale_timesheet.field_sale_order_line_task_id
+msgid "Task generated by the sales order item"
+msgstr "المهمة التي تم إنشاؤها بواسطة عنصر طلب المبيعات"
+
+#. module: sale_timesheet
+#: code:addons/sale_timesheet/controllers/main.py:111
+#: code:addons/sale_timesheet/controllers/main.py:143
+#: model:ir.model.fields,field_description:sale_timesheet.field_sale_order_tasks_count
+#: model:ir.ui.view,arch_db:sale_timesheet.view_order_form_inherit_sale_timesheet
+#, python-format
+msgid "Tasks"
+msgstr "المهام"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_sale_order_tasks_ids
+msgid "Tasks associated to this sale"
+msgstr "المهام المرتبطة بهذا البيع"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_sale_show_tax
+msgid "Tax Display"
+msgstr "عرض الضرائب"
+
+#. module: sale
+#: model:res.groups,name:sale.group_show_price_subtotal
+msgid "Tax display B2B"
+msgstr "عرض الضرائب B2B"
+
+#. module: sale
+#: model:res.groups,name:sale.group_show_price_total
+msgid "Tax display B2C"
+msgstr "عرض الضرائب B2C"
+
+#. module: sale
+#: selection:res.config.settings,sale_show_tax:0
+msgid "Tax-Excluded Prices"
+msgstr "الاسعار مستبعدة الضرائب"
+
+#. module: sale
+#: selection:res.config.settings,sale_show_tax:0
+msgid "Tax-Included Prices"
+msgstr "أسعار شاملة الضرائب"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_amount_tax
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_price_tax
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_tax_id
+#: model:ir.ui.view,arch_db:sale.report_invoice_layouted
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "Taxes"
+msgstr "الضرائب"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_advance_payment_inv_deposit_taxes_id
+msgid "Taxes used for deposits"
+msgstr "الضرائب المستخدمة للودائع"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_salesteams_search
+msgid "Team Leader"
+msgstr "قائد المجموعة"
+
+#. module: sales_team
+#: model:ir.ui.view,arch_db:sales_team.crm_team_view_form
+msgid "Team Members"
+msgstr "اعضاء الفريق"
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_res_config_settings_module_sale_payment
+msgid "Technical field implied by user choice of online_confirmation"
+msgstr "المجال الفني مقدر باختيار المستخدم لـ online_confirmation"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_sale_note
+msgid "Terms & Conditions"
+msgstr "الشروط والاحكام"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_note
+msgid "Terms and conditions"
+msgstr "الشروط والأحكام"
+
+#. module: sale
+#: code:addons/sale/models/analytic.py:128
+#: code:addons/sale/models/analytic.py:140
+#, python-format
+msgid "The Sales Order %s linked to the Analytic Account must be validated before registering expenses."
+msgstr "طلب المبيعات %s المرتبطة مركز التكلفة يجب التحقق من صحتها قبل تسجيل النفقات."
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_advance_payment_inv_amount
+msgid "The amount to be invoiced in advance, taxes excluded."
+msgstr "المبلغ المطلوب تحرير فاتورة به مقدمًا ، مستبعد الضرائب."
+
+#. module: sale
+#: model:ir.model.fields,help:sale.field_sale_order_analytic_account_id
+msgid "The analytic account related to a sales order."
+msgstr "مركز التكلفة المتعلق بأمر بيع"
+
+#. module: sales_team
+#: model:ir.model.fields,help:sales_team.field_crm_team_color
+msgid "The color of the channel"
+msgstr "لون القناة"
+
+#. module: sale_order_dates
+#: code:addons/sale_order_dates/models/sale_order.py:58
+#, python-format
+msgid "The date requested by the customer is sooner than the commitment date. You may be unable to honor the customer's request."
+msgstr "التاريخ المطلوب بواسطة العميل أقرب من تاريخ الإلتزام. ربما لن تستطيع تلبية طلب العميل في الوقت المناسب."
+
+#. module: sales_team
+#: model:ir.model.fields,help:sales_team.field_crm_team_reply_to
+msgid "The email address put in the 'Reply-To' of all emails sent by Odoo about cases in this sales channel"
+msgstr "عنوان البريد الالكتروني في 'الرد على' لجميع الرسائل المرسلة من قبل اودو عن الحالات في قناة المبيعات"
+
+#. module: sales_team
+#: model:ir.model.fields,help:sales_team.field_crm_team_dashboard_graph_model
+msgid "The graph this channel will display in the Dashboard.\n"
+""
+msgstr "سيتم عرض الرسم البياني لهذه القناة في لوحة المعلومات.\n"
+""
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "The margin is computed as the sum of product sales prices minus the cost set in their detail form."
+msgstr "يتم حساب الهامش كمجموع أسعار مبيعات المنتجات مطروحًا منه التكلفة المحددة في نموذج التفاصيل الخاص بهم."
+
+#. module: sale
+#: code:addons/sale/wizard/sale_make_invoice_advance.py:149
+#, python-format
+msgid "The product used to invoice a down payment should be of type 'Service'. Please use another product or update this product."
+msgstr "المنتج المستخدم لفوترة الدفعة الأولى يجب ان يكون من النوع خدمة . يرجى استخدام منتج آخر أو تحديث هذا المنتج."
+
+#. module: sale
+#: code:addons/sale/wizard/sale_make_invoice_advance.py:147
+#, python-format
+msgid "The product used to invoice a down payment should have an invoice policy set to \"Ordered quantities\". Please update your deposit product to be able to create a deposit invoice."
+msgstr "يجب أن يتم تعيين سياسة الفاتورة على المنتج المستخدم لفوترة دفعة أولى \"الكميات المطلوبة\". يرجى تحديث منتج الإيداع الخاص بك لتكون قادرة على إنشاء فاتورة الإيداع."
+
+#. module: sales_team
+#: model:ir.model.fields,help:sales_team.field_crm_team_dashboard_graph_period
+msgid "The time period this channel's dashboard graph will consider."
+msgstr "الفترة الزمنية التي سينظر فيها الرسم البياني على لوحة المعلومات الخاصة بهذه القناة."
+
+#. module: sales_team
+#: model:ir.model.fields,help:sales_team.field_crm_team_dashboard_graph_type
+msgid "The type of graph this channel will display in the dashboard."
+msgstr "نوع الرسم البياني الذي ستعرضه هذه القناة في لوحة المعلومات."
+
+#. module: sales_team
+#: model:ir.model.fields,help:sales_team.field_crm_team_team_type
+msgid "The type of this channel, it will define the resources this channel uses."
+msgstr "نوع هذه القناة ، ستحدد الموارد التي تستخدمها هذه القناة."
+
+#. module: sale
+#: code:addons/sale/wizard/sale_make_invoice_advance.py:78
+#, python-format
+msgid "The value of the down payment amount must be positive."
+msgstr "يجب أن تكون قيمة مبلغ الدفعة المقدمة إيجابية."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_orders
+msgid "There are currently no orders for your account."
+msgstr "لا يوجد حاليا أي طلبات لحسابك."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_quotations
+msgid "There are currently no quotations for your account."
+msgstr "لا توجد حاليًا تسعيرات لحسابك."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "There are two ways to manage pricelists: 1) Multiple prices per product: must be set in the Sales tab of the product detail form. 2) Price computed from formulas: must be set in the pricelist form."
+msgstr "هناك طريقتان لإدارة قوائم الأسعار: 1) أسعار متعددة لكل منتج: يجب تعيينها في علامة تبويب المبيعات في نموذج تفاصيل المنتج. 2) السعر المحسوب من الصيغ: يجب تحديده في قائمة الأسعار."
+
+#. module: sale
+#: code:addons/sale/wizard/sale_make_invoice_advance.py:74
+#, python-format
+msgid "There is no income account defined for this product: \"%s\". You may have to install a chart of account from Accounting app, settings menu."
+msgstr "لا يوجد حساب دخل محدد لهذا المنتج: \"%s\". قد يتعين عليك تثبيت مخطط حساب من تطبيق المحاسبة ، قائمة الإعدادات."
+
+#. module: sale
+#: code:addons/sale/models/sale.py:430
+#: code:addons/sale/models/sale.py:434
+#, python-format
+msgid "There is no invoicable line."
+msgstr "لا يوجد خط قابل للفوترة."
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "There is no timesheet for now."
+msgstr "لا يوجد جدول زمني في الوقت الحالي."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_error
+msgid "There was an error processing this page."
+msgstr "كان هناك خطأ في معالجة هذه الصفحة."
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+msgid "This Year"
+msgstr "هذه السنة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "This default value is applied to any new product created. This can be changed in the product detail form."
+msgstr "يتم تطبيق هذه القيمة الافتراضية على أي منتج جديد تم إنشاؤه. يمكن تغيير ذلك في نموذج تفاصيل المنتج."
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.action_order_report_all
+msgid "This report performs analysis on your quotations and sales orders. Analysis check your sales revenues and sort it by different group criteria (salesman, partner, product, etc.) Use this report to perform analysis on sales not having invoiced yet. If you want to analyse your turnover, you should use the Invoice Analysis report in the Accounting application."
+msgstr "سيقوم النظام تلقائيابتحليل الفواتير وطلبات المبيعات الخاصة بك. يتحقق التحليل من عوائد المبيعات الخاصة بك ويصنفها بمعايير المجموعة المختلفة (مندوب مبيعات، شريك، منتج، الخ.) استخدم هذا التقرير للقيام بتحليل المبيعات التي ليس لديها فواتير بعد.إذا كنت ترغب في تحليل التحويل الخاص بك، يجب عليك استخدام تقرير تحليل الفاتورة في تطبيق المحاسبة."
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.action_order_report_quotation_salesteam
+msgid "This report performs analysis on your quotations. Analysis check your sales revenues and sort it by different group criteria (salesman, partner, product, etc.) Use this report to perform analysis on sales not having invoiced yet. If you want to analyse your turnover, you should use the Invoice Analysis report in the Accounting application."
+msgstr "يؤدي هذا التقرير إلى تحليل الفواتير الخاصة بك. يتحقق التحليل من إيرادات المبيعات الخاصه بك،  ويصنفها بمعايير المجموعة المختلفة (مندوب مبيعات، شريك، منتج، الخ) استخدم هذا التقرير لإجراء تحليل على المبيعات التي لم يتم فوترتها بعد. إذا كنت ترغب في تحليل التحويلات الخاصة بك، يجب عليك استخدام تقرير تحليل الفاتورة في تطبيق المحاسبة."
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.action_order_report_so_salesteam
+msgid "This report performs analysis on your sales orders. Analysis check your sales revenues and sort it by different group criteria (salesman, partner, product, etc.) Use this report to perform analysis on sales not having invoiced yet. If you want to analyse your turnover, you should use the Invoice Analysis report in the Accounting application."
+msgstr "يؤدي هذا التقرير إلى تحليل الفواتير الخاصة بك. يتحقق التحليل من إيرادات المبيعات الخاصه بك، ويصنفها بمعايير المجموعة المختلفة (مندوب مبيعات، شريك، المنتج، الخ) استخدم هذا التقرير لإجراء تحليل على المبيعات التي لم يتم فوترتها بعد. إذا كنت ترغب في تحليل التحويلات الخاصة بك، يجب عليك استخدام تقرير تحليل الفاتورة في تطبيق المحاسبة."
+
+#. module: sale_timesheet
+#: code:addons/sale_timesheet/models/sale_order.py:237
+#, python-format
+msgid "This task has been created from: <a href=# data-oe-model=sale.order data-oe-id=%d>%s</a> (%s)"
+msgstr "تم إنشاء هذه المهمة من: <a href=# data-oe-model=sale.order data-oe-id=%d>%s</a> (%s)"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "Time by people"
+msgstr "الوقت حسب الناس"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.product_template_search_view_sale_timesheet
+msgid "Time-based services"
+msgstr "الخدمات المبنية على الزمن"
+
+#. module: sale_timesheet
+#. openerp-web
+#: code:addons/sale_timesheet/static/src/js/timesheet_plan.js:143
+#: model:ir.actions.act_window,name:sale_timesheet.action_timesheet_from_invoice
+#: model:ir.actions.act_window,name:sale_timesheet.timesheet_action_from_plan
+#: model:ir.actions.act_window,name:sale_timesheet.timesheet_action_plan_pivot
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_view_pivot_revenue
+#, python-format
+msgid "Timesheet"
+msgstr "الجدول الزمني"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_hr_employee_timesheet_cost
+msgid "Timesheet Cost"
+msgstr "تكلفة الجدول الزمني"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_sale_order_timesheet_count
+msgid "Timesheet activities"
+msgstr "أنشطة الجدول الزمني"
+
+#. module: sale_timesheet
+#: model:ir.model.fields,field_description:sale_timesheet.field_sale_order_timesheet_ids
+msgid "Timesheet activities associated to this sale"
+msgstr "أنشطة الجدول الزمني المرتبطة بهذا البيع"
+
+#. module: sale_timesheet
+#: code:addons/sale_timesheet/controllers/main.py:103
+#: code:addons/sale_timesheet/controllers/main.py:132
+#: code:addons/sale_timesheet/models/account_invoice.py:26
+#: model:ir.model.fields,field_description:sale_timesheet.field_account_invoice_timesheet_ids
+#: model:ir.ui.view,arch_db:sale_timesheet.account_invoice_view_form_inherit_sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+#: model:ir.ui.view,arch_db:sale_timesheet.view_order_form_inherit_sale_timesheet
+#, python-format
+msgid "Timesheets"
+msgstr "سجلات النشاط"
+
+#. module: sale_timesheet
+#: code:addons/sale_timesheet/models/project.py:20
+#, python-format
+msgid "Timesheets of %s"
+msgstr "الجداول الزمنية لل %s"
+
+#. module: sale
+#: selection:product.template,service_type:0
+msgid "Timesheets on project (one fare per SO/Project)"
+msgstr "الجداول الزمنية للمشروع (سعر واحد لكل SO / مشروع)"
+
+#. module: sale_timesheet
+#: selection:product.template,service_policy:0
+msgid "Timesheets on tasks"
+msgstr "الجداول الزمنية على المهام"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_qty_to_invoice
+#: model:ir.ui.view,arch_db:sale.sale_order_view_search_inherit_sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_line_filter
+#: selection:sale.order,invoice_status:0
+#: selection:sale.order.line,invoice_status:0
+msgid "To Invoice"
+msgstr "في انتظار الفوترة"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.timesheet_plan
+msgid "To invoice"
+msgstr "في انتظار الفوترة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+msgid "Today Activities"
+msgstr "انشطة اليوم"
+
+#. modules: sale, sale_custom
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_price_total
+#: model:ir.model.fields,field_description:sale.field_sale_order_amount_total
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_price_total
+#: model:ir.model.fields,field_description:sale.field_sale_report_price_total
+#: model:ir.ui.view,arch_db:sale.invoice_form_inherit_sale
+#: model:ir.ui.view,arch_db:sale.portal_my_orders
+#: model:ir.ui.view,arch_db:sale.portal_my_quotations
+#: model:ir.ui.view,arch_db:sale.report_configuration_search_view
+#: model:ir.ui.view,arch_db:sale.view_order_line_tree
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.report_all_channels_sales_view_pivot
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "Total Price"
+msgstr "السعر الإجمالي"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_tree
+#: model:ir.ui.view,arch_db:sale.view_quotation_tree
+msgid "Total Tax Included"
+msgstr "المجموع مع الضرائب"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_product_product_service_type
+#: model:ir.model.fields,field_description:sale.field_product_template_service_type
+msgid "Track Service"
+msgstr "تتبع الخدمة"
+
+#. module: sales_team
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_dashboard_graph_type
+msgid "Type"
+msgstr "النوع"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_delivery_ups
+msgid "UPS"
+msgstr "UPS"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_delivery_usps
+msgid "USPS"
+msgstr "USPS"
+
+#. module: sales_team
+#: code:addons/sales_team/models/crm_team.py:146
+#: code:addons/sales_team/models/crm_team.py:173
+#, python-format
+msgid "Undefined graph model for Sales Channel: %s"
+msgstr "نموذج الرسم البياني غير معرف لقناة المبيعات: %s"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_price_unit
+#: model:ir.ui.view,arch_db:sale.report_invoice_layouted
+#: model:ir.ui.view,arch_db:sale.report_saleorder_document
+msgid "Unit Price"
+msgstr "سعر الوحدة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Unit Price:"
+msgstr "سعر الوحدة:"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_product_uom
+#: model:ir.model.fields,field_description:sale.field_sale_report_product_uom
+#: model:ir.ui.view,arch_db:sale.view_order_line_tree
+msgid "Unit of Measure"
+msgstr "وحدة القياس"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.menu_product_uom_categ_form_action
+msgid "Unit of Measure Categories"
+msgstr "فئات وحدات القياس"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.menu_product_uom_form_action
+#: model:ir.ui.menu,name:sale.next_id_16
+#: model:ir.ui.view,arch_db:sale.res_config_settings_view_form
+msgid "Units of Measure"
+msgstr "وحدة القياس"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "Unlock"
+msgstr "فتح"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_sales_order_filter
+msgid "Unread Messages"
+msgstr "رسائل غير مقروءة"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_order_amount_untaxed
+msgid "Untaxed Amount"
+msgstr "المبلغ دون ضرائب"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_report_price_subtotal
+msgid "Untaxed Total"
+msgstr "المجموع غير الخاضع للضريبة"
+
+#. module: sale_crm
+#: model:ir.model.fields,help:sale_crm.field_crm_lead_sale_amount_total
+msgid "Untaxed Total of Confirmed Orders"
+msgstr "المجموع غير الخاضع للضريبة من الطلبات المؤكدة"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.sale_order_view_search_inherit_sale
+msgid "Upselling"
+msgstr "الارتقاء بالصفقة"
+
+#. module: sale
+#: selection:sale.order,invoice_status:0
+#: selection:sale.order.line,invoice_status:0
+msgid "Upselling Opportunity"
+msgstr "فرص الارتقاء بالصفقة"
+
+#. module: sales_team
+#: model:ir.actions.act_window,help:sales_team.crm_team_salesteams_act
+#: model:ir.actions.act_window,help:sales_team.sales_team_config_action
+msgid "Use sales channels to organize your sales departments. \n"
+"                    Each channel will work with a separate pipeline."
+msgstr "استخدم قنوات المبيعات لتنظيم أقسام المبيعات لديك. \n"
+"                    ستعمل كل قناة مع خط أنابيب منفصل."
+
+#. module: sale_management
+#. openerp-web
+#: code:addons/sale_management/static/src/js/tour.js:65
+#, python-format
+msgid "Use the breadcrumbs to <b>go back to preceeding screens</b>."
+msgstr "استخدم الدلائل <b>للعودة الى الشاشات السابقة</b>."
+
+#. module: sale_management
+#. openerp-web
+#: code:addons/sale_management/static/src/js/tour.js:69
+#, python-format
+msgid "Use this menu to access quotations, sales orders and customers."
+msgstr "استخدم هذه القائمة للوصول إلى الفواتير وطلبات المبيعات والعملاء."
+
+#. module: sales_team
+#: model:res.groups,name:sales_team.group_sale_salesman_all_leads
+msgid "User: All Documents"
+msgstr "المستخدم: جميع المستندات"
+
+#. module: sales_team
+#: model:res.groups,name:sales_team.group_sale_salesman
+msgid "User: Own Documents Only"
+msgstr "المستخدم: الوثائق الخاصة فقط"
+
+#. modules: sales_team, sale_crm
+#: model:ir.model,name:sale_crm.model_res_users
+#: model:ir.model,name:sales_team.model_res_users
+msgid "Users"
+msgstr "المستخدمون"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_my_quotations
+msgid "Valid Until"
+msgstr "صالح حتى"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_report_volume
+msgid "Volume"
+msgstr "الحجم"
+
+#. module: sale
+#: selection:product.template,sale_line_warn:0
+#: selection:res.partner,sale_warn:0
+msgid "Warning"
+msgstr "تحذير"
+
+#. module: sale
+#: code:addons/sale/models/sale.py:996
+#, python-format
+msgid "Warning for %s"
+msgstr "تحذير من  %s"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.res_partner_view_buttons
+msgid "Warning on the Sales Order"
+msgstr "تحذير من طلب المبيعات"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.product_form_view_sale_order_button
+#: model:ir.ui.view,arch_db:sale.product_template_form_view_sale_order_button
+msgid "Warning when Selling this Product"
+msgstr "تحذير عند بيع هذا المنتج"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_group_warning_sale
+msgid "Warnings"
+msgstr "تحذيرات"
+
+#. module: sales_team
+#: model:crm.team,name:sales_team.salesteam_website_sales
+#: selection:crm.team,team_type:0
+msgid "Website"
+msgstr "موقع الكتروني"
+
+#. module: sales_team
+#: selection:crm.team,dashboard_graph_group:0
+msgid "Week"
+msgstr "اسبوع"
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_advance_payment_method
+msgid "What do you want to invoice?"
+msgstr "ما الذى تريد فوترته ؟"
+
+#. module: sale_management
+#. openerp-web
+#: code:addons/sale_management/static/src/js/tour.js:23
+#, python-format
+msgid "Write the name of your customer to create one on the fly, or select an existing one."
+msgstr "اكتب اسم عميلك لإنشاءه مباشرة ، أو حدد اسمًا حاليًا."
+
+#. module: sale
+#. openerp-web
+#: code:addons/sale/static/src/js/sale.js:32
+#, python-format
+msgid "Wrong value entered!"
+msgstr "أدخلت قيمة خاطئة!"
+
+#. module: sale
+#: code:addons/sale/models/sale.py:188
+#, python-format
+msgid "You can not delete a sent quotation or a sales order! Try to cancel it before."
+msgstr "لا يمكنك حذف الفاتورة أو طلب مبيعات! حاول إلغاءها اولا."
+
+#. module: sale_timesheet
+#: code:addons/sale_timesheet/models/account.py:32
+#, python-format
+msgid "You can not modify already invoiced timesheets (linked to a Sales order items invoiced on Time and material)."
+msgstr "لا يمكنك تعديل الجداول الزمنية التي تم تحرير فواتير بها بالفعل (مرتبطة بعناصر طلب المبيعات التي تم فوترتها في الوقت والمحتوى)."
+
+#. module: sale
+#: code:addons/sale/models/sale.py:1059
+#, python-format
+msgid "You can not remove a sales order line.\n"
+"Discard changes and try setting the quantity to 0."
+msgstr "لا يمكنك إزالة سطر طلب مبيعات.\n"
+"تجاهل التغييرات وحاول تعيين الكمية إلى 0."
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.action_orders_to_invoice
+msgid "You can select all orders and invoice them in batch, or check\n"
+"                every order and invoice them one by one."
+msgstr "يمكنك تحديد جميع الطلبات وفوترتها في دفعة ، أو تحقق\n"
+"                من كل طلب وقم بوفترتها واحدة تلو الأخرى."
+
+#. module: sale_timesheet
+#: code:addons/sale_timesheet/models/project.py:85
+#, python-format
+msgid "You cannot delete a task related to a Sales Order. You can only archive this task."
+msgstr "لا يمكنك حذف مهمة متعلقة بطلب مبيعات. يمكنك فقط أرشفة هذه المهمة."
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.action_orders_to_invoice
+msgid "You will find here all orders that are ready to be invoiced."
+msgstr "ستجد هنا جميع الطلبات الجاهزة للفوترة."
+
+#. module: sale
+#: code:addons/sale/controllers/portal.py:229
+#, python-format
+msgid "Your Order has been confirmed."
+msgstr "تم تأكيد طلبك."
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.action_quotations
+#: model:ir.actions.act_window,help:sale.action_quotations_salesteams
+msgid "Your next actions should flow efficiently: confirm the Quotation\n"
+"                to a Sales Order, then create the Invoice and collect the Payment."
+msgstr "يجب أن تتدفق الإجراءات التالية بكفاءة: قم بتاكيد الفاتورة\n"
+"                إلى طلب بيع ، ثم قم بانشاء الفاتورة وجمع الدفع."
+
+#. module: sale
+#: model:ir.actions.act_window,help:sale.act_res_partner_2_sale_order
+#: model:ir.actions.act_window,help:sale.action_orders_salesteams
+msgid "Your next actions should flow efficiently: confirm the Quotation to a Sales Order, then create the Invoice and collect the Payment."
+msgstr "يجب أن تتدفق الإجراءات التالية بكفاءة: قم بتاكيد الفاتورة إلى طلب بيع ، ثم قم بانشاء الفاتورة وجمع الدفع ."
+
+#. module: sale
+#: model:ir.model.fields,field_description:sale.field_res_config_settings_module_delivery_bpost
+msgid "bpost"
+msgstr "bpost"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.portal_order_error
+#: model:ir.ui.view,arch_db:sale.portal_order_success
+msgid "close"
+msgstr "اغلاق"
+
+#. module: sale
+#: model:ir.ui.view,arch_db:sale.view_order_form
+msgid "days"
+msgstr "أيام"
+
+#. module: sale_timesheet
+#: model:ir.ui.view,arch_db:sale_timesheet.hr_timesheet_employee_extd_form
+msgid "per hour"
+msgstr "في الساعة"
+
+#. module: sale
+#: model:ir.model,name:sale.model_report_sale_report_saleproforma
+msgid "report.sale.report_saleproforma"
+msgstr "report.sale.report_saleproforma"
+
+#. module: sale
+#: model:ir.model,name:sale.model_res_config_settings
+msgid "res.config.settings"
+msgstr "res.config.settings"
+
+#. module: sale
+#: model:ir.model,name:sale.model_sale_layout_category
+msgid "sale.layout_category"
+msgstr "sale.layout_category"
+
+#. module: sales_team
+#: model:res.groups,comment:sales_team.group_sale_salesman_all_leads
+msgid "the user will have access to all records of everyone in the sales application."
+msgstr "سيتمكن المستخدم من الوصول إلى جميع سجلات كل شخص في تطبيق المبيعات."
+
+#. module: sales_team
+#: model:res.groups,comment:sales_team.group_sale_salesman
+msgid "the user will have access to his own data in the sales application."
+msgstr "سيتمكن المستخدم من الوصول إلى بياناته الخاصة في تطبيق المبيعات."
+
+#. module: sales_team
+#: model:res.groups,comment:sales_team.group_sale_manager
+msgid "the user will have an access to the sales configuration as well as statistic reports."
+msgstr "سيتمكن المستخدم من الوصول إلى اعدادات المبيعات بالإضافة إلى التقارير الإحصائية."
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+msgid "Certificate Quotation"
+msgstr "فواتير الشهادات"
+
+#. module: sale_custom
+#: model:ir.actions.act_window,name:sale_custom.action_certificate_quotations
+#: model:ir.ui.menu,name:sale_custom.menu_sale_certificate_quotations
+msgid "Certificate Quotations"
+msgstr "فواتير الشهادات"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+msgid "Certificate lines"
+msgstr "التفاصيل"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Waiting for Supervisor"
+msgstr "في إنتظار المشرف"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Waiting for Department Manager"
+msgstr "في إنتظار مدير القسم"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Waiting for Accounting Administrator"
+msgstr "في إنتظار اﻹدارة المالية"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Validated"
+msgstr "تم الإعتماد"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.product_template_only_form_view_inherit_sale_custom
+msgid "Service Name"
+msgstr "إسم الخدمة"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_product_product_channel
+#: model:ir.model.fields,field_description:sale_custom.field_product_product_channel_id
+#: model:ir.model.fields,field_description:sale_custom.field_product_template_channel
+#: model:ir.model.fields,field_description:sale_custom.field_product_template_channel_id
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate_channel_id
+#: model:ir.ui.view,arch_db:sale_custom.product_template_tree_view_inherit_sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+msgid "Channel"
+msgstr "القناة"
+
+#. modules: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+msgid "Channel"
+msgstr "القناة"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_product_product_center_id
+#: model:ir.model.fields,field_description:sale_custom.field_product_template_center_id
+#: model:ir.ui.view,arch_db:sale_custom.product_template_tree_view_inherit_sale_custom
+msgid "Center"
+msgstr "المركز"
+
+#. module: sale_custom
+#: model:res.groups,name:sale_custom.group_billing_officer_crm
+msgid "Billing Officer / CRM"
+msgstr "موظف إدارة علاقات العملاء"
+
+#. module: account
+#: model:ir.ui.view,arch_db:account.product_template_form_view
+#: model:ir.ui.view,arch_db:account.res_config_settings_view_form
+msgid "Invoicing"
+msgstr "الحسابات"
+
+#. module: account
+#: model:ir.ui.view,arch_db:account.product_template_form_view
+#: model:ir.ui.view,arch_db:account.view_account_bank_journal_form
+msgid "Receivables"
+msgstr "المدينون"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center_code
+msgid "Code"
+msgstr "الكود"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Draft"
+msgstr "مسودة"
+
+#. modules: sale, sale_custom, sales_team
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_create_uid
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_create_uid
+#: model:ir.model.fields,field_description:sale.field_sale_order_create_uid
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_create_uid
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center_create_uid
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate_create_uid
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_create_uid
+#: model:ir.model.fields,field_description:sale_custom.field_support_type_create_uid
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. modules: sale, sale_custom, sales_team
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_create_date
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_create_date
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_create_date
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center_create_date
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate_create_date
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_create_date
+#: model:ir.model.fields,field_description:sale_custom.field_support_type_create_date
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_ebs_percentage
+msgid "EBS Percentage(%)"
+msgstr "EBS نسبة شركة(%)"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_fees
+#: model:ir.model.fields,field_description:sale_custom.field_support_type_fees
+msgid "Fees"
+msgstr "رسوم"
+
+#. module: sale_custom
+#: code:addons/sale_custom/models/models.py:195
+#, python-format
+msgid "Fees , Must Not Be Less Than One!."
+msgstr "الرسوم ، يجب ألا تكون أقل من واحد!."
+
+#. modules: sale, sale_custom, sales_team
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_id
+#: model:ir.model.fields,field_description:sale.field_report_sale_report_saleproforma_id
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_id
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_id
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center_id
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate_id
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_id
+#: model:ir.model.fields,field_description:sale_custom.field_support_type_id
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_id
+msgid "ID"
+msgstr "المعرف"
+
+#. modules: sale, sale_custom, sales_team
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales___last_update
+#: model:ir.model.fields,field_description:sale.field_report_sale_report_saleproforma___last_update
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv___last_update
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category___last_update
+#: model:ir.model.fields,field_description:sale.field_sale_order___last_update
+#: model:ir.model.fields,field_description:sale.field_sale_order_line___last_update
+#: model:ir.model.fields,field_description:sale.field_sale_report___last_update
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center___last_update
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate___last_update
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees___last_update
+#: model:ir.model.fields,field_description:sale_custom.field_support_type___last_update
+#: model:ir.model.fields,field_description:sales_team.field_crm_team___last_update
+msgid "Last Modified on"
+msgstr "آخر تعديل في"
+
+#. modules: sale, sale_custom, sales_team
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_write_date
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_write_date
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_write_date
+#: model:ir.model.fields,field_description:sale.field_sale_order_write_date
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center_write_date
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate_write_date
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_write_date
+#: model:ir.model.fields,field_description:sale_custom.field_support_type_write_date
+#: model:ir.model.fields,field_description:sales_team.field_crm_team_write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_partner_percentage
+msgid "Partner Percentage(%)"
+msgstr "نسبة الشريك(%)"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_range_from
+msgid "Range From"
+msgstr "الحد الأدنى"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_range_from
+msgid "Range From"
+msgstr "الحد الأدنى"
+
+#. module: sale_custom
+#: code:addons/sale_custom/models/models.py:201
+#, python-format
+msgid "Range From , Must Not Be Less Than Zero !."
+msgstr "الحد الأدنى ، يجب ألا يكون أقل من الصفر!."
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_range_to
+msgid "Range To"
+msgstr "الحد الأعلى"
+
+#. module: sale_custom
+#: code:addons/sale_custom/models/models.py:207
+#, python-format
+msgid "Range To , Must Not Be Less Than One !."
+msgstr "الحد الأعلى ، يجب ألا يكون أقل من واحد !."
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_product_product_service
+#: model:ir.model.fields,field_description:sale_custom.field_product_template_service
+#: model:ir.model.fields,field_description:sale_custom.field_report_all_services_sales_product_id
+#: model:ir.ui.view,arch_db:sale_custom.product_template_tree_view_inherit_sale_custom
+msgid "Service"
+msgstr "الخدمات"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.product_template_only_form_view_inherit_sale_custom
+msgid "Service Fees"
+msgstr "رسوم الخدمات"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.product_template_only_form_view_inherit_sale_custom
+msgid "Service Fees Lines"
+msgstr "رسوم خدمة الخطوط"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_product_product_line_ids
+#: model:ir.model.fields,field_description:sale_custom.field_product_template_line_ids
+msgid "Service Line"
+msgstr "خط الخدمة"
+
+#. module: sale_custom
+#: model:ir.model,name:sale_custom.model_services_fees
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_service_fees_id
+msgid "Services Fees"
+msgstr "رسوم الخدمات"
+
+#. module: sale_custom
+#: code:addons/sale_custom/models/models.py:226
+#, python-format
+msgid "Sum Of percentages , Must Not Be Grater Than 100% !."
+msgstr "مجموع النسب المئوية ، يجب ألا يكون أكبر من 100% !."
+
+#. module: sale_custom
+#: code:addons/sale_custom/models/models.py:236
+#, python-format
+msgid "Sum Of percentages , Must Not Be Less Than 100% !."
+msgstr "مجموع النسب المئوية ، يجب ألا يكون أقل من 100% !."
+
+#. module: sale_custom
+#: code:addons/sale_custom/models/models.py:220
+#, python-format
+msgid "Partner Percentage , Must Not Be Grater Than 100% !."
+msgstr "النسبة المئوية للشريك ، يجب ألا تكون أكبر من 100٪ !."
+
+
+#. module: sale_custom
+#: code:addons/sale_custom/models/models.py:214
+#, python-format
+msgid "Ebs Percentage, Must Not Be Grater Than 100% !."
+msgstr "النسبة المئوية لشركة Ebs ، يجب ألا تكون أكبر من 100٪ !."
+
+#. module: sale
+#: code:addons/sale/models/sales_team.py:101
+#: model:ir.actions.act_window,name:sale.action_quotations
+#: model:ir.actions.act_window,name:sale.action_quotations_salesteams
+#: model:ir.model.fields,field_description:sale.field_crm_team_use_quotations
+#: model:ir.ui.menu,name:sale.menu_sale_quotations
+#: model:ir.ui.view,arch_db:sale.crm_team_salesteams_view_kanban
+#: model:ir.ui.view,arch_db:sale.portal_my_home_menu_sale
+#: model:ir.ui.view,arch_db:sale.portal_my_home_sale
+#: model:ir.ui.view,arch_db:sale.portal_my_quotations
+#: model:ir.ui.view,arch_db:sale.sale_order_view_search_inherit_quotation
+#: model:ir.ui.view,arch_db:sale.view_order_product_search
+#, python-format
+msgid "Quotations"
+msgstr "الفواتير المبدئية"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.product_menu_catalog
+msgid "Catalog"
+msgstr "الخدمات"
+
+#. module: sale
+#: model:ir.ui.menu,name:sale.menu_sale_quotations
+msgid "Bank Cards Quotations"
+msgstr "الفواتير المبدئية"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+msgid "Service"
+msgstr "الصنف"
+
+#. module: sale_custom
+#: code:addons/sale_custom/models/models.py:85
+#, python-format
+msgid "Order Line must contains at least one service"
+msgstr "الرجاء ادخال الصنف"
+
+#. module: crm_custom
+#: model:ir.ui.menu,name:crm_custom.sale_order_menu_quotations_crm
+msgid "Bank Card Quotation"
+msgstr "فواتير البطاقات المدئية"
+
+#. module: sale_custom
+#: model:ir.ui.menu,name:sale_custom.menu_bank_card_sale_order
+msgid "Bank Cards Orders"
+msgstr "اوامر البيع"
+
+#. module: sale_custom
+#: model:res.groups,name:sale_custom.group_sale_admin
+msgid "Sale Administrator"
+msgstr "مدير النظام"
+
+#. module: sale_custom
+#: model:ir.actions.act_window,name:sale_custom.sale_center_action_window
+msgid "Sale Center"
+msgstr "مركز البيع"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_sale_order_line_sale_certificate_id
+#: model:ir.model.fields,field_description:sale_custom.field_support_type_sale_certificate_id
+msgid "Sale Certificate"
+msgstr "الشهادات"
+
+#. module: sale_custom
+#: model:ir.actions.act_window,name:sale_custom.certification_action_window
+#: model:ir.ui.menu,name:sale_custom.certification_menu
+msgid "Sale Certification"
+msgstr "الشهادات"
+
+#. module: sale_custom
+#: model:ir.ui.menu,name:sale_custom.report_all_services_sales
+msgid " Bank Card Quotation Report"
+msgstr " فواتير البطاقات البنكية"
+
+#. module: sale_custom
+#: model:ir.ui.menu,name:sale_custom.sale_center_menu
+msgid "Sales Centers"
+msgstr "المراكز"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.channel_form_view
+msgid "Channel Name"
+msgstr "اسم القناة"
+
+#. module: sale_custom
+#: model:ir.actions.act_window,name:sale_custom.channel_action_window
+#: model:ir.ui.menu,name:sale_custom.channels_menu
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+msgid "Channels"
+msgstr "القنوات"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.certification_form_view
+msgid "Support Types"
+msgstr "انواع اﻹجراءات"
+
+#. module: sale_custom
+#: code:addons/sale_custom/models/models.py:75
+#, python-format
+msgid "Certificate Lines must contains at least one line"
+msgstr "الرجاء ادخال تفاصيل نوع اﻹجراء"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate_support_type_ids
+#: model:ir.model.fields,field_description:sale_custom.field_sale_order_line_type_of_support
+#: model:ir.model.fields,field_description:sale_custom.field_support_type_support_type
+#: model:ir.ui.view,arch_db:sale_custom.certification_form_view
+msgid "Type of Support"
+msgstr "نوع اﻹجراء"
+
+#. module: sale_custom
+#: code:addons/sale_custom/models/models.py:176
+#: sql_constraint:support.type:0
+#, python-format
+msgid "Type of Support must be unique per Sale Certification."
+msgstr "يجب ان لا يتكرر نوع اﻹجراء في نفس الشهادة"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate_note
+#: model:ir.ui.view,arch_db:sale_custom.certification_form_view
+msgid "Certification Description"
+msgstr "الوصف"
+
+#. module: sale_custom
+#: selection:support.type,support_type:0
+msgid "Complete certification"
+msgstr "شهادة كاملة"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Waiting for Department approval"
+msgstr "في انتظار تصديق القسم"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Waiting for Financial Manager Validation"
+msgstr "في انتظار اعتماد الحسابات"
+
+#. module: sale_custom
+#: model:res.groups,name:sale_custom.group_financial_manager
+msgid "Financial Manager"
+msgstr "مدير الحسابات"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Waiting for Invoice Payment"
+msgstr "في انتظار دفع الفاتورة"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Waiting for Markiting Manager"
+msgstr "في انتظار تصديق مدير التسويق"
+
+#. modules: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+msgid "Approve"
+msgstr "تصديق"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+msgid "Set to draft"
+msgstr "إرجاع إلى الحالة المبدئية"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+msgid "Client Approved"
+msgstr "موافقة العميل"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Waiting for client approval"
+msgstr "في انتظار موافقة العميل"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Waiting for Direct Manager"
+msgstr "في انتظار المشرف"
+
+#. module: sale_custom
+#: model:res.groups,name:sale_custom.group_direct_manager
+msgid "Direct Manager"
+msgstr "المدير المباشر"
+
+#. module: sale_custom
+#: model:res.groups,name:sale_custom.group_marketing_manager
+msgid "Marketing Manager"
+msgstr "مدير التسويق"
+
+#. module: sale_custom
+#: model:res.groups,name:sale_custom.group_sale_officer
+msgid "Sale Officer"
+msgstr "موظف المبيعات"
+
+#. module: sale_custom
+#: model:ir.module.category,name:sale_custom.module_category_sale
+msgid "Sale"
+msgstr "المبيعات"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Invoice Paid"
+msgstr "تم دفع الفاتورة"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Waiting for finicial manager"
+msgstr "في انتظار تصديق الحسابات"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Purchase Requisition Created"
+msgstr "تم انشاء طلب الشراء"
+
+#. module: sale
+#: model:mail.message.subtype,name:sale.mt_salesteam_invoice_created
+#: selection:sale.order,state:0
+msgid "Invoice Created"
+msgstr "تم انشاء الفاتورة"
+
+#. module: sale
+#: selection:sale.order,state:0
+msgid "Waiting for CRM Superviser approval"
+msgstr "في انتظار تصديق مشرف إدارة علاقات العملاء"
+
+#. module: sale_custom
+#: model:ir.actions.report,name:sale_custom.action_certificate_invoice
+#: model:ir.ui.view,arch_db:sale_custom.view_certificate_quotations_form
+msgid "Certificate Invoice"
+msgstr "فاتورة الشهادات"
+
+
+#. modules: sale, sale_custom
+#: model:ir.ui.view,arch_db:sale.view_order_form
+#: model:ir.ui.view,arch_db:sale.view_sale_advance_payment_inv
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+#: model:ir.ui.view,arch_db:sale_custom.certificate_invoice_wizard_view
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. modules: sale, sale_custom
+#: model:ir.ui.view,arch_db:sale.view_order_form
+#: model:ir.ui.view,arch_db:sale_custom.certificate_invoice_wizard_view
+msgid "Print"
+msgstr "طباعة"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.certificate_invoice_wizard_view
+msgid "Print Certificate Invoice details"
+msgstr "طباعة تفاصيل فاتورة الشهادات"
+
+#. module: sale_custom
+#: model:ir.actions.act_window,name:sale_custom.action_certificate_invoice_wizard
+msgid "Certificate Invoice Details Report"
+msgstr "تقرير تفاصيل فاتورة الشهادات"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.certificate_invoice_wizard_view
+msgid "or"
+msgstr "أو"
+
+#. module: sale_custom
+#: model:ir.model,name:sale_custom.model_report_sale_custom_report_certificate_invoice
+msgid "report.sale_custom.report_certificate_invoice"
+msgstr "report.sale_custom.report_certificate_invoice"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "83749575‬‬"
+msgstr "83749575‬‬"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_certificate_invoice_wizard_subject
+msgid "Subject"
+msgstr "الموضوع"
+
+
+#. module: sale_custom
+#: model:ir.model,name:sale_custom.model_subject_wizard
+msgid "subject.wizard"
+msgstr "subject.wizard"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b> \n"
+"                                                            بسم الله الرحمن الرحيم \n"
+"                                                        </b>"
+msgstr "<b> \n"
+"                                                            بسم الله الرحمن الرحيم \n"
+"                                                        </b>"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<u>\n"
+"                                                        Customer Relationship Management\n"
+"                                                        </u>"
+msgstr "<u>\n"
+"                                                        إدارة دعم العملاء\n"
+"                                                        </u>"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "Electronic Banking Services company"
+msgstr "شركة الخدمات المصرفية الإلكترونية المحدودة"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "<u>\n"
+"                                                    Marketing Management and Business Development\n"
+"                                                    </u>"
+msgstr "<u>\n"
+"                                                    إدارة التسويق وتطوير الاعمال\n"
+"                                                    </u>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "Print prices for bank cards"
+msgstr "عرض أسعار طباعة بطاقات مصرفية خام"
+
+#. modules: sale, sale_custom
+#: model:ir.model,name:sale.model_account_invoice
+#: model:ir.model,name:sale_custom.model_account_invoice
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "Invoice"
+msgstr "فاتورة"
+
+
+
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b style=\"font-family:KacstLetter;font-size:25;\">\n"
+"                                                Date : \n"
+"                                            </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:25;\">\n"
+"                                                التاريخ : \n"
+"                                            </b>"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                                Number : \n"
+"                                            </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                                الرقم : \n"
+"                                            </b>"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                                Tax Identification Number \n"
+"                                            </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                                الرقم التعريفي الضريبي \n"
+"                                            </b>"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                                110009676400‬‬  \n"
+"                                            </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                                110009676400‬‬  \n"
+"                                            </b>"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                                Name : \n"
+"                                            </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                               الإسم :  \n"
+"                                            </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                                Subject: \n"
+"                                            </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                               الموضوع: \n"
+"                                            </b>"
+
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b>Process Type</b>"
+msgstr "<b>نوع العملية</b>"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b>Amount</b>"
+msgstr "<b>المبلغ</b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b>Channel</b>"
+msgstr "<b>القناة</b>"
+
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b style=\"font-family:KacstLetter\">\n"
+"                                                Signature : \n"
+"                                            </b>"
+msgstr "<b style=\"font-family:KacstLetter\">\n"
+"                                               التوقيع :\n"
+"                                            </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b style=\"font-family:KacstLetter\">\n"
+"                                                Signature : \n"
+"                                            </b>"
+msgstr "<b style=\"font-family:KacstLetter\">\n"
+"                                                 التوقيع  : \n"
+"                                            </b>"
+
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b style=\"font-family:KacstLetter ; font-size:15\">\n"
+"                                        The stamp duty has been paid for the financial receipt number FK‬‬ ‫‪9738901‬‬ Issued by the unified tax center of the central companies\n"
+"                                    </b>"
+msgstr "<b style=\"font-family:KacstLetter ; font-size:15\">\n"
+"                                        سددت ضريبة الدمغة للفواتير بالإيصال المالي رقم FK‬‬ ‫‪9738901‬‬ الصادر من المركز الضريبى الموحد للشركات الوسطى\n"
+"                                    </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "-Customer Relationship Department"
+msgstr "-قسم علاقات العملاء"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "Customer Relationship Management"
+msgstr "إدارة علاقات العملاء"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "Fax:‫‪"
+msgstr "الفاكس:‫‪"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "Tel:‫‪"
+msgstr "الهاتف:‫‪"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "Posted by:‫‪"
+msgstr "طبع بواسطة:‫‪"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "Posted date:‫‪"
+msgstr "تاريخ الطباعة:‫‪"
+
+
+
+#. modules: sale, sale_custom
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_display_name
+#: model:ir.model.fields,field_description:sale.field_report_sale_report_saleproforma_display_name
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_display_name
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_display_name
+#: model:ir.model.fields,field_description:sale.field_sale_order_display_name
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_display_name
+#: model:ir.model.fields,field_description:sale.field_sale_report_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_certificate_invoice_wizard_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_report_all_services_sales_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_report_sale_custom_report_certificate_invoice_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_support_type_display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. modules: sale, sale_custom
+#: model:ir.model.fields,field_description:sale.field_report_all_channels_sales_id
+#: model:ir.model.fields,field_description:sale.field_report_sale_report_saleproforma_id
+#: model:ir.model.fields,field_description:sale.field_sale_advance_payment_inv_id
+#: model:ir.model.fields,field_description:sale.field_sale_layout_category_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_id
+#: model:ir.model.fields,field_description:sale.field_sale_order_line_id
+#: model:ir.model.fields,field_description:sale.field_sale_report_id
+#: model:ir.model.fields,field_description:sale_custom.field_certificate_invoice_wizard_id
+#: model:ir.model.fields,field_description:sale_custom.field_report_all_services_sales_id
+#: model:ir.model.fields,field_description:sale_custom.field_report_sale_custom_report_certificate_invoice_id
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center_id
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate_id
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_id
+#: model:ir.model.fields,field_description:sale_custom.field_support_type_id
+msgid "ID"
+msgstr "المعرف"
+
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "<strong style=\"font-size:50;font-family:KacstLetter\"> Certification Fee Approval Form\n"
+"                                </strong>\n"
+"                                <br/><br/><br/>"
+msgstr "<strong style=\"font-size:50;font-family:KacstLetter\"> نموذج اعتماد الشهادات\n"
+"                                </strong>\n"
+"                                <br/><br/><br/>"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "<b style=\"font-family:KacstLetter\">\n"
+"                                                    Fees\n"
+"                                                    </b>"
+msgstr "<b style=\"font-family:KacstLetter\">\n"
+"                                                    الرسوم\n"
+"                                                    </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "<b style=\"font-family:KacstLetter\">Type of support\n"
+"                                                    </b>"
+msgstr "<b style=\"font-family:KacstLetter\">نوع الإجراء\n"
+"                                                    </b>"
+ 
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "<b style=\"font-family:KacstLetter\">Certification Description\n"
+"                                                    </b>"
+msgstr "<b style=\"font-family:KacstLetter\">وصف الشهادة\n"
+"                                                    </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "<b style=\"font-family:KacstLetter\">\n"
+"                                                    Type of Channel\n"
+"                                                    </b>"
+msgstr "<b style=\"font-family:KacstLetter\">\n"
+"                                                    نوع القناة\n"
+"                                                    </b>"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "<br/><br/>\n"
+"\n"
+"                    <b style=\"font-family:KacstLetter;font-size:30\"> \n"
+"                        <u>\n"
+"                            Company Fees Acceptance:\n"
+"                        </u>\n"
+"                    </b> \n"
+"                    <br/><br/>"
+msgstr "<br/><br/>\n"
+"\n"
+"                    <b style=\"font-family:KacstLetter;font-size:30\"> \n"
+"                        <u>\n"
+"                             قبول رسوم الشركة :\n"
+"                        </u>\n"
+"                    </b> \n"
+"                    <br/><br/>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "Approved"
+msgstr "أوافق"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "Declined"
+msgstr "لا أوافق"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "<br/><br/><br/><br/>\n"
+"\n"
+"\n"
+"                    <b style=\"font-family:KacstLetter;font-size:30\">\n"
+"                        <u>Type of Support:\n"
+"                        </u>\n"
+"                    </b><br/><br/>"
+msgstr "<br/><br/><br/><br/>\n"
+"\n"
+"\n"
+"                    <b style=\"font-family:KacstLetter;font-size:30\">\n"
+"                        <u>نوع الإجراء:\n"
+"                        </u>\n"
+"                    </b><br/><br/>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+#: selection:support.type,support_type:0
+msgid "Additional Development Support"
+msgstr "دورة تطوير إضافي"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+#: selection:support.type,support_type:0
+msgid "Additional QA Testing"
+msgstr "دورة ضبط جودة إضافية"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "Completer Certification"
+msgstr "شهادة كاملة"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "<br/><br/> <br/><br/>\n"
+"\n"
+"\n"
+"                    <u>\n"
+"                        <b style=\"font-family:KacstLetter;font-size:30\"> \n"
+"                            Name: \n"
+"                        </b>\n"
+"                    </u>\n"
+"                    <br/>"
+msgstr "<br/><br/> <br/><br/>\n"
+"\n"
+"\n"
+"                    <u>\n"
+"                        <b style=\"font-family:KacstLetter;font-size:30\"> \n"
+"                            الإسم: \n"
+"                        </b>\n"
+"                    </u>\n"
+"                    <br/>"
+
+
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "<u style=\"font-family:KacstLetter;font-size:30\">\n"
+"                                Signature :\n"
+"                            </u>"
+msgstr "<u style=\"font-family:KacstLetter;font-size:30\">\n"
+"                                التوقيع :\n"
+"                            </u>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.template_certificate_quotation
+msgid "<u style=\"font-family:KacstLetter;font-size:30\">\n"
+"                                Stamp:\n"
+"                             </u>"
+msgstr "<u style=\"font-family:KacstLetter;font-size:30\">\n"
+"                                الختم:\n"
+"                             </u>"
+
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_certificate_invoice_wizard_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_report_all_services_sales_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_report_sale_custom_report_certificate_invoice_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_report_sale_custom_template_certificate_quotation_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_display_name
+#: model:ir.model.fields,field_description:sale_custom.field_support_type_display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_certificate_invoice_wizard_id
+#: model:ir.model.fields,field_description:sale_custom.field_report_all_services_sales_id
+#: model:ir.model.fields,field_description:sale_custom.field_report_sale_custom_report_certificate_invoice_id
+#: model:ir.model.fields,field_description:sale_custom.field_report_sale_custom_template_certificate_quotation_id
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center_id
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate_id
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees_id
+#: model:ir.model.fields,field_description:sale_custom.field_support_type_id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_certificate_invoice_wizard___last_update
+#: model:ir.model.fields,field_description:sale_custom.field_report_all_services_sales___last_update
+#: model:ir.model.fields,field_description:sale_custom.field_report_sale_custom_report_certificate_invoice___last_update
+#: model:ir.model.fields,field_description:sale_custom.field_report_sale_custom_template_certificate_quotation___last_update
+#: model:ir.model.fields,field_description:sale_custom.field_sale_center___last_update
+#: model:ir.model.fields,field_description:sale_custom.field_sale_certificate___last_update
+#: model:ir.model.fields,field_description:sale_custom.field_services_fees___last_update
+#: model:ir.model.fields,field_description:sale_custom.field_support_type___last_update
+msgid "Last Modified on"
+msgstr "آخر تعديل في"
+
+#. module: sale_custom
+#: model:ir.model,name:sale_custom.model_report_sale_custom_template_certificate_quotation
+msgid "report.sale_custom.template_certificate_quotation"
+msgstr "report.sale_custom.template_certificate_quotation"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b style=\"font-family:KacstLetter\">\n"
+"                                                Signature : \n"
+"                                            </b>"
+msgstr "<b style=\"font-family:KacstLetter\">\n"
+"                                               التوقيع :\n"
+"                                            </b>"
+
+#. module: sale_custom
+#: model:ir.model.fields,field_description:sale_custom.field_sale_order_order_type
+msgid "Order Type"
+msgstr "نوع الطلب"
+
+#. module: sale_custom
+#: selection:sale.order,order_type:0
+msgid "Card"
+msgstr "بطاقات"
+
+#. module: sale_custom
+#: selection:sale.order,order_type:0
+msgid "Other"
+msgstr "أخرى"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+msgid "Are you sure you want to cancel?"
+msgstr "تأكيد الغاء الطلب؟"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            Date : \n"
+"                                        </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            التاريخ : \n"
+"                                        </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            Number : \n"
+"                                        </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            الرقم : \n"
+"                                        </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            Bank : \n"
+"                                        </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            المصرف : \n"
+"                                        </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            Subject: \n"
+"                                        </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            الموضوع: \n"
+"                                        </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "<b>No.</b>"
+msgstr "<b>الرقم</b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "<b>Service</b>"
+msgstr "<b>البيان</b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<b>Total</b>"
+msgstr "<b>المجموع</b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "<b>Unit price X Ordered Qty</b>"
+msgstr "<b>سعر الوحدة X عدد الوحدات</b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "<b>Amount</b>"
+msgstr "<b>المبلغ</b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<strong>1\\<u> Offer validity:</u></strong>"
+msgstr "<strong>1\\<u> صلاحية العرض:</u></strong>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "The above prices are valid for ten days from the date of the offer. If the offer is accepted, the approval must be sent within the validity period of the offer"
+msgstr "الأسعار أعلاه سارية لمدة عشر إيام من تاريخ العرض ، فى حالة قبول العرض  يجب إرسال الموافقة خلال فترة سريان العرض"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<strong>2\\<u> Method of payment:</u></strong>"
+msgstr "<strong>2\\<u> طريقة السداد:</u></strong>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "Payment shall be made immediately upon receipt of the offer and before the commencement of execution by check or direct debit for the banks that have been authorized to do so."
+msgstr "يتم سداد  فور قبول العرض وقبل الشروع فى التنفيذ وذلك بشيك او بالخصم المباشر بالنسبة للمصارف التى فوضت بذلك."
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<strong>3\\<u> Implementation:</u></strong>"
+msgstr "<strong>3\\<u> التنفيــذ:</u></strong>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<b> After receiving the final design profile of its location by the bank and paying its cost.</b>"
+msgstr "<b> بعد إستلام البروفه النهائيه للتصميم موقعه من جانب البنك وسداد قيمه التكلفه.</b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<strong>4\\<u> Delivery:</u></strong>"
+msgstr "<strong>4\\<u> التسليم:</u></strong>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<b> The bank shall be delivered one month after the completion of the implementation procedures mentioned above in (3).</b>"
+msgstr "<b> يتم تسليم البنك بعد شهر من إكمال إجراءات التنفيذ المذكوره اعلاه فى (3).</b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<strong>5\\<u> Prices:</u></strong>"
+msgstr "<strong>5\\<u> الأسعار:</u></strong>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "Including printing, deportation and customs clearance only."
+msgstr "شاملة الطباعة والترحيل والتخليص الجمركى فقط."
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "Internal Note"
+msgstr "مذكرة داخلية"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            From : \n"
+"                                        </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            من : \n"
+"                                        </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            To : \n"
+"                                        </b>"
+msgstr "<b style=\"font-family:KacstLetter;font-size:20;\">\n"
+"                                            إلى : \n"
+"                                        </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "<b style=\"font-size:30;font-family:KacstLetter\">\n"
+"                                    <strong><u>\n"
+"                                        Subject: Prices Offers\n"
+"                                    </u></strong>\n"
+"                                </b>"
+msgstr "<b style=\"font-size:30;font-family:KacstLetter\">\n"
+"                                    <strong><u>\n"
+"                                        الموضوع:عرض اسعار\n"
+"                                    </u></strong>\n"
+"                                </b>"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "With reference to the above subject, we inform you that"
+msgstr "بالإشارة إلى الموضوع أعلاه ، نفيدكم بانه قد تم طلب"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "has been requested direct debit card - the bank"
+msgstr "بطاقة خصم مباشر–البنك"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid ". The table below details the offer of prices of cards based on the approved pricing for"
+msgstr ". الجدول ادناه يوضح  تفاصيل العرض  الخاص باسعار البطاقات بناء على الفاتورة المجازة للعام"
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_financial
+msgid "<strong><u>Note:</u></strong> The prices above can be increased or decreased according to the exchange rate of the dollar and the customs exchange"
+msgstr "<strong><u>ملحوظة:</u></strong> الاسعار اعلاه قابله للزياده او النقصان حسب سعر  صرف الدولار والدولار الجمركى"
+
+
+#. module: sale_custom
+#: model:ir.actions.report,name:sale_custom.action_quotation_order_customer
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+msgid "Customer Report"
+msgstr "تقرير العميل"
+
+#. module: sale_custom
+#: model:ir.actions.report,name:sale_custom.action_quotation_order_financial
+#: model:ir.ui.view,arch_db:sale_custom.cards_quotation_inherit_sale_order_form
+msgid "Financial Report"
+msgstr "تقرير عرض الأسعار"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b>\n"
+"                                                (Just\n"
+"                                             </b>"
+msgstr "<b>\n"
+"                                                (فقط\n"
+"                                             </b>"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+msgid "<b> \n"
+"                                                Pound Only)\n"
+"                                             </b>"
+msgstr "<b> \n"
+"                                                جنيه لاغير)\n"
+"                                             </b>"
+
+
+#. module: sale_custom
+#: model:ir.ui.view,arch_db:sale_custom.report_certificate_invoice
+#: model:ir.ui.view,arch_db:sale_custom.report_quotation_order_customer
+msgid "<b>Total</b>"
+msgstr "<b>الإجمالي</b>"
+
+
+

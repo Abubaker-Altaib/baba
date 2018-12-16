@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+
+    
+
+
+
+
+
+
+	<record id="view_picking_out_form_wafi" model="ir.ui.view">
+		<field name="name">stock.picking.out.form</field>
+		<field name="model">stock.picking.out</field>
+		<field name="inherit_id" ref="stock.view_picking_out_form" />
+		<field name="arch" type="xml">
+                    
+		   
+           <xpath expr="//button[@name='action_process']"
+             position="replace">
+             <button name="action_process" states="confirmed" string="Request" type="object" class="oe_highlight" context="{'request':1}" groups="purchase_ntc.group_administrative_user,purchase_ntc.group_technical_user"/>
+             <button name="action_process" states="approve_ghrm" string="Deliver" type="object" class="oe_highlight"   groups="stock_custom.group_warehouse_keeper"/>
+           </xpath>
+
+		</field>
+	</record>
+
+	<record id="view_picking_out_form" model="ir.ui.view">
+		<field name="name">stock.picking.out.form</field>
+		<field name="model">stock.picking.out</field>
+		<field name="inherit_id" ref="stock_custom.view_picking_out_form" />
+		<field name="arch" type="xml">
+
+             
+
+             <xpath expr="//button[@name='action_process']"
+             position="replace">
+			     <button name="action_process" states="confirmed" string="Request" type="object" class="oe_highlight" context="{'request':1}" groups="purchase_ntc.group_administrative_user,purchase_ntc.group_technical_user"/>
+			     <button name="action_process" states="approve_ghrm" string="Deliver" type="object" class="oe_highlight"   groups="stock_custom.group_warehouse_keeper"/>
+           </xpath>
+
+            <!--xpath expr="/form/header//button[@name='%(stock.act_stock_return_picking)d']"
+             position="after">
+                <button name="sign_signal" states="draft" string="sign" class="oe_highlight"/>
+                <button name="approve_ghrm" states="assigned" string="Approve GHRM" class="oe_highlight" groups="base_custom.group_general_hr_manager"/>
+
+            </xpath-->
+
+
+             
+
+
+            <xpath expr="/form/header//button[@name='draft_complete']"
+             position="attributes">
+                <attribute name="states">draft</attribute>
+                <attribute name="groups">base_custom.group_section_manager</attribute>
+                <attribute name="string">Confirm</attribute>
+            </xpath>
+
+            <xpath expr="/form/header//button[@name='validate_confirme']"
+             position="attributes">
+                <attribute name="groups">base_custom.group_department_manager</attribute>
+                <attribute name="string">Approve</attribute>
+            </xpath>
+
+            <xpath expr="/form/header//button[@name='draft_force_assign']"
+             position="attributes">
+                <attribute name="groups">base_custom.group_general_department_manager</attribute>
+                <attribute name="string">Approve GM</attribute>
+            </xpath>
+
+
+            
+
+
+            
+
+		</field>
+	</record>
+
+    <record id="view_picking_out_form2" model="ir.ui.view">
+        <field name="name">stock.picking.out.form</field>
+        <field name="model">stock.picking.out</field>
+        <field name="inherit_id" ref="stock.view_picking_out_form" />
+        <field name="arch" type="xml">
+            <xpath expr="/form/header//field[@name='state']" position="replace">
+                <field name="state" nolabel="1" readonly="1" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"auto":"blue", "confirmed":"blue"}'/>
+            </xpath>
+               
+        </field>
+    </record>
+
+    <record id="product_category_form_ntc" model="ir.ui.view">
+        <field name="name">product.category.form</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view" />
+        <field name="arch" type="xml">
+                    
+           <xpath expr="//field[@name='type']" position="after">
+                <field name="technical"/>
+           </xpath>
+
+        </field>
+    </record>
+
+
+
+
+
+
+        
+
+
+
+
+    
+    <record id="view_picking_form" model="ir.ui.view">
+        <field name="name">stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock_custom.view_picking_form" />
+        <field name="arch" type="xml">
+            <xpath expr="/form/header//button[@name='draft_complete']"
+             position="attributes">
+                <attribute name="groups">base_custom.group_department_manager</attribute>
+                <attribute name="string">Confirm</attribute>
+            </xpath>
+            
+           
+             <xpath expr="/form/header//button[@name='action_assign']"  position="attributes">
+                  <attribute name="groups">purchase_ntc.group_administrative_user,purchase_ntc.group_technical_user</attribute>
+             </xpath>
+                           
+ 
+
+            <xpath expr="/form/header//button[@name='validate_confirme']"
+             position="attributes">
+                <attribute name="groups">purchase_wafi.group_general_department_manager</attribute>
+                <attribute name="string">Approve</attribute>
+            </xpath>
+
+            <xpath expr="/form/header//button[@name='draft_force_assign']"
+             position="attributes">
+                <attribute name="groups">base.group_hr_manager</attribute>
+                <attribute name="string">Approve HRM</attribute>
+            </xpath>
+
+            <xpath expr="/form/header//field[@name='state']" position="replace">
+                    <field name="state" nolabel="1" readonly="1" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"auto":"blue", "confirmed":"blue"}'/>
+                </xpath>
+        </field>
+    </record>
+
+
+
+    <record id="view_picking_in_form_ntc" model="ir.ui.view">
+        <field name="name">stock.picking.in.form</field>
+        <field name="model">stock.picking.in</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="stock.view_picking_in_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="/form/header" position="inside">
+                <button name="%(act_stock_transfer_picking_in)d" states="done" string="Transfer Shipment" class="oe_highlight" type="action"/>
+            </xpath>
+        </field>
+    </record>
+
+
+
+      
+
+
+      <!-- Inherit Stock Picking Out Filter  -->
+
+      <!--record id="view_picking_out_search" model="ir.ui.view">
+            <field name="name">stock.picking.out.search</field>
+            <field name="model">stock.picking</field>
+            <field name="arch" type="xml">
+            <field name="inherit_id" ref="stock.view_picking_out_search"/>
+                <search string="Picking list">
+
+                    
+                </search>
+            </field>
+        </record-->
+
+      <!-- Inherit Location Form Add Location Sepc Type -->
+
+     <record id="id_view_location_inherit_1" model="ir.ui.view"   >
+            <field name="name">stock.location.form.Inherited</field>
+            <field name="model">stock.location</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                  <field name="active" position="after">
+
+                          <field name="location_spec_type" required="1"/>
+
+                   </field> 
+
+              
+
+
+            </field>
+      </record>
+     
+
+      <!-- Inherit Location Form Add Location Sepc Type -->
+
+
+    <record id="product_template_form_view_inherit" model="ir.ui.view">
+        <field name="name">product.normal.form.inherit</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+		<field name="arch" type="xml">
+           
+
+
+           <xpath expr="//field[@name='categ_id']" position="after">
+                 <label for="it_product" class="oe_edit_only" groups="purchase_ntc.group_technical_user"/>
+					<field name="it_product" groups="purchase_ntc.group_technical_user"/>       
+		   </xpath>
+
+           
+
+
+
+        </field>
+    </record>
+
+
+
+    </data>
+</openerp>
+
+
+

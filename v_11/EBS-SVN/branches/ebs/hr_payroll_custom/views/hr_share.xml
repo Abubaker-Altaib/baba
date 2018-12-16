@@ -1,0 +1,72 @@
+<odoo>
+  <data>
+    
+    <record model="ir.ui.view" id="share_tree_view">
+      <field name="name">share tree view</field>
+      <field name="model">hr.share</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="type_of_share"/>
+          <field name="org"/>
+          <field name="date"/>
+          <field name='state'/>
+        </tree>
+      </field>
+    </record>
+   
+
+    <!-- actions opening views on models -->
+  
+    <record model="ir.actions.act_window" id="share_action_window">
+      <field name="name">Share</field>
+      <field name="res_model">hr.share</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+ 
+
+
+ <record id="share_form_view" model="ir.ui.view">
+      <field name="name">share form view</field>
+      <field name="model">hr.share</field>
+      <field name="arch" type="xml">
+        <form string="Share" version="7.0">
+          <header>
+            <button name="confirm" string="Confirm" class="oe_highlight"  states='draft' type='object'/>
+            <button name="deduction" string="Wait for deduction" class="oe_highlight"  states='confirm' type='object'/>
+            <field name="state" widget="statusbar" statusbar_visible="draft" />
+          </header>
+          <sheet string="Share">
+            <group col='4'>
+                <field name="name"  attrs="{'required':[('state','=','draft')] ,'readonly':[('state','!=','draft')]}"/>
+                <field name="type_of_share"  attrs="{'required':[('state','=','draft')] ,'readonly':[('state','!=','draft')]}"/>
+                <field name="org" attrs="{'required':[('state','=','draft')] ,'readonly':[('state','!=','draft')]}"/>
+                <field name="date" attrs="{'required':[('state','=','draft')] ,'readonly':[('state','!=','draft')]}"/>
+            </group>
+
+             <notebook attrs="{'invisible':[('state','=','draft')]}">
+               <page string="Share Lines"> 
+                 <field name="share_lines" attrs="{'readonly':[('state','!=','confirm')]}">
+                      <tree string="share" editable="top" >
+                        <field name="employee_id"/>
+                        <field name="amount" />
+                        <field name='state'/>
+                      </tree>
+                    </field>
+               </page>
+             </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+
+
+    <menuitem name="Share" id="share_mene_item_root" parent="hr_payroll.menu_hr_payroll_root"/>
+    <menuitem name="Share" id="share_mene_item" parent="share_mene_item_root" action='share_action_window'/>
+
+    
+   
+
+   
+  </data>
+</odoo>

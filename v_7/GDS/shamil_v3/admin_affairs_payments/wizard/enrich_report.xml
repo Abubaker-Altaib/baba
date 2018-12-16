@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- enrich report wiz View-->
+
+    	<record id="view_enrich_report_wiz" model="ir.ui.view">
+            <field name="name">enrich report wiz</field>
+            <field name="model">enrich.report.wiz</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Enrich Payment" version="7.0">
+        		<separator string="Enrich Payment" colspan="4"/>
+            		<group col="6" colspan="6">
+            			<field name="company_id" colspan="4"/>
+       					<newline/>
+            			<field name="month" colspan="2"/>
+           			<field name="year" colspan="2"/>
+       					<newline/>
+            			<field name="payment_enrich" colspan="4" domain="[('company_id','=',company_id),('month','=',month),('year','=',year)]"/>
+       			<newline/>
+    			</group>
+            		<footer>
+				<button special="cancel" string="Cancel" class="oe_link" />
+                                or
+           	    		<button name="print_report" string="Print" type="object" class="oe_highlight" />
+    			</footer>
+    			</form>
+            </field>
+		</record>
+<!-- enrich report wiz Action-->
+        <record id="action_enrich_report_wiz" model="ir.actions.act_window">
+            <field name="name">enrich report wiz action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">enrich.report.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_enrich_report_wiz"/>
+            <field name="target">new</field>
+        </record>
+
+
+<!-- enrich report wizard Menu-->
+      
+
+
+        <menuitem name="Enrich" parent="admin_affairs.main_menu_report" id="menu_enrich_report"/>
+        <menuitem name="Enrich Payment Report" parent="menu_enrich_report" action="action_enrich_report_wiz" id="menu_enrich_report_wiz"/>
+
+    </data>
+</openerp>

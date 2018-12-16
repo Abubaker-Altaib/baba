@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+   <openerp>
+       <data>
+           <!-- Monitoring Press Record Form,Tree View & Action -->
+           <record id="id_monitoring_press_view_form" model="ir.ui.view">
+		 <field name="name">monitoring.press.form</field>
+	         <field name="model">monitoring.press</field>
+		 <field name="arch" type="xml">
+		     <form string="Monitoring Press Record" version="7.0" >
+                    	<header>
+				<button name="confirmed" states="draft" string="Officer Confirm" 
+                                        confirm="Are you sure you want to confirm this Record?" class="oe_highlight" />
+				<button name="gm" states="confirmed" string="Media Section Manager" class="oe_highlight"
+                                        confirm="Are you sure you want to confirm this Record?" /> 					
+                               <button name="done" states="gm" string="GM confirm" class="oe_highlight"
+                                       confirm="Are you sure you want to confirm this Record?" />
+				<button name="cancel" states="draft,confirmed,gm" string="Cancel Request" class="oe_highlight"
+                                        confirm="Are you sure you want to Cancel this Record?" />
+				<button name="ir_action_cancel_draft" states="cancel,done" string="Set to Draft" type="object"  />
+                        	<field name="state" widget="statusbar" statusbar_visible="draft,confirmed,gm,done,cancel"/>
+                    	</header>
+                         <sheet>
+			 	<group col="4" colspan="2">
+			     		<field name="name"  />
+			     		<field name="date"/>
+			     		<field name="user_id" />
+			     		<field name="company_id" />
+			     		<field name="description" colspan="4"/>
+			 	</group>
+			 	<notebook colspan="4">
+			     		<page string="News Papers">
+				 		<field colspan="4" name="press_lines" nolabel="1" >
+							<tree editable="bottom" string="Press Lines">
+								<field name="p_name"/>
+								<field name="writer"/>
+                                        			<field name="paper_number" />
+								<field name="subject" />
+								<field name="gm_comment" />
+								<field name="evaluation"/>
+							</tree>
+						</field>
+			    		</page>
+			   		<page string="Notes">
+						<field name="notes" colspan="4" nolabel="1" />
+			    		</page>
+				</notebook>
+             		 </sheet>
+	             </form>
+		</field>
+	   </record>
+
+	<record id="id_monitoring_press_view_tree" model="ir.ui.view">
+		<field name="name">monitoring.press.tree</field>
+		<field name="model">monitoring.press</field>
+		<field name="arch" type="xml">
+			<tree string="Monitoring Press">
+				<field name="name"/>
+				<field name="description"/>
+				<field name="state"/>
+				<field name="date" select="1" />
+				<field name="user_id"/>
+				<field name="company_id" colspan="1"/>
+			</tree>
+		</field>
+	</record>
+
+	<!-- News Paper Form and Tree -->
+	<record id="monitoring_press_lines_form" model="ir.ui.view">
+		<field name="name">monitoring.press.lines.form</field>
+		<field name="model">monitoring.press.lines</field>
+		<field name="arch" type="xml">
+			<form string="NewsPaper"  version="7.0">
+				<notebook colspan="4">
+					<page string="News Paper">
+                                        	<group  col="4" colspan="2">                        
+							<separator string="News Paper Information" colspan="6" />
+							<field name="p_name"/>
+		                                	<field name="paper_number" colspan="2" />
+							<field name="no_page" colspan="2" />
+							<field name="release_date" colspan="2" />
+							<field name="evaluation" colspan="2" />
+							<separator string="Subject" colspan="6" />
+							<field name="subject" colspan="4" />
+							<field name="writer" colspan="4"/>
+							<separator string="Template Press" colspan="6" />
+							<field name="template_press" colspan="4"/>
+							<separator string="Genral Manager Comment" colspan="6" />
+							<field name="gm_comment" colspan="4"/>
+                                                </group>
+					</page>						
+				</notebook>
+			</form>
+		</field>
+	</record>
+
+	<record id="monitoring_press_lines_tree" model="ir.ui.view">
+		<field name="name">monitoring.press.lines.tree</field>
+		<field name="model">monitoring.press.lines</field>
+		<field name="arch" type="xml">
+			<tree string="Items">
+				<field name="p_name"/>
+                                <field name="paper_number" />
+				<field name="no_page" />
+				<field name="subject" />
+				<field name="writer"/>
+				<field name="evaluation"/>
+			</tree>
+		</field>
+	</record>
+
+	<!-- Monitoring Press Search Filter -->
+	<record id="view_monitoring_press_filter" model="ir.ui.view">
+		<field name="name">monitoring.press.list.select</field>
+		<field name="model">monitoring.press</field>
+		<field name="type">search</field>
+		<field name="arch" type="xml">
+			<search string="Search for Press Record">
+				<field name="name" select="1" />
+				<separator orientation="vertical" />
+				<field name="date" select="1" />
+				<separator orientation="vertical" />
+				<field name="press_name" select="1" />
+				<separator orientation="vertical" />
+				<field name="company_id" widget= "selection" select="1" />
+				<newline />
+				<group expand="0" string="Group By..." colspan="4" col="10">
+					<filter string="Responsible" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'user_id'}" />
+					<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+					<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					<filter string="Company" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'company_id'}" />
+				</group>
+			</search>
+		</field>
+	</record>
+
+	<!-- news Paper Cofigruation Form & Tree & search -->
+	<record id="id_news_papers_view_form" model="ir.ui.view">
+		<field name="name">news.papers.form</field>
+		<field name="model">news.papers</field>
+		<field name="arch" type="xml">
+			<form string="News Papers Record"  version="7.0">
+ 				<sheet>
+                                	<group  col="4" colspan="2">                        
+						<field name="code"/>
+						<field name="name"/>
+                                        </group>                        
+ 				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<record id="news_papers_tree" model="ir.ui.view">
+		<field name="name">news.papers.tree</field>
+		<field name="model">news.papers</field>
+		<field name="arch" type="xml">
+			<tree string="News Paper">
+				<field name="code"/>
+                                <field name="name" />
+			</tree>
+		</field>
+	</record>
+
+	<record id="news_papers_action" model="ir.actions.act_window">
+		<field name="res_model">news.papers</field>
+		<field name="domain">[]</field>
+	</record>
+
+	<record id="view_news_papers_filter" model="ir.ui.view">
+		<field name="name">news.papers.list.select</field>
+		<field name="model">news.papers</field>
+		<field name="type">search</field>
+		<field name="arch" type="xml">
+			<search string="Search for NewsPapers Record">
+				<field name="name" select="1" />
+				<separator orientation="vertical" />
+				<field name="code" select="1" />
+				<newline />
+			</search>
+		</field>
+	</record>
+
+	<!-- Menu -->
+	<record id="id_monitoring_press_action" model="ir.actions.act_window">
+		<field name="res_model">monitoring.press</field>
+		<field name="domain">[]</field>
+	</record>
+
+       <menuitem id="menu_media" name="Media" parent="admin_affairs.menu_admin_affairs_operations"/> 
+       <menuitem id="menu_media_configuration" name="Media Configuration " parent="admin_affairs.admin_affairs_configuration_menu"/>  
+       <menuitem id="news_papers_menu" name="News Papers" parent="menu_media_configuration" action="news_papers_action" /> 
+       <menuitem id="id_monitoring_press_menu" name="Monitoring press" parent="menu_media" action="id_monitoring_press_action" />    
+       <!--menuitem id="id_media_menu" name="Media" parent="public_relation.id_public_relation" sequence="1"/-->
+       <!--menuitem id="menu_media_configuration" name="Media configuration" parent="public_relation.id_public_relation"/-->  
+
+
+
+	</data>
+</openerp>

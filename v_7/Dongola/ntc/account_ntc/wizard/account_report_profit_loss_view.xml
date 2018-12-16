@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+     <data>
+        <record id="account_profit_loss_report_view" model="ir.ui.view">
+            <field name="name">Profit and Loss</field>
+            <field name="model">account.pl.report.arabic</field>
+            <field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Report Options">
+					<label nolabel="1" string="" />
+					<newline />
+					<field name="chart_account_id" widget='selection' invisible="1" />
+					<field name="fiscalyear_id" options='{"no_open":True}' />
+					<field name="target_move" />
+                    <field name="display_account" readonly="0"/>
+                    <field name="display_type" invisible="1"/>
+                    <field name="regular_account"/>
+					<notebook tabpos="up" colspan="4">
+						<page string="Filters" name="filters">
+							<field name="filter" on_change="onchange_filter(filter, fiscalyear_id)"
+								colspan="4" />
+							<!--separator string="Dates" colspan="4" /-->
+							<field name="date_from"
+								attrs="{'invisible':[('filter', '!=', 'filter_date')], 'required':[('filter', '=', 'filter_date')]}"
+								colspan="2" />
+							<field name="date_to"
+								attrs="{'invisible':[('filter', '!=', 'filter_date')], 'required':[('filter', '=', 'filter_date')]}"
+								colspan="2" />
+							<!--separator string="Periods" colspan="4" /-->
+							<field name="period_from" domain="[('fiscalyear_id', '=', fiscalyear_id)]" context="{'closed':True}"
+								attrs="{'invisible':[('filter','!=','filter_period')], 'required':[('filter', '=', 'filter_period')]}"
+								colspan="2" />
+							<field name="period_to" domain="[('fiscalyear_id', '=', fiscalyear_id)]" context="{'closed':True}"
+								attrs="{'invisible':[('filter','!=','filter_period')], 'required':[('filter', '=', 'filter_period')]}"
+								colspan="2" />
+						</page>
+						<page string="Journals" name="journal_ids">
+							<field name="journal_ids" colspan="4" nolabel="1" />
+						</page>
+					</notebook>
+					<separator colspan="4" />
+					<group col="4" colspan="4">
+						<button icon="gtk-cancel" special="cancel" string="Cancel"
+							colspan="2" />
+						<button icon="gtk-print" name="check_report" string="Print"
+							type="object" colspan="2" default_focus="1" />
+					</group>
+				</form>
+			</field>
+		</record>
+
+        <!--record id="account_pl_report_view" model="ir.ui.view">
+            <field name="name">Profit and Loss</field>
+            <field name="model">account.pl.report.arabic</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account_custom.account_common_report_view" />
+            <field name="arch" type="xml">
+            <data>
+            <xpath expr="//field[@name='target_move']" position="replace">
+                <field name="target_move" required="0" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='journal_ids']" position="replace">
+                <field name="journal_ids" required="0" colspan="4" nolabel="1" readonly="1"/>
+            </xpath>
+            <xpath expr="/form/label[@string='']" position="replace">
+                <separator string="Profit And Loss" colspan="4"/>
+                <label nolabel="1" colspan="4" string="The Profit and Loss report gives you an overview of your company profit and loss in a single document"/>
+            </xpath>
+            <xpath expr="//field[@name='fiscalyear_id']" position="after">
+                   <field name="display_account"/>
+                   <field name="display_type"/>
+            </xpath>
+            </data>
+            </field>
+        </record-->
+
+         <record id="action_account_pl_report" model="ir.actions.act_window">
+             <field name="name">Account Profit And Loss</field>
+             <field name="res_model">account.pl.report.arabic</field>
+             <field name="type">ir.actions.act_window</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">form</field>
+             <field name="view_id" ref="account_profit_loss_report_view"/>
+             <field name="target">new</field>
+       </record>
+
+<!--delete model="ir.model.data" search="[('name','=','action_account_pl_report')]"/-->
+
+        <menuitem icon="STOCK_PRINT"
+                name="Profit And Loss"
+                action="action_account_pl_report"
+                id="account.menu_account_pl_report"
+            groups="account.group_account_manager,account.group_account_user"
+                parent="account.final_accounting_reports"/>
+
+    </data>
+</openerp>

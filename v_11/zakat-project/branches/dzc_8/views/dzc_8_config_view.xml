@@ -1,0 +1,96 @@
+<odoo>
+    <data>
+
+        <!--========= Transport companies ===================== -->
+
+        <!-- Tree view for transport_company model -->
+        <record id="transport_company_view_tree" model="ir.ui.view">
+            <field name="name">Transport Company Tree</field>
+            <field name="model">dzc8.transport.company</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="source_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view for transport company model -->
+        <record id="‫‪transport_company_view_form" model="ir.ui.view">
+            <field name="name">Transport Company Form</field>
+            <field name="model">dzc8.transport.company</field>
+            <field name="arch" type="xml">
+                <form>
+
+                    <sheet>
+                            <group col="4" colspan="2">
+                                <field name="name" required="1"/>
+                                <field name="source_id" domain="[('company_id', '=', company_id)]" required="1"/>
+                            </group>
+                            <group col="4" colspan="2">
+                                <field name="company_id" readonly="1"/>
+                                <field name="user_id"/>
+
+                            </group>
+                        <notebook>
+                            <page string="Destinations" required="1">
+                                <field name="state_fees_ids">
+                                    <tree editable="bottom">
+                                        <field name="name" required="1"/>
+                                        <field name="transport_fees" widget="monetary" options="{'currency_field': 'currency_id'}"
+                                               required="1"/>
+                                        <field name="currency_id" invisible="1" />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Accounts">
+                                <group col="4" colspan="2">
+                                    <field name="zakat_journal" required="1"/>
+                                    <field name="property_zakat_account_id" required="1"/>
+                                    <field name="property_analytic_account_id" required="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <!-- Transport company serch view-->
+        <record id="transport_company_view_search" model="ir.ui.view">
+            <field name="name">dzc8.transport.company.search</field>
+            <field name="model">dzc8.transport.company</field>
+            <field name="arch" type="xml">
+
+                <search string="Search Opportunities">
+                    <field name="name"/>
+                </search>
+
+            </field>
+        </record>
+
+        <!-- Transport companies Main form action-->
+        <record id="transport_company_action" model="ir.actions.act_window">
+            <field name="name">Transport Company</field>
+            <field name="res_model">dzc8.transport.company</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- Transport companies menu -->
+        <menuitem name="Configuration"
+                  id="dzc_8_configuration_main_menu"
+                  parent="iban_alsabil_main_menu"
+                  sequence="3"/>
+
+        <!-- Transport companies menu -->
+        <menuitem name="Transport Companies"
+                  id="transport_companies_form_menu_action"
+                  parent="dzc_8_configuration_main_menu"
+                  action="transport_company_action"/>
+
+    </data>
+</odoo>
+

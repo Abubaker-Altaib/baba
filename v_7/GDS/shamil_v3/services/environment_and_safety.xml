@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+                <!-- contract category Form,Tree View & Action -->
+		<record id="view_contract_category_form" model="ir.ui.view">
+			<field name="name">contract.category.form</field>
+			<field name="model">contract.category</field>
+			<field name="arch" type="xml">
+				<form string="Contract category" version="7.0">
+ 					<sheet>
+ 					    <group>
+						<field name="name" select="1"/>
+						<field name="parent_id" select="1"/>
+						<newline/>
+						<separator string="Accounting properties" colspan="4"/>
+						<newline/>
+						<separator string="Template properties" colspan="4"/>
+						<field name="templet_id" colspan="2" />
+					        <field name="name_type" colspan="2" />
+						<separator string="Direct Account properties" colspan="4"/>
+						<field name="journal_id" colspan="2" />
+						<field name="account_id" colspan="2" />
+						<field name="analytic_id" colspan="2" />
+ 					    </group>
+ 					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_contract_category_tree" model="ir.ui.view">
+			<field name="name">contract.category</field>
+			<field name="model">contract.category</field>
+			<field name="arch" type="xml">
+				<tree string=">Contract category">
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+		
+		<record id="contract_category_form_action" model="ir.actions.act_window">
+            <field name="name">Contract category</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">contract.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help">Create contract category you want to be used in environment and safety contract.</field>
+        </record>
+
+<!-- Department and Cost Add Form,Tree View & Action -->
+		<record id="view_dep_cost_form" model="ir.ui.view">
+			<field name="name">depat.cost.form</field>
+			<field name="model">depat.cost</field>
+			<field name="arch" type="xml">
+				<form string="Department cost and Evaluation"  version="7.0">
+                            	 <sheet>	 
+				<notebook>
+				<page string="Department cost">
+ 					    <group>
+						<field name="department_id" select="1" required="1"/>
+						<field name="cost" select="1"/>
+						 <field name="amount_total"/>
+ 					    </group>
+				</page>
+			<page string="Evaluation">
+ 					    <group>
+    		                <field name="deduct_days" select="1"/>
+				<field name="deduct_amount" select="1"/>
+				<field name="percentage_rating" select="1"/>
+				<field name="mount_afer_detcut_rat" select="1"/>
+				<field name="rate_need" select="1"/>
+ 					    </group>
+				</page>
+					</notebook>
+ 					    </sheet>	 
+				</form>
+			</field>
+		</record>
+
+		<record id="view_dep_cost_tree" model="ir.ui.view">
+			<field name="name">depat.cost.tree</field>
+			<field name="model">depat.cost</field>
+			<field name="arch" type="xml">
+				<tree string=">Department cost and Evaluation">
+				<field name="department_id" select="1"/>
+						<field name="cost" select="1"/>
+						<field name="amount_total"/>
+	    		 <field name="deduct_days" select="1"/>
+				<field name="deduct_amount" select="1"/>
+				<field name="percentage_rating" select="1"/>
+				<field name="amount_with_tax" select="1"/>
+				</tree>
+			</field>
+		</record>
+		
+		
+		<record id="contract_fees_form" model="ir.ui.view">
+			<field name="name">contract.fees.form</field>
+			<field name="model">contract.fees</field>
+			<field name="arch" type="xml">
+				<form string="Contract Fees"  version="7.0">
+					<header>
+
+		                          <button name="confirm" string="Confirm" confirm="Are You Sure You Want To Confirm Fees"
+		                                 states="draft"  class="oe_highlight"/>
+		                          <button name="cancel" string="Cancel" confirm="Are You Sure You Want To Confirm Fees" 
+		                                 states="confirm"  class="oe_highlight"/>		
+		                    	  <button name="action_cancel_draft" states="cancel" string="Set To Draft"
+		                                 type="object" />                           
+		                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,cancel"/>
+		                       </header>
+					<sheet>
+					    <notebook >
+						<page string="Contract Fees">
+                            <field name="fees_date" colspan="2" required="1"/> 
+			   <field name="visible_month" colspan="2"  />
+                            <field name="year" colspan="2" />
+                            <field name="no_month" colspan="2" />
+							<field name="final_total" colspan="2" required="1" />
+							<newline/>
+							<separator string="Department And Cost" colspan="4" />	
+							<notebook colspan="4">
+							<page string="Department And Cost">
+                                                              <group>
+								      <field name="dep_fees" />
+                                                               </group>
+                
+							 </page>
+						    </notebook>
+						</page>                            
+					    </notebook>
+					    <button name="section_depart" string="Section Service" confirm="Are You Sure To Approve this Fees" states="confirm" icon="gtk-apply" colspan="2"/>
+     			 <button name="create_invoice" string="Create Invoice" confirm="Are You Sure You Want Approve and To Create An Invoice to this Fees" states="section_depart" icon="gtk-apply" colspan="2"/>						    									
+				</sheet>
+				
+			</form>
+		</field>
+	</record>	
+		
+		<record id="contract_fees_tree" model="ir.ui.view">
+			<field name="name">contract.fees.tree</field>
+			<field name="model">contract.fees</field>
+			<field name="arch" type="xml">
+				<tree colors="grey:state=='cancel';blue:state=='confirmed'"
+					string="Contract Fees">
+					<field name="fees_date"/>
+					<field name="year" />
+					<field name="visible_month" />
+				        <field name="no_month" colspan="2" />			
+                    			<field name="fees_amount" />
+					<field name="dep_fees" nolabel="1" >
+						<tree editable="bottom" string="Contract Fees">
+							<field name="department_id" colspan="2" required="1"/>
+							<field name="cost" colspan="2" />
+						</tree>
+					</field>
+					<field name="state" />
+					<field name="voucher_no" />	
+                 <button name="section_depart" string="Section Service" confirm="Are You Sure To Approve this Fees" states="confirm" icon="gtk-apply" colspan="2"/>
+     			 <button name="create_invoice" string="Create Invoice" confirm="Are You Sure You Want Approve and To Create An Invoice to this Fees" states="section_depart" icon="gtk-apply" colspan="2"/>						    									
+				</tree>
+			</field>
+		</record>	
+		
+		<!-- environment and safety Record Form,Tree View & Action -->
+		<record id="view_environment_and_safety_view_form" model="ir.ui.view">
+			<field name="name">environment.and.safety.form</field>
+			<field name="model">environment.and.safety</field>
+			<field name="arch" type="xml">
+				<form string="environment and safety" version="7.0">
+                                     <header col="11" colspan="4">					
+                                           <button name="confirmed" states="draft" string="Section Manager confirmation"
+						   confirm="Are you sure you want to Confirm this request?"  />
+                                    <!--groups="base.group_Section_manager,base.group_general_department_manager,base.group_department_managers"-->
+                        
+					   <button name="confirmed_m" states="confirmed" string=" Department manager confirmation"
+						   confirm="Are you sure you want to confirm this request?" icon="gtk-applyl" />
+                                           <!--groups="base.group_general_department_manager,base.group_department_managers"-->
+					  <button name="approv_gm" states="confirmed_m" string="GM approval"
+						 confirm="Are you sure you want to approve this request" icon="gtk-apply"  />
+					  <button name="head" states="approv_gm" string="General Manager approval"
+						  confirm="Are you sure you want to approve this request" icon="gtk-apply"  />
+                                          <!--groups="base.group_general_department_manager"-->							
+					  <!--button name="approv_gm" states="head" string="GM approval"
+						 confirm="Are you sure you want to approve this request" icon="gtk-apply"  /-->
+                                          <!--groups="base.group_admin_affairs_general_manager"-->
+					  <button name="admin_affair" states="head" string="Admin Affairs Manager approval"
+						 confirm="Are you sure you want to approve this request" icon="gtk-apply"  />
+                                           <!--groups="base.group_admin_affairs_manager"-->							
+                                          <button name="service_section" states="admin_affair" string="Service Section Manager"
+					       confirm="Are you sure you want to approve this request?" icon="gtk-apply"  />
+                                           <!--groups="base.group_service_section_manager"-->
+                                           <button name="execute" states="service_section" string="Service Officer"
+						   confirm="Are you sure you want to approve this request?"   />
+                                          <!--groups="base.group_rented_allowns"-->
+					  <button name="cancel" string="Cancel Request"
+                                             states="draft,confirmed,confirmed_m,confirmed_gm,head,approv_gm,admin_affair,service_section,execute" 
+						   confirm="Are you sure you want to Cancel this request?"  />
+					  <button name="ir_action_cancel_draft" states="cancel"
+						  string="Set to Draft" type="object" icon="gtk-convert"  />
+					   <field name="state" widget="statusbar" statusbar_visible="draft,execute,cancel"/> 						
+				</header>
+                                <sheet>			
+				           <group  col="4" > 							
+                                                       <field name="name" colspan="2" />								
+							<field name="type_contract" colspan="2"/>
+							<field name="building_rent" colspan="2" 
+                                          attrs="{'invisible':[('type_contract','=','contract')],'required':[('type_contract','!=','contract')]}"/>
+
+						<field name="date" colspan="2" />
+						<field name="company_id" colspan="2" required="1" />
+
+
+						<field name="department_id" colspan="2" attrs="{'invisible':[('type_contract','=','contract')],'required':[('type_contract','!=','contract')]}"/>
+						<field name="user_id" colspan="2" />						
+						<field name="partner_id" colspan="2" attrs="{'invisible':[('state','!=','execute')]}"/>
+						<field name="date_of_rent" colspan="2" required="1" />
+						<field name="date_of_return" colspan="2" required="1" />
+					
+						<field name="cost_of_contract" colspan="2" attrs="{'invisible':[('state','!=','execute')]}" />						
+						<field name="category_id" colspan="2"  attrs="{'invisible':[('state','!=','execute')]}"/>
+				</group >
+
+					<notebook colspan="4">	
+					<page string="Contract Fees">
+                            <newline/>
+                            <button name="create_fees" string="Create Fees" confirm="Are You Sure" type="object" icon="gtk-execute" colspan="2"  attrs="{'invisible':[('state','!=','execute')]}"/>
+                            <group colspan="2" col="2" > 
+                            <field name="fees_total_amount" colspan="2" readonly="1" />
+                            </group>
+							<field colspan="4" name="contract_fees_ids" nolabel="1">
+									<!--tree editable="bottom" string="Contract Fees"-->
+										<field name="fees_date" colspan="2" required="1"/>
+										<field name="visible_month" colspan="2" />
+										<field name="no_month" colspan="2" />
+                                        <field name="year" colspan="2" />
+										<field name="fees_amount" colspan="2" />
+									    <field name="final_total" colspan="2" />
+										<field name="state" colspan="2" />
+									<!--/tree-->
+                            <field name="fees_total_amount" colspan="2" readonly="1" />
+                            <field name="voucher_no" />	
+                            <button name="section_depart" string="Section Service" confirm="Are You Sure To Approve this Fees" states="confirm" icon="gtk-apply" colspan="2"/>
+     						<button name="create_invoice" string="Create Invoice" confirm="Are You Sure You Want Approve and To Create An Invoice to this Fees" states="section_depart" icon="gtk-apply" colspan="2"/>						    									
+                   				</field>	
+                            </page>	
+											
+					<page string="Taxes" attrs="{'invisible':[('state','!=','execute')]}">
+						<field name="taxes_id" colspan="2"/>
+				   <group col="4" colspan="4">						
+						<!--field name="amount_tax" /-->
+						<!--field name="amount_untaxed" /-->
+						<!--field name="amount_total"/-->
+						</group>
+						</page>
+												
+				   <page string="Notes">
+							<field name="notes" colspan="4" nolabel="1" />
+						</page>												
+					</notebook>
+				                                          </sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="view_environment_and_safety_tree" model="ir.ui.view">
+			<field name="name">environment.and.safety.tree</field>
+			<field name="model">environment.and.safety</field>
+			<field name="arch" type="xml">
+				<tree string="environment and safety">
+						<field name="name" colspan="2" />				
+						<field name="date" colspan="2" />
+						<field name="partner_id" colspan="2" />						
+						<field name="date_of_rent" colspan="2"  />
+						<field name="date_of_return" colspan="2"  />
+						<field name="building_rent" colspan="2"  />	
+						<field name="state"  colspan="2"/>
+						<field name="company_id" colspan="2" required="1" />				
+									
+						</tree>
+			</field>
+		</record>
+
+
+
+		<!-- environment and safety Search Filter -->
+
+		<record id="view_environment_and_safety_filter" model="ir.ui.view">
+			<field name="name">environment.and.safety.list.select</field>
+			<field name="model">environment.and.safety</field>
+			<field name="arch" type="xml">
+				<search string="Search for Press Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="date" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="partner_id" colspan="1"/>
+
+					
+
+					<newline />
+
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Partner" icon="terp-personal"
+							domain="[]" context="{'group_by':'partner_id'}" />
+						<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+						
+					</group>
+
+				</search>
+			</field>
+		</record>
+
+		<!-- Menu -->
+
+		<record id="environment_and_safety_action" model="ir.actions.act_window">
+			<field name="res_model">environment.and.safety</field>
+			<field name="domain">[]</field>
+		</record>
+		
+        <menuitem id="menu_environment_and_safety_contract" name="environment and safety"
+          parent="menu_environment_and_safety" action="environment_and_safety_action"/>
+
+		
+
+		<menuitem id="menu_environment_and_safety_contract_category" name="Contract category"
+          parent="service_configration_menu" action="contract_category_form_action"/>
+
+	</data>
+</openerp>
+

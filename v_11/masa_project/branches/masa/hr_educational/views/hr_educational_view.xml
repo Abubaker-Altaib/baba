@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+		<record model="ir.ui.view" id="recruitment_needs_form_inherit">
+            <field name="name">Recruitment Needs inherit</field>
+            <field name="model">hr.recruitment.needs</field>
+            <field name="inherit_id" ref="hr_recruitment_custom.recruitment_needs_form"/>
+            <field name="arch" type="xml">
+            	 <xpath expr="//field[@name='department_id']" position="after">
+            	 	<field name="j_type" invisible="1"/>
+            	 </xpath>
+               <xpath expr="//field[@name='job_id']" position="replace">
+                  <field name="job_id" 
+                    options="{'no_create': True, 'no_open': True}"
+                    attrs="{'required':[('need_type','=','exist')], 'invisible': [('state', '=', 'draft'),('need_type', '=', 'new')]}" domain="[('j_type','=',j_type),('state','=','approved')]"/>
+               </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="recruitment_group_need_form_inherit">
+            <field name="name">Recruitment Needs By Jobs</field>
+            <field name="model">hr.recruitment.needs.grouping</field>
+            <field name="inherit_id" ref="hr_recruitment_custom.recruitment_group_need_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='approve']" position="after">
+            		<field name="j_type" invisible="1"/>
+            	</xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_hr_employee_grade_form1_inherit">
+            <field name="name">hr.payroll.structure.form</field>
+            <field name="model">hr.payroll.structure</field>
+            <field name="inherit_id" ref="hr_payroll_custom.view_hr_employee_grade_form1"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='date_from']" position="before">
+            		<field name="structure_type" required="True"/>
+            	</xpath>
+            </field>
+        </record>
+
+        <record id="view_hr_payroll_structure_list_view1_inherit" model="ir.ui.view">
+           <field name="name">hr.payroll.structure.tree</field>
+           <field name="model">hr.payroll.structure</field>
+           <field name="inherit_id" ref="hr_payroll_custom.view_hr_payroll_structure_list_view1"/>
+           <field name="arch" type="xml">
+           	    <xpath expr="//field[@name='name']" position="after">
+                   <field name="structure_type"/>
+               </xpath>
+           </field>
+        </record>
+    </data>
+</odoo>

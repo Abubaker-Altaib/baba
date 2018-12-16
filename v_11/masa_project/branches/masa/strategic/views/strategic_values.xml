@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="strategic_values_view_form">
+            <field name="name">strategic.values.view.form</field>
+            <field name="model">strategic.values</field>
+            <field name="arch" type="xml">
+                <form string="Strategic Values">
+                    <sheet string="Strategic Values">
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"  placeholder="Strategic Values Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                            </group>
+                            <group>
+                                <field name="sequence"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>    
+                        </group>
+                        <group>
+                            <field name="description" nolabel="1" placeholder="Strategic Values Description."/>
+                        </group>
+                        
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_strategic_values_tree">
+            <field name="name">strategic.values.tree</field>
+            <field name="model">strategic.values</field>
+            <field name="arch" type="xml">
+                <tree string="Strategic Values">
+                    <field name="sequence"/>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_strategic_values_view">
+            <field name="name">Strategic Values</field>
+            <field name="res_model">strategic.values</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_strategic_values_tree"/>
+        </record>
+
+        <record id="view_strategic_values_search" model="ir.ui.view">
+           <field name="name">strategic.values.search</field>
+           <field name="model">strategic.values</field>
+           <field name="arch" type="xml">
+               <search string="Strategic Values">
+                    <field name="name" filter_domain="[('name','ilike',self)]" string="Strategic Values "/>
+                    <field name="code"/>
+                    <field name="active"/>
+                    <field name="sequence"/>
+                    <field name="company_id"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                </search>
+            </field>
+        </record>
+<!--         <menuitem parent="menu_strategic_configuration_view"
+                  id="menu_strategic_values_view"
+                  name="Strategic Values"
+                  action="act_strategic_values_view"/> -->
+    </data>
+</odoo>

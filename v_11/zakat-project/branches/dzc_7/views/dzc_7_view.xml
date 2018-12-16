@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+	<data>
+		<record id="dzc_7_support_order_form_view" model="ir.ui.view" >
+			<field name="name">Support Order</field>
+			<field name="model">dzc_7.support.order</field>
+			<field name="arch" type="xml">
+				<form >
+          			<header>
+              			<button name="action_confirm" string="Confirm" states="draft" type="object" class="oe_highlight"/>
+              			<button name="action_approve" string="Aprove" states="confirmed" type="object" class="oe_highlight"/>
+              			<button name="action_done" string="Done" states="approval" type="object" class="oe_highlight"/>
+              			<button name="action_cancle" states="draft,confirmed,approval" string="Cancel" type="object" class="oe_highlight"/>
+              			<button name="action_set_draft" states="cancel" string="Set Draft" type="object" class="oe_highlight"/>
+              			<field name="state" statusbar_visible="draft,confirmed,approval,done" widget="statusbar"/>
+          			</header>
+          			<sheet>
+            		<group>
+                	<group>
+                    <field name="name" readonly="1"/>
+                    <field name="oragnaztion_id" attrs="{'readonly':[('state','in',('done','cancel'))],'required':[('support_type' , '=' , 'organization')],
+                    'invisible':[('support_type','!=','organization')]}" domain="[('channel_type','=','fe_sabeel')]"/>
+                    <field name="program_area" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                    <field name="support_method" required="1" attrs="{'readonly':[('state','=','done')]}" />
+
+                    <field name="approved_amount"  attrs="{'invisible':[('support_method','!=','cash')],'readonly':[('state','=','done')],'required':[('support_method','=','cash')]}"/>
+
+                    <field name="support_type" required="1" readonly="1"/>
+                    
+                </group>
+                <group>
+                    <field name="date" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                    <field name="program_name" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                    <field name="People" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+
+                    <field name="estimated_cost"  attrs="{'readonly':[('state','=','done')],'invisible':[('support_method','!=','cash')],'required':[('support_method','=','cash')]}"/>
+                    
+                    
+                    <field name="state_id" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+
+                    <field name="company_id" required="1" readonly="1"/>
+
+                </group>
+            </group>
+            <notebook>
+                <page string="Researcher Report">
+                  <group>
+                    <field name="researcher_report" attrs="{'readonly':[('state','=','done')]}" required="1"/>
+                  </group>
+                  
+                </page>
+                <page string="Products" attrs="{'invisible':[('support_method' ,'!=' , 'material')]}">
+                                <field name="products_ids">
+                                    <tree editable="bottom">
+                                        <field name="product_id" required="1"/>
+                                        <field name="product_qty" required="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                <page string="Almasaref Manager Comment" attrs="{'invisible':[('state','=','draft')]}">
+                  <group>
+                    <field name="type_" attrs="{'required':[('state','not in',['draft'])]}"/>
+                  </group>
+                  <group>
+                    <field name="almasaref_manager_comment" attrs="{'readonly':[('state','=','done')],'required':[('state','!=','draft')]}"/>
+                  </group>
+                </page>
+                <page string="Secretary of State Decision" attrs="{'invisible':[('state','!=','approval'),('state','!=','done'),('state','!=','cancel')]}">
+                  <group>
+                  
+                    <field name="secretary_state_decision" attrs="{'readonly':[('state','=','done')],'required':[('state','=','approval')]}"/>
+                  </group>
+                </page>
+
+                 <page string="Voucher" attrs="{'invisible':[('state','!=','done')]}">
+                        <group>
+                        <field name="vaucher_id" readonly="1"/>
+                      </group>
+                      </page>
+            </notebook>
+          </sheet>
+
+        </form>
+      </field>
+    </record>
+    <!-- tree view -->
+		<record id="dzc_7_support_order_tree_view" model="ir.ui.view" >
+			<field name="name">Support Order</field>
+			<field name="model">dzc_7.support.order</field>
+			<field name="arch" type="xml">
+				<tree>
+					<field name="name" />
+					<field name="date" />
+					<field name="program_name" />
+					<field name="state_id" />
+					<field name="state" string="Order Status"/>
+					
+				</tree>
+      </field>
+    </record>
+<!-- search view -->
+
+		<record id="dzc_7_support_order_search_view" model="ir.ui.view" >
+			<field name="name">Support Order</field>
+			<field name="model">dzc_7.support.order</field>
+			<field name="arch" type="xml">
+				<search>
+					<field name="name" />
+					<field name="program_name" />
+					
+				</search>
+      </field>
+    </record>
+    
+<act_window id="dzc_7_support_action"
+		name="Support order"
+		res_model="dzc_7.support.order"
+		view_mode="search,tree,form"
+		context="{'default_support_type':'organization'}"
+		/>
+		<menuitem id="dzc_7_support_main_menu"
+        name="Support"
+        parent="dzc7_menu"
+        sequence="1"
+        action="dzc_7_support_action"
+        />
+
+<!-- Support support order menu -->
+    <menuitem id="dzc_7_support_menu"
+        name="Support Order"
+        parent="dzc_7_support_main_menu"
+        sequence="1"
+        action="dzc_7_support_action"
+        />
+        
+		
+	</data>
+</odoo>
+
+
+

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Account Types -->
+        <!-- record model="account.account.type" id="account.data_account_type_non_current_assets">
+            <field name="type">receivable</field>
+        </record>
+        <record model="account.account.type" id="account.data_account_type_current_liabilities">
+            <field name="type">payable</field>
+        </record>
+        <record model="account.account.type" id="account.data_account_type_non_current_liabilities">
+            <field name="type">payable</field>
+        </record-->
+        <record model="account.account.type" id="account.data_account_type_saving">
+            <field name="name">Saving</field>
+            <field name="include_initial_balance" eval="True" />
+        </record>
+        <record model="account.account.type" id="account.data_account_type_other_payable">
+            <field name="name">Other Payable</field>
+            <field name="include_initial_balance" eval="True" />
+        </record>
+        <record model="account.account.type" id="account.data_account_type_short_term_loans">
+            <field name="name">Short-Term Loans</field>
+            <field name="include_initial_balance" eval="True" />
+        </record>
+        <record model="account.account.type" id="account.data_account_type_investment">
+            <field name="name">Investment</field>
+            <field name="include_initial_balance" eval="True" />
+        </record>
+        <record model="account.account.type" id="account.data_account_type_human_resource">
+            <field name="name">Human Resource</field>
+        </record>
+        <record model="account.account.type" id="account.data_account_type_current_account">
+            <field name="name">Current Accounts</field>
+        </record>
+        <record model="account.account.type" id="account.data_account_type_consumption_fixed_assets">
+            <field name="name">Consumption of fixed assets</field>
+        </record>
+        <record model="account.account.type" id="account.data_account_type_provision_doubtful_debts">
+            <field name="name">Provision for doubtful debts</field>
+        </record>
+        <record model="account.account.type" id="account.data_account_type_provision_zkat">
+            <field name="name">Provision for Zkat</field>
+        </record>
+        <record model="account.account.type" id="account.data_account_type_zkat_paid">
+            <field name="name">Zkat paid</field>
+        </record>
+        <record model="account.account.type" id="account.data_account_type_taxes_paid">
+            <field name="name">Taxes paid</field>
+        </record>
+        <record model="account.account.type" id="account.data_account_type_gain_sale_fixed_assets">
+            <field name="name">Gain on sale of fixed assets</field>
+        </record>
+        <record model="account.account.type" id="account.data_account_type_purchase_sale_fixed_assets">
+            <field name="name">Purchase of fixed assets</field>
+        </record>
+        <record model="account.account.type" id="account.data_account_type_deferred_sales_receivables">
+            <field name="name">Deferred sales receivables</field>
+        </record>
+
+        <!-- Currencies -->
+        <record id="SDG" model="res.currency">
+            <field name="name">SDG</field>
+            <field name="symbol">SD</field>
+            <field name="rounding">0.01</field>
+            <field name="position">before</field>
+        </record>
+
+        <!-- Chart Template -->
+        <record id="transfer_account_id" model="account.account.template">
+            <field name="code">511</field>
+            <field name="name">جاري الفروع</field>
+            <field name="user_type_id" ref="account.data_account_type_current_account" />
+        </record>
+        <record id="configurable_chart_template" model="account.chart.template">
+            <field name="name">Microfinance Account Chart Template</field>
+            <field name="code_digits">6</field>
+            <field name="transfer_account_id" ref="transfer_account_id" />
+            <field name="currency_id" ref="SDG" />
+        </record>
+        <record id="transfer_account_id" model="account.account.template">
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+
+        <!-- Account Templates -->
+
+        <!-- Balance Sheet -->
+        <!-- Current Assets >
+        <record id="conf_csh" model="account.account.template">
+            <field name="code">111101</field>
+            <field name="name">الخزينة</field>
+            <field name="user_type_id" ref="account.data_account_type_liquidity" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_bnk" model="account.account.template">
+            <field name="code">111201</field>
+            <field name="name">البنك</field>
+            <field name="user_type_id" ref="account.data_account_type_liquidity" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_ncas01" model="account.account.template">
+            <field name="code">112001</field>
+            <field name="name">ذمم البيوع المؤجلة</field>
+            <field eval="True" name="reconcile" />
+            <field name="user_type_id" ref="account.data_account_type_non_current_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_invest" model="account.account.template">
+            <field name="code">113001</field>
+            <field name="name">الإستثمارات قصيرة الأجل</field>
+            <field eval="True" name="reconcile" />
+            <field name="user_type_id" ref="account.data_account_type_investment" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_recv01" model="account.account.template">
+            <field name="code">114001</field>
+            <field name="name">الذمم المدينة</field>
+            <field eval="True" name="reconcile" />
+            <field name="user_type_id" ref="account.data_account_type_receivable" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_recv02" model="account.account.template">
+            <field name="code">114002</field>
+            <field name="name">إيرادات تحت التحصيل</field>
+            <field eval="True" name="reconcile" />
+            <field name="user_type_id" ref="account.data_account_type_receivable" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_stk" model="account.account.template">
+            <field name="code">115001</field>
+            <field name="name">المخزن</field>
+            <field name="user_type_id" ref="account.data_account_type_current_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        < Fixed Assets >
+        <record id="conf_xfa101" model="account.account.template">
+            <field name="code">121101</field>
+            <field name="name">الاراضي</field>
+            <field name="user_type_id" ref="account.data_account_type_fixed_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_xfa102" model="account.account.template">
+            <field name="code">121102</field>
+            <field name="name">المباني</field>
+            <field name="user_type_id" ref="account.data_account_type_fixed_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_xfa103" model="account.account.template">
+            <field name="code">121103</field>
+            <field name="name">وسائل النقل</field>
+            <field name="user_type_id" ref="account.data_account_type_fixed_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_xfa104" model="account.account.template">
+            <field name="code">121104</field>
+            <field name="name">الاثاثات</field>
+            <field name="user_type_id" ref="account.data_account_type_fixed_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_xfa105" model="account.account.template">
+            <field name="code">121105</field>
+            <field name="name">الاجهزة و المعدات</field>
+            <field name="user_type_id" ref="account.data_account_type_fixed_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_xfa106" model="account.account.template">
+            <field name="code">121201</field>
+            <field name="name">الاصول غير الملموسة</field>
+            <field name="user_type_id" ref="account.data_account_type_fixed_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+
+        <record id="conf_xfa901" model="account.account.template">
+            <field name="code">121901</field>
+            <field name="name">مجمع إهلاك المباني</field>
+            <field name="user_type_id" ref="account.data_account_type_fixed_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_xfa902" model="account.account.template">
+            <field name="code">121902</field>
+            <field name="name">مجمع إهلاك وسائل النقل</field>
+            <field name="user_type_id" ref="account.data_account_type_fixed_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_xfa903" model="account.account.template">
+            <field name="code">121903</field>
+            <field name="name">مجمع إهلاك الاثاثات</field>
+            <field name="user_type_id" ref="account.data_account_type_fixed_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_xfa904" model="account.account.template">
+            <field name="code">121904</field>
+            <field name="name">مجمع إهلاك الاجهزة و المعدات</field>
+            <field name="user_type_id" ref="account.data_account_type_fixed_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_xfa905" model="account.account.template">
+            <field name="code">121905</field>
+            <field name="name">مجمع اطفاء الاصول الغير ملموسة</field>
+            <field name="user_type_id" ref="account.data_account_type_fixed_assets" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+
+
+
+        < Liabilities >
+        <record id="cas" model="account.account.template">
+            <field name="code">211001</field>
+            <field name="name">القروض طويلة الأجل (المضاربات)</field>
+            <field eval="True" name="reconcile" />
+            <field name="user_type_id" ref="account.data_account_type_non_current_liabilities" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_saving" model="account.account.template">
+            <field name="code">212001</field>
+            <field name="name">حساب الإدخار</field>
+            <field eval="True" name="reconcile" />
+            <field name="user_type_id" ref="account.data_account_type_saving" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_pay" model="account.account.template">
+            <field name="code">213001</field>
+            <field name="name">الذمم الدائنة</field>
+            <field eval="True" name="reconcile" />
+            <field name="user_type_id" ref="account.data_account_type_payable" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_current_liabilities" model="account.account.template">
+            <field name="code">214001</field>
+            <field name="name">الموجودات الاخرى</field>
+            <field eval="True" name="reconcile" />
+            <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+
+        < Capital >
+        <record id="conf_capital" model="account.account.template">
+            <field name="code">291001</field>
+            <field name="name">رأس المال</field>
+            <field name="user_type_id" ref="account.data_account_type_equity" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_reserve" model="account.account.template">
+            <field name="code">292001</field>
+            <field name="name">الإحتياطيات</field>
+            <field name="user_type_id" ref="account.data_account_type_equity" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_pl" model="account.account.template">
+            <field name="code">293001</field>
+            <field name="name">الارباح و الخسائر المتراكمة</field>
+            <field name="user_type_id" ref="account.data_unaffected_earnings" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+
+        < Profit and Loss >
+        < Revenues >
+        <record id="conf_rev" model="account.account.template">
+            <field name="code">311001</field>
+            <field name="name">إيرادات ذمم البيوع</field>
+            <field name="user_type_id" ref="account.data_account_type_revenue" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_invest_rev" model="account.account.template">
+            <field name="code">311002</field>
+            <field name="name">إيرادات الإستثمار</field>
+            <field name="user_type_id" ref="account.data_account_type_revenue" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_other_income" model="account.account.template">
+            <field name="name">إيرادات اخري</field>
+            <field name="code">312001</field>
+            <field name="user_type_id" ref="account.data_account_type_other_income" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+
+        < Expenses >
+        <record id="conf_slry001" model="account.account.template">
+            <field name="code">411001</field>
+            <field name="name">مرتبات و اجور</field>
+            <field name="user_type_id" ref="account.data_account_type_human_resource" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_slry002" model="account.account.template">
+            <field name="code">411002</field>
+            <field name="name">البدلات</field>
+            <field name="user_type_id" ref="account.data_account_type_human_resource" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_expense01" model="account.account.template">
+            <field name="code">412001</field>
+            <field name="name">خدمات</field>
+            <field name="user_type_id" ref="account.data_account_type_expenses" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_expense02" model="account.account.template">
+            <field name="code">412002</field>
+            <field name="name">كهرباء و مياه</field>
+            <field name="user_type_id" ref="account.data_account_type_expenses" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_expense03" model="account.account.template">
+            <field name="code">412003</field>
+            <field name="name">وقود</field>
+            <field name="user_type_id" ref="account.data_account_type_expenses" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_depreciation01" model="account.account.template">
+            <field name="name">اهلاك الاصول الثابتة</field>
+            <field name="code">413001</field>
+            <field name="user_type_id" ref="account.data_account_type_depreciation" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record>
+        <record id="conf_depreciation02" model="account.account.template">
+            <field name="name">اطفاء مصروفات التاسيس</field>
+            <field name="code">414001</field>
+            <field name="user_type_id" ref="account.data_account_type_depreciation" />
+            <field name="chart_template_id" ref="configurable_chart_template" />
+        </record-->
+
+    </data>
+</odoo>

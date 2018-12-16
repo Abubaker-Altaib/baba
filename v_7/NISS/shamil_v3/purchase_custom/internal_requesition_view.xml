@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    <!-- view definition for Request for approval of a purchase module -->
+         <record id="ireq_m_form" model="ir.ui.view">
+            <field name="name">ireq.m.form</field>
+            <field name="model">ireq.m</field>
+            <field name="arch" type="xml">
+                <form string="Request for approval of a purchase Form" version="7.0">
+                <header>
+	            <button name="confirmed_d" states="draft" string="Confirm" confirm="Are you sure you want to confirm this request?" />
+		    <button name="confirmed_s" states="confirmed_d" string="Supply Department Approve" confirm="Are you sure you want to confirm this request?" />
+		    <button name="ireq_confirm" states="confirmed_s" string="Approve Purchase Department" confirm="Are you sure you want to confirm this request?" />
+		    <button name="ireq_cancel" states="confirmed_s,confirmed_d" string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to delete this request?" />
+	            <button name="ireq_cancel" states="draft" string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to delete this request?" />
+	            <button name="cancel" states="confirmed" string="Cancel Request" icon="gtk-cancel" type="object" confirm="Are you sure you want to delete this request?" />
+		    <button name="ir_action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" />
+                    <button colspan="1" name="approve1" states="wait_confirmed" string="Purchase Department Approve" confirm="Are you sure you want to confirm this request?"/>
+                    <button colspan="1" name="approve2" states="approve1" string="Supply Department Approve" confirm="Are you sure you want to confirm this request?"/>
+                    <button colspan="1" name="done" states="approve2,checked" string="Make Purchase Order" confirm="Are you sure you want to create purchase Order?"/>  
+                    <button name="ireq_cancel" states="checked,approve1,approve2,wait_confirmed" string="Cancel Request" icon="gtk-cancel" confirm="Are you sure you want to delete this request?"/>
+                    <!--button name="view_quotation" string="Quotations" type="object" attrs="{'invisible': [('state','in', ['draft','confirmed_d','confirmed_s','confirmed'])]}" class="oe_highlight"/-->
+                    <field name="state" widget="statusbar" readonly="1" statusbar_visible="draft,done,cancel" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <label string="Request for Quotation " attrs="{'invisible': [('state','not in',('draft','sent'))]}"/>
+                        </h1>
+                    </div>
+                    <group>
+                     <group>
+                        <field name="cat_id" colspan="2" on_change="onchange_category_check_products_line(cat_id,pro_ids)" required="1"/>
+                        <field name="department_id" attrs="{'readonly':['|',('state','not in',['draft','confirmed_d','confirmed_s'])],'invisible':[('purpose', '!=', 'direct')], 'required':[('purpose', '=', 'direct')]}"/>  
+                        <field name="purpose" colspan="2"/>
+                        <field name="company_id" colspan="2"/>
+                     </group>
+                     <group>
+                        <field name="name" colspan="2"/>
+                        <field name="ir_date" colspan="2"/>
+                        <field name="ir_ref" colspan="2" />
+                        <field name="user" colspan="2" />
+                     </group>
+                    </group>
+                  <notebook colspan="4">
+                    <page string="Items">
+                        <field name="pro_ids">
+                                <tree editable="bottom" string="Items Lines">
+                                    <field name="product_id" 
+                                    on_change="onchange_product_id(product_id)" domain="[('categ_id','=',parent.cat_id)]"/>
+                                    <field name="name" invisible="True"/>
+                                    <field name="product_uom" />
+                                    <field name="product_qty"/>
+                                    <field name="state" invisible="True"/>                                    
+                                </tree>
+                        </field>
+                    </page>
+                    <page string="Quotations">
+                       <group colspan="4">
+                         <button name="create_quote"
+                          states="confirmed" string="Create a Quotation"
+                           type="object" groups="purchase_custom.group_purchase_commitee_member"/>
+                          <label colspan="3"  string="" /> 
+                       </group>
+                         <field name="q_ids" nolabel="1" colspan="4">
+                           <tree string="Purchase Quotes" create="false">
+				    <field name="name" colspan="2" />
+                                    <field name="q_no"/>
+                                    <field name="supplier_id"/>
+                                    <field name="amount_total"/>
+                                    <field name="state"/>
+                           </tree>
+                           </field>
+                       <group>
+                        <separator string="Reasons" colspan="4"/>
+                        <field name="r1" colspan="2"/>
+                        <field name="r2" colspan="2" />
+                        <field name="r3" colspan="2" />
+                        <field name="r4" colspan="2" attrs="{'required':[('state', '=', 'wait_confirmed')]}"/>
+                       </group>
+                    </page>
+                    <page string="Notes">
+                        <field name="notes" colspan="4" nolabel="1"/>
+                       <group colspan="4" col="1">
+                        <field name="inform" colspan="4" />
+                      </group>
+                    </page>
+                </notebook>
+                </sheet>
+                </form>
+            </field>
+          </record>
+          
+         <record id="ireq_m_tree" model="ir.ui.view">
+            <field name="name">ireq.m.tree</field>
+            <field name="model">ireq.m</field>
+            <field name="arch" type="xml">
+                <tree colors="grey:state=='cancel';blue:state=='confirmed'" string="Request for approval of a purchase">
+                        <field name="name"/>
+                        <field name="department_id"/>
+                        <field name="ir_ref"/>
+                        <field name="user"/>
+                        <field name="state"/>
+                </tree>
+            </field>
+          </record>
+          <record id="ireq_products_form" model="ir.ui.view">
+            <field name="name">ireq.products.form</field>
+            <field name="model">ireq.products</field>
+            <field name="arch" type="xml">
+                <form string="Items">
+                   <notebook colspan="4">
+                      <page string="Items">
+                        <field name="product_id" on_change="onchange_product_id(product_id)" colspan="4" domain="[('categ_id','=',parent.cat_id)]"/>
+                        <field name="name" colspan="4"/>
+                        <field name="product_qty" colspan="2"/>
+                        <field name="product_uom" colspan="2" />
+                        <field name="price_unit" invisible="1"/>
+                        <field name="desc" colspan="4"/>
+                        <field name="state" invisible="True"/>                                    
+                      </page>
+                   </notebook>
+                </form>
+            </field>
+         </record>
+         <record id="ireq_products_tree" model="ir.ui.view">
+            <field name="name">ireq.products.tree</field>
+            <field name="model">ireq.products</field>
+            <field name="arch" type="xml">
+                <tree string="Items">
+                        <field name="product_id" on_change="onchange_product_id(product_id)" domain="[('categ_id','=',parent.cat_id)]"/>
+                        <field name="name"/>
+                        <field name="product_uom" />
+                        <field name="product_qty"/>
+                        <field name="price_unit" invisible="1"/>
+                </tree>
+            </field>
+
+         </record>
+
+        <record id="view_ireq_m_filter" model="ir.ui.view">
+            <field name="name">ireq.m.list.select</field>
+            <field name="model">ireq.m</field>
+            <field name="arch" type="xml">
+                <search string="Search Request for approval of a purchase">                
+                    <field name="name" select="1"/>
+                     <separator orientation="vertical"/>
+                    <field name="ir_ref" select="1"/>
+                     <separator orientation="vertical"/>
+                    <field name="department_id" select="1"/>
+                    <field name="user" select="1"/>
+                  <newline/>
+                  <group expand="0" string="Group By..." colspan="4" col="10">
+                    <filter string="Department" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'department_id'}"/>
+                    <filter string="Responsible" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'user'}"/>
+                    <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                </group>
+              </search>
+            </field>
+        </record>
+        
+<!-- Action -->
+        <record id="ireq_m_form_action" model="ir.actions.act_window">
+            <field name="name">Request for approval of a purchase Action</field>
+            <field name="view_id" ref="ireq_m_tree"/>
+            <field name="res_model">ireq.m</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem action="ireq_m_form_action" id="menu_ireq_m_form_action" parent="purchase.menu_procurement_management" sequence="1"            groups="purchase.group_purchase_manager"/>
+
+<!-- links  -->
+
+        <!--act_window
+           domain="[('pq_ir_ref', '=', active_id)]"
+           id="act_internal_requstion_2_quotes"
+           name="Quotations"
+           target="current"
+           res_model="pur.quote"
+           src_model="ireq.m"/-->
+
+       <!--act_window
+           domain="[('ir_id', '=', active_id)]"
+           id="act_internal_requstion_pos"
+           name="Purchase Orders"
+           res_model="purchase.order"
+           src_model="ireq.m"/-->
+
+
+
+
+   </data>
+</openerp>

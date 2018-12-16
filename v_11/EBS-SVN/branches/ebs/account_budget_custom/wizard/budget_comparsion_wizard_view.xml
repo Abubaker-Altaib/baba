@@ -1,0 +1,47 @@
+<odoo>
+ <data>
+
+ <record model="ir.ui.view" id="budget_comparsion_wizard">
+      <field name="name">budget.comparsion.wizard.view</field>
+      <field name="model">budget.comparsion.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Compare Budget">
+        <group col="2" colspan="2">
+          <field name='analytic_account_id'/>
+          <field name='start_date'/>
+            <field name='end_date'/>
+        </group>
+        <footer>
+            <button name="print_budget_comparsion_report" string="Print" type="object" class="oe_highlight"/>
+             or
+            <button string="Cancel" class="oe_highlight" special="cancel"/>
+        </footer>
+        </form>
+    </field>
+</record>
+
+
+<record id="action_budget_comparsion_wizard" model="ir.actions.act_window">
+			<field name="name">Budgets Comparsion</field>
+			<field name="res_model">budget.comparsion.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+</record>
+
+<menuitem name="Budgets Comparsion" id="budget_comparsion_wizard_menu" action="action_budget_comparsion_wizard" parent="account_budget_custom.menu_budget_reporting"/>
+
+
+
+     <report
+                id = "action_budget_comparsion"
+                model = "crossovered.budget"
+                string = "Budget Comparsion"
+                menu = "False"
+                report_type = "qweb-pdf"
+                name = "account_budget_custom.budget_comparsion"
+                file = "account_budget_custom.budget_comparsion"
+        />
+
+</data>
+</odoo>

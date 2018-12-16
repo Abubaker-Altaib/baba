@@ -1,0 +1,280 @@
+<odoo>
+  <data>
+
+   <delete model="ir.actions.report" id="stock.action_report_picking"/>
+   <delete model="ir.actions.report" id="stock.action_report_delivery"/>
+
+   <record model="ir.ui.view" id="view_inventory_form_inherit">
+      <field name="name">stock.inventory.form.inherit</field>
+      <field name="model">stock.inventory</field>
+      <field name="inherit_id" ref="stock.view_inventory_form"/>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+
+          <xpath expr="//field[@name='state']" position="replace">
+             <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+          </xpath>
+
+          <xpath expr="//button[@name='action_start']" position="after">
+
+            <button name="confirm_inventory" type="object" string="Confirm"  states='confirm' class="oe_highlight" groups='stock_custom.group_stock_manager '/>
+
+            <button name="service_review" type="object" string="Approve"  states='service_review' class="oe_highlight" groups='stock_custom.group_service_manager' />
+
+            <button name="account_review" type="object" string="Review"  states='account_review' class="oe_highlight" groups='stock_custom.group_account_administrator'/>
+
+            <!--button name="cancel_inventory" type="object" string="No approve" class="oe_highlight"            attrs="{'invisible': [('state','not in',['service_review','account_review','internal_review'] )] }" groups='stock_custom.group_service_manager , stock_custom.group_account_administrator , stock_custom.group_internal_auditor'/-->
+
+
+
+           <button name="cancel_inventory" type="object" string="Cancel" class="oe_highlight" 
+            attrs="{'invisible': [('state','!=','service_review' )] }"
+            groups='stock_custom.group_service_manager'/>
+
+            <button name="cancel_inventory" type="object" string="Cancel" class="oe_highlight" 
+            attrs="{'invisible': [('state','!=','account_review' )] }"
+            groups='stock_custom.group_account_administrator'/>
+
+            <button name="cancel_inventory" type="object" string="Cancel" class="oe_highlight" 
+            attrs="{'invisible': [('state','!=','internal_review' )] }"
+            groups='stock_custom.group_internal_auditor'/>
+
+          </xpath>
+
+          <xpath expr="//button[@name='action_done']" position="attributes">
+            <attribute name='states'>internal_review</attribute>
+            <attribute name='groups'>stock_custom.group_internal_auditor</attribute>
+            <attribute name='string'>Approve</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_start']" position="attributes">
+             <attribute name='groups'>stock_custom.group_stock_manager</attribute>
+          </xpath>
+
+            <xpath expr="//button[@name='action_cancel_draft'][2]" position="replace">
+            <button name="action_cancel_draft"  string="Set to draft" type="object" 
+             states="confirm"  class="btn-primary" confirm="Are you sure you want to make adjusment Draft?"
+             groups="stock_custom.group_stock_manager"/>
+
+            <button name="action_cancel_draft" string="Set to draft" type="object"
+             states="service_review"  class="btn-primary" confirm="Are you sure you want to make adjusment Draft?" 
+             groups="stock_custom.group_service_manager"/>
+
+             <button name="action_cancel_draft" string="Set to draft" type="object"
+             states="account_review"  class="btn-primary" confirm="Are you sure you want to make adjusment Draft?" 
+             groups="stock_custom.group_account_administrator"/>
+
+             <button name="action_cancel_draft" string="Set to draft" type="object"
+             states="internal_review"  class="btn-primary" confirm="Are you sure you want to make adjusment Draft?" 
+             groups="stock_custom.group_internal_auditor"/>
+          </xpath>
+
+          <xpath expr="//button[@name='action_cancel_draft'][1]" position="attributes">
+            <attribute name='invisible'>1</attribute>
+          </xpath>
+
+          <xpath expr="//notebook/page[2]" position="after">
+            <page string="Note" name="note">
+                <field name="note" placeholder="write your note"/>
+            </page> 
+          </xpath>
+
+          <xpath expr="//notebook/page[1]/field/tree/field[@name='product_qty']" position="attributes">
+            <attribute name='attrs'>{'readonly':[('state','=','service_review')]}</attribute>
+          </xpath>
+
+          <xpath expr="//notebook/page/field[@name='line_ids']" position="attributes">
+           <attribute name='attrs'>{'readonly':[('state','not in',['draft','confirm','service_review'])]}</attribute>
+          </xpath>
+
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_picking_form_inherit">
+      <field name="name">stock.picking.form.inherit</field>
+      <field name="model">stock.picking</field>
+      <field name="inherit_id" ref="stock.view_picking_form"/>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+        <xpath expr="//form/header" position="inside">
+          <button name="print_receive_note"  string="Print Good Receive Note" type="object" class="oe_highlight" attrs="{'invisible':[ '|', ('state','not in',['done','assigned']),('group_id','=',False),]}" groups='stock_custom.group_stock_manager'/>
+        </xpath>
+
+          <xpath expr="//field[@name='move_lines']" position='attributes'>
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+          </xpath>
+
+          <!-- Add domain to Operation Type field to display only Internal Operations -->
+          <xpath expr="//page[@name='extra']/group/group/field[@name='picking_type_id']" position='attributes'>
+            <attribute name='domain'>[('code','=','internal')]</attribute>
+            <attribute name='context'>{'default_code':'internal'}</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='do_print_picking']" position="attributes">
+            <attribute name='invisible'>1</attribute>
+          </xpath>
+
+           <xpath expr="//notebook" position="before">
+            <group colspan='3' col='3'>
+            <group><field name='is_qut'/></group>
+            <group><field name='is_spec' /></group>
+            <group><field name='is_qul'/></group>
+            </group>
+          </xpath>
+
+          <xpath expr="//notebook/page[2]/field/tree/field[@name='product_uom_qty']" position="attributes">
+
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_toggle_is_locked']" position="attributes">
+            <attribute name='invisible'>1</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_confirm']" position="attributes">
+            <attribute name='groups'>stock_custom.group_stock_manager</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_assign']" position="attributes">
+            <attribute name='groups'>stock_custom.group_stock_manager</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='button_validate']" position="attributes">
+            <attribute name='groups'>stock_custom.group_stock_manager</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='do_print_picking']" position="attributes">
+            <attribute name='groups'>stock_custom.group_stock_manager</attribute>
+          </xpath>
+
+          <xpath expr="//form/header/button[5]" position="attributes">
+            <attribute name='attrs'>{'invisible':[('state','=','done')]}</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='%(stock.act_stock_return_picking)d']" position="attributes">
+            <attribute name='groups'>stock_custom.group_stock_manager</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_cancel']" position="attributes">
+            <attribute name='groups'>stock_custom.group_stock_manager</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='do_unreserve']" position="attributes">
+            <attribute name='groups'>stock_custom.group_stock_manager</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='button_scrap']" position="attributes">
+            <attribute name='groups'>stock_custom.group_stock_manager</attribute>
+          </xpath>
+
+
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_scrap_form_inherit">
+      <field name="name">stock.scrap.form.inherit</field>
+      <field name="model">stock.scrap</field>
+      <field name="inherit_id" ref="stock.stock_scrap_form_view"/>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+
+          <xpath expr="//button[@name='action_validate']" position="attributes">
+           <attribute name='groups'>stock_custom.group_service_manager</attribute>
+           <attribute name='states'>confirm</attribute>
+           <attribute name='string'>Approve</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_validate']" position="before">
+          <button name="confirm_scrap"  string="Confirm" type="object" class="oe_highlight" states='draft' groups='stock_custom.group_stock_manager'/>
+          </xpath>
+
+           <xpath expr="//button[@name='action_validate']" position="after">
+             <button name="cancel_scrap"  string="Cancel" type="object" class="oe_highlight" states='confirm' groups='stock_custom.group_service_manager'/>
+            </xpath>
+
+          <xpath expr="//field[@name='state']" position="attributes">
+             <attribute name='statusbar_visible'>draft,confirm</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_validate']" position="attributes">
+                    <attribute name='groups'>stock_custom.group_service_manager</attribute>
+                    <attribute name='states'>confirm</attribute>
+                    <attribute name='string'>Approve</attribute>
+          </xpath>
+
+          <xpath expr="//field[@name='product_id']" position="attributes">
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+            <attribute name='domain'>[('type','!=','service')]</attribute>
+          </xpath>
+
+          <xpath expr="//field[@name='scrap_qty']" position="attributes">
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+          </xpath>
+
+          <xpath expr="//field[@name='package_id']" position="attributes">
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+          </xpath>
+
+          <xpath expr="//field[@name='owner_id']" position="attributes">
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+          </xpath>
+
+          <xpath expr="//field[@name='location_id']" position="attributes">
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+          </xpath>
+
+          <xpath expr="//field[@name='scrap_location_id']" position="attributes">
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+          </xpath>
+
+          <xpath expr="//field[@name='origin']" position="attributes">
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+          </xpath>
+
+          <xpath expr="//field[@name='date_expected']" position="attributes">
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+          </xpath>
+
+
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_scrap_form_inherit2">
+      <field name="name">stock.scrap.form.inherit2</field>
+      <field name="model">stock.scrap</field>
+      <field name="inherit_id" ref="stock.stock_scrap_form_view2"/>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+
+        <xpath expr="//button[@name='action_validate']" position="replace">
+          <button name="confirm_scrap" string="Confirm" type="object" class="btn-primary"/>
+        </xpath>
+
+        </field>
+      </record>
+
+      <!-- security --> 
+       <!-- main menu item -->
+      <menuitem name="Inventory" id="stock.menu_stock_root" sequence="30"
+        groups="stock.group_stock_manager,stock.group_stock_user,stock_custom.group_service_manager,stock_custom.group_account_administrator,stock_custom.group_internal_auditor"
+        web_icon="stock,static/description/icon.png"/>
+
+        <!-- transfer  menu item -->
+     <menuitem id="stock.all_picking" name="Transfers" parent="stock.menu_stock_warehouse_mgmt" sequence="5" action="stock.action_picking_tree_all" groups="stock.group_stock_manager,stock.group_stock_user,stock_custom.group_stock_manager,stock_custom.group_department_manager"/>
+
+      <!-- inventory adjustment -->
+      <menuitem action="stock.action_inventory_form" id="stock.menu_action_inventory_form" parent="stock.menu_stock_warehouse_mgmt" sequence="30" groups="stock_custom.group_stock_manager,stock_custom.group_service_manager,stock_custom.group_account_administrator,stock_custom.group_internal_auditor"/>
+
+      <!-- scrap -->
+      <menuitem
+      id="stock.menu_stock_scrap"
+      name="Scrap"
+      parent="stock.menu_stock_warehouse_mgmt"
+      action="stock.action_stock_scrap"
+      sequence="99"
+      groups="stock_custom.group_stock_manager,stock_custom.group_service_manager"/>
+
+
+  </data>
+</odoo>
+

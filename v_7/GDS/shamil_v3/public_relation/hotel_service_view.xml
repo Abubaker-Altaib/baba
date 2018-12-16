@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+ <!-- hotel destination Form,Tree View & Action -->
+	<record id="hotel_dest_form" model="ir.ui.view">
+            <field name="name">hr.employee.mission.config</field>
+            <field name="model">hr.employee.mission</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_mission.hr_employee_mission_form_view"/>
+            <field name="arch" type="xml">
+                <field  name="end_date"  position="after">
+                    <field name="rec_by_categ"/>
+            </field>
+            </field>
+        </record>
+        
+        <record id="hotel_dest_tree" model="ir.ui.view">
+            <field name="name">hr.employee.mission.config</field>
+            <field name="model">hr.employee.mission</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="hr_mission.hr_employee_mission_tree_view"/>
+            <field name="arch" type="xml">
+                <field  name="end_date"  position="after">
+                    <field name="rec_by_categ"/>
+            </field>
+            </field>
+        </record>
+	
+       <!-- hotel service type Form,Tree View & Action -->
+       <record id="view_hotel_service_extra_form" model="ir.ui.view">
+			<field name="name">hotel.service.extra.form</field>
+			<field name="model">hotel.service.extra</field>
+			<field name="arch" type="xml" >
+				<form string="Extra hotel services" version="7.0">
+					<sheet>
+						<group>
+						<field name="name" select="1"/>
+						<field name="active"/>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_hotel_service_extra_tree" model="ir.ui.view">
+			<field name="name">hotel.service.extra.tree</field>
+			<field name="model">hotel.service.extra</field>
+			<field name="arch" type="xml">
+				<tree string="Extra hotel services">
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+       	
+       	<record id="hotel_service_extra_form_action" model="ir.actions.act_window">
+			<field name="res_model">hotel.service.extra</field>
+			<field name="domain">[]</field>
+		</record>
+		
+		
+		
+<!-- hotel service catgory Form,Tree View & Action -->
+       <record id="view_service_catgory_form" model="ir.ui.view">
+			<field name="name">service.catgory.form</field>
+			<field name="model">service.catgory</field>
+			<field name="arch" type="xml">
+				<form string="Cat hotel services" version="7.0">
+                                         <sheet>
+						<group>
+							 <field name="name" select="1"/>
+							 <field name="parent_id" select="1"/>
+							 <newline/>
+							 <separator string="Accounting properties" colspan="4"/>
+							 <newline/>
+							 <field name="templet_id" />
+							  <field name="name_type" />
+							 <field name="analytic_id" />
+						</group>
+                                         </sheet>
+
+				</form>
+			</field>
+		</record>
+
+		<record id="view_service_catgory_tree" model="ir.ui.view">
+			<field name="name">service.catgory.tree</field>
+			<field name="model">service.catgory</field>
+			<field name="arch" type="xml">
+				<tree string="Cat hotel services">
+					<field name="name"/>
+					<field name="templet_id" />
+					
+				</tree>
+			</field>
+		</record>
+       	
+       	<record id="service_catgory_form_action" model="ir.actions.act_window">
+			<field name="res_model">service.catgory</field>
+			<field name="domain">[]</field>
+		</record>
+		
+		
+		<!-- hotel service name Form,Tree View & Action -->
+       <record id="view_service_type_form" model="ir.ui.view">
+			<field name="name">service.type.form</field>
+			<field name="model">service.type</field>
+			<field name="arch" type="xml">
+				<form string="hotel services name" version="7.0">
+                                   <sheet>
+                                   <group col="4">
+				         <field name="ser_name" select="1"/>
+					 <field name="name" select="1"/>
+					 <field name="catg_id" select="1"/>
+					 <field name="cost_service" />
+                                   </group>
+
+					 <notebook colspan="4">
+						<page string="Employee Information" attrs="{'invisible':[('name','!=','hotel')]}">
+                                                        <field name="hotel_lines">
+                                                         </field>
+						</page>
+						<page string="meal Information" attrs="{'invisible':[('name','!=','meal')]}">
+                                                        <field name="hotel_lines_meal">
+                                                         </field>
+						</page>
+						<page string="other Information">
+                                                        <field name="notes">
+                                                         </field>
+						</page>
+					 </notebook>
+				        </sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_service_type_tree" model="ir.ui.view">
+			<field name="name">service.type.tree</field>
+			<field name="model">service.type</field>
+			<field name="arch" type="xml">
+				<tree string="hotel services Name">
+					<field name="name"/>
+					<field name="catg_id"/>
+					<field name="cost_service" />
+					<!--field name="meal_type" attrs="{'invisible':[('name','=','meal')]}"/-->	
+				
+				</tree>
+			</field>
+		</record>
+       	
+       	<record id="service_type_form_action" model="ir.actions.act_window">
+			<field name="res_model">service.type</field>
+			<field name="domain">[]</field>
+		</record>
+       	   
+		<!-- hotel service order Form,Tree View & Action -->
+		<record id="view_hotel_service_form" model="ir.ui.view">
+			<field name="name">hotel.service.form</field>
+			<field name="model">hotel.service</field>
+			<field name="arch" type="xml">
+				<form string="Hotel service order" version="7.0">
+                                         <header col="4">
+
+					     
+					     <button name="confirmed" states="draft" string="Section Confirm" icon="terp-gtk-go-back-rtl"
+						 confirm="Are you sure you want to confirm this Record?"  /><!--groups="base.group_Section_manager,base.group_department_managers"-->
+						 
+						 <button name="confirmed1" states="confirmed" string="Department manager confirm"
+						 icon="terp-gtk-go-back-rtl" confirm="Are you sure you want to confirm this Record?" /><!--groups="base.group_department_managers"-->
+						 
+						 <!--button name="confirmed2" states="confirmed1" string="General department manager confirm"
+						 icon="terp-gtk-go-back-rtl" confirm="Are you sure you want to confirm this Record?" groups="base.group_general_department_manager"/>
+						 
+						 <button name="approve" states="confirmed2" string="General affair manager confirm"
+						 icon="terp-gtk-go-back-rtl" confirm="Are you sure you want to confirm this Record?" groups="base.group_admin_affairs_general_manager"/-->
+						 
+						 <button name="approve1" states="confirmed1" string="Genral Department Manager"
+						 icon="terp-gtk-go-back-rtl" confirm="Are you sure you want to confirm this Record?" /><!--groups="base.group_admin_affairs_manager"-->
+						 
+						 <button name="approve2" states="approve1" string="PRM Section Manager"
+						 icon="terp-gtk-go-back-rtl" confirm="Are you sure you want to confirm this Record?" /><!--groups="base.group_media_section_manager"-->
+						 
+						 <button name="approve3" states="approve2" string="PRM Office to Executing"
+						 icon="terp-gtk-go-back-rtl" confirm="Are you sure you want to execute this Record?" /><!--groups="base.group_media_section_manager"-->
+						 
+						 <button name="done" states="approve3" string="Create financial ratification"
+						 icon="terp-gtk-go-back-rtl" confirm="Are you sure you want to create financial claim?" /><!--groups="base.group_media_section_manager" -->
+
+						<button name="hotel_cancel" states="draft,confirmed,confirmed1,approve1,approve2,approve3"
+						 string="Cancel" icon="gtk-cancel" confirm="Are you sure you want to cancel this order?"/>
+					 
+					     <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+						 
+						<field name="state" widget="statusbar" statusbar_visible="draft,done,hotel_cancel"/>
+			 		 </header>
+                                         <sheet>
+                     <group col="4">
+						<field name="name" />
+						<field name="date" />
+						<field name="department_id"/>
+						<field name="partner_id"
+						attrs="{'required':[('state','in',['approve2','approve3'])]}"/>
+	                       			<field name="amount_untaxed" colspan="2" />
+	                       			<field name="amount_tax" colspan="2" />
+	                       			<field name="cost" colspan="2" attrs="{'required':[('state','=','approved_sc')]}"/>
+						<field name="create_date"/>
+						<field name="voucher_no"
+						attrs="{'invisible':[('state','!=','done')]}"/>
+				        <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+						<field name="user_id"/>
+						<field name="mission_id"/>
+						
+			    	 </group>
+				     <separator colspan="4"/>
+					 <notebook colspan="4">
+						<page string="Service Type">
+                                                        <field name="service_type">
+                                                         </field>
+						</page>
+						<page string="Tax" attrs="{'invisible':[('state','not in',('approve2','approve3','done'))]}">
+							<field name="taxes_id" colspan="4" nolabel="1" />
+								
+						</page>
+					  <page string="Notes">	
+						<field name="notes" colspan="4" nolabel="1"/>
+					</page>
+					</notebook>
+				</sheet> 
+				</form>
+			</field>
+		</record>
+
+		<record id="view_hotel_service_tree" model="ir.ui.view">
+			<field name="name">hotel.service.tree</field>
+			<field name="model">hotel.service</field>
+			<field name="arch" type="xml">
+				<tree string="Hotel service order">
+					<field name="name"/>
+				    <field name="date"/>
+				    <field name="department_id"/>
+					<field name="service_type"/>
+					<field name="partner_id"/>
+					<field name="create_date" />
+					<field name="state"/>
+					<field name="user_id"/>
+				</tree>
+			</field>
+		</record>
+	
+	<!-- hotel service lines Form and Tree -->
+
+		<record id="view_hotel_service_line_form" model="ir.ui.view">
+			<field name="name">hotel.service.line.form</field>
+			<field name="model">hotel.service.line</field>
+			<field name="arch" type="xml">
+				<form string="Service types" version="7.0">	
+                                      <sheet>	
+					<group>																	    
+					       <field name="employee_type" colspan="2"/>
+						<newline/>
+					       <group colspan="2">
+						<field name="employee_id" attrs="{'invisible':[('employee_type','!=','in_company')]}"/>
+						 
+						 <field name="employee_name" attrs="{'invisible':[('employee_type','!=','out_company')]}"/>
+						
+						<field name="foreigner_id" attrs="{'invisible':[('employee_type','!=','foreigner')]}"/>
+					</group>
+						<group colspan="2">
+						  	
+						 <field name="foreigners_degree_id" widget="selection"
+						  	attrs="{'invisible':[('employee_type','=','in_company'),],
+						  			'required':['|',('employee_type','=','out_company'),('employee_type','=','foreigner')] }"/>	  
+						 
+						 <field name="degree_id" 
+						  	attrs="{'invisible':[('employee_type','!=','in_company')]}"/>
+					</group>
+					<field name="employee_company_id" 
+						  	attrs="{'invisible':[('employee_type','!=','out_company')] }"/>
+						  	
+						 <field name="name" colspan="4"/>
+                                        </group>
+                                         </sheet>
+				</form>
+			</field>
+		</record>
+		<record id="view_hotel_service_line_tree" model="ir.ui.view">
+			<field name="name">hotel.service.line.tree</field>
+			<field name="model">hotel.service.line</field>
+			<field name="arch" type="xml">
+				<tree string="Service types">
+					 <field name="employee_type"/>
+					 <field name="employee_id" 
+						 attrs="{'invisible':[('employee_type','!=','in_company')] }"/>	
+					 <field name="degree_id" 
+						 attrs="{'invisible':[('employee_type','!=','in_company')] }"/>	
+					 <field name="employee_name" 
+						 attrs="{'invisible':[('employee_type','!=','out_company')] }"/>	  
+					 <field name="foreigners_degree_id" 
+					 	 attrs="{'invisible':[('employee_type','!=','out_company')] }"/>	  
+					 <field name="name" string="Note"/>
+				</tree>
+			</field>
+		</record>
+
+
+       	<record id="hotel_service_line_form_action" model="ir.actions.act_window">
+			<field name="res_model">hotel.service.line</field>
+			<field name="domain">[]</field>
+		</record>
+
+
+
+	<!-- hotel service lines meals Form and Tree -->
+
+		<record id="view_hotel_service_line_meals_form" model="ir.ui.view">
+			<field name="name">hotel.service.line.meals.form</field>
+			<field name="model">hotel.service.line.meals</field>
+			<field name="arch" type="xml">
+				<form string="Meal Information" version="7.0">	
+                                      <sheet>	
+					       <group colspan="2">
+						<field name="meal_type" colspan="2"/>
+						<newline/>
+					        <field name="meal_description" colspan="6"/>
+					</group>
+                                         </sheet>
+				</form>
+			</field>
+		</record>
+		<record id="view_hotel_service_line_meals_tree" model="ir.ui.view">
+			<field name="name">hotel.service.line.meals.tree</field>
+			<field name="model">hotel.service.line.meals</field>
+			<field name="arch" type="xml">
+				<tree string="Meal Information">
+					 <field name="meal_type"/>
+					 <field name="meal_description"/>	
+				</tree>
+			</field>
+		</record>
+
+
+       	<record id="hotel_service_line_meals_form_action" model="ir.actions.act_window">
+			<field name="res_model">hotel.service.line.meals</field>
+			<field name="domain">[]</field>
+		</record>
+
+		<!-- Hotel service order Search Filter -->		
+		<record id="view_hotel_service_filter" model="ir.ui.view">
+			<field name="name">hotel.service.list.select</field>
+			<field name="model">hotel.service</field>
+			<field name="arch" type="xml">
+				<search string="Search for Hotel service order Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="service_type"/>
+					<separator orientation="vertical" />
+					<field name="date" select="1" />
+					<separator orientation="vertical" />
+					<field name="user_id" />
+					<newline />
+					<group expand="0" string="Extended Filters..." colspan="4" col="20" >
+                    <field name="department_id" widget="selection" />
+					<field name="state" />
+					<field name="company_id" widget="selection" groups="base.group_multi_company"/>
+                    </group>
+                   	<newline/>
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Department" icon="terp-personal"
+							domain="[]" context="{'group_by':'department_id'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+						<filter string="Service date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+					    <separator orientation="vertical"/>
+					    <filter string="Service type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'service_type'}" />
+					    <separator orientation="vertical"/>
+					    <filter string="Responsible" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'user_id'}" />
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<!-- Menus -->
+        <record id="hotel_service_form_action" model="ir.actions.act_window">
+			<field name="res_model">hotel.service</field>
+			<field name="domain">[]</field>
+		</record>
+		
+		<menuitem id="menu_hotel_service" name="Hotel service"
+			parent="id_public_relation" sequence="3" />
+	
+        <menuitem id="menu_hotel_form_service" name="Hotel service order"
+			parent="menu_hotel_service" action="hotel_service_form_action" 
+			sequence="3" />
+		
+		<!--Hotel service type menus-->	        
+        <menuitem id="menu_hotel_service_type" name="Extra hotel services"
+			parent="menu_hotel_service" action="service_type_form_action" />	
+			
+		<!--Hotel service name menus  -->	        
+        <menuitem id="menu_hotel_service_name" name="hotel services name"
+			parent="menu_hotel_service" action="service_catgory_form_action" />		  	   
+	</data>
+</openerp>

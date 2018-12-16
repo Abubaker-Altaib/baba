@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+       <record id="view_create_custody_release_request" model="ir.ui.view">
+            <field name="name">Create Custody Release Request</field>
+            <field name="model">create.custody.release.request</field>
+            <field name="arch" type="xml">
+                   <form string="Create Release Request" version="7.0">
+                      <group>
+              	         <field name="department_id" on_change="change_department(department_id)" />
+              	         <field name="release_date" />
+                      </group>
+                         <newline />
+			      <field colspan="12" name="custody_ids" mode="tree">
+				     <tree editable="bottom" string="Custody Lines">
+				          <field name="custody_id" />
+				          <field name="name" />
+				          
+				          <field name="employee_id" />
+				          <field name="return_this" />
+				     </tree>
+			      </field>
+                              <footer>
+				  <button string="Create Release Order" name="create_release_order"  type="object" />
+                                        or	
+                                  <button string="Cancel" special="cancel" icon="gtk-cancel"/>
+                             </footer>
+                   </form>
+            </field>
+        </record>
+
+
+
+               <record id="action_create_custody_release_request" model="ir.actions.act_window">
+                       <field name="name">Action For Create Release Request</field>
+                       <field name="res_model">create.custody.release.request</field>
+                       <field name="view_type">form</field>
+                       <field name="view_mode">form</field>
+                       <field name="view_id" ref="view_create_custody_release_request"/>
+                       <field name="target">new</field>
+                </record>
+       
+		
+
+      
+       <menuitem
+            action="action_create_custody_release_request"
+            id="menu_action_create_custody_release_request"
+            parent="menu_account_pact_child"
+            name="Custody Release Wizard" />
+            
+    </data>
+</openerp>

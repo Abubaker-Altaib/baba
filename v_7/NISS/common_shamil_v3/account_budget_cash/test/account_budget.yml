@@ -1,0 +1,153 @@
+    
+- 
+  Creating a account.budget record
+- 
+  !record {model: account.budget, id: account_budget_administratif0}:
+    analytic_account_id: account.analytic_administratif
+    company_id: base.main_company
+    period_id: account.period_1
+    account_budget_line:
+      - general_account_id: account.xfa
+        planned_amount: 10
+
+    
+-
+  Check that Initially fiscalyear budget is in the "Draft" state
+-
+  !assert {model: account.budget, id: account_budget_administratif0}:
+    - state == 'draft'
+
+-
+  Change the state of budget to "Confirmed" by clicking "Confirm" button
+-
+  !workflow {model: account.budget, action: confirm, ref: account_budget_administratif0}
+  
+-
+  Check that the budget state is now "Confirm"
+-
+  !assert {model: account.budget, id: account_budget_administratif0}:
+    - state == 'confirm'
+  
+-
+  Check that the budget state is now "Validated"
+-
+  !workflow {model: account.budget, action: validate, ref: account_budget_administratif0}
+  
+-
+  Check that the budget state is now "Validate"
+-
+  !assert {model: account.budget, id: account_budget_administratif0}:
+    - state == 'validate'
+ 
+-
+  I print account budget report
+-
+  !python {model: account.budget}: |
+    import netsvc, tools, os
+    (data, format) = netsvc.LocalService('report.account.account.budget.object').create(cr, uid, [ref('account_budget_administratif0')], {}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'account_budget_custom-report_account_budget_object'+format), 'wb+').write(data)
+
+-
+  In order to test Increasing Budget operation, Call increase wizard 
+-
+  !record {model: account.budget.increasing, id: account_budget_increasing_0}:
+    account_id: account.xfa
+    amount: 2.0
+    analytic_account_id: account.analytic_administratif
+    company_id: base.main_company
+    period_id: account.period_1
+    
+-
+  Increase budget by clicking "Compute" Button
+-
+  !python {model: account.budget.increasing}: |
+    self.compute(cr, uid, ref("account_budget_increasing_0"))
+
+-
+  I check that the budget line residual is increased
+-
+  !python {model: account.budget}: |
+    budget=self.browse(cr, uid, ref("account_budget_administratif0"))
+    for line in budget.account_budget_line:
+        assert line.total_operation==2 and line.residual_balance==12, "Increasing Operation not Completed"
+    
+
+-
+  In order to test Transfer from Budget to another operation, Call transfer wizard 
+-
+  !record {model: account.budget.transfer, id: account_budget_transfer_0}:
+    from_company_id: base.main_company
+    from_analytic_account_id: account.analytic_administratif
+    analytic_account_id: account.analytic_administratif
+    amount: 5
+    from_account_id: account.xfa
+    company_id: base.main_company
+    account_id: account.xfa
+    from_period_id: account.period_1
+    period_id: account.period_2
+    
+-
+  Transfer budget by clicking "Compute" Button
+-
+  !python {model: account.budget.transfer}: |
+    self.compute(cr, uid, ref("account_budget_transfer_0"))
+
+-
+  I check that the transfer to budget line residual is increased
+-
+  !python {model: account.budget.lines}: |        
+    budget_line_ids = self.search(cr, uid, [('analytic_account_id','=',ref("account.analytic_administratif")),
+    ('general_account_id','=',ref("account.xfa")),('period_id','=',ref("account.period_2"))])
+    for line in self.browse(cr, uid, budget_line_ids):
+        assert line.total_operation==5 and line.residual_balance==5, "Transfer to Operation not Completed"
+
+-
+  I check that the transfer from budget line residual is decreased
+-
+  !python {model: account.budget}: |
+    budget=self.browse(cr, uid, ref("account_budget_administratif0"))
+    for line in budget.account_budget_line:
+        assert line.total_operation==-3 and line.residual_balance==7, "Transfer from Operation not Completed"
+        
+
+-
+  In order to test Closing Budget operation with transfer the residual to next period's budget, Call Close wizard 
+-
+  !record {model: account.budget.close, id: account_budget_close_0}:
+    company_id: base.main_company
+    analytic_account_ids:
+      - account.analytic_administratif
+    period_id: account.period_1
+    
+        
+-
+  Transfer budget by clicking "Compute" Button
+-
+  !python {model: account.budget.close}: |
+    self.close(cr, uid, ref("account_budget_close_0"))
+
+-
+  Check that the closed budget line state is now "Done"
+-
+  !assert {model: account.budget, id: account_budget_administratif0}:
+      - state == 'done'
+-
+  Check that the closed budget line residual_balance become ZERO
+-   
+  !python {model: account.budget.lines}: |        
+    close_budget_line_ids = self.search(cr, uid, [('analytic_account_id','=',ref("account.analytic_administratif")),('period_id','=',ref("account.period_1"))])
+    for line in self.browse(cr, uid, close_budget_line_ids):
+        assert line.total_operation==-10 and line.residual_balance==0, "Residual Amount not Transfered to next period's budget"
+
+-
+  Check that the next period's budget line residual is increased
+-
+  !python {model: account.budget.lines}: |
+    budget_line_ids = self.search(cr, uid, [('analytic_account_id','=',ref("account.analytic_administratif")),('period_id','=',ref("account.period_2"))])
+    for line in self.browse(cr, uid, budget_line_ids):
+        assert line.total_operation==12 and line.residual_balance==12, "Residual Amount is not Increased from Closing budget Operation"
+       
+   
+    
+ 

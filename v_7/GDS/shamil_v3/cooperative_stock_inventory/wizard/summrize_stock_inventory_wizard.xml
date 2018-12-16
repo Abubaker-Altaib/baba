@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<record id="view_stock_all_inventory" model="ir.ui.view">
+            <field name="name">stock_all_inventory</field>
+            <field name="model">stock.all.inventory</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Summrize Stock Inventory" version="7.0">
+        	    <separator string="Summrize Stock Inventory" colspan="4"/>
+                       <group col="4">
+		               <field name="Date_from" colspan="2"  on_change="onchange_date(Date_from, Date_to)"/>
+	       		       <newline/>
+		               <field name="Date_to" colspan="2"  on_change="onchange_date(Date_from, Date_to)"/>
+	       		       <newline/>
+				<!--field name="location_id" colspan="4"/-->
+				<field name="state" colspan="4"/>
+	       		       <newline/>
+                     </group>
+       				                
+                     <footer>
+                       <button name="print_report" string="Print" type="object" default_focus="1" class="oe_highlight"/>
+                       or
+                       <button string="Cancel" class="oe_link" special="cancel"/>
+                     </footer>
+    		</form>
+            </field>
+        </record>
+
+        <record id="action_stock_all_inventory" model="ir.actions.act_window">
+            <field name="name">stock_all_inventory</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.all.inventory</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_stock_all_inventory"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Summrize Stock Inventory"
+                parent="cooperative_stock.menu_cooperative_stock_reports"
+                action="action_stock_all_inventory"
+                id="menu_wizard_stock_all_inventory"
+               />
+
+    </data>
+</openerp>

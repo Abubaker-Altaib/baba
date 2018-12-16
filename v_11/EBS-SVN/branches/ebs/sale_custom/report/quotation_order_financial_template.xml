@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_quotation_order_financial">
+        <t t-call="web.html_container">
+            <t t-set="data_report_margin_top" t-value="5"/>
+            <t t-set="data_report_dpi" t-value="140"/>
+            <t t-call="web.basic_layout">
+                <div class="page">
+                    <html>
+                        <body>
+
+                            <style type="text/css">
+                                /* Declare fonts */
+                                @font-face {
+                                    font-family:KacstLetter ;
+                                    src: url(/sale_custom/static/font/KacstLetter.ttf);
+                                }
+                            </style>
+
+                            <table>
+                                <tbody>
+                                    <tr width="100%">
+                                        <td style="background:white;border-right:0px solid #C1C3D1;" width="18%">
+
+                                            <img src="/sale_custom/static/src/img/index.jpeg" style="height: 160px;width: 200;"/>
+                                        </td>
+                    
+                                        <td width="82%">
+                                            <strong>
+
+                                                <center style="color:#00008B;font-size:30;font-family:KacstLetter">
+                                                    <b> 
+                                                        بسم الله الرحمن الرحيم 
+                                                    </b>
+                                                </center>
+
+                                                <center style="color:#00008B; font-size:35;font-family:KacstLetter">
+                                                        Electronic Banking Services company
+                                                </center><br></br>
+                                                    
+                                                <center style="color:#00008B; font-size:30;font-family:KacstLetter">
+                                                    <u>
+                                                    Marketing Management and Business Development
+                                                    </u>
+                                                </center><br></br>
+
+                                                <center style="color:#00008B;font-size:30;font-family:KacstLetter">
+                                                    Internal Note
+                                                </center>
+
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+ 
+                            <u style="width:90%;"></u>
+
+                            <table style="padding-top:0px; border-collapse:separate;border-spacing:0px 40px;color:#00008B">
+                                <tr>
+                                    <td>
+                                        <b style="font-family:KacstLetter;font-size:20;">
+                                            Date : 
+                                        </b>
+                                    </td>
+
+                                    <td>
+                                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')" style="font-family:KacstLetter;font-size:20;"/>
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b style="font-family:KacstLetter;font-size:20;">
+                                            From : 
+                                        </b>
+                                    </td>
+
+                                    <td>
+                                        <b style="font-family:KacstLetter;font-size:20;">
+                                            Manager of Marketing and Business Development 
+                                        </b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b style="font-family:KacstLetter;font-size:20;">
+                                            To : 
+                                        </b>
+                                    </td>
+
+                                    <td>
+                                        <b style="font-family:KacstLetter;font-size:20;">
+                                            Manager of Financial Management 
+                                        </b>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <center>
+                                <b style="font-size:30;font-family:KacstLetter">
+                                    <strong><u>
+                                        Subject: Prices Offers
+                                    </u></strong>
+                                </b>
+                            </center>
+
+                            <table style="padding-top:0px;border-collapse:separate;border-spacing:0px 40px;color:#00008B;width:90%">
+                                <tr>
+                                    <td>
+                                        <p style="font-family:KacstLetter;font-size:20;">
+                                            <span  style="font-family:KacstLetter">With reference to the above subject, we inform you that <span t-esc="sum([d.product_uom_qty for d in docs.order_line])" style="font-family:KacstLetter"/> has been requested direct debit card - the bank <span t-esc="docs.partner_id.name" style="font-family:KacstLetter"/>. The table below details the offer of prices of cards based on the approved pricing for <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y')"/>:</span>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <center>
+                                <table class="table table-condensed" style="width:90%;">
+                                    <thead>
+                                        <tr style="font-weight:bold;font-size:25px;background:grey">
+                                            <th class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width:10%;" >
+                                                <b>No.</b>
+                                             </th>
+                                            <th class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width:30%;" >
+                                                <b>Service</b>
+                                            </th>
+                                            <th class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width:30%;">
+                                                <b>Unit price X Ordered Qty</b>
+                                            </th>
+                                            <th class="td-allborder" style="text-align:center;border:1px solid black;font-family:KacstLetter;width:20%;">
+                                                <b>Amount</b>
+                                            </th>
+                                         </tr>
+                                    </thead>
+                                    <t t-set="seq" t-value="1" />
+                                    <t t-foreach="docs.order_line" t-as="d">
+                                        <tr style="text-align:center;border-width: thick;font-size:20px">
+                                            <td style="border:1px solid black">
+                                                <span t-esc="seq"  style="font-family:KacstLetter"/>
+                                                <t t-set="seq" t-value="seq+1" />
+                                            </td>
+                                            <td style="border:1px solid black">
+                                                <span t-esc="d.product_id.name" style="font-family:KacstLetter"/>
+                                            </td>
+                                            <td style="border:1px solid black">
+                                                <b><span t-esc="d.price_unit" style="font-family:KacstLetter"/> X <span t-esc="d.product_uom_qty" style="font-family:KacstLetter"/></b>
+                                            </td>
+                                            <td style="border:1px solid black">
+                                                <span t-esc="d.price_total" style="font-family:KacstLetter"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </table>
+                            </center>
+ 
+                            <p style="font-family:KacstLetter;font-size:20;"><strong><u>Note:</u></strong> The prices above can be increased or decreased according to the exchange rate of the dollar and the customs exchange</p>
+
+                        </body>
+                    </html>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <data>
+         
+        <report   
+            id="action_quotation_order_financial"
+            string="Financial Report"
+            model="sale.order"
+            report_type="qweb-pdf"
+            name="sale_custom.report_quotation_order_financial"
+            file="sale_custom.report_quotation_order_financial"
+            menu="False"/>
+
+
+    </data>
+</odoo>

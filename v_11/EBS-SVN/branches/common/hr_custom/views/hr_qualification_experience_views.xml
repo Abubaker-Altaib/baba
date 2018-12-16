@@ -1,0 +1,254 @@
+<odoo>
+	<!-- Inherited view of Employee for employee skills -->
+	<record id="view_hr_employee_form" model="ir.ui.view">
+		<field name="name">view.hr.employee.form</field>
+		<field name="model">hr.employee</field>
+		<field name="inherit_id" ref="hr.view_employee_form"/>
+		<field name="arch" type="xml">
+			<xpath expr="//form/sheet/div/div/notebook/page[@name='hr_settings']" position="after">
+			     <page name="hr_qualification" string="Qualifications">
+			         <field name="qualification_ids" context="{'default_employee_id': active_id}" attrs="{'readonly':[('state', 'not in', ['draft'])]}">
+			             <tree>
+			                 <field name="degree_id"/>
+                             <field name="specialt_id"/>
+			                 <field name="institute_id"/>
+			                 <field name="score"/>
+			                 <field name="qualified_year"/>
+			                 <button name="action_get_attachment_view" string="View Attached Documents" type="object" icon="fa-paperclip"/>
+                             <field name="state"/>
+			             </tree>
+
+			         </field>
+                </page>
+                <page string="Experiences">
+                    <field name="experience_ids" context="{'default_employee_id': active_id}" attrs="{'readonly':[('state', 'not in', ['draft'])]}">
+                        <tree>
+                            <field name="job_id"/>
+                            <field name="location"/>
+                            <field name="from_date"/>
+                            <field name="to_date"/>
+                            <button name="action_get_attachment_view" string="View Attached Documents" type="object" icon="fa-paperclip"/>
+                            <field name="state"/>
+                        </tree>
+
+                    </field>
+                </page>
+            </xpath>
+         </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_employee_education_form">
+            <field name="name">view.hr.employee.qualification.form</field>
+            <field name="model">hr.employee.qualification</field>
+            <field name="arch" type="xml">
+                <form string="Qualifications">
+                    <header>
+                        <button string="Validate" name="set_validated" class="oe_highlight" states="draft"
+                            type="object"/>
+                        <button string="Reset to Draft" name="set_draft"
+                            states="validated" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,validated"/>
+                    </header>
+                    <sheet>
+                    <div class="oe_button_box" name="button_box">
+                          <field name="attachment_ids" widget="many2many_binary" />
+                    </div>
+                        
+                    <div class="oe_title">
+                    <label for="employee_id" class="oe_edit_only"/>
+                    <h2><field name="employee_id"/></h2>
+                     </div>
+                    <group col="4">
+
+                        <field name="degree_id"/>
+                        <field name="qualified_year"/>
+                        <field name="institute_id"/>
+                        <field name="specialt_id"/>
+                        <field name="score"/>
+                    </group>
+                    </sheet>
+                </form>
+            </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_employee_education_tree">
+            <field name="name">hr.employee.qualification.tree</field>
+            <field name="model">hr.employee.qualification</field>
+            <field name="arch" type="xml">
+                <tree  decoration-info="state == 'draft'" decoration-muted="state in ('validated')" string="Qualifications">
+                    <field name="employee_id"/>
+                    <field name="degree_id"/>
+                    <field name="specialt_id"/>
+                    <field name="institute_id"/>
+                    <field name="qualified_year"/>
+                    <field name="score"/>
+                   <button name="action_get_attachment_view" string="View Attached Documents" type="object" icon="fa-paperclip"/>
+                   <field name="state"/>
+                </tree>
+            </field>
+    </record>
+    <record id="view_employee_education_search" model="ir.ui.view">
+           <field name="name">hr.employee.qualification.search</field>
+           <field name="model">hr.employee.qualification</field>
+           <field name="arch" type="xml">
+               <search string="Qualifications">
+                    <field name="degree_id"/>
+                    <field name="institute_id"/>
+                    <field name="qualified_year"/>
+                    <field name="employee_id"/>
+                    <field name="score"/>
+                </search>
+            </field>
+    </record>
+
+    <!-- Action of Qualification -->
+    <record id="action_emp_qualification" model="ir.actions.act_window">
+        <field name="name">Qualification</field>
+        <field name="res_model">hr.employee.qualification</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_employee_education_tree"/>
+    </record>
+
+
+    <record model="ir.ui.view" id="view_employee_profession_form">
+            <field name="name">view.hr.employee.experience.form</field>
+            <field name="model">hr.employee.experience</field>
+            <field name="arch" type="xml">
+                <form string="Experience">
+                       <header>
+                        <button string="Validate" name="set_validated" class="oe_highlight" states="draft"
+                            type="object"/>
+                        <button string="Reset to Draft" name="set_draft"
+                            states="validated" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,validated"/>
+                     </header>
+                    <sheet >
+                       <div class="oe_button_box" name="button_box">
+                          <field name="attachment_ids" widget="many2many_binary" />
+                    </div>
+                        
+                    <div class="oe_title">
+                    <label for="employee_id" class="oe_edit_only"/>
+                    <h2><field name="employee_id"/></h2>
+                    
+                     </div>
+                        <group col="4">
+                            <field name="categ_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="from_date"/>
+                            <field name="job_id" 
+                                   options="{'no_create': True, 'no_open': True}" domain="[('categ_id','=',categ_id)]" 
+                                   attrs="{'invisible': [('categ_id', '=', False)]}"/>
+                            <field name="to_date"/>
+                            <field name="location"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_employee_profession_tree">
+            <field name="name">hr.employee.experience.tree</field>
+            <field name="model">hr.employee.experience</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'draft'" decoration-muted="state in ('validated')" string="Experience">
+                    <field name="employee_id"/>
+                    <field name="job_id"/>
+                    <field name="location"/>
+                    <field name="from_date"/>
+                    <field name="to_date"/>
+                    <button name="action_get_attachment_view" string="View Attached Documents" type="object" icon="fa-paperclip"/>
+                   <field name="state"/>
+                </tree>
+            </field>
+    </record>
+    <record id="view_employee_profession_search" model="ir.ui.view">
+           <field name="name">hr.employee.experience.search</field>
+           <field name="model">hr.employee.experience</field>
+           <field name="arch" type="xml">
+               <search string="Experience">
+                    <field name="employee_id"/>
+                    <field name="job_id"/>
+                    <field name="location"/>
+                    <field name="from_date"/>
+                    <field name="to_date"/>
+                </search>
+            </field>
+    </record>
+
+    <!-- Action of Experience -->
+    <record id="action_employee_profession" model="ir.actions.act_window">
+        <field name="name">Experience</field>
+        <field name="res_model">hr.employee.experience</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_employee_profession_tree"/>
+    </record>
+
+
+
+    
+    <record id="view_hr_specialst_form" model="ir.ui.view">
+        <field name="name">view.hr.specialst.form</field>
+        <field name="model">hr.specialst</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="name" required="True"/>
+                    <field name="code"/>
+                </group>
+            </form>
+        </field>
+    </record>
+    
+    <record id="hr_specialst_tree" model="ir.ui.view">
+        <field name="name">view.specialst.tree</field>
+        <field name="model">hr.specialst</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+            </tree>
+        </field>
+    </record>
+
+
+    
+    <record id="action_hr_specialst" model="ir.actions.act_window">
+        <field name="name">Specialst</field>
+        <field name="res_model">hr.specialst</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+    </record>
+    <!-- Inherited menu of configuration -->
+    <menuitem
+            id="hr.menu_human_resources_configuration"
+            name="Configuration"
+            parent="hr.menu_hr_root"
+            groups="hr.group_hr_manager,hr.group_hr_user"
+            sequence="100"/>
+
+    <menuitem
+            id="menu_emp_qualification"
+            name="Qualifications"
+            parent="hr_custom.menu_hr_management"
+            action="action_emp_qualification"/>
+
+    <menuitem
+            id="menu_emp_experience"
+            name="Experience"
+            parent="hr_custom.menu_hr_management"
+            action="action_employee_profession"/>
+
+
+    <!-- Menu of Qualifications -->
+    <menuitem id="menu_qualifications" parent="hr.menu_human_resources_configuration"
+    name="Qualifications" groups="hr.group_hr_manager,hr.group_hr_user" sequence="4"/>
+
+    <!-- Menu for Degree -->
+    <menuitem id="menu_emp_degree" parent="menu_qualifications"
+    action="hr_job_degree_action" groups="hr.group_hr_manager,hr.group_hr_user"  name="Qualifications" sequence="5"/>
+
+    <menuitem id="menu_hr_specialst" parent="menu_qualifications"
+    action="action_hr_specialst" groups="hr.group_hr_manager,hr.group_hr_user" name="Specialst" sequence="7"/>
+</odoo>

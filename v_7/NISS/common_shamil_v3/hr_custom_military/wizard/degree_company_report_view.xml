@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="hr_payroll_custom.view_salary_degree_tree">
+			<field name="name">hr.salary.degree.tree</field>
+			<field name="model">hr.salary.degree</field>
+			<field name="arch" type="xml">
+				<tree string=">Salary Scale Degrees">
+					<field name="sequence" groups="hr_custom_military.hr_emp_salary_manager"/>
+					<field name="name" />
+					<field name="payroll_id" groups="hr_custom_military.hr_emp_salary_manager"/>
+					<field name="category_id" groups="hr_custom_military.hr_emp_salary_manager"/>
+					<field name="basis" groups="hr_custom_military.hr_emp_salary_manager"/>
+					<field name="max_raise" groups="hr_custom_military.hr_emp_salary_manager"/>
+					<field name="raise_type" groups="hr_custom_military.hr_emp_salary_manager"/>
+					<field name="raise_amount" groups="hr_custom_military.hr_emp_salary_manager"/>
+					<field name="exempted_amount" groups="hr_payroll_custom.group_tax" />
+					<field name="taxable" groups="hr_payroll_custom.group_tax" />
+				</tree>
+			</field>
+		</record>
+        
+        <record id="view_degree_company_wizard" model="ir.ui.view">
+            <field name="name">degree_company_wizard.form</field>
+            <field name="model">degree_company.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Company Degree Report" version="7.0">
+                    <button name="print_report" string="Print" type="object"/>
+                    <group>
+                        <field name="company_id"  groups="base.group_multi_company"/>
+                        <field name="job_id" />
+                        <field name="gender" />
+                        <!--field name="degree_id" required="1"/-->
+                        <field name="department_id" />
+                        <field name="included_department" attrs="{'invisible':[('department_id','=',False)]}" />
+                        <field name="degrees_ids" />
+                        
+
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="action_degree_company_wizard" model="ir.actions.act_window">
+            <field name="name">Company Degree Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">degree_company.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_degree_company_wizard"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="degree_company_wizard_menu" name="Company Degree Report" action="action_degree_company_wizard" parent="hr_custom.menu_hr_process_report"/>
+        <report menu="False" auto="False" id="degree_company_report_id" model="hr.employee" name="hr.degree_company.report" file="hr_custom_military/report/degree_company_report.mako" string="Comapany Degree Report" report_type="webkit" header="True"/>
+        
+    </data>
+</openerp>

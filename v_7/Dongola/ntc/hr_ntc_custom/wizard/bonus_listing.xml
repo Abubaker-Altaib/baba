@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <report
+            auto="False"
+            menu="False" 
+            id="bonus_listing_related_att"
+            model="hr.payroll.main.archive"
+            name="bonus_listing_related_att.report"
+            file="hr_ntc_custom/report/bonus_listing.mako"
+            string="Bonus Listing" 
+            report_type="webkit"  header="True" />
+
+        <record id="bonus_listing_form" model="ir.ui.view">
+            <field name="name">bonus.listing.form</field>
+            <field name="model">bonus.listing</field>
+            <field name="arch" type="xml">
+                <form string="Bonus Listing" version="7.0">
+                    <group>
+                        <group>
+                            <field name="company_id" colspan="2"/>
+                            <field name="bonus_date" />
+                        </group>
+                        <group>
+                            <field name="month" colspan="2"/>
+                            <field name="year" colspan="2"/>
+                            <field name="allow" colspan="2"/>
+                      </group>
+                    </group>
+                    <footer>
+                        <button name="print_report" string="Print" type="object"  class="oe_highlight"/>
+                          or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="bonus_listing" model="ir.actions.act_window">
+            <field name="name">Bonus Listing</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">bonus.listing</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+      	<menuitem
+                  action="bonus_listing"
+                  id="menu_bonus_listing"
+                  parent="hr_payroll_custom.menu_hr_payroll_reporting"
+                  name="Bonus Listing" />
+
+
+
+        <record id="bonus_report" model="ir.ui.view">
+            <field name="name">Bonus Notification</field>
+            <field name="model">employee.bonus.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Bonus Notification" version="7.0">
+                    <group col="4" colspan="2">
+                        <field name="employee_id"/>
+                    </group>
+                            <footer>
+                                <button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight"/>
+                                or
+                                <button string="Cancel" class="oe_link" special="cancel"/>
+                            </footer>
+
+               
+                </form>
+            </field>
+        </record>
+
+        <record id="bonus_report_action" model="ir.actions.act_window">
+            <field name="name">Bonus Notification</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">employee.bonus.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="context">{'model_id':active_id}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.values" id="employees_salary_report_value">
+            <field name="model_id" ref="hr_custom.model_hr_process_archive" />
+            <field name="name">Bonus Notification</field>
+            <field name="key2">client_print_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('bonus_report_action'))" />
+            <field name="key">action</field>
+            <field name="model">hr.process.archive</field>
+        </record>
+
+
+        <record id="additional_form" model="ir.ui.view">
+            <field name="name">Bonus Notification</field>
+            <field name="model">employee.additional.form.report</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Additional Allowance Form" version="7.0">
+                    <group col="4" colspan="2">
+                        <field name="period_id" required="1"/>
+                        <field name="month" required="1"/>
+                    </group>
+                            <footer>
+                                <button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight"/>
+                                or
+                                <button string="Cancel" class="oe_link" special="cancel"/>
+                            </footer>
+
+               
+                </form>
+            </field>
+        </record>
+
+
+
+        <record id="additional_form_action" model="ir.actions.act_window">
+            <field name="name">Additional Allowance Form</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">employee.additional.form.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="context">{'model_id':active_id}</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.values" id="additional_form_value">
+            <field name="model_id" ref="hr_additional_allowance.model_hr_additional_allowance" />
+            <field name="name">Additional Allowance Form</field>
+            <field name="key2">client_print_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('additional_form_action'))" />
+            <field name="key">action</field>
+            <field name="model">hr.additional.allowance</field>
+        </record>
+
+
+    </data>
+</openerp>

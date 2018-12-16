@@ -1,0 +1,61 @@
+
+- 
+  Creating a account.fiscalyear.budget record
+- 
+  !record {model: account.fiscalyear.budget, id: account_fiscalyear_budget_0}:
+    analytic_account_id: account.analytic_agrolait
+    company_id: base.main_company
+    fiscalyear_id: account.data_fiscalyear
+    account_fiscalyear_budget_line:
+      - analytic_account_id: account.analytic_agrolait
+        company_id: base.main_company
+        fiscalyear_id: account.data_fiscalyear
+        general_account_id: account.cog
+        planned_amount: 2400.0
+      - analytic_account_id: account.analytic_agrolait
+        company_id: base.main_company
+        fiscalyear_id: account.data_fiscalyear
+        general_account_id: account.a_expense
+        planned_amount: 1000.0
+    
+-
+  Check that Initially fiscalyear budget is in the "Draft" state
+-
+  !assert {model: account.fiscalyear.budget, id: account_fiscalyear_budget_0}:
+    - state == 'draft'
+
+-
+  Change the state of fiscalyear budget to "Confirmed" by clicking "Confirm" button
+-
+  !workflow {model: account.fiscalyear.budget, action: confirm, ref: account_fiscalyear_budget_0}
+  
+-
+  Check that the fiscalyear budget state is now "Confirm"
+-
+  !assert {model: account.fiscalyear.budget, id: account_fiscalyear_budget_0}:
+    - state == 'confirm'
+    
+-
+  Generate period's budgets & change the state of fiscalyear budget to "Validated" by clicking "Generate Period's Budget" button
+-
+  !workflow {model: account.fiscalyear.budget, action: validate, ref: account_fiscalyear_budget_0}
+  
+-
+  Check that the fiscalyear budget state is now "Validate"
+-
+  !assert {model: account.fiscalyear.budget, id: account_fiscalyear_budget_0}:
+    - state == 'validate'
+   
+-
+  Check that now there is a period's budget created
+-
+  !python {model: account.fiscalyear.budget}: |
+    budget_pool=self.pool.get('account.budget.lines')
+    FY_budget=self.browse(cr, uid, ref("account_fiscalyear_budget_0"))
+    period_ids=self.pool.get('account.period').search(cr, uid, [('fiscalyear_id','=',ref("account.data_fiscalyear"))])
+    budget_ids=budget_pool.search(cr, uid, [('period_id','in',period_ids),('general_account_id','in',[ref("account.cog"),ref("account.a_expense")]),('analytic_account_id','=',ref("account.analytic_agrolait"))])
+    assert len(budget_ids)==2*len(period_ids), "Period's Budgets not Created"
+    
+    
+    
+    

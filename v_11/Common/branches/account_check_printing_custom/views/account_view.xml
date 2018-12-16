@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Journal View -->
+        <record id="view_account_journal_form_inherited" model="ir.ui.view">
+            <field name="name">account.journal.form.inherited</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account_check_printing.view_account_journal_form_inherited" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='check_sequence_id']" position="after">
+                    <field name="transfer_payment_method_selected" invisible="1"/>
+                    <field name="transfer_sequence_id" attrs="{'invisible': [('transfer_payment_method_selected', '=', False)]}"/>
+                    <field name="check_dimension" />
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Check Log View -->
+
+        <record id="check_log_filter" model="ir.ui.view">
+            <field name="name">check.log.select</field>
+            <field name="model">check.log</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search Log">
+                    <group col='16' colspan='4'>
+                        <field name="name" />
+                        <field name="status" />
+                        <field name="check_no" />
+                        <field name="release_at" />
+                        <field name="journal_id" domain="[('type','=','bank' )]"
+                            widget="selection" select="1" />
+                        <field name="date_due" />
+                    </group>
+                    <newline />
+                    <group expand="0" string="Group By...">
+                        <filter string="Status" icon="terp-partner" domain="[]" context="{'group_by':'status'}" />
+                        <filter string="Banks" icon="terp-partner" domain="[]" context="{'group_by':'journal_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="check_log_form">
+            <field name="name">check.log.form</field>
+            <field name="model">check.log</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+
+                <form string="Check Log" delete="false" create="false">
+                    <sheet>
+                        <group>
+                            <field name="partner_id" readonly="1" />
+                            <field name="journal_id" readonly="1" />
+                            <field name="date_due" />
+                            <field name="check_no" readonly="1" />
+                            <field name="name" readonly="1" attrs="{'invisible':[('name','=',False)]}"/>
+                            <field name="status" readonly="1" />
+                            <field name="release_at" />
+                            <field name="signed" attrs="{'readonly':[('status','!=','active')]}" />
+                            <field name="description" />
+                            <field name="company_id" widget="selection" groups="base.group_multi_company" />
+                        </group>
+                    </sheet>
+                </form>
+
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="check_log_tree">
+            <field name="name">check.log.tree</field>
+            <field name="model">check.log</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string='Check Log' delete="false" create="false">
+                    <field name="partner_id" readonly="1" />
+                    <field name="journal_id" readonly="1" />
+                    <field name="check_no" readonly="1" />
+                    <field name="name" readonly="1" />
+                    <field name="date_due" />
+                    <field name="status" readonly="1" />
+                    <field name="release_at" />
+                    <field name="signed" attrs="{'readonly':[('status','!=','active')]}" />
+                    <field name="company_id" widget="selection" groups="base.group_multi_company" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_check_log" model="ir.actions.act_window">
+            <field name="name">Check Log</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">check.log</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="check_log_filter" />
+            <field name="view_id" ref="check_log_tree" />
+        </record>
+
+        <menuitem name="Check Log" id="menu_check_log" action="action_check_log" parent="account.account_reports_management_menu"
+            sequence="360" />
+
+        <record model="ir.ui.view" id="account_check_dimension_form">
+            <field name="name">account.check.dimension.form</field>
+            <field name="model">account.check.dimension</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Check Dimension">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" />
+                                <field name="font_size" />
+                                <field name="date" placeholder="x,y" />
+                                <field name="beneficiary" placeholder="x,y" />
+                                <field name="amount" placeholder="x,y" />
+                                <field name="number" placeholder="x,y" />
+                                <field name="release_at" placeholder="x,y" />
+                                <field name="description" placeholder="x,y" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="account_check_dimension_tree">
+            <field name="name">account.check.dimension.tree</field>
+            <field name="model">account.check.dimension</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Check Dimension">
+                    <field name="name" />
+                    <field name="date" />
+                    <field name="beneficiary" />
+                    <field name="amount" />
+                    <field name="number" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_account_check_dimension" model="ir.actions.act_window">
+            <field name="name">Check Dimension</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.check.dimension</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account_check_dimension_tree" />
+        </record>
+        <menuitem name="Check Dimension" id="menu_account_check_dimension" action="action_account_check_dimension"
+            parent="account.account_account_menu" sequence="360" />
+
+
+        <record id="view_account_payment_form_inherited" model="ir.ui.view">
+            <field name="name">account.payment.form.inherited</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='post']" position="before">
+                    <button name="print_transfer_report" class="oe_highlight" string="Print Transfer report" type="object"
+                        attrs="{'invisible': ['|',('payment_method_code', '!=', 'transfer'), ('state', '!=', 'draft')]}" />
+                </xpath>
+                <xpath expr="//field[@name='check_amount_in_words']" position="replace">
+                    <field name="check_amount_in_words" attrs="{'invisible': [('payment_method_code', 'not in', ['check_printing','transfer'])], 'readonly': [('state', '!=', 'draft')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='communication']" position="after">
+                    <field name="transfer_number" attrs="{'invisible':['|',('payment_method_code','!=','transfer'),('transfer_number','=',0)]}"/>
+                    <field name="release_at" attrs="{'invisible': [('payment_method_code', '!=', 'check_printing')],'readonly': [('state', 'not in', ['draft','paid'])]}"/>
+                    <field name="description" attrs="{'invisible': [('payment_method_code', '!=', 'check_printing')],'readonly': [('state', 'not in', ['draft','paid'])]}"/>
+                </xpath>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

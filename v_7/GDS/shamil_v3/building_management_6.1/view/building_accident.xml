@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+		<!-- building accident Record Form,Tree View & Action -->
+
+		<record id="id_building_accident_view_form" model="ir.ui.view">
+			<field name="name">building.accident.form</field>
+			<field name="model">building.accident</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Building Accident">
+					<group col="4" colspan="4">
+						<field name="name" colspan="1" />
+						<field name="date" colspan="1"/>
+						<field name="accident_category" colspan="1" required="1"/>
+						<field name="accident_type_id" colspan="1" widget="selection"/>
+						<field name="building_id" colspan="1" attrs="{'required':[('accident_category', '=', 'building')],'invisible':[('accident_category', '!=', 'building')]}" domain="[('building_category','=','building')]"/>
+						<field name="building_company_id" colspan="1" attrs="{'invisible':[('accident_category', '!=', 'building')]}"/>
+						<field name="station_id" colspan="1" attrs="{'required':[('accident_category', '=', 'station')],'invisible':[('accident_category', '!=', 'station')]}" domain="[('building_category','=','station')]" />
+						<field name="station_company_id" colspan="1" attrs="{'invisible':[('accident_category', '!=', 'station')]}"/>
+						<field name="car_id" colspan="1" attrs="{'required':[('accident_category', '=', 'car')],'invisible':[('accident_category', '!=', 'car')]}" />
+						<field name="car_department_id" colspan="1" attrs="{'invisible':[('accident_category', '!=', 'car')]}"/>
+						<field name="accident_date" colspan="1" />
+						<field name="accident_location" colspan="1" attrs="{'required':[('accident_category', '=', 'other')],'invisible':[('accident_category', '!=', 'other')]}"/>
+
+						<field name="estimated_cost" colspan="1" />
+						<field name="user_id" colspan="1" />
+						<field name="company_id" colspan="1" />
+					</group>
+					<group col="4" colspan="4">
+						<separator string="Insurance Section" colspan="4" />
+						<field name="notify_insurance_date" colspan="1" attrs="{'invisible':[('state', 'not in', ('approve','done'))]}"/>
+						<field name="partner_id" colspan="1" attrs="{'invisible':[('state', 'not in', ('approve','done'))]}"/>
+						<field name="repayment_cost" colspan="1" attrs="{'invisible':[('state', 'not in', ('approve','done'))]}"/>
+						<field name="notify_workshop_date" colspan="1" attrs="{'invisible':[('state', 'in', ('draft','section'))]}"/>
+						<field name="coverage_date" colspan="1" attrs="{'invisible':[('state', 'not in', ('approve','done'))]}"/>
+					</group>
+					<notebook colspan="4">
+						<page string="Accident Description">
+							<field name="accident_desc" colspan="4" nolabel="1" />
+						<group col="11" colspan="4">
+								<field name="state" readonly="1" />
+
+								<button name="section" states="draft" string="officer confirmation"
+									confirm="Are you sure you want to Confirm this request?"/>
+								
+								<button name="approve" states="section" string="Section manager confirmation"
+									confirm="Are you sure you want to confirm this request?" groups="base.group_service_section_manager"/>
+									
+							   <button name="done" states="approve" string="Insurance Section Manager "
+									confirm="Are you sure you want to approve this request" />
+																
+									
+								<button name="cancel" states="draft,section,approve" string="Cancel Request"
+									icon="gtk-cancel" confirm="Are you sure you want to Cancel this request?" />
+									
+								<button name="ir_action_cancel_draft" states="cancel"
+									string="Set to Draft" type="object" icon="gtk-convert" />
+							</group>
+						</page>
+						<page string="Maintenance Description">
+							<field name="maintenance_desc" colspan="4" nolabel="1" />
+						</page>
+					</notebook>
+
+				</form>
+			</field>
+		</record>
+
+
+		<record id="id_building_accident_view_tree" model="ir.ui.view">
+			<field name="name">building.accident.tree</field>
+			<field name="model">building.accident</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Building Accident">
+					<field name="name"/>
+					<field name="station_id" select="1" />
+					<field name="building_id" select="1" />
+					<field name="car_id" select="1" />
+					<field name="accident_type_id" select ="1" colspan="1"/>
+					<field name="accident_date" colspan="1"/>
+					<field name="state" colspan="1"/>
+					<field name="user_id" colspan="1"/>
+
+				</tree>
+			</field>
+		</record>
+
+
+
+		
+
+		<!-- building accident Search Filter -->
+
+		<record id="view_building_accident_filter" model="ir.ui.view">
+			<field name="name">building.accident.list.select</field>
+			<field name="model">building.accident</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search for Building Accident Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="station_id" widget="selection"/>
+					<separator orientation="vertical" />
+					<field name="accident_type_id" widget="selection" />
+					<separator orientation="vertical" />
+					<field name="accident_date"/>
+					<separator orientation="vertical" />
+					<field name="state"/>
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Station" icon="terp-personal"
+							domain="[('accident_category','=','station')]" context="{'group_by':'station_id'}" />
+						<filter string="Building" icon="terp-personal"
+							domain="[('accident_category','=','building')]" context="{'group_by':'building_id'}" />
+						<filter string="Accident Type" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'accident_type_id'}" />
+						<filter string="Accident Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'accident_date'}" />
+						<filter string="Responsible" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'user_id'}" />
+
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+
+
+					</group>
+				</search>
+			</field>
+		</record>
+
+
+
+<!-- Accident Cofiguration -->
+
+
+	<!--Accident Cofiguration Cofigruation Form & Tree & search -->
+
+		<record id="id_accident_type_view_form" model="ir.ui.view">
+			<field name="name">accident.type.form</field>
+			<field name="model">accident.type</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Accident Type Record">
+					<field name="code"/>
+					<field name="name"/>
+				</form>
+			</field>
+		</record>
+
+		<record id="accident_type_tree" model="ir.ui.view">
+			<field name="name">accident.type.tree</field>
+			<field name="model">accident.type</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Accident Type">
+					<field name="code"/>
+                                        <field name="name" />
+				</tree>
+			</field>
+		</record>
+
+
+		<record id="accident_type_action" model="ir.actions.act_window">
+			<field name="res_model">accident.type</field>
+			<field name="domain">[]</field>
+		</record>
+
+		<record id="view_accident_type_filter" model="ir.ui.view">
+			<field name="name">accident.type.list.select</field>
+			<field name="model">accident.type</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search for Accident Type">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="code" select="1" />
+					<newline />
+				</search>
+			</field>
+		</record>
+
+
+
+<!--Building Menu -->
+		<record id="id_building_accident_action" model="ir.actions.act_window">
+			<field name="res_model">building.accident</field>
+			<field name="domain">[]</field>
+		</record>
+
+       <menuitem id="id_building_accident_menu" name="Building Accident"
+			parent="building_management_menu" action="id_building_accident_action" sequence="3"/>
+
+
+       <menuitem id="id_building_accident_type_menu" name="Accident Type"
+			parent="menu_building_manager_config_menu" action="accident_type_action"  />
+
+
+
+
+	</data>
+</openerp>

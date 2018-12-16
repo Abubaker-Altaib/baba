@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      
+        <record id="action_payment_recieve" model="ir.actions.client">
+            <field name="name">Payment Recieve</field>
+            <field name="tag">payment_recieve</field>
+        </record>
+
+      <record id="payment_recieve_form" model="ir.ui.view">
+            <field name="name">Payment Recieve</field>
+            <field name="model">payment.receive</field>
+            <field name="arch" type="xml">
+            <form string="Payment Receive" version="7.0">
+              <header>
+                <button name="confirm_rec" string="Confirm" type="object"/>
+              </header>
+              <group col="4" colspan="2">
+                <field name="employee_id" on_change="on_change_employee(employee_id)" />
+                 <field name="emp_code" on_change="on_change_emp_code(emp_code)" />
+               </group>
+              <group col="4" colspan="2">
+                <field name="military_no" readonly="1"/>
+                <field name="camp" readonly="1"/>
+               
+              </group>
+              <group col="4" colspan="2">
+                <field name="hand"  attrs="{'readonly':[('state' , '!=' , 'draft')]}"/>
+                <field name="finger" attrs="{'readonly':[('state' , '!=' , 'draft')]}"/>
+              </group>
+
+              <notebook>
+                <page string="Payments">
+                  <field name="state" invisible="1"/>
+                  <field name="line_ids" states="confirm">
+                    <tree editable="false">
+                      <field name="date" />
+                      <field name="amount"/>
+                      <field name="state"/>
+                      <button type="object" name="confirm" states="draft,confirm" string="Receive" icon="gtk-apply"/>
+                      <button type="object" name="do_done" states="received" string="Done" icon="gtk-apply"/>
+                    </tree>
+                  </field> 
+
+                </page>
+              </notebook>
+          </form>
+            </field>
+      </record>
+
+        <record id="payment_recieve_action" model="ir.actions.act_window">
+            <field name="name">Payment Recieve</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">payment.receive</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="payment_recieve_form"/>
+            <field name="target">current</field>
+        </record>
+
+
+      
+        <menuitem
+                name="Payment Recieve"
+                id="payment_recieve_menu"
+                parent="Payment_main_menu"
+                action="payment_recieve_action"
+                />
+  </data>  
+</openerp>

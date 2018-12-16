@@ -1,0 +1,798 @@
+<odoo>
+  <data>
+    <!-- hospital treatment form  -->
+
+    <!-- this is the configuration menu  -->
+        <menuitem id="configuration_dzc1"
+                  name="Configuration"
+                  parent="dzc1_menu"
+                  sequence="6"
+        />
+
+    <record model="ir.ui.view" id="hospital_treatment_form">
+      <field name="name">Clinic</field>
+      <field name="model">hospital.treatment</field>
+      <field name="arch" type="xml">
+        <form >
+          <header attrs="{'invisible':[('contract','!=',True)]}">
+            <button name="approve" string="Approve" type="object" class="oe_highlight" attrs="{'invisible':['|',('state' , '!=' , 'draft'),('contract','!=',True)]}"/>
+            <button name="contract_termination" state="approve" string="Contract Termination" type="object" class="oe_highlight"   attrs="{'invisible':[('state' , '!=' , 'approve'),('contract','!=',True)]}"/>
+            <button name="set_draft" state="cancel" string="Set To Draft" type="object" class="oe_highlight" attrs="{'invisible':[('state' , '!=' , 'cancel'),('contract','!=',True)]}"/>
+            <field name="state" attrs="{'invisible':[('contract','!=',True)]}" widget="statusbar"/>
+          </header>
+          <sheet>
+            <group colspan="4" col="2">
+              <group>
+                <field name="name" attrs="{'readonly':[('state', 'in', ['approve', 'cancel'])]}" required="1"/>
+                <field name="location_name" attrs="{'readonly':[('state', 'in', ['approve', 'cancel'])]
+                ,'invisible':[('contract','!=',True)],'required':[('contract','=',True)]}"/>
+              </group>
+
+              <group>
+                <field name="contract" attrs="{'readonly':[('state', 'in', ['approve', 'cancel'])]}"/>
+                <field name="establish_date" attrs="{'readonly':[('state', 'in', ['approve', 'cancel'])],'invisible':[('contract','!=',True)],'required':[('contract','=',True)]}"/>
+                <field name="contract_date" attrs="{'readonly':[('state', 'in', ['approve', 'cancel'])],'invisible':[('contract','!=',True)],'required':[('contract','=',True)]}"/>
+              </group>
+
+              <group>
+                <field name="main_owner" attrs="{'readonly':[('state', 'in', ['approve', 'cancel'])],'invisible':[('contract','!=',True)],'required':[('contract','=',True)]}"/>
+                <field name="file_name" invisible="1"/>
+                <field widget="binary" attrs="{'readonly':[('state', 'in', ['approve', 'cancel'])],'invisible':[('contract','!=',True)],'required':[('contract','=',True)]}" height="64" name="doc_image" filename="file_name" />
+              </group>
+              <group>
+                <field name="Type" attrs="{'readonly':[('state', 'in', ['approve', 'cancel'])],'invisible':[('contract','!=',True)],'required':[('contract','=',True)]}"/>
+				        <field name="position" attrs="{'invisible':[('Type','!=','hospital')],
+                       'required':[('Type','=','hospital')]}" />
+              </group>
+              
+            </group>
+            <notebook>
+              <page string="Staff" attrs="{'invisible':[('contract','!=',True)]}">
+                <field name="staff_ids" attrs="{'readonly':[('state', 'in', ['approve', 'cancel'])],'invisible':[('contract','!=',True)],'required':[('contract','=',True)]}">
+                  <tree editable="buttom" >
+                   <field name="name"/>
+                   <field name="phone_number"/>
+                   <field name="title"/>
+                 </tree>
+               </field>
+             </page>
+
+             <page string="Operations" attrs="{'invisible':['|',('Type', 'in', ['pharmacy', 'medical_center']),('contract','!=',True)]}">
+              <field name="op_fees_ids" attrs="{'readonly':[('state', 'in', ['approve', 'cancel'])],'invisible':[('contract','!=',True)],'required':[('contract','=',True)]}">
+                <tree editable="bottom">
+                 <field name="illness_id" required="1" context="{'op_fees_ids':parent.op_fees_ids}"/>
+                 <field name="operation_fees" required="1"/>
+                 <field name="discount" required="0"/>
+               </tree>
+             </field>
+           </page>
+
+         </notebook>
+       </sheet>
+     </form>
+   </field>
+ </record>
+ <!-- hospital treatment tree -->
+ <record model='ir.ui.view' id='hospital_tratment_tree'>
+  <field name='name'>Clinic List</field>
+  <field name='model'>hospital.treatment</field>
+  <field name='arch' type='xml'>
+    <tree >
+     <field name="name"/>
+     <field name="location_name"/>
+     <field name="Type"/>
+     <field name="state"/>
+   </tree>
+ </field>
+</record>
+<!-- hospital treatment Search -->
+
+<record id="view_hospital_treatment_search" model="ir.ui.view">
+ <field name="name">Clinic search</field>
+ <field name="model">hospital.treatment</field>
+ <field name="arch" type="xml">
+   <search string="Search Hospital">
+     <field name="name"/>
+     <field name="staff_ids"/>
+     <field name="main_owner"/>
+   </search>
+ </field>
+</record>
+
+<!-- hospital treatment action -->
+<record id="hospital_tratment_action" model="ir.actions.act_window">
+  <field name="name">Clinic Action</field>
+  <field name="res_model">hospital.treatment</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record>
+
+
+<!-- zakat committee base  form -->
+<record model="ir.ui.view" id="view_zakat_committee_form">
+ <field name="name">zakat.dzc1.committee.form</field>
+ <field name="model">zakat.dzc1.committee</field>
+ <field name="arch" type="xml">
+   <form string=" zakat committee base form ">
+     <header>
+     </header>
+     <sheet>
+      <group>
+       <group>
+         <field name="committee_name" required="1"/>
+         <field name="administrative_unit_id" required="1"/>
+         <field name="company_id" readonly="1"/>
+       </group>
+       
+       <group>
+         <field name="head_of_committee" required="1"/>
+         <field name="phone_number"/>
+       </group>
+
+
+     </group>
+   </sheet>
+ </form>
+</field>
+</record>
+<!--  zakat committee base  tree-->
+
+<record model='ir.ui.view' id='name_id_tree'>
+
+  <field name='name'>zakat.dzc1.committee.tree</field>
+  <field name='model'>zakat.dzc1.committee</field>
+  <field name='arch' type='xml'>
+    <tree string='zakat committee base Tree'>
+      <field name="head_of_committee"/>
+      <field name="phone_number"/>
+    </tree>
+  </field>
+</record>
+
+<!-- zakat committee base search  -->
+<record id="view_zakat_committee_search" model="ir.ui.view">
+ <field name="name">zakat.dzc1.committee.search</field>
+ <field name="model">zakat.dzc1.committee</field>
+ <field name="arch" type="xml">
+   <search string="Search committee">
+     <field name="committee_name"/>
+   </search>
+ </field>
+</record>
+
+<!-- zakat committe action -->
+<record id="zakat_committee_action" model="ir.actions.act_window">
+  <field name="name">Zakat Action</field>
+  <field name="res_model">zakat.dzc1.committee</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record>
+
+
+
+<!-- ======================================================-->
+
+<!-- ======================================================-->
+<!-- zakat diagnostic sectors form -->
+<record model="ir.ui.view" id="view_diagnostic_sector_form">
+  <field name="name">zakat.diagnostic.sectors.form</field>
+  <field name="model">zakat.diagnostic.sectors</field>
+  <field name="arch" type="xml">
+   <form string=" zakat diagnostic sectors form ">
+    <header>
+    </header>
+    <sheet>
+     <group>
+
+      <group>
+        <field name="sector_no" required="1"/>
+      </group>
+
+      <group>
+        <field name="name" required="1"/>
+      </group>
+
+      
+
+    </group>
+  </sheet>
+</form>
+</field>
+</record>
+
+<!--  zakat diagnostic sectors tree-->
+<record model='ir.ui.view' id='diagnostic_sectors_tree'>
+
+ <field name='name'>zakat.diagnostic.sectors.tree</field>
+ <field name='model'>zakat.diagnostic.sectors</field>
+ <field name='arch' type='xml'>
+  <tree string='Diagnostic Sectors'>
+   <field name="sector_no"/>
+   <field name="name"/>
+
+ </tree>
+</field>
+</record>
+
+<!-- zakat diagnostic sectors search --> 
+<record id="diagnostic_sectors_view_search" model="ir.ui.view">
+ <field name="name">zakat.diagnostic.sectors.search</field>
+ <field name="model">zakat.diagnostic.sectors</field>
+ <field name="arch" type="xml">
+
+   <search string="Search Opportunities">
+    <field name="sector_no"/>
+    <field name="name"/>
+  </search>
+
+</field>
+</record>
+
+<!-- zakat diagnostic sectors action -->
+<record id="diagnostic_sectors_action" model="ir.actions.act_window">
+ <field name="name">Diagnostic Sectors </field>
+ <field name="res_model">zakat.diagnostic.sectors</field>
+ <field name="view_type">form</field>
+ <field name="view_mode">tree,form</field>
+</record>
+
+
+<!-- zakat diagnostic sectors menu item -->
+<menuitem name="Diagnostic Sectors" 
+ parent="configuration_dzc1" 
+ id="diagnostic_sectors_action_menu" 
+ action="diagnostic_sectors_action"/>
+
+
+
+  confiuration menu of zakat committee
+
+ <menuitem name="Zakat Committee"
+  parent="configuration_dzc1"
+  id="zakat_committee_menu"
+  action="zakat_committee_action"/>
+
+  <!-- ======================================================-->
+  <!-- ======================================================-->
+  <!-- zakat Illness form view -->
+  <record model="ir.ui.view" id="view_illness_form">
+    <field name="name">zakat.illness.form</field>
+    <field name="model">zakat.illness</field>
+    <field name="arch" type="xml">
+     <form string=" zakat Illness form ">
+      <header>
+      </header>
+      <sheet>
+       <group>
+
+         <group>
+          <field name="name" required="1" default_focus="1"/>
+        </group>
+
+        <group>
+          <field name="sector_id" required="1"/>
+        </group>
+
+      </group>
+    </sheet>
+  </form>
+</field>
+</record>
+
+<!--  zakat illness tree view -->
+<record model='ir.ui.view' id='view_illness_tree'>
+
+ <field name='name'>zakat.illness.tree</field>
+ <field name='model'>zakat.illness</field>
+ <field name='arch' type='xml'>
+  <tree string='zakat illness Tree'>
+   <field name="name"/>
+   <field name="sector_id"/>
+ </tree>
+</field>
+</record>
+
+<!-- zakat illness search view --> 
+<record id="view_illness_search" model="ir.ui.view">
+ <field name="name">zakat.illness.search</field>
+ <field name="model">zakat.illness</field>
+ <field name="arch" type="xml">
+
+   <search string="Search Opportunities">
+    <field name="sector_id"/>
+    <field name="name"/>
+  </search>
+</field>
+</record>
+
+<!-- zakat illness action -->
+<record id="illness_action" model="ir.actions.act_window">
+ <field name="name">Zakat Illness Action</field>
+ <field name="res_model">zakat.illness</field>
+ <field name="view_type">form</field>
+ <field name="view_mode">tree,form</field>
+</record>
+
+
+<!-- zakat illness menu item -->
+<menuitem name="The Illness" 
+ parent="configuration_dzc1" 
+ id="illness_action_menu" 
+ action="illness_action"/>
+
+
+ <!-- confiuration menu of hospital   -->
+ <menuitem id="hospital_treatment_menu" 
+  name="Clinics"
+  parent="configuration_dzc1" 
+  action="hospital_tratment_action"/>
+  
+  <!-- ======================= -->
+
+  <!-- this is the state -->
+
+  <!-- this is the state tree view -->
+  <record model='ir.ui.view' id='country_tree_view'>
+    <field name='name'>zakat.country</field>
+    <field name='model'>zakat.country</field>
+    <field name='arch' type='xml'>
+     <tree string='State Tree'>
+       <field name="country_number"/>
+       <field name="name"/>
+     </tree>
+   </field>
+ </record>
+ <!-- this is the country form view -->
+ <record model="ir.ui.view" id="country_form_view">
+  <field name="name">zakat.country</field>
+  <field name="model">zakat.country</field>
+  <field name="arch" type="xml">
+   <form string=" State ">
+    <sheet>
+      <group>
+        <group>
+          <field name="country_number"/>
+          <field name="company_id" readonly="1"/>
+        </group>
+        <group>
+         <field name="name"/>
+       </group>
+     </group>
+   </sheet>
+ </form>
+</field>
+</record>
+<!-- this is the country search view -->
+<record id="country_search_view" model="ir.ui.view">
+  <field name="name">country.search</field>
+  <field name="model">zakat.country</field>
+  <field name="arch" type="xml">
+    <search string="Search">
+      <field name="name"/>
+      <field name="country_number"/>
+    </search>
+  </field>
+</record>
+
+<!-- this is the country action -->
+<record id="country_action" model="ir.actions.act_window">
+  <field name="name">Country</field>
+  <field name="res_model">zakat.country</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record>
+
+<!-- this is the country menu -->
+<menuitem id="country_zakat"
+ name="Country"
+ parent="configuration_dzc1"
+ action="country_action"
+ />
+
+ <!-- Zakat Guarantees Form View -->
+ <record id="zakat_guarantees_form_view" model="ir.ui.view">
+  <field name="name">Guarantees</field>
+  <field name="model">zakat.guarantees</field>
+  <field name="arch" type="xml">
+    <form>
+      <sheet>
+        <group string="Guarantees Information" col="4" colspan="2">
+          <field name="type" required="1"/>
+          <field name="support_type" required="1"/>
+          <field name="card_validity"  attrs="{'invisible':[('type','!=','i_health')],'required':[('type','=','i_health')]}"/>
+
+        <field name="classification" attrs="{'invisible':[('type','!=','s_support')],'required':[('type','=','s_support')]}"/>                          
+
+          <field name="amount" required="1" attrs="{'invisible':['&amp;',('type','=','s_support'),('support_type','=','not_fixed')]}"/>
+
+          <field name="company_id" required="1" readonly="1"/>
+
+        </group>
+        <notebook>
+          <page string="Guarantees Account" >
+            <group col="4" colspan="2">
+             <field name="journal_id" required="1"/>
+             <field name="property_analytic_account_id" required="1"/>
+             <field name="property_account_id" required="1"/>
+
+
+           </group>
+         </page>
+       </notebook>
+     </sheet>
+   </form>
+ </field>
+</record>
+
+<!-- Zakat Guarantees Tree View  -->
+<record id="zakat_guarantees_tree_view" model="ir.ui.view">
+  <field name="name">Guarantees</field>
+  <field name="model">zakat.guarantees</field>
+  <field name="arch" type="xml">
+    <tree>
+      <field name="company_id"/>
+      <field name="type"/>
+      <field name="amount"/>
+    </tree>
+  </field>
+</record>
+
+<!-- Guarantees Search View -->
+<record id="zakat_guarantees_search_view" model="ir.ui.view">
+  <field name="name">Guarantees Search</field>
+  <field name="model">zakat.guarantees</field>
+  <field name="arch" type="xml">
+    <search>
+      <field name="company_id"/>
+      <field name="type"/>
+      <group expand="0" string="Group By">
+        <filter string="Company" context="{'group_by': 'company_id'}"/>
+        <filter string="Type" context="{'group_by': 'type'}"/>
+      </group>
+    </search>
+  </field>
+</record>
+
+<!-- zakat Guarantees Action  -->
+<record id="zakat_guarantees_action" model="ir.actions.act_window">
+  <field name="name">Guarantees</field>
+  <field name="res_model">zakat.guarantees</field>
+  <field name="view_mode">tree,form</field>
+  <field name="view_type">form</field>
+</record>
+
+<!-- urgent emergency type form view -->
+<record id="urgent_emergency_type_form" model="ir.ui.view">
+  <field name="name">Urgent Emergency Type</field>
+  <field name="model">zakat.urgentemergencytype</field>
+  <field name="arch" type="xml">
+    <form>
+      <sheet>
+        <group string="Urgent &amp; Emergency Type"  col="4" colspan="2">
+          <field name="name" required="1"/>
+          <field name="journal_id" required="1"/>
+            <field name="property_analytic_account_id"  required="1"/>
+          <field name="property_account_id" required="1"/>
+          <field name="company_id" readonly="1"/>
+        </group>
+      </sheet>
+    </form>
+  </field>
+</record>
+
+<!-- urgent emergency type tree view -->
+<record id="urgent_emergency_type_tree" model="ir.ui.view">
+  <field name="name">Urgent Emergency Type List</field>
+  <field name="model">zakat.urgentemergencytype</field>
+  <field name="arch" type="xml">
+    <tree>
+      <field name="name"/>
+      <field name="property_account_id"/>
+      <field name="property_analytic_account_id"  required="1"/>
+      <field name="company_id"/>
+    </tree>
+  </field>
+</record>
+
+<!-- urgent emergency type Search View -->
+<record id="urgent_emergency_type_search_view" model="ir.ui.view">
+  <field name="name">Urgent Emergency Type Search</field>
+  <field name="model">zakat.urgentemergencytype</field>
+  <field name="arch" type="xml">
+    <search>
+      <field name="company_id"/>
+      <field name="name"/>
+      <group expand="0" string="Group By">
+        <filter string="Company" context="{'group_by': 'company_id'}"/>
+        <filter string="Type" context="{'group_by': 'type'}"/>
+      </group>
+    </search>
+  </field>
+</record>
+
+<!-- urgent emergency type Action  -->
+<record id="urgent_emergency_type_action" model="ir.actions.act_window">
+  <field name="name">Urgent Emergency Type</field>
+  <field name="res_model">zakat.urgentemergencytype</field>
+  <field name="view_mode">tree,form</field>
+  <field name="view_type">form</field>
+</record>
+
+
+
+<!-- Guarantees Menuitem -->
+<menuitem id="zakat_guarantees_menu"
+  name="Guarantees"
+  parent="configuration_dzc1"
+  action="zakat_guarantees_action"
+  
+  />
+
+  <!-- urgent emergency type Menuitem -->
+  <menuitem id="zakat_urgent_emergency_type_menu"
+    name="Urgent Emergency Type"
+    parent="configuration_dzc1"
+    action="urgent_emergency_type_action"
+    
+    />
+
+  
+  <!-- Ratification List Form View -->
+        <record id="ratification_list_view_form" model="ir.ui.view">
+            <field name="name">Ratification List Form</field>
+            <field name="model">zakat.ratification</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_approve" string="Approve" states="draft" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_draft" string="Set To Draft" states="cancel" type="object"
+                                class="oe_highlight"/>
+                        <button name="action_cancel" string="Cancel" states="draft,approve" type="object"
+                                class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group string="Ratification List Information">
+                            <field name="name" attrs="{'readonly':[('state','in',['approve', 'cancel'])]}"/>
+                            <field name="ratification_list" attrs="{'readonly':[('state','in',['approve', 'cancel'])]}"/>
+                            <field name="ratification_type" domain="[('type', '=', type)]"  options="{'no_quick_create': True, 'no_create_edit': True}"
+                                   attrs="{'readonly':[('state','in',['approve', 'cancel'])],
+                                    'invisible':[('ratification_list','not in',['is', 'as'])],
+                                   'required':[('ratification_list','in',['is', 'as'])]}"/>
+                            <!--<field name="IS_type"-->
+                                   <!--attrs="{'readonly':[('state','in',['approve', 'cancel'])], 'invisible':[('ratification_list','!=','is')], 'required':[('ratification_list','=','is')]}"/>-->
+                            <!--<field name="AS_type"-->
+                                   <!--attrs="{'readonly':[('state','in',['approve', 'cancel'])], 'invisible':[('ratification_list','!=','as')], 'required':[('ratification_list','=','as')]}"/>-->
+                            <label for="year"/>
+                            <dev>
+                            <field name="year" attrs="{'readonly':[('state','in',['approve', 'cancel'])]}"   style="width:15%; text-align:center;" placeholder="Year"/>
+                                -
+                            <field name="months" attrs="{'readonly':[('state','in',['approve', 'cancel'])]}" style="width:15%; text-align:center;" placeholder="Months"/>
+                            </dev>
+                            <field name="type"  invisible="1"/>
+                            <field name="contribution" invisible="1"/>
+                        </group>
+                        <notebook>
+
+                            <page string="Ratification List Ceilings"
+                                  attrs="{'invisible':[('ratification_list','!=','dtt')]}">
+                                <field  name="ceiling_ids" attrs="{'readonly':[('state','in',['approve', 'cancel'])]}" context="{'ceiling': ceiling_ids, 'ra':id}">
+                                    <tree editable="bottom">
+                                        <field name="From"/>
+                                        <field name="To" context="{'to':To}"/>
+                                        <field name="zakat_pre" required="1"/>
+                                        <field name="greater" widget="radio" options="{'horizontal': true}"/>
+                                        <field name="In"
+                                               attrs="{'invisible':[('greater','=','no')], 'required':[('greater','=','yes')]}"/>
+                                        <field name="give"
+                                               attrs="{'invisible':[('greater','=','no')], 'required':[('greater','=','yes')]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Ratification List Ceilings"
+                                  attrs="{'invisible':[('ratification_list','!=','as')]}">
+                                <field name="ceiling_ids_as" attrs="{'readonly':[('state','in',['approve', 'cancel'])]}" context="{'ceiling': ceiling_ids_as, 'ra':id}">
+                                    <tree editable="bottom">
+                                        <field name="From"/>
+                                        <field name="To" context="{'to':To}"/>
+                                        <field name="zakat_amount" required="1"/>
+                                        <field name="financial_amount" required="1"/>
+                                        <field name="greater" widget="radio" options="{'horizontal': true}"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Ratification List Ceilings"
+                                  attrs="{'invisible':[('ratification_list','!=','is')]}">
+                                <field name="ceiling_ids_is"  attrs="{'readonly':[('state','in',['approve', 'cancel'])],
+                                'invisible':[('contribution','in',['fi', False])]}" context="{'ceiling': ceiling_ids_is, 'ra':id}">
+                                    <tree editable="bottom">
+                                        <field name="From"/>
+                                        <field name="To" context="{'to':To}"/>
+                                        <field name="zakat_pre" required="1"/>
+                                        <field name="financial_pre" required="1"/>
+                                        <field name="greater" widget="radio" options="{'horizontal': true}"/>
+                                        <field name="In"
+                                               attrs="{'invisible':[('greater','=','no')], 'required':[('greater','=','yes')]}"/>
+                                        <field name="give"
+                                               attrs="{'invisible':[('greater','=','no')], 'required':[('greater','=','yes')]}"/>
+                                    </tree>
+                                </field>
+                                <field name="ceiling_ids_kck" attrs="{'invisible':[('contribution','in',['p', False])],
+                                 'readonly':[('state','in',['approve', 'cancel'])]}" context="{'ceiling': ceiling_ids_kck, 'ra':id}">
+                                    <tree editable="bottom">
+                                        <field name="From"/>
+                                        <field name="To" context="{'to':To}"/>
+                                        <field name="zakat_amount" required="1"/>
+                                        <field name="financial_amount" required="1"/>
+                                        <field name="greater" widget="radio" options="{'horizontal': true}"/>
+                                        <field name="In"
+                                               attrs="{'invisible':[('greater','=','no')], 'required':[('greater','=','yes')]}"/>
+                                        <field name="give"
+                                               attrs="{'invisible':[('greater','=','no')], 'required':[('greater','=','yes')]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page string="Ratification List Accounting">
+                                <group col="4" colspan="2">
+                                    <field name="zakat_journal" attrs="{'readonly':[('state','in',['approve', 'cancel'])]}" required="1"/>
+                                    <field name="property_analytic_account_id" attrs="{'readonly':[('state','in',['approve', 'cancel'])]}" required="1"/>
+                                    <field name="property_zakat_account_id" attrs="{'readonly':[('state','in',['approve', 'cancel'])]}" required="1"/>
+                                    <field name="property_financial_account_id"
+                                           attrs="{'invisible':[('ratification_list','=','dtt')],
+                                            'required':[('ratification_list','in',['is','as'])],
+                                            'readonly':[('state','in',['approve', 'cancel'])]}"/>
+                                </group>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--Ratification List Tree -->
+        <record id="ratification_list_view_tree" model="ir.ui.view">
+            <field name="name">Ratification List Tree</field>
+            <field name="model">zakat.ratification</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="ratification_list"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Search View For Ratification List -->
+        <record id="view_ratification_list_search" model="ir.ui.view">
+            <field name="name">Ratification List Search</field>
+            <field name="model">zakat.ratification</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="ratification_list"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" context="{'group_by': 'state'}"/>
+                        <filter string="Ratification List" context="{'group_by': 'ratification_list'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Ratification List Action -->
+        <record id="ratification_list_action" model="ir.actions.act_window">
+            <field name="name">Ratification List</field>
+            <field name="res_model">zakat.ratification</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+        <!-- Ratification List Configuration -->
+        <menuitem id="ratification_list_menu"
+                  name="Ratification List"
+                  parent="configuration_dzc1"
+                  action="ratification_list_action"
+        />
+
+      <!-- Ratification Type Form View -->
+        <record id="ratification_type_view_form" model="ir.ui.view">
+            <field name="name">Ratification Type Form</field>
+            <field name="model">zakat.ratification.type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group string="Ratification Type">
+                            <field name="type"/>
+                            <field name="name" required="1"/>
+                            <field name="contribution" attrs="{'invisible':[('type','!=','it')],
+                             'required':[('type','=','it')]}" widget="radio" options="{'horizontal': true}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+      <!--Ratification Type Tree -->
+        <record id="ratification_type_view_tree" model="ir.ui.view">
+            <field name="name">Ratification Type Tree</field>
+            <field name="model">zakat.ratification.type</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="type"/>
+                </tree>
+            </field>
+        </record>
+
+      <!-- Search View For Ratification Type -->
+        <record id="view_ratification_type_search" model="ir.ui.view">
+            <field name="name">Ratification Type Search</field>
+            <field name="model">zakat.ratification.type</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="type"/>
+                    <field name="name"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Type" context="{'group_by': 'type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+      <!-- Ratification Type Action -->
+        <record id="ratification_type_action" model="ir.actions.act_window">
+            <field name="name">Ratification Type</field>
+            <field name="res_model">zakat.ratification.type</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+        <!-- Ratification Type Configuration -->
+        <menuitem id="ratification_type_menu"
+                  name="Ratification Type"
+                  parent="configuration_dzc1"
+                  action="ratification_type_action"
+        />
+
+<!-- orginizations tree view -->
+  <record id="orginizations_view_tree" model="ir.ui.view">
+    <field name="name">organizations</field>
+    <field name="model">dzc2.organizations</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="channel_type"/>
+        <field name="activity"/>        
+      </tree>
+    </field>
+  </record>
+  <!-- case study menu -->
+
+
+      <!-- orginizations form view -->
+  
+  <record id="organization_action" model="ir.actions.act_window">
+    <field name="name">Organizations</field>
+    <field name="res_model">dzc2.organizations</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('channel_type', '=', 'fageer')]</field>
+    <field name="view_id" ref="orginizations_view_tree"/>
+    <field name="context">{'default_channel_type':'fageer'}</field>
+  </record>
+  <menuitem id="dzc1_orgnizations_menu"
+    parent="configuration_dzc1"
+    name="Organizations"
+    action="organization_action"
+    sequence="2"/>
+
+
+
+
+
+  </data>
+</odoo>
+

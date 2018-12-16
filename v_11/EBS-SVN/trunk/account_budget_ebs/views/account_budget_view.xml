@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<delete id="account_budget.crossovered_budget_budgetpessimistic0" model="crossovered.budget" />
+
+		<record id="budget_post_tree" model="ir.ui.view">
+            		<field name="name">account.budget.post.tree</field>
+           		 <field name="model">account.budget.post</field>
+	    		<field name="inherit_id" ref="account_budget_custom.budget_post_tree" />
+            		<field name="arch" type="xml">
+	    			<xpath expr='//field[@name="code"]' position="after">
+					<field name="account_id" />
+	    			</xpath>
+			</field>
+		</record>
+
+ 		<record model="ir.ui.view" id="budget_post_form">
+            		<field name="name">account.budget.post.form</field>
+            		<field name="model">account.budget.post</field>
+	    			<field name="inherit_id" ref="account_budget.view_budget_post_form" />
+            		<field name="arch" type="xml">
+	    			<xpath expr='//field[@name="company_id"]' position="after">
+					<field name="account_id" required='1' domain="[('company_id','=',company_id)]"/>
+	    			</xpath>
+
+		    		<xpath expr='//notebook' position="attributes">
+					<attribute name="invisible"> 1 </attribute>
+		    		</xpath>
+	    			
+			</field>
+		</record>
+
+
+		<record model="ir.ui.view" id="crossovered_budget_view_form">
+			<field name="name">crossovered.budget.view.form</field>
+			<field name="model">crossovered.budget</field>
+			<field name="inherit_id" ref="account_budget.crossovered_budget_view_form" />
+			<field name="arch" type="xml">
+
+				<xpath expr="//field[@name='analytic_account_id']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+				</xpath>
+
+				<xpath expr="//field[@name='crossovered_budget_line']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+				</xpath>
+
+
+		       		<xpath expr="//notebook/page/field/form/group/group/field[@name='general_budget_id']" position="before">
+		    			<!--field name="parent_account_id" required="1" domain="[('user_type_id.type','=','view')]" context="{'show_parent_account':True}"/-->
+		    			<field name="parent_account_id" domain="[('user_type_id.type','=','view')]" context="{'show_parent_account':True}" required='1'/>
+		    		 </xpath>	
+          
+
+			       <xpath expr='/form/sheet/notebook/page/field/tree/field[@name="general_budget_id"]' position="before">
+			       		<field name="parent_account_id" required="1" domain="[('user_type_id.type','=','view')]" context="{'show_parent_account':True}"/>
+			       </xpath>
+
+			       <xpath expr="//notebook/page/field/tree/field[@name='general_budget_id']" position="attributes">
+					<attribute name="domain">
+						[('company_id','=',parent.company_id) , ('account_id.parent_id','=',parent_account_id)]
+					</attribute>
+				</xpath>
+				<xpath expr="//notebook/page/field/form/group/group/field[@name='general_budget_id']" position="attributes">
+					<attribute name="domain">
+						[('company_id','=',parent.company_id) ,
+						('account_id.parent_id','=',parent_account_id)]
+					</attribute>
+				</xpath>
+
+
+	    		<xpath expr="//notebook/page" position='before'>
+	    			<page string='Parent Account'>
+	    				<field name="parent_account_budget_ids" attrs="{'readonly':[('state','!=','draft')]}">
+                            <tree string="Parent Account" editable='top' create='false'>
+                                <field name="account_id" domain="[('user_type_id.type','=','view')]" context="{'show_parent_account':True}" readonly='1'/>
+                                <field name='amount'/>
+                                <field name='budget_id' invisible='1'/>
+                                <!--button name="find_budgetary_positions" type="object" string="add budget line"/-->
+                            </tree>
+                        </field>
+	    			</page>
+
+	    		</xpath>
+
+                <xpath expr='//notebook' position="before">
+			       <button name="%(account_budget_ebs.action_add_accounts_and_lines)d"  string="Add Accounts and Budget lines" type="action" attrs="{'invisible': [('state','!=', 'draft')]}" class="oe_highlight" />
+			    </xpath>
+
+			</field>
+		</record>
+
+
+		<record model="ir.ui.view" id="crossovered_budget_line_form">
+            		<field name="name">crossovered.budget.line.form</field>
+            		<field name="model">crossovered.budget.lines</field>
+	    		<field name="inherit_id" ref="account_budget.view_crossovered_budget_line_form" />
+            		<field name="arch" type="xml">
+	    			<xpath expr='//field[@name="analytic_account_id"]' position="after">
+					<field name="name_position_analytic" />
+	    			</xpath>
+
+	    			<xpath expr="/form/*" position="before">
+   					 <header>
+   					 	<button string="Confirm" name="action_budget_line_confirm" states="draft" type="object" class="oe_highlight"/>
+     				   <field name="state" widget="statusbar"/>
+   					 </header>
+					</xpath>
+
+				   <xpath expr='//field[@name="crossovered_budget_id"]' position="attributes">
+	               <attribute name="attrs">{'readonly':[('state','=','confirmed')]}</attribute>
+	    		   </xpath>
+
+	    		   <xpath expr='//field[@name="analytic_account_id"]' position="attributes">
+	               <attribute name="attrs">{'readonly':[('state','=','confirmed')]}</attribute>
+	    		   </xpath>
+
+	    		   <xpath expr='//field[@name="general_budget_id"]' position="attributes">
+	               <attribute name="attrs">{'readonly':[('state','=','confirmed')]}</attribute>
+	    		   </xpath>
+
+	    		   <xpath expr='//field[@name="paid_date"]' position="attributes">
+	               <attribute name="readonly">1</attribute>
+	    		   </xpath>
+
+	    		   <xpath expr='//field[@name="planned_amount"]' position="attributes">
+	               <attribute name="attrs">{'readonly':[('state','=','confirmed')]}</attribute>
+	    		   </xpath>
+
+	    		   <xpath expr='//field[@name="practical_amount"]' position="attributes">
+	               <attribute name="readonly">1</attribute>
+	    		   </xpath>
+
+	    		   <xpath expr='//field[@name="theoritical_amount"]' position="attributes">
+	               <attribute name="readonly">1</attribute>
+	    		   </xpath>
+
+	    		   <xpath expr='//field[@name="percentage"]' position="attributes">
+	               <attribute name="readonly">1</attribute>
+	    		   </xpath>
+				
+				<xpath expr="//field[@name='date_from']" position="replace">
+					<field name="date_from" class="oe_inline"
+						required="1" attrs="{'readonly':[('state','=','confirmed')]}" />
+				</xpath>
+
+				<xpath expr="//field[@name='date_to']" position="replace">
+					<field name="date_to" class="oe_inline" required="1" attrs="{'readonly':[('state','=','confirmed')]}" />
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="crossovered_budget_line_tree">
+            		<field name="name">crossovered.budget.line.tree</field>
+            		<field name="model">crossovered.budget.lines</field>
+	    		<field name="inherit_id" ref="account_budget.view_crossovered_budget_line_tree" />
+            		<field name="arch" type="xml">
+	    			<xpath expr='//field[@name="analytic_account_id"]' position="after">
+					<field name="name_position_analytic" />
+	    			</xpath>
+			</field>
+		</record>
+
+
+		<!-- Budget Lines -->
+		<record model="ir.ui.view" id="crossovered_budget_lines_view_tree">
+			<field name="name">crossovered.budget.lines.view.tree</field>
+			<field name="model">crossovered.budget.lines</field>
+			<field name="inherit_id"
+				ref="account_budget.view_crossovered_budget_line_tree" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='percentage']" position="after">
+					<field name="state"/>
+				</xpath>
+			</field>
+		</record>
+
+			
+	</data>
+</openerp>
+
+

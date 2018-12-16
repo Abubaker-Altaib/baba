@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <record id="store_order_form_inherit" model="ir.ui.view">
+        <field name="name">store.order.form</field>
+        <field name="model">exchange.order</field>
+        <field name="inherit_id" ref="stock_exchange.store_order_form"/>
+        <field name="arch" type="xml">
+
+        <button name="action_cancel" position="attributes">
+            <attribute name="states">approved,picking,budget_no</attribute>
+        </button>
+        <button name="action_cancel" position="after">
+            <button name="resend_budget" states="budget_no" string="Resend to budget" icon="gtk-go-forward" />
+        </button>
+        <field name="ttype" position="after">
+            <group colspan="4" col="4">
+                <field name="acc_bud_confirm_id"/>
+                <field name="account_id"  groups="account.group_account_user" />
+                <field name="account_analytic_id"  groups="analytic.group_analytic_accounting" domain="[('parent_id','!=',False)]" />
+            </group>
+        </field>
+
+        </field>
+    </record>
+
+    <record id="exchange_order_form_inherit" model="ir.ui.view">
+        <field name="name">store.order.form</field>
+        <field name="model">exchange.order</field>
+        <field name="inherit_id" ref="stock_exchange.exchange_order_form"/>
+        <field name="arch" type="xml">
+
+        <button name="action_cancel" position="attributes">
+            <attribute name="states">approved,picking,budget_no</attribute>
+        </button>
+        <button name="action_cancel" position="after">
+            <button name="resend_budget" states="budget_no" string="Resend to budget" icon="gtk-go-forward" />
+        </button>
+        <field name="ttype" position="after">
+            <group colspan="4" col="4" >
+                <field name="acc_bud_confirm_id"/>
+                <field name="account_id"  groups="account.group_account_user" />
+                <field name="account_analytic_id"  groups="analytic.group_analytic_accounting" domain="[('parent_id','!=',False)]" />
+            </group>
+        </field>
+
+        </field>
+    </record>
+
+    <act_window
+	    domain="[('acc_bud_confirm_id', '=', active_id)]"
+        id="act_budget_confirmation_stock"
+        name="Exchange Requst"
+        res_model="exchange.order"
+        src_model="account.budget.confirmation"/>
+
+    </data>
+</openerp>
+

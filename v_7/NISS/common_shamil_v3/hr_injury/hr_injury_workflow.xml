@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+<openerp>
+<data>
+
+    <!-- Workflow definition -->
+
+    <record model="workflow" id="wkf_injury">
+        <field name="name">hr.injury.wf</field>
+        <field name="osv">hr.injury</field>
+        <field name="on_create">True</field>
+    </record>
+
+    <record model="workflow.activity" id="act_draft2">
+        <field name="wkf_id" ref="wkf_injury" />
+        <field name="flow_start">True</field>
+        <field name="name">draft</field>
+    </record>
+
+    <record model="workflow.activity" id="act_confirm2">
+        <field name="wkf_id" ref="wkf_injury" />
+        <field name="name">confirm</field>
+        <field name="kind">function</field>
+        <field name="action">confirm()</field>
+        <field name="split_mode">OR</field>
+    </record>
+
+    <record model="workflow.activity" id="act_validate1">
+        <field name="wkf_id" ref="wkf_injury" />
+        <field name="name">validate</field>
+        <field name="kind">function</field>
+        <field name="action">validate1()</field>
+    </record>
+
+    <record model="workflow.activity" id="act_validate2">
+        <field name="wkf_id" ref="wkf_injury" />
+        <field name="name">second_validate</field>
+        <field name="kind">function</field>
+        <field name="action">validate2()</field>
+    </record>
+
+    <record model="workflow.activity" id="act_validate3">
+        <field name="wkf_id" ref="wkf_injury" />
+        <field name="name">third_validate</field>
+        <field name="kind">function</field>
+        <field name="action">validate3()</field>
+    </record>
+
+
+    <record model="workflow.activity" id="act_refuse2">
+        <field name="wkf_id" ref="wkf_injury" />
+        <field name="name">refuse</field>
+        <field name="kind">function</field>
+        <field name="flow_stop">True</field>
+        <field name="kind">stopall</field>
+        <field name="action">refuse()</field>
+    </record>
+
+    <!--
+        workflow transition
+    -->
+
+    <record model="workflow.transition" id="t1">
+        <field name="act_from" ref="act_draft2" />
+        <field name="act_to" ref="act_confirm2" />
+        <field name="signal">confirm</field>
+    </record>
+
+    <record model="workflow.transition" id="t2">
+        <field name="act_from" ref="act_confirm2" />
+        <field name="act_to" ref="act_validate1" />
+        <field name="signal">validate</field>
+        <field name="condition">True</field>
+        <!--<field name="group_id" ref="base.group_department_manager100"/>-->
+    </record>
+
+    <record model="workflow.transition" id="t12">
+        <field name="act_from" ref="act_validate1" />
+        <field name="act_to" ref="act_validate2" />
+        <field name="signal">second_validate</field>
+        <field name="condition">True</field>
+        <!--<field name="group_id" ref="base.group_department_manager100"/>-->
+    </record>
+
+    <record model="workflow.transition" id="t3">
+        <field name="act_from" ref="act_confirm2" />
+        <field name="act_to" ref="act_refuse2" />
+        <field name="signal">refuse</field>
+        <!--<field name="group_id" ref="base.group_hr_user"/>-->
+    </record>
+
+   <record model="workflow.transition" id="t4">
+        <field name="act_from" ref="act_validate1" />
+        <field name="act_to" ref="act_refuse2" />
+        <field name="signal">refuse</field>
+        <!--<field name="group_id" ref="base.group_hr_user"/>-->
+    </record>
+
+    <record model="workflow.transition" id="t14">
+        <field name="act_from" ref="act_validate2" />
+        <field name="act_to" ref="act_refuse2" />
+        <field name="signal">refuse</field>
+       <!-- <field name="group_id" ref="base.group_hr_user"/>-->
+    </record>
+
+    <record model="workflow.transition" id="t8">
+        <field name="act_from" ref="act_validate2" />
+        <field name="act_to" ref="act_validate3" />
+       <!-- <field name="group_id" ref="base.group_hr_user"/>-->
+        <field name="signal">third_validate</field>
+       <!-- <field name="group_id" ref="base.group_hr_user"/>-->
+    </record>
+
+    <record model="workflow.transition" id="t10">
+        <field name="act_from" ref="act_validate3" />
+        <field name="act_to" ref="act_refuse2" />
+        <field name="signal">refuse</field>
+        <!--<field name="group_id" ref="base.group_hr_user"/>-->
+    </record>
+
+    <!--<record model="workflow.transition" id="t11">
+        <field name="act_from" ref="act_validate" />
+        <field name="act_to" ref="act_validate1" />
+       <field name="condition">not holiday_status_id.double_validation</field>
+        <field name="signal" eval="False"/>
+    </record>-->
+
+</data>
+</openerp>

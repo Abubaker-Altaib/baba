@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="hr_promotions_candidates" model="ir.ui.view">
+            <field name="name">Promotions Candidates</field>
+            <field name="model">hr.promotions.candidates</field>
+            <field name="arch" type="xml">
+                <form string="Promotions Candidates" version="7.0">
+                    <group >
+                        <field name="payroll_id"/>
+                        <field name="margin" />
+                        <field name="date"/>
+                   </group >
+        		   <group>
+        			<field name="degree_from" domain="[('payroll_id','=', payroll_id)]" on_change="onchange_degree_from(degree_from)" attrs="{'required':[('degree_to','!=',False)]}"/>
+        			<field name="degree_to" domain="[('payroll_id','=', payroll_id)]" attrs="{'required':[('degree_from','!=',False)]}"/>
+                    </group>
+         		   <group>
+        			<field name="academic"/>
+        			<field name="qual"  attrs="{'invisible':[('academic','=',False)],'required':[('academic','=',True)]}"  domain="[('type','=', 'view')]"/>
+        			<field name="isolated" invisible="1"/>
+        			<field name="ruling"  invisible="1"/>
+        			<field name="rebuke"  invisible="1"/>
+                    </group>	
+                    <footer>
+                        <button name="promotions_candidates" string="Candidate" type="object" />
+                         or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                                                
+                        
+                  </footer>		 	  
+                </form>
+            </field>
+        </record>
+
+        <record id="action_promotions_candidates" model="ir.actions.act_window">
+            <field name="name">Promotions Candidates</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.promotions.candidates</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem 
+            action="action_promotions_candidates"
+            id="hr_promotions_menu" 
+            parent="hr_custom.menu_hr_payroll_processes" 
+            name="Promotions Candidates"/>
+
+     </data> 
+</openerp>

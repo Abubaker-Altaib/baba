@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<!-- Employee Substitution inherit -->
+		<record id="hr_employee_substitution_form" model="ir.ui.view">
+			<field name="name">hr.employee.substitution.form.inherit</field>
+			<field name="model">hr.employee.substitution</field>
+			<field name="type">form</field>
+			<field name="inherit_id"
+				ref="hr_payroll_custom.view_hr_employee_substitution_form" />
+			<field name="arch" type="xml">
+				<field name="state" position="replace">
+					<field name="state" widget="statusbar"
+						statusbar_visible="draft,complete,confirm,approve,done"
+						statusbar_colors='{"cancel":"red"}' />
+				</field>
+				<button name="action_approve" position="replace">
+					<button name="complete" string="Complete" states="draft"
+						class="oe_highlight" />
+					<button name="confirm" string="Confirm" states="complete"
+						class="oe_highlight" groups="base.group_department_manager" />
+					<button name="approve" string="Approve" states="confirm"
+						class="oe_highlight" groups="base_custom.group_account_general_manager" />
+				</button>
+				<button name="action_done" position="replace">
+					<button name="cancel" string="Cancel" states="confirm"
+						class="oe_highlight" groups="base.group_hr_manager" />
+					<button name="done" string="Done" states="approve" class="oe_highlight"
+						groups="base.group_hr_manager" />
+				</button>
+				<!--field name="bonus_id" position="after">
+					<field name="job_id" required="1" />
+					<field name="create_uid" />
+				</field-->
+			</field>
+		</record>
+
+		<!-- HR Employee Reemployment inherit -->
+		<record id="view_reemployment_payroll_form" model="ir.ui.view">
+			<field name="name">employee.reemployment.payroll.inherit</field>
+			<field name="model">hr.employee.reemployment</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_reemployment_form" />
+			<field name="arch" type="xml">
+				<field name="degree_id" position="replace">
+					<field name="degree_id" required="1"
+						attrs="{'readonly':[('state','in',('approve','done'))]}" />
+				</field>
+				<field name="bonus_id" position="replace">
+					<field name="bonus_id" required="1"
+						attrs="{'readonly':[('state','in',('approve','done'))]}" />
+				</field>
+			</field>
+		</record>
+
+		<!-- HR hr.employee.exempt.tax inherit -->
+		<record id="view_reemployment_payroll_form" model="ir.ui.view">
+			<field name="name">hr.employee.exempt.tax.inherit</field>
+			<field name="model">hr.employee.exempt.tax</field>
+			<field name="type">form</field>
+			<field name="inherit_id"
+				ref="hr_payroll_custom.view_hr_employee_exempt_tax_form" />
+			<field name="arch" type="xml">
+				<header position="replace">
+					<header>
+						<button name="action_complete" string="Complete" states="draft"
+							type="object" icon="gtk-apply" class="oe_highlight" />
+						<button name="action_confirm" string="Confirm" states="complete"
+							type="object" icon="gtk-apply" class="oe_highlight" />
+						<button name="action_validate" string="Validate" states="confirm"
+							type="object" icon="gtk-apply" class="oe_highlight" />
+						<button name="action_reject" string="Reject" states="validate"
+							type="object" icon="gtk-apply" class="oe_highlight" />
+						<button name="approve_exempted" string="Approve" states="validate"
+							type="object" icon="gtk-apply" class="oe_highlight" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,complete,confirm,approve" />
+					</header>
+				</header>
+			</field>
+		</record>
+	</data>
+</openerp>

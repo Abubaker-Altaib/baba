@@ -1,0 +1,868 @@
+<odoo>
+    <data>
+
+        <!-- Custom account.payment view -->
+        <record id="view_account_payment_inherit" model="ir.ui.view">
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="model">account.payment</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name = 'payment_type']" position="before">
+                    <field name="check" invisible="1" />
+                    <field name="portfolio" attrs="{'invisible':[('is_approval','!=',False)]}"/>
+                    <field name="portfolio_id" attrs="{'invisible':['&amp;',('portfolio','=',False),('is_approval','!=',False)],'required':[('portfolio','=',True)]}"/>
+                    <field name="amount_source" attrs="{'invisible':[('check','!=',1)],'required':[('portfolio','=',True),('payment_type','=','outbound')]}"/>
+                    <field name="check_amount_in_words_general" invisible="1"></field>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="attrs">{'readonly':[('portfolio','!=',False)]}</attribute>
+                </xpath>
+
+
+
+
+
+            </field>
+        </record>
+
+
+        <!-- Finance portfolio Form,Tree,Graph View & Action -->
+        <record id="view_finance_portfolio_form" model="ir.ui.view">
+            <field name="name">finance.portfolio.form</field>
+            <field name="model">finance.portfolio</field>
+            <field name="arch" type="xml">
+                <form string="Finance Portfolio">
+                    <sheet>
+                        <group col="4" colspan="2">
+                            <field name="active"/>
+                            <field name="name" style="width:200px" />
+                            <field name="funded_party" />
+                            <label for="portfolio_amount" />
+                            <div>
+                                <field name="portfolio_amount" class="oe_inline" />
+                                <label string=" " />
+                                <label string=" SDG" />
+                            </div>
+
+                            <label for="custom" />
+                            <div>
+                                <field name="custom" class="oe_inline" />
+                                <label string=" " />
+                                <label string=" %" />
+                            </div>
+
+                            <field name="real_value" />
+
+                            <label for="cus_result" />
+                            <div>
+                                <field name="cus_result" class="oe_inline" />
+                                <label string=" " />
+                                <label string=" SDG" />
+                            </div>
+
+                            <label for="portfolio_month_period" string="Portfolio Period" />
+                            <div>
+                                <div>
+                                    <field name="portfolio_month_period" placeholder="Month..." class="oe_inline" />
+                                    <label string="Month" class="oe_inline" />
+                                </div>
+
+                                <div>
+                                    <field name="portfolio_year_period" placeholder="Year..." class="oe_inline" />
+                                    <label string="Year " class="oe_inline" />
+                                    <label string=" " class="oe_inline" />
+                                    <label string=" " class="oe_inline" />
+                                </div>
+
+                            </div>
+
+                            <field name="start_date" />
+                            <field name="end_date" />
+
+
+                        </group>
+
+
+                        <notebook>
+
+                            <page string="Portfolio and Grantees">
+                                <group col="2" colspan="2">
+
+                                    <group col="2" colspan="2" string="Wallet">
+                                        <field name="portfolio_format" widget="radio" />
+                                        <label for="funded_party_ratio"
+                                            attrs="{'invisible': [('portfolio_format', 'not in', ('modarba_mogayeda'))]}" />
+                                        <div attrs="{'invisible': [('portfolio_format', 'not in', ('modarba_mogayeda'))]}">
+                                            <field name="funded_party_ratio" class="oe_inline" />
+                                            <label string=" " />
+                                            <label string="%" />
+                                        </div>
+
+                                        <label for="speculation_ratios" />
+                                        <div>
+                                            <field name="speculation_ratios" class="oe_inline" />
+                                            <label string=" " />
+                                            <label string="%" />
+                                        </div>
+
+                                        <label for="others"
+                                            attrs="{'invisible': [('portfolio_format', 'not in', ('modarba_mogayeda'))]}" />
+                                        <div attrs="{'invisible': [('portfolio_format', 'not in', ('modarba_mogayeda'))]}">
+                                            <field name="others" class="oe_inline" />
+                                            <label string=" " />
+                                            <label string="%" />
+                                        </div>
+
+                                        <label for="pr_members" />
+                                        <div>
+                                            <field name="pr_members" class="oe_inline" />
+                                            <label string=" " />
+                                            <label string="%" />
+                                        </div>
+                                        <field name="others_partner_id"
+                                            attrs="{'required':[('others','>',0)],'invisible':[('others','=',0)]}" />
+
+
+                                    </group>
+
+                                    <group col="2" colspan="2" string="Grantee">
+
+                                        <field name="guarantee_ids" nolabel="1">
+                                            <tree string="Guarantee" editable="bottom">
+                                                <field name="guarantee_type" />
+                                                <field name="document_number" />
+                                                <field name="guarantee_value" />
+                                            </tree>
+
+                                        </field>
+
+                                    </group>
+
+                                </group>
+                            </page>
+
+
+                            <page string="Installments">
+                                <field name="installment_ids" readonly="True" nolabel="1">
+                                    <tree string="Installments" editable="bottom">
+                                        <field name="payment_type" invisible="1" />
+                                        <field name="partner_type" invisible="1" />
+                                        <field name="partner_id" invisible="1" />
+                                        <field name="payment_date" />
+                                        <field name="amount" />
+                                        <field name="state" />
+                                    </tree>
+                                </field>
+                                <!--group> <field name="installment_ids_check"></field> </group -->
+                            </page>
+
+
+                            <page string="Payments">
+                                <field name="amount_ids" readonly="True" nolabel="1">
+                                    <tree string="Payments" editable="bottom">
+
+                                        <field name="name" />
+                                        <field name="amount_source" />
+                                        <field name="funded_party" />
+                                        <field name="speculater" />
+                                        <field name="others" />
+                                        <field name="date" string="Date" />
+                                        <field name="line_name" invisible="1" />
+                                        <button name="execute" string="Execute" type="object" class="oe_highlight"
+                                            attrs="{'invisible': [('line_name', '!=', False)]}" icon="fa-check-circle"
+                                            help="Execute journal enteries" />
+                                    </tree>
+                                </field>
+                                <!--group> <field name="amount_ids_check" /> </group -->
+                            </page>
+                            <page string="Forbidden">
+                                <group>
+                                    <group>
+                                        <field name="company_ids" widget="many2many_tags" />
+                                        <field name="sectors_ids" widget="many2many_tags" string="Sector" />
+                                        <field name="formula" widget="many2many_tags"
+                                            options="{'no_create_edit': True, 'no_create':True, 'no_open':True}" />
+                                    </group>
+                                    <group>
+                                        <label string="Order Type" />
+                                        <div>
+                                            <field name="individual" />
+                                            <label string="Individual" />
+                                            <field name="group" />
+                                            <label string="Group" />
+                                        </div>
+                                        <label string="Gender" />
+                                        <div>
+                                            <field name="male" />
+                                            <label string="Male" />
+                                            <field name="female" />
+                                            <label string="Female" />
+                                        </div>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Accounting">
+                                <group col="4" colspan="2">
+                                    <field name="property_account_payable_id" readonly="1" />
+                                    <field name="property_account_receivable_id" readonly="1" />
+                                    <field name="profit_account_id" readonly="1" />
+                                    <field name="expected_profit_account_id" readonly="1" />
+                                    <field name="profit_margin_account_id" readonly="1" />
+                                    <field name="profit_suspend_account_id" readonly="1" />
+                                    <field name="account_analytic_id" readonly="1" />
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="view_finance_portfolio_tree" model="ir.ui.view">
+            <field name="name">finance.portfolio.tree</field>
+            <field name="model">finance.portfolio</field>
+            <field name="arch" type="xml">
+                <tree string="Finance Portfolio">
+                    <field name="active" />
+                    <field name="name" />
+                    <field name="portfolio_amount" />
+                    <!--field name="real_value" /-->
+                    <field name="custom" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_finance_portfolio_graph" model="ir.ui.view">
+            <field name="name">finance.portfolio.graph</field>
+            <field name="model">finance.portfolio</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Portfolios" type="bar">
+                    <field name="name" />
+                    <field name="portfolio_amount" type="measure" />
+                </graph>
+            </field>
+        </record>
+
+
+
+
+
+
+        <!--Calendar view (no need for it now) -->
+        <!--record id="view_calendar_todo_task" model="ir.ui.view"> <field name="model">finance.portfolio</field> <field 
+            name="arch" type="xml"> <calendar date_start="start_date" color="name" display="[name], Stage [portfolio_amount]" > <field 
+            name="name" /> <field name="portfolio_amount" /> </calendar> </field> </record -->
+
+
+
+        <record id="finance_portfolio_action" model="ir.actions.act_window">
+            <field name="name">Finance Portfolio</field>
+            <field name="res_model">finance.portfolio</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,graph</field>
+        </record>
+
+
+
+
+        <menuitem id="menu_portfolio_management_parent" name="Portfolio Management" parent="menu_finance_root"
+            sequence="4" />
+
+        <menuitem id="menu_finance_portfolio" name="Portfolios" sequence="10" parent="menu_portfolio_management_parent"
+            action="finance_portfolio_action" />
+
+
+        <!--Branch View & Action -->
+
+        <record id="view_portfolio_branch_request_form" model="ir.ui.view">
+            <field name="name">portfolio.branch.request.form</field>
+            <field name="model">portfolio.branch.request</field>
+            <field name="arch" type="xml">
+                <form string="Branch Request">
+                    <header>
+                        <button name="send_request" type="object"
+                            attrs="{'invisible':[('state','in',('approved', 'waiting_approval','refused'))]}" string="Send Request"
+                            class="oe_highlight" groups="microfinance.group_branch_manager" />
+                        <field name="state" widget="statusbar" />
+                    </header>
+                    <sheet>
+
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="request_date" />
+                            <field name="amount_request" attrs="{'readonly':[('state','!=','draft')]}"
+                                style="width:20%%" />
+                            <field name="portfolio_id" attrs="{'invisible':[('state','in',('draft','refused','waiting_approval'))]}" />
+                            <field name="amount_received" attrs="{'invisible':[('state','in','draft','refused','waiting_approval')]}" />
+                        </group>
+                    <notebook>
+                        <page string="Notes">
+                           <field name="description" placeholder="Notes..." />
+                        </page>
+                    </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_portfolio_branch_request_tree" model="ir.ui.view">
+            <field name="name">portfolio.branch.request.tree</field>
+            <field name="model">portfolio.branch.request</field>
+            <field name="arch" type="xml">
+                <tree string="Request"
+                    colors="blue:state=='waiting_approval';green:state=='approved';
+                red:state=='refused';">
+                    <field name="name" />
+                    <field name="amount_request" />
+                    <field name="request_date" />
+                    <field name="portfolio_id" />
+                    <field name="amount_received" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="portfolio_branch_request_action" model="ir.actions.act_window">
+            <field name="name">Requests</field>
+            <field name="res_model">portfolio.branch.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem id="menu_portfolio_branch" name="Branch" sequence="13" parent="menu_portfolio_management_parent"
+            groups="microfinance.group_branch_manager" />
+
+        <menuitem id="menu_portfolio_branch_request" name="Branch Request" sequence="12" parent="menu_portfolio_branch"
+            action="portfolio_branch_request_action" />
+
+
+
+
+
+
+
+        <!-- ################################################### -->
+        <!--Head View & Action -->
+
+        <record id="view_portfolio_head_recieve_form" model="ir.ui.view">
+            <field name="name">portfolio.head.recieve.form</field>
+            <field name="model">portfolio.head.recieve</field>
+            <field name="arch" type="xml">
+                <form string="Head Recived" create="false">
+
+                    <header>
+                        <button type="object" name="refuse" states="op_recommend,gm_recommend,ac_approval"
+                            string="Refuse Request" confirm="Are You Sure You Want To Refuse Request?" attrs="{'invisible':[('state','not in',('waiting_approval'))]}"
+                            class="oe_highlight" />
+                        <button type="object" name="act_op_recommend" string="OP Recommend"
+                            attrs="{'invisible':[('status','!=','op_recommend')]}" class="oe_read_only"
+                            groups="microfinance.group_operation_manager" />
+                        <button type="object" name="act_gm_recommend" string="GM Recommend"
+                            attrs="{'invisible':[('status','!=','gm_recommend')]}" class="oe_read_only"
+                            groups="microfinance.group_general_manager" />
+                        <button type="object" name="act_ac_approval" string="Approve"
+                            attrs="{'invisible':[('status','!=','ac_approval')]}" class="oe_read_only"
+                            groups="microfinance.group_general_manager" />
+
+
+                        <field name="state" statusbar_visible="waiting_approval,approved,refused" widget="statusbar" />
+                        <field name="status" invisible="1" />
+                    </header>
+
+                    <sheet>
+                        <group col="4" colspan="4">
+
+                            <field name="requests" />
+                            <field name="amount_requested" attrs="{'invisible':[('requests','=',False)]}" />
+                            <field name="portfolio_id" required="1" attrs="{'readonly':[('state','!=','waiting_approval')]}" />
+                            <field name="portfolio_amount" attrs="{'invisible':[('portfolio_id','=',False)]}" />
+                            <field name="company_portfolio_amount" attrs="{'invisible':[('portfolio_id','=',False)]}" />
+                            <field name="portfolio_give" attrs="{'readonly':[('state','!=','waiting_approval')]}" />
+                        </group>
+                        <notebook>
+                            <page string="Notes">
+                                <field name="description" placeholder="Notes..." />
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" />
+                        <field name="message_ids" widget="mail_thread" />
+                    </div>
+
+
+                </form>
+            </field>
+        </record>
+
+
+
+        <record id="view_portfolio_head_recieve_tree" model="ir.ui.view">
+            <field name="name">portfolio.head.recieve.tree</field>
+            <field name="model">portfolio.head.recieve</field>
+            <field name="arch" type="xml">
+                <tree string="Request Recived"
+                    colors="blue:state=='waiting_approval';green:state=='approved';
+                red:state=='refused';"
+                    create="false">
+
+                    <field name="requests" />
+                    <field name="portfolio_id" />
+                    <field name="portfolio_give" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="portfolio_head_recieve_search" model="ir.ui.view">
+            <field name="name">portfolio.head.recieve.search</field>
+            <field name="model">portfolio.head.recieve</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Portfolio">
+                    <filter string="Waiting Approval" name="state_w_head_recive" icon="terp-accessories-archiver"
+                        domain="[('state','=','waiting_approval')]" />
+                </search>
+            </field>
+        </record>
+
+
+        <record id="portfolio_head_recieve_action" model="ir.actions.act_window">
+            <field name="name">Request Recived</field>
+            <field name="res_model">portfolio.head.recieve</field>
+            <field name="context">{'search_default_state_w_head_recive':1}</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem id="menu_portfolio_head" name="Head" sequence="12" parent="menu_portfolio_management_parent"
+            groups="microfinance.group_operation_manager,microfinance.group_general_manager" />
+
+        <menuitem id="menu_portfolio_head_recieve" name="Head Receive" sequence="13" parent="menu_portfolio_head"
+            action="portfolio_head_recieve_action" />
+
+
+
+
+        <!--Head Request View & Action -->
+
+        <record id="view_portfolio_head_request_form" model="ir.ui.view">
+            <field name="name">portfolio.head.request.form</field>
+            <field name="model">portfolio.head.request</field>
+            <field name="arch" type="xml">
+                <form string="Head Request">
+                    <header>
+                        <button type="object" name="accept" confirm="Are You Sure You Want To Send Request?"
+                            string="Send To Varify" class="oe_highlight" attrs="{'invisible':[('state','!=','draft')]}"
+                            groups="microfinance.group_operation_manager" />
+                        <field name="state" widget="statusbar" />
+                    </header>
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="portfolio" attrs="{'readonly':[('state', 'in',['waiting_approval','done'])]}" />
+                            <field name="portfolio_amount" attrs="{'readonly':[('state', 'in',['waiting_approval','done'])]}" />
+                            <field name="name" attrs="{'readonly':[('state', 'in',['waiting_approval','done'])]}" />
+                            <field name="company_portfolio_amount" attrs="{'readonly':[('state', 'in',['waiting_approval','done'])]}" />
+                            <field name="amount_source" attrs="{'readonly':[('state', 'in',['waiting_approval','done'])]}" />
+                            <field name="amount" attrs="{'readonly':[('state', 'in',['waiting_approval','done'])]}" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+
+        <record id="portfolio_head_request_tree" model="ir.ui.view">
+            <field name="name">portfolio.head.request.tree</field>
+            <field name="model">portfolio.head.request</field>
+            <field name="arch" type="xml">
+                <tree string="Requests" colors="blue:state=='waiting_approval';green:state=='done';">
+
+                    <field name="name" />
+                    <field name="portfolio" />
+                    <field name="amount" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="portfolio_head_request_search" model="ir.ui.view">
+            <field name="name">portfolio.head.request.search</field>
+            <field name="model">portfolio.head.request</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Portfolio">
+                    <filter string="Waiting Approval" name="state_w" icon="terp-accessories-archiver" domain="[('state','=','waiting_approval')]" />
+                </search>
+            </field>
+        </record>
+
+
+        <record id="portfolio_head_request_action" model="ir.actions.act_window">
+            <field name="name">Requests</field>
+            <field name="res_model">portfolio.head.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_state_w':1}</field>
+        </record>
+
+        <menuitem id="menu_portfolio_head_request" name="Head Request" sequence="12" parent="menu_portfolio_head"
+            action="portfolio_head_request_action" />
+
+
+
+
+
+        <!--branch recive Request View & Action -->
+
+        <record id="view_portfolio_branch_receive_form" model="ir.ui.view">
+            <field name="name">portfolio.branch.receive.form</field>
+            <field name="model">portfolio.branch.receive</field>
+            <field name="arch" type="xml">
+                <form string="Head Request" create="false">
+                    <header>
+                        <button type="object" name="accept" attrs="{'invisible':[('state','!=','waiting_approval')]}"
+                            string="Request Compelete" class="oe_highlight" groups="microfinance.group_branch_manager" />
+                        <field name="state" widget="statusbar" />
+                    </header>
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="amount_source" />
+                            <field name="amount" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="portfolio_branch_receive_tree" model="ir.ui.view">
+            <field name="name">portfolio.branch.receive.tree</field>
+            <field name="model">portfolio.branch.receive</field>
+            <field name="arch" type="xml">
+                <tree string="Request Received" create="false" colors="blue:state=='waiting_approval';green:state=='done';">
+                    <field name="name" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="portfolio_branch_receive_action" model="ir.actions.act_window">
+            <field name="name">Request Recived</field>
+            <field name="res_model">portfolio.branch.receive</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem id="menu_portfolio_branch_receive" name="Branch Received" sequence="15" parent="menu_portfolio_branch"
+            action="portfolio_branch_receive_action" />
+
+
+
+
+        <!-- finance.portfolio.payment View & Action -->
+
+        <record id="view_portfolio_payment_form" model="ir.ui.view">
+            <field name="name">finance.portfolio.payment.form</field>
+            <field name="model">finance.portfolio.payment</field>
+            <field name="arch" type="xml">
+                <form string="Portfolio Payment">
+
+                    <sheet>
+
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="date" />
+                            <field name="funded_party" />
+                            <field name="amount_source" />
+                            <field name="speculater" />
+                            <field name="others" />
+                            <field name="portfolio_id" />
+                            <field name="line_name" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_portfolio_payment_tree" model="ir.ui.view">
+            <field name="name">finance.portfolio.payment.tree</field>
+            <field name="model">finance.portfolio.payment</field>
+            <field name="arch" type="xml">
+                <tree string="Request">
+                    <field name="name" />
+                    <field name="date" />
+                    <field name="funded_party" />
+                    <field name="amount_source" />
+                    <field name="speculater" />
+                    <field name="others" />
+                    <field name="portfolio_id" />
+                    <field name="line_name" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="portfolio_payment_action" model="ir.actions.act_window">
+            <field name="name">Portfolio Payments</field>
+            <field name="res_model">finance.portfolio.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!--menuitem id="menu_portfolio_payment" name="Portfolio Payment" sequence="6" parent="account.menu_finance_receivables" 
+            action="portfolio_payment_action" / -->
+
+
+        <!-- Finance portfolio Accounting Form,Tree,Graph View & Action -->
+        <record id="view_finance_portfolio_accounting_form" model="ir.ui.view">
+            <field name="name">finance.portfolio.form</field>
+            <field name="model">finance.portfolio</field>
+            <field name="arch" type="xml">
+                <form string="Finance Portfolio" create="false" delete="false">
+                    <sheet>
+                        <group col="4" colspan="2">
+                            <field name="active" readonly="1"/>
+                            <field name="name" readonly="1" style="width:200px" />
+                            <field name="funded_party" readonly="1"/>
+                            <label for="portfolio_amount" readonly="1"/>
+                            <div>
+                                <field name="portfolio_amount" readonly="1" class="oe_inline" />
+                                <label string=" " />
+                                <label string=" SDG" />
+                            </div>
+
+                            <label for="custom" />
+                            <div>
+                                <field name="custom" readonly="1" class="oe_inline" />
+                                <label string=" " />
+                                <label string=" %" />
+                            </div>
+
+                            <field name="real_value" readonly="1" />
+
+                            <label for="cus_result" />
+                            <div>
+                                <field name="cus_result" readonly="1" class="oe_inline" />
+                                <label string=" " />
+                                <label string=" SDG" />
+                            </div>
+
+                            <label for="portfolio_month_period" string="Portfolio Period" />
+                            <div>
+                                <div>
+                                    <field name="portfolio_month_period" readonly="1" placeholder="Month..." class="oe_inline" />
+                                    <label string="Month" class="oe_inline" />
+                                </div>
+
+                                <div>
+                                    <field name="portfolio_year_period" readonly="1" placeholder="Year..." class="oe_inline" />
+                                    <label string="Year " class="oe_inline" />
+                                    <label string=" " class="oe_inline" />
+                                    <label string=" " class="oe_inline" />
+                                </div>
+
+                            </div>
+
+                            <field name="start_date" readonly="1" />
+                            <field name="end_date"  readonly="1"/>
+
+
+                        </group>
+
+
+                        <notebook>
+
+                            <page string="Portfolio and Grantees">
+                                <group col="2" colspan="2">
+
+                                    <group col="2" colspan="2" string="Wallet">
+                                        <field name="portfolio_format" readonly="1" widget="radio" />
+                                        <label for="funded_party_ratio"
+                                            attrs="{'invisible': [('portfolio_format', 'not in', ('modarba_mogayeda'))]}" />
+                                        <div attrs="{'invisible': [('portfolio_format', 'not in', ('modarba_mogayeda'))]}">
+                                            <field name="funded_party_ratio" readonly="1" class="oe_inline" />
+                                            <label string=" " />
+                                            <label string="%" />
+                                        </div>
+
+                                        <label for="speculation_ratios" />
+                                        <div>
+                                            <field name="speculation_ratios" readonly="1" class="oe_inline" />
+                                            <label string=" " />
+                                            <label string="%" />
+                                        </div>
+
+                                        <label for="others"
+                                            attrs="{'invisible': [('portfolio_format', 'not in', ('modarba_mogayeda'))]}" />
+                                        <div attrs="{'invisible': [('portfolio_format', 'not in', ('modarba_mogayeda'))]}">
+                                            <field name="others" readonly="1" class="oe_inline" />
+                                            <label string=" " />
+                                            <label string="%" />
+                                        </div>
+
+                                        <label for="pr_members" />
+                                        <div>
+                                            <field name="pr_members" readonly="1" class="oe_inline" />
+                                            <label string=" " />
+                                            <label string="%" />
+                                        </div>
+                                        <field name="others_partner_id" readonly="1"
+                                            attrs="{'required':[('others','>',0)],'invisible':[('others','=',0)]}" />
+
+
+                                    </group>
+
+                                    <group col="2" colspan="2" string="Grantee">
+
+                                        <field name="guarantee_ids" nolabel="1" readonly="1">
+                                            <tree string="Guarantee" editable="bottom">
+                                                <field name="guarantee_type" />
+                                                <field name="document_number" />
+                                                <field name="guarantee_value" />
+                                            </tree>
+
+                                        </field>
+
+                                    </group>
+
+                                </group>
+                            </page>
+
+
+                            <page string="Installments">
+                                <field name="installment_ids" readonly="True" nolabel="1">
+                                    <tree string="Installments" editable="bottom">
+                                        <field name="payment_type" invisible="1" />
+                                        <field name="partner_type" invisible="1" />
+                                        <field name="partner_id" invisible="1" />
+                                        <field name="payment_date" />
+                                        <field name="amount" />
+                                        <field name="state" />
+                                    </tree>
+                                </field>
+                                <!--group> <field name="installment_ids_check"></field> </group -->
+                            </page>
+
+
+                            <page string="Payments">
+                                <field name="amount_ids" readonly="True" nolabel="1">
+                                    <tree string="Payments" editable="bottom">
+
+                                        <field name="name" />
+                                        <field name="amount_source" />
+                                        <field name="funded_party" />
+                                        <field name="speculater" />
+                                        <field name="others" />
+                                        <field name="date" string="Date" />
+                                        <field name="line_name" invisible="1" />
+                                        <button name="execute" string="Execute" type="object" class="oe_highlight"
+                                            attrs="{'invisible': [('line_name', '!=', False)]}" icon="fa-check-circle"
+                                            help="Execute journal enteries" />
+                                    </tree>
+                                </field>
+                                <!--group> <field name="amount_ids_check" /> </group -->
+                            </page>
+                            <page string="Forbidden">
+                                <group>
+                                    <group>
+                                        <field name="company_ids" widget="many2many_tags" readonly="1"/>
+                                        <field name="sectors_ids" widget="many2many_tags" string="Sector" readonly="1"/>
+                                        <field name="formula" widget="many2many_tags"
+                                            options="{'no_create_edit': True, 'no_create':True, 'no_open':True}" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <label string="Order Type" />
+                                        <div>
+                                            <field name="individual" readonly="1"/>
+                                            <label string="Individual" />
+                                            <field name="group" readonly="1"/>
+                                            <label string="Group" />
+                                        </div>
+                                        <label string="Gender" />
+                                        <div>
+                                            <field name="male" readonly="1"/>
+                                            <label string="Male" />
+                                            <field name="female" readonly="1"/>
+                                            <label string="Female" />
+                                        </div>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Accounting">
+                                <group col="4" colspan="2">
+                                    <field name="property_account_payable_id" />
+                                    <field name="property_account_receivable_id" />
+                                    <field name="profit_account_id" />
+                                    <field name="expected_profit_account_id" />
+                                    <field name="profit_margin_account_id" />
+                                    <field name="profit_suspend_account_id" />
+                                    <field name="account_analytic_id" />
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_finance_portfolio_accounting_tree" model="ir.ui.view">
+            <field name="name">finance.portfolio.tree</field>
+            <field name="model">finance.portfolio</field>
+            <field name="arch" type="xml">
+                <tree string="Finance Portfolio" create="false" delete="false">
+                    <field name="active" />
+                    <field name="name" />
+                    <field name="portfolio_amount" />
+                    <field name="real_value" />
+                    <field name="custom" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_portfolio_accounting" model="ir.actions.act_window">
+            <field name="name">Finance Portfolio</field>
+            <field name="res_model">finance.portfolio</field>
+            <field name="domain">[]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <record id="action_new_tree" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_finance_portfolio_accounting_tree"/>
+            <field name="act_window_id" ref="action_portfolio_accounting"/>
+        </record>
+
+
+        <record id="action_new_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_finance_portfolio_accounting_form"/>
+            <field name="act_window_id" ref="action_portfolio_accounting"/>
+        </record>
+
+
+
+        <menuitem id="menu_portfolio_accounting" name="Portfolio Accounting" sequence="99" parent="account.menu_finance_entries" action="action_portfolio_accounting" />
+
+
+
+
+
+
+
+    </data>
+</odoo>

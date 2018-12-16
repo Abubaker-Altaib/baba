@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data><record id="view_payroll_listing_department" model="ir.ui.view">
+            <field name="name">Payroll listing department</field>
+            <field name="model">payroll.listing.department</field>
+            <field name="arch" type="xml">
+                <form string="Payroll listing department" version="7.0">
+                    <group>
+                        <field name="type"/>
+                        <field name="allowance_deduction"  domain="[('in_salary_sheet','=',False)]" attrs="{'invisible':[('type','!=','addendum')],'required':[('type','=','addendum')]}"/>
+				        <field name="month"/>
+				        <field name="year"/> 
+		                <field name="payroll_ids"/>
+		                <field name="department_ids"  />
+                   </group>
+                    <footer>
+		               	<button name="print_report" string="Print" type="object" />
+		              	or
+		              	<button string="Cancel" class="oe_link" special="cancel"/>
+                     </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="payroll_listing_department_action" model="ir.actions.act_window">
+            <field name="name">Payroll listing department</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">payroll.listing.department</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+	<menuitem name="تقرير تفصيلي للمرتبات" 
+              parent="hr_payroll_custom.menu_hr_payroll_reporting"
+		      action="payroll_listing_department_action"
+		      id="menu_payroll_listing_department"/>
+</data>
+</openerp>

@@ -1,0 +1,114 @@
+<document filename="notification.pdf">
+	<template pageSize="(595.0,842.0)" title="Car Maintenance Notification"
+		author="NCTR" allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="1.3cm" y1="0.9cm" height="28cm" width="19cm" />
+			
+		</pageTemplate>
+	</template>
+	
+	<stylesheet>
+		<blockTableStyle id="Table4">
+			<blockValign value="CENETR" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#e6e6e6" start="0,0" stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#2F4F4F" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table3">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+
+		<paraStyle name="P5" fontName="Helvetica-Bold" fontSize="16.0" 
+			leading="5" alignment="CENTER" spaceBefore="20.0" spaceAfter="20.0" />
+		<paraStyle name="P6" fontName="Helvetica-Bold" fontSize="10.0"
+			leading="10" alignment="RIGHT" spaceBefore="6.0" spaceAfter="6.0" />
+		
+		<paraStyle name="P7" fontName="Helvetica-Bold" fontSize="10.0"
+			leading="10" alignment="LEFT" spaceBefore="6.0" spaceAfter="6.0" />
+
+		<paraStyle name="P11" rightIndent="0.0" leftIndent="0.0"
+			fontName="Helvetica" fontSize="10.0" leading="10" alignment="RIGHT"
+			spaceBefore="0.0" spaceAfter="0.0" />
+		<paraStyle name="col_Right" fontName="Helvetica-Bold"
+			fontSize="14" leading="17" alignment="RIGHT" spaceBefore="25.0"
+			spaceAfter="25.0" />
+		<images />
+	</stylesheet>
+
+	<story>
+		<para style="P5"></para>
+		<para style="P5"></para>
+		<para style="P5"></para>
+		<para style="P5"></para>
+		<para style="P5"></para>
+		<para style="P5"></para>
+		<para style="P5">السيد مدير إدارة الخدمات[[ repeatIn(objects,'req') ]]</para>
+		<para style="P5">الموضوع صيانة العربة رقم</para>
+		<para style="P5">[[ req.vehicle_id.name ]]</para>
+		<para style="P6"></para>
+		<para style="P6">باﻷشارة للموضوع إعلاه و حسب مذكرة مسؤول الصيانة فإن العربة المذكورة أعلاه تحتاج إلى</para>
+		
+		<blockTable colWidths="110.0,110.0,240.0,45.0" style="Table4">
+			<tr> 	
+				<td>
+					<para style="P6">التكلفة</para>
+				</td>
+
+				<td>
+					<para style="P6">الكمية</para>
+				</td>
+				<td>
+					<para style="P6">البيان</para>
+				</td>
+				<td>
+					<para style="P6">الرقم</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+				    <para style="P6">[[ repeatIn(req.cost_ids,'req_cost') ]][[ formatLang(req_cost.amount) ]]</para>
+				</td>
+				<td>
+					<para style="P6">[[ formatLang(req_cost.quantity) ]]</para>
+				</td>
+				<td>
+					<para style="P6">[[ req_cost.cost_subtype_id.name or '/']]</para>
+				</td>
+				<td>
+					<para style="P6"><seq id="L1"/></para>
+				</td>
+			</tr>
+			
+		</blockTable>
+		<blockTable colWidths="110.0,395" style="Table4">
+			<tr>
+				<td>
+					<para style="P11">[[ formatLang(req.sum_cost) ]]</para>
+				</td>
+				<td>
+					<para style="P6">الاجمالى</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="P6"></para>
+		<para style="P6">عليه نرجو التكرم بالتصديق</para>
+
+		<para style="P7">[[ get_user() ]]</para>
+		<para style="P7">رئيس قسم الخدمات</para>
+		
+		 <para>
+     			 <seqReset id="L1"/>
+      		</para>
+	</story>
+</document>

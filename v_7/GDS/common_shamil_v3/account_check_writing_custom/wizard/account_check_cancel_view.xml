@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="account_cancel_check_view" model="ir.ui.view">
+             <field name="name">Cancel Payments</field>
+             <field name="model">account.cancel.check</field>
+             <field name="type">form</field>
+             <field name="arch" type="xml">
+                <form string="Cancel Checks"  version="7.0">
+                    <separator string="Cancel Checks" colspan="4"/>
+                    <group>
+                        <field name="journal_ids" nolabel='1' colspan="4" width="550" height="200" />
+                    </group>
+                    <footer>
+                      <button name="get_moves" string="Forward" type="object"  class="oe_highlight"/>
+                      or
+                     <button string="Cancel" class="oe_link" special="cancel"/>
+                   </footer>
+                </form>
+             </field>
+         </record>
+
+        <record id="action_account_cancel_check" model="ir.actions.act_window">
+             <field name="name">Cancel Checks</field>
+             <field name="res_model">account.cancel.check</field>
+             <field name="type">ir.actions.act_window</field>
+             <field name="view_type">form</field>
+             <field name="view_mode">tree,form</field>
+             <field name="view_id" ref="account_cancel_check_view"/>
+             <field name="target">new</field>
+       </record> 
+        
+        <menuitem
+            action="action_account_cancel_check"
+            icon="STOCK_EXECUTE"
+            name="Cancel Checks"
+            id="menu_cancel_check2"
+            parent="account.menu_account_pp_statements"
+            groups="account_voucher_custom.group_account_expense_pay"
+            />
+    </data>
+</openerp>

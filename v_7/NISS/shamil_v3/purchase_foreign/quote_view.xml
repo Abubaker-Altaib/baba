@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="quote_for_foreign_inherit" model="ir.ui.view">
+			<field name="name">quote.for.foreign.form</field>
+			<field name="model">pur.quote</field>
+			<field name="inherit_id" ref="purchase_custom.pur_quote_form" />
+			<field name="arch" type="xml">
+				<field name="vat_supp" position="after">
+					<field name="pricelist_id" colspan="2" readonly="1"/>
+					<field name="currency_id" colspan="2" attrs="{ 'readonly':[('state','!=','draft') ] , 'required' : [('purchase_type','=','foreign')]}"/>
+			       </field>
+				<field name="supplier_id" position="after">
+					<field name="purchase_type" colspan="2" readonly="1" />
+					<field name="product_type" colspan="2" 
+		                               attrs="{'invisible':[('purchase_type','!=','foreign') ],'readonly':[('state','!=','draft') ]}" /> 
+			       </field>
+			       <xpath expr="//page[@string='Initial invoice']" position="after">
+                                      <page string="Other Information" attrs="{'invisible':[('purchase_type','=','internal')],'readonly':[('state','!=','draft') ]}">
+                                            <group colspan="2" col="4">
+						    <group colspan="2" col="2" name="delivery infromation" 
+		                                           attrs="{'invisible':[('product_type','=','service')],'readonly':[('state','!=','draft') ]}">
+							   <separator string="Delivery Infromation" colspan="2" />
+							   <field name="delivery_method"
+		                                                   attrs="{'required':[('purchase_type','=','foreign'),('product_type','!=','service')],'readonly':[('state','!=','draft') ]}"/>
+							   <field name="delivery_date" attrs="{ 'readonly':[('state','!=','draft') ]}"/>
+						    </group>
+						    <group colspan="2" col="2" name="terms" attrs="{'invisible':[('product_type','=','service')],'readonly':[('state','!=','draft') ]}">
+							<separator string="Terms" colspan="2" />
+							<field name="picking_policy" 
+		                                               attrs="{'required':[('purchase_type','=','foreign'),('product_type','!=','service')],'readonly':[('state','!=','draft') ]}"/>
+							<field name="incoterm" 
+		                                               attrs="{'required':[('purchase_type','=','foreign'),('product_type','!=','service')],'readonly':[('state','!=','draft') ]}"/>
+						    </group>
+		                                    <group colspan="4" col="4" name="conditions">
+							   <separator string="Conditions" colspan="4" />
+							   <!--field name="payment_term" colspan="2" 
+		                                               attrs="{'required':[('purchase_type','=','foreign')]}"/-->
+							   <field name="payment_method" colspan="4" attrs="{'required':[('purchase_type','=','foreign')],'readonly':[('state','!=','draft') ]}"/>
+						     </group>
+						     <separator colspan="2" string="Other conditions" />
+						     <field name="other_conditions" nolabel="1" colspan="4" attrs="{ 'readonly':[('state','!=','draft') ]}" />
+					    </group>
+				      </page>
+				      <page string="notes">
+					    <field name="notes" nolabel="1" />
+				      </page>
+			       </xpath>
+                                            <field name="amount_untaxed" position="before">
+					    <field name="freight" colspan="2" attrs="{'invisible':[('purchase_type','!=','foreign')], 'readonly':[('state','!=','draft') ]}"/>
+					    <field name="packing" colspan="2" attrs="{'invisible':[('purchase_type','!=','foreign')], 'readonly':[('state','!=','draft') ]}"/>
+					    <field name="discount" colspan="2" attrs="{'invisible':[('purchase_type','!=','foreign')], 'readonly':[('state','!=','draft') ]}"/>
+			       <newline/>
+                               </field>
+                               <button name="button_dummy" states="draft" colspan="2" string="Compute" 
+                                       type="object" icon="gtk-execute" position="after">
+			               <newline/>
+                               </button>
+                               <field name="amount_tax" position="replace">
+                                      <field name="amount_tax" colspan="2" attrs="{'invisible':[('purchase_type','=','foreign')],}" readonly="1"/>
+                               </field>
+			</field>
+		</record>
+		
+		<record id="purchase_foriegn_quote_products_form" model="ir.ui.view">
+			<field name="name">foriegn_pq_products_form</field>
+			<field name="model">pq.products</field>
+			<field name="inherit_id" ref="purchase_custom.pq_products_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+			       <field name="price_subtotal" colspan="2" position="after">
+				      <field name="product_packaging" colspan="2" attrs="{'invisible':[('purchase_type','=','foreign')], 'readonly':[('state','!=','draft') ]}"/>
+			       </field>
+			</field>
+	        </record>
+	</data>
+</openerp>

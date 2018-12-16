@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="action_partner_form_inherit">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="category_id"]' position="after">
+                    <field name="is_permanent"/>
+                </xpath>
+                <!-- <xpath expr="//field[@name='supplier']" position="replace">
+                   <field name="supplier" attrs="{'invisible':[('is_permanent', '=',True)]}"/>
+                </xpath>
+                <xpath expr="//field[@name='customer']" position="replace">
+                   <field name="customer" attrs="{'invisible':[('customer', '=',True)]}"/>
+                </xpath> -->
+            </field>
+        </record>
+        <record model="ir.ui.view" id="action_journal_form_inherit">
+            <field name="name">account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="type"]' position="after">
+                    <field name="is_resource" attrs="{'invisible' : [('is_resource', '=',True)]}"/>
+                </xpath>
+                <xpath expr='//field[@name="type"]' position="replace">
+                    <field name="type" attrs="{'invisible' : [('is_resource', '=',True)]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="action_account_voucher_form_inherit">
+            <field name="name">account.voucher.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_sale_receipt_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="name"]' position="after">
+                    <field name="is_resource" attrs="{'invisible' : [('is_resource', '=',True)]}"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_account_journal_form_inherit2" model="ir.ui.view">
+            <field name="name">account.journal</field>
+            <field name="model">account.journal</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Resources Categories">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" type="object" name="toggle_active" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1><field name="name" class="oe_inline"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="type"/>
+                                <field name="Partner_id"/>
+                            </group>
+                            <group>
+                                <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                                <field name="analytic_account_id"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="journal_entries" string="Journal Entries">
+                                <group>
+                                    <group>
+                                        <field name="code"/>
+                                        <label for="sequence_number_next"/>
+                                        <div>
+                                            <field name="sequence_number_next" style="padding-right: 1.0em"/>
+                                            <field name="sequence_id" required="0"
+                                                   attrs="{'readonly': 1}" groups="base.group_no_one"/>
+                                        </div>
+                                        <field name="refund_sequence"
+                                               attrs="{'invisible': [('type', 'not in', ['sale', 'purchase'])]}"
+                                               groups="base.group_no_one"/>
+                                        <label for="refund_sequence_number_next"
+                                               attrs="{'invisible': ['|',('type', 'not in', ['sale', 'purchase']), ('refund_sequence', '!=', True)]}"/>
+                                        <div attrs="{'invisible': ['|',('type', 'not in', ['sale', 'purchase']), ('refund_sequence', '!=', True)]}">
+                                            <field name="refund_sequence_number_next" style="padding-right: 1.0em"/>
+                                            <field name="refund_sequence_id" required="0"
+                                                   attrs="{'readonly': 1}" groups="base.group_no_one"/>
+                                        </div>
+                                    </group>
+                                    <group>
+                                        <field name="default_debit_account_id" domain="[('deprecated', '=', False)]" groups="account.group_account_user"/>
+                                        <field name="default_credit_account_id" domain="[('deprecated', '=', False)]" groups="account.group_account_user"/>
+                                        <field name="currency_id" options="{'no_create': True}" groups="base.group_multi_currency"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="advanced_settings" string="Advanced Settings">
+                                <group>
+                                    <group string="Control-Access" groups="base.group_no_one">
+                                        <div class="text-muted" colspan="2">Keep empty for no control</div>
+                                        <field name="type_control_ids" widget="many2many_tags"/>
+                                        <field name="account_control_ids" widget="many2many_tags"/>
+                                    </group>
+                                    <group string="Miscellaneous" groups="account.group_account_user">
+                                        <field name="inbound_payment_method_ids" widget="many2many_checkboxes" attrs="{'invisible': [('type', 'not in', ['bank', 'cash'])]}"/>
+                                        <field name="outbound_payment_method_ids" widget="many2many_checkboxes" attrs="{'invisible': [('type', 'not in', ['bank', 'cash'])]}"/>
+                                        <field name="group_invoice_lines" attrs="{'invisible': [('type', 'not in', ['sale', 'purchase'])]}"/>
+                                        <field name="profit_account_id" attrs="{'invisible': [('type', '!=', 'cash')]}"/>
+                                        <field name="loss_account_id" attrs="{'invisible': [('type', '!=', 'cash')]}"/>
+                                        <field name="show_on_dashboard" groups="base.group_no_one"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="permanent_order_view_form">
+            <field name="name">permanent.order.view.form</field>
+            <field name="model">permanent.order</field>
+            <field name="arch" type="xml">
+                <form string="Permanent Order">
+                    <sheet string="Permanent Order">
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="Partner_id"/>
+                                <field name="analytic_account_id"/>
+                                <field name="payment_journal_id"/>
+                                <field name="payment_date"/>
+                            </group>
+                            <group>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                                <field name="amount"/>
+                                <field name="payment_amount"/>
+                                <field name="payment_ids"/>
+                            </group>    
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_permanent_order_tree">
+            <field name="name">permanent.order.tree</field>
+            <field name="model">permanent.order</field>
+            <field name="arch" type="xml">
+                <tree name="Permanent Order">
+                    <field name="Partner_id"/>
+                    <field name="payment_journal_id"/>
+                    <field name="payment_date"/>
+                    <field name="amount"/>
+                    <field name="payment_amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="act_permanent_order_view">
+            <field name="name">permanent.order</field>
+            <field name="res_model">permanent.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_permanent_order_tree"/>
+        </record>
+
+        <record id="action_partner_form2" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('is_permanent','=', True)]</field>
+            <field name="context">
+            {
+                "default_is_permanent" : True
+            }
+            </field>
+            <field name="view_mode">kanban,tree,form</field>
+        </record>
+        <record id="action_bank_form" model="ir.actions.act_window">
+            <field name="name">Banks</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.journal</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('type','=','bank'),('is_resource','=', True)]</field>
+            <field name="context">
+            {
+                "default_is_resource" : True,
+                "default_type" : 'bank'
+            }
+            </field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_id" ref="account.account_bank_journal_view_kanban"/>
+        </record>
+        <record id="action_bank_form_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_account_journal_tree"/>
+            <field name="act_window_id" ref="action_bank_form"/>
+        </record>
+        <record id="action_bank_form_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.view_account_journal_form"/>
+            <field name="act_window_id" ref="action_bank_form"/>
+        </record>
+        <record id="action_bank_form2" model="ir.actions.act_window">
+            <field name="name">Resources Categories</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.journal</field>
+            <field name="view_type">form</field>
+            <field name="context">
+            {
+                "default_is_resource" : True,
+            }
+            </field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record id="action_bank_form2_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_account_journal_tree"/>
+            <field name="act_window_id" ref="action_bank_form2"/>
+        </record>
+        <record id="action_bank_form2_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_journal_form_inherit2"/>
+            <field name="act_window_id" ref="action_bank_form2"/>
+        </record>
+        <record id="open_account_journal_dashboard_kanban_inherit" model="ir.actions.act_window">
+        <field name="name">Accounting Dashboard</field>
+        <field name="res_model">account.journal</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="account.account_journal_dashboard_kanban_view"/>
+        <field name="usage">menu</field>
+        <field name="context">{'search_default_dashboard':1}</field>
+        <field name="domain">[('belongs_to_company', '=',True),('type','=','bank'),('is_resource','=', True)]</field>
+        <field name="help" type="html">
+            <p>
+                This is the accounting dashboard. If you have not yet
+                installed a chart of account, please install one first.
+               <a type="action" name="%(account.open_account_charts_modules)d">Browse available countries.</a>
+            </p>
+        </field>
+     </record>
+     <record id="action_sale_receipt_inherit" model="ir.actions.act_window">
+        <field name="name">Finance Resources voucher </field>
+        <field name="res_model">account.voucher</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="domain">[('journal_id.type','=','sale'), ('voucher_type','=','sale'),('is_resource','=', True)]</field>
+        <field name="context">{'default_voucher_type': 'sale', 'voucher_type': 'sale','default_is_resource':True}</field>
+        <field name="view_id" ref="account_voucher.view_voucher_tree"/>
+        <field name="search_view_id" ref="account_voucher.view_voucher_filter_sale"/>
+        <field name="target">current</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+             Click to create a sale receipt.
+            </p><p>
+                When the sale receipt is confirmed, you can record the customer
+                payment related to this sales receipt.
+            </p>
+            </field>
+        </record>
+        <record id="action_sale_receipt_tree_inherit" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="action_sale_receipt_inherit"/>
+        </record>
+        <record id="action_sale_receipt_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_voucher.view_sale_receipt_form"/>
+            <field name="act_window_id" ref="action_sale_receipt_inherit"/>
+        </record>
+        <menuitem id="menu_finance_resource_view"
+        	      name="Finance Resources"/>
+        <menuitem parent="menu_finance_resource_view"
+                  id="menu_finance_resource_configuration_view"
+                  sequence="100"
+                  name="Configuration"/>
+        <menuitem parent="menu_finance_resource_configuration_view"
+        	      id="menu_finance_resource_Customers_view"
+        	      name="Customers"
+                  sequence="1"
+        	      action="action_partner_form2"/>
+        <menuitem parent="menu_finance_resource_configuration_view"
+                  id="menu_finance_resource_bank_categories_view"
+                  name="Resources Categories"
+                  sequence="2"
+                  action="action_bank_form2"/>
+        <menuitem parent="menu_finance_resource_configuration_view"
+                  id="menu_finance_resource_banks_view"
+                  name="Banks"
+                  sequence="3"
+                  action="action_bank_form"/>
+        <menuitem id="menu_board_journal_2" name="Dashboard" action="open_account_journal_dashboard_kanban_inherit" parent="menu_finance_resource_view" sequence="1"/>
+        <menuitem id="menu_act_permanent_order_view"
+            action="act_permanent_order_view"
+            name="Permanent Order"
+            parent="menu_finance_resource_view"
+            sequence="2"/>
+        <menuitem id="menu_action_sale_receipt_inherit"
+            action="action_sale_receipt_inherit"
+            name="Finance Resources Voucher"
+            parent="menu_finance_resource_view"
+            sequence="3"/>
+    </data>
+</odoo>

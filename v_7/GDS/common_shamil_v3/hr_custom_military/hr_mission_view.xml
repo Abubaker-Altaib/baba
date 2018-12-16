@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="mission_form_view_inherit">
+			<field name="name">hr.employee.mission.view.inherit</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_mission_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="set_to_draft_mission"]' position="before" version="7.0">
+					<button string="Move Order" name="mission_move_order" attrs="{'invisible' : [('need_move_order' , '=' , False)]}" type="object" class="oe_highlight" groups="base.group_hr_manager" />
+				</xpath>
+				<xpath expr='//button[@name="confirm_mission"]' position="replace" version="7.0">
+					<button string="Confirm" name="confirm_mission" type="object" states="completed"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+				</xpath>
+				<xpath expr='//field[@name="mission_leader"]' position="after" version="7.0">
+					<field name="move_order_id" attrs="{'readonly' : [('state' , '=' , 'approved')]}" domain="[('mission_move_id' , '=' , False) , ('type' , '=' , 'mission') , ('move_date' ,'&gt;=', start_date), ('move_date' ,'&lt;', end_date)]"/>
+				</xpath>
+				<xpath expr='//field[@name="mission_line"]' position="replace" version="7.0">
+					<field name="need_move_order" invisible="0" />
+					<field colspan="4" name="mission_line"
+									context="{'default_type':'1','default_mission_fees':mission_fee,'default_start_date':start_date,'default_end_date':end_date,'default_days':days}"
+									nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}">
+									<tree editable="top" string="Employee mission">
+										<field name="employee_id" colspan="4"
+									on_change="onchange_employee(employee_id,parent.mission_id,parent.start_date,parent.end_date,context)" />
+										<field name="type"   invisible="1"/>
+										<field name="days" on_change="onchange_line_date(start_date, end_date, days,'days')"/>
+										<field name="mission_amounts"/>
+										<field name="mission_fees"/>
+										<field name="start_date" on_change="onchange_line_date(start_date, end_date, days,'start_date')" invisible="0"/>
+										<field name="end_date" on_change="onchange_line_date(start_date, end_date, days,'end_date')"  invisible="0" />
+										<field name="move_order_id"  invisible="1" domain="[('employee_id' , '=' , employee_id) ,('date' ,'&gt;=', start_date), ('date' ,'&lt;', end_date) ,('type' , '=' , 'mission') , ('mission_id' , = , False)]"/>
+										<field name="notes" />
+
+									</tree>
+								</field>
+				</xpath>
+				<xpath expr="//page[last()]" position="before">
+					<page string="More Details">
+						<group col="4">
+							<field name="road_days" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+						<field name="source" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+						<field name="return_place" attrs="{'readonly' : [('state' , '!=' , 'draft')]}"/>
+						</group>
+					</page>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="opreation_form_view_inherit">
+			<field name="name">hr.employee.mission.view.inherit</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_operation_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="set_to_draft_mission"]' position="before" version="7.0">
+					<button string="Move Order" name="opreation_move_order" attrs="{'invisible' : [('need_move_order' , '=' , False)]}" type="object" class="oe_highlight" groups="base.group_hr_manager" />
+				</xpath>
+				<xpath expr='//button[@name="confirm_mission"]' position="replace" version="7.0">
+					<button string="Confirm" name="confirm_mission" type="object" states="completed"
+							groups="base.group_hr_manager" icon="gtk-apply" />
+				</xpath>
+				<xpath expr='//field[@name="mission_leader"]' position="after" version="7.0">
+					<field name="move_order_id" attrs="{'readonly' : [('state' , '=' , 'approved')]}" domain="[('mission_move_id' , '=' , False) , ('type' , '=' , 'opreation') , ('move_date' ,'&gt;=', start_date), ('move_date' ,'&lt;', end_date)]"/>
+				</xpath>
+				<xpath expr='//tree/field[@name="notes"]' position="before" version="7.0">
+						<field name="move_order_id"  invisible="1" />
+				</xpath>
+
+				<xpath expr='//field[@name="mission_line"]' position="replace" version="7.0">
+					<field name="need_move_order" invisible="0" />
+					<field colspan="4" name="mission_line"
+									context="{'default_type':'2','default_start_date':start_date,'default_end_date':end_date,'default_days':days}"
+									nolabel="1" attrs="{'readonly':[('state','not in',('draft'))]}">
+									<tree editable="top" string="Employee mission">
+										<field name="employee_id" colspan="4"
+									on_change="onchange_employee(employee_id,parent.mission_id,parent.start_date,parent.end_date,context)" />
+										<field name="days" on_change="onchange_line_date(start_date, end_date, days,'days')"/>
+										<field name="mission_amounts"   string="Operation amount"/>
+										<field name="start_date" on_change="onchange_line_date(start_date, end_date, days,'start_date')" invisible="0"/>
+										<field name="end_date"  on_change="onchange_line_date(start_date, end_date, days,'end_date')" invisible="0" />
+										<field name="move_order_id"  invisible="0" domain="[('employee_id' , '=' , employee_id) ,('date' ,'&gt;=', start_date), ('date' ,'&lt;', end_date) ,('type' , '=' , 'opreation') ,('mission_id' , '=' , False)]"/>
+										<field name="notes"/>
+									</tree>
+					</field>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="transmission_form_view_inherit">
+			<field name="name">hr.employee.mission.view.inherit</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_transmission_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="set_to_draft_mission"]' position="before" version="7.0">
+					<button string="Move Order" name="transmission_move_order" attrs="{'invisible' : [('need_move_order' , '=' , False)]}" type="object" class="oe_highlight" groups="base.group_hr_manager" />
+				</xpath>
+				<field name="dept_report" position="replace">
+					<field name="dept_report" attrs="{'readonly':[('state','=','closed')]}"/>
+					<field name="move_order_dest" attrs="{'invisible':[('dept_report','=',False)],'required':[('dept_report','=',True)],'readonly':[('state','=','closed')]}"/></field>
+				<xpath expr='//field[@name="department_id"]' position="after" version="7.0">
+					<field name="need_move_order" />
+				</xpath>
+				<xpath expr='//tree/field[@name="notes"]' position="before" version="7.0">
+						<field name="move_order_id" domain="[('mission_id' , '=' , False) , ('type' , '=' , 'transmission') , ('date' ,'&gt;=', start_date), ('date' ,'&lt;', end_date)]" invisible="0" />
+				</xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_employee_mission_form_view">
+			<field name="name">hr.employee.mission.form</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_mission_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="mission_line"]/tree/field[@name="employee_id"]' position="replace">
+					<field name="employee_id" domain="[('state','=','approved')]" colspan="4" on_change="onchange_employee(employee_id,parent.mission_id,parent.start_date,parent.end_date,context)" context="{'mission_line':parent.mission_line}"/>
+				</xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_employee_operation_form_view">
+			<field name="name">hr.employee.mission.form</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_operation_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="mission_line"]/tree/field[@name="employee_id"]' position="replace">
+					<field name="employee_id" domain="[('state','=','approved')]" colspan="4" on_change="onchange_employee(employee_id,parent.mission_id,parent.start_date,parent.end_date,context)" context="{'mission_line':parent.mission_line}"/>
+				</xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_employee_transmission_form_view">
+			<field name="name">hr.employee.mission.form</field>
+			<field name="model">hr.employee.mission</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_mission.hr_employee_transmission_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="mission_line"]/tree/field[@name="employee_id"]' position="replace">
+					<field name="employee_id" domain="[('state','=','approved')]" colspan="4" on_change="onchange_employee(employee_id,parent.mission_id,parent.start_date,parent.end_date,context)" context="{'mission_line':parent.mission_line}"/>
+				</xpath>
+				<xpath expr='//button[@name="confirm_transmission"]' position="replace">
+					<button string="Confirmation" name="confirm_transmission" states="draft" type="object" groups="base.group_hr_manager" icon="gtk-apply" />
+				</xpath>
+				<xpath expr='//field[@name="illness"]' position="replace">
+					<field nolabel="1" name="illness" context="{'default_type':'transmission','default_transmission_id':id}">
+						<form string="Mediction" version="7.0">
+							<header>
+								<button type="object" string="Confirm" name="do_confirm" states="draft" class="oe_highlight" />
+								<field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+							</header>
+							<sheet>
+								<group>
+									<field name="employee_id" domain="[('state','=','approved')]" attrs="{'readonly':[('state','!=', 'draft')]}" context="{'same':parent.mission_line,'illness':parent.illness}"/>
+								</group>
+								<group col="4">
+									<field name="date" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+									<field name="illness" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+								</group>
+								<group col="2">
+									<field name="type" />
+									<field name="holiday_id" attrs="{'invisible' : [('type' , '!=' , 'holiday')]}" />
+									<field name="transmission_id" attrs="{'invisible' : [('type' , '!=' , 'transmission')]}" />
+									<field name="commision_id" attrs="{'invisible' : [('type' , '!=' , 'commision')]}" />
+								</group>
+								<notebook>
+									<page string="Doctor">
+										<group col="4">
+											<field name="med_option_id" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+											<field name="end_date" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+										</group>
+										<field name="doctor_comment" attrs="{'readonly':[('state','!=', 'draft')]}"/>
+									</page>
+								</notebook>
+							</sheet>
+						</form>
+					</field>
+				</xpath>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_mission_arch_tree_view">
+			<field name="name">Mission Archive</field>
+			<field name="model">hr.employee.mission.line</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Mission Archive">
+					<field name="emp_degree" />
+					<field name="employee_id" />	
+					<field name="emp_mission_id" />
+					<field name="start_date" />
+					<field name="end_date" />
+				</tree>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_mission_arch_form_view">
+			<field name="name">Mission Archive</field>
+			<field name="model">hr.employee.mission.line</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Mission Archive">
+					<group col="4">
+						<field name="start_date" readonly="1"/>
+						<field name="end_date" readonly="1"/>
+						<field name="emp_degree" readonly="1"/>
+						<field name="employee_id" readonly="1"/>	
+						<field name="emp_mission_id" readonly="1"/>		
+					</group>
+				</form>
+			</field>
+		</record>
+		<record id="hr_mission_archive_action" model="ir.actions.act_window">
+			<field name="name">Mission Archive</field>
+			<field name="res_model">hr.employee.mission.line</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[('type' , '=' , '1')]</field>
+		</record>
+		<menuitem id="hr_mission_arch_menu" name="Missions Archive" parent="hr_mission.menu_mission" action="hr_mission_archive_action" groups="base.group_hr_overview,base.group_hr_manager,base.group_hr_user" />
+	</data>
+</openerp>  

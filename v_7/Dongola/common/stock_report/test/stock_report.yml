@@ -1,0 +1,36 @@
+
+-
+  I print an exit permit report.
+-
+  !python {model: stock.picking}: |
+    import netsvc, tools, os
+    (data, format) = netsvc.LocalService('report.stock.exit_permit.list').create(cr, uid, [ref('stock.outgoing_shipment')], {}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'stock-exit_permit'+format), 'wb+').write(data)
+-
+  I print an examine and receive form report.
+-
+  !python {model: stock.picking}: |
+    import netsvc, tools, os
+    (data, format) = netsvc.LocalService('report.examine.and.receive.form2.reports').create(cr, uid, [ref('stock.incomming_shipment')], {}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'stock-examine'+format), 'wb+').write(data)
+
+-
+  I print a Stock Location Product report.
+-
+  !python {model: product.product}: |
+    ctx={}
+    data_dict = {'move':'moved'}
+    from tools import test_reports
+    test_reports.try_report_action(cr, uid, 'action_view_stock_location_product',wiz_data=data_dict, context=ctx, our_module='stock_report')
+
+-
+  I print a GRN report.
+-
+  !python {model: stock.picking}: |
+    import netsvc, tools, os
+    (data, format) = netsvc.LocalService('report.grn.report').create(cr, uid, [ref('stock.incomming_shipment')], {'model': 'stock.picking', 'id': ref('stock.incomming_shipment'), 'report_type': 'pdf'}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'stock-grn'+format), 'wb+').write(data)
+

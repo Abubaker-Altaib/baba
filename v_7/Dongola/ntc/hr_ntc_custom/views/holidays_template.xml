@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <!-- Default follow up message -->
+        <record id="email_hr_holidays" model="email.template">
+            <field name="name">Default holiday notification e-mail</field>
+            <field name="email_from">erpmail@itisalat.ntc.org.sd</field>
+            <field name="subject">تنبيه الاجازة</field>
+            <field name="email_to">${object.email}</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_hr_holidays"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 15px; color: rgb(34, 34, 34); background-color: #FFF; ">
+
+    <p style="text-align:right;" ><strong>مرحبا </strong></p><br />
+	% if object.state == 'confirm':
+        <p style="text-align:right;"><strong>هناك طلب إجازة في انتظار تصديق المدير المباشر</strong></p>
+    % endif
+    % if object.state == 'unit_manag':
+        <p style="text-align:right;"><strong>هناك طلب إجازة في انتظار تصديق مدير الادارة</strong></p>
+    % endif
+    % if object.state == 'dep_manag':
+        <p style="text-align:right;"><strong>هناك طلب إجازة في انتظار تصديق مدير الادارة العامة</strong></p>
+    % endif
+    % if object.state == 'general_dep':
+        <p style="text-align:right;"><strong>هناك طلب إجازة في انتظار تصديق مدير الادارة العامة للموارد البشرية و المالية</strong></p>
+    % endif
+    % if object.state == 'hr_finance1':
+        <p style="text-align:right;"><strong>هناك طلب إجازة في انتظار تصديق المدير العام</strong></p>
+    % endif
+    % if object.state == 'hr_finance2':
+        <p style="text-align:right;"><strong>هناك طلب إجازة في انتظار تنفيذ الموارد البشرية</strong></p>
+    % endif
+    % if object.state == 'cut':
+        <p style="text-align:right;"><strong>هناك طلب إجازة في انتظار موافقة القطع من مدير الادارة</strong></p>
+    % endif
+    % if object.state == 'approve_cut':
+        <p style="text-align:right;"><strong>هناك طلب إجازة في انتظار موافقة القطع من مدير الادارة العامة</strong></p>
+    % endif
+    % if object.state == 'general_dep_cut':
+        <p style="text-align:right;"><strong>هناك طلب إجازة في انتظار موافقة القطع من مدير الادارة العامة للموارد البشرية و المالية</strong></p>
+    % endif
+    % if object.state == 'hr_finance1_cut':
+        <p style="text-align:right;"><strong>هناك طلب إجازة في انتظار موافقة القطع من المدير العام</strong></p>
+    % endif
+    % if object.state == 'hr_finance2_cut':
+        <p style="text-align:right;"><strong>هناك طلب إجازة في انتظار تنفيذ الموارد البشرية</strong></p>
+    % endif
+
+    <p style="text-align:right;"><strong>:تفاصيل الطلب</strong></p>    
+    <p style="margin-right: 30px; text-align:right;">
+        <strong>اسم الموظف:</strong>${object.employee_id.name}<br /><br />
+       ${object.date_from}<strong>&nbsp;&nbsp;:تاريخ البداية </strong><br /><br />
+       ${object.date_to}<strong>&nbsp;&nbsp;:تاريخ النهاية</strong><br /><br />
+       % if object.url :
+            <strong>&nbsp;&nbsp; <a href=${object.url}>اضغط هنا للوصول للسجل</a> </strong><br /><br /> 
+        % endif
+        % if not object.url :
+            <strong>&nbsp;&nbsp;الرجاء الاتصال بمدير النظام من أجل الصلاحيات</strong><br /><br /> 
+        % endif                 	 
+
+    </p>  
+    <p>
+		
+		</p>
+    
+    </div>
+</div>
+            ]]></field>
+        </record>
+
+
+    </data>
+</openerp>

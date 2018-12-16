@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- this is Health Insurance main menu -->
+        <menuitem id="health_insurance_main_menu"
+                  parent="dzc1_menu"
+                  name="Health Insurance"
+                  sequence="1"
+        />
+
+
+        <!-- Health Insurance Plan-->
+
+        <record model='ir.ui.view' id='health_insurance_plan_tree'>
+
+            <field name='name'>Health Insurance Plan Tree</field>
+            <field name='model'>dzc1.health.insurance.plan</field>
+            <field name='arch' type='xml'>
+                <tree string='Health Insurance Plan Tree'>
+
+                    <field name="code"/>
+                    <field name="duration_from"/>
+                    <field name="duration_to"/>
+                    <field name="name"/>
+                    <field name="state"/>
+
+                </tree>
+            </field>
+        </record>
+
+        <!-- Search View For Insurance Plan model -->
+        <record id="health_insurance_plan_search" model="ir.ui.view">
+            <field name="name">Health Insurance Plan Search</field>
+            <field name="model">dzc1.health.insurance.plan</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="code"/>
+                    <field name="name"/>
+
+                </search>
+            </field>
+        </record>
+
+
+        <record id="health_insurance_plan_form" model="ir.ui.view">
+            <field name="name">Health Insurance Plan</field>
+            <field name="model">dzc1.health.insurance.plan</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="confirm_action" states="draft," string="Confirm" type="object"
+                                class="oe_highlight"/>
+                        <button name="done_action" states="confirm," string="Done" type="object" class="oe_highlight"/>
+                        <button name="cancel_action" states="draft,confirm" string="Cancel" type="object"
+                                class="oe_highlight"/>
+                        <button name="set_to_draft_action" states="cancel," string="Set To Draft" type="object"
+                                class="oe_highlight"/>
+
+
+                        <field name="state" widget="statusbar"/>
+                    </header>
+
+                    <sheet>
+
+                        <group col="2" colspan="2">
+                            <group>
+                                <field name="code" readonly="1"/>
+
+                                <field name="duration_from" required="1"
+                                       attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+                                <field name="name" required="1"
+                                       attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+                                <field name="no_of_family" required="1"
+                                       attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+                            </group>
+
+                            <group>
+                                <field name="date" required="1" readonly="1"/>
+
+                                <field name="duration_to" required="1"
+                                       attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+                                <field name="state_id" required="1" domain="[('company_id' , '=' , company_id)]"
+                                       attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+                                <field name="company_id" required="1" readonly="1"/>
+
+
+                            </group>
+                        </group>
+                        <notebook>
+
+                            <page string="Health Insurance Plan Details">
+                                <field name="loacl_states_ids"
+                                       attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}">
+
+                                    <tree editable="bottom">
+                                        <field name="loacl_states_id" required="1"
+                                               domain="[('state_id' , '=' , parent.state_id)]"
+                                               context="{'loacl_states_ids' : parent.loacl_states_ids}"/>
+
+                                        <field name="no_families" required="1"/>
+
+                                        <field name="families_per_month" required="1"/>
+
+                                        <field name="families_per_week" required="1"/>
+
+                                        <field name="actual_execute" required="1" readonly="1"/>
+
+                                        <field name="name" invisible="1"/>
+
+                                    </tree>
+                                </field>
+                            </page>
+
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- health_insurance_plan action -->
+        <record id="health_insurance_plan_action" model="ir.actions.act_window">
+            <field name="name">Health Insurance Plan</field>
+            <field name="res_model">dzc1.health.insurance.plan</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!--Health Insurance Plan menu -->
+        <menuitem id="health_insurance_plan_menu"
+                  parent="health_insurance_main_menu"
+                  name="Health Insurance Plan"
+                  action="health_insurance_plan_action"
+                  sequence="2"
+
+        />
+
+
+        <!-- Insurance Health Support Form-->
+        <record id="insurance_health_form_view" model="ir.ui.view">
+            <field name="name">Insurance Health Support</field>
+            <field name="model">zakat.insurance.health</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_confirm" string="Confirm" states="draft" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_approve" string="Approve" states="confirm" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_done" states="approve" string="Done" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_cancel" string="Cancel" states="draft,approve,confirm" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_draft" string="Set To Draft" states="cancel" type="object"
+                                class="oe_highlight"/>
+                        <field name="state" statusbar_visible="draft,approve,done" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <h1>
+                                <field name="name" readonly="1" style="width: 90%"/>
+                            </h1>
+                            <div class="oe_button_box" name="button_box">
+                                <button name="get_data"
+                                        attrs="{'invisible':[('state','in',['done','approve','cancel'])]}"
+                                        string="Get Data" type="object" class="oe_stat_button"
+                                        icon="fa-magnet"/>
+                            </div>
+                        </group>
+
+                        <group col="4" colspan="2">
+                            <field name="order_date" required="1"
+                                   attrs="{'readonly':[('state','in', ['done','approve', 'cancel'])]}"/>
+                            <field name="type" readonly="1"/>
+                            <field name="description"
+                                   attrs="{'readonly':[('state','in', ['done','approve', 'cancel'])]}"
+                                   required="1"/>
+
+                            <field name="partner_id" required="1"
+                                   attrs="{'readonly':[('state','in', ['done','approve', 'cancel'])]}"/>
+                            <field name="amount" readonly="1"/>
+                            <field name="no_active_card" readonly="1"/>
+
+                            <field name="state_id" attrs="{'readonly':[('state','in', ['done','approve', 'cancel'])]}"
+                                   domain="[('company_id', '=', company_id)]" required="1"/>
+                            <field name="company_id" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Insurance">
+                                <field name="insurance_ids" required="1" readonly="1"/>
+                            </page>
+                            <page string="Voucher" attrs="{'invisible':[('state','!=','done')]}">
+                                <group>
+                                    <field name="voucher_id" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- Insurance Health Support List -->
+        <record id="insurance_health_tree_view" model="ir.ui.view">
+            <field name="name">Insurance Health Support List</field>
+            <field name="model">zakat.insurance.health</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="order_date"/>
+                    <field name="amount" sum="amount"/>
+                    <field name="no_active_card" sum="no_active_card"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- zakat insurance lines -->
+        <record id="zakat_insurance_lines_tree_view" model="ir.ui.view">
+            <field name="name">zakat insurance lines</field>
+            <field name="model">zakat.insurance.lines</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="guaranteed_id"/>
+                    <field name="i_enddate"/>
+                    <field name="insurance_amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Insurance Health Guarantees action -->
+        <record id="insurance_health_action" model="ir.actions.act_window">
+            <field name="name">Insurance Health Action</field>
+            <field name="res_model">zakat.insurance.health</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('type', '=', 'i_health')]</field>
+            <field name="context">{'default_type': 'i_health'}</field>
+            <field name="view_id" ref="insurance_health_tree_view"/>
+        </record>
+
+        <!-- Insurance Health Guarantees Menu-item -->
+        <menuitem id="insurance_health_menu"
+                  name="Insurance Health Support Payment"
+                  action="insurance_health_action"
+                  parent="health_insurance_main_menu"
+                  sequence="5"/>
+
+
+        <!-- Insurance Form View form form view -->
+        <record id="insurance_form" model="ir.ui.view">
+            <field name="name">Application Form</field>
+            <field name="model">zakat.aplication.form</field>
+            <field name="arch" type="xml">
+                <form create="false" edit="false" delete="false">
+
+                    <sheet>
+                        <field name="state" invisible="1"/>
+                        <group>
+                            <group>
+                                <field name="faqeer_id"
+                                       attrs="{'readonly':['|',('state', '=', 'done'),('old_en','=',True)]}"
+                                       context="{'form_view_ref': 'zakat_base.zakat_res_partner_form_view', 'default_zakat_partner': 1, 'default_Fageer': 1,}"
+                                       domain="[('zakat_partner','=',True)]" required="1"/>
+                                <field name="old_en" invisible="1"/>
+                                <field name="name" readonly="1"/>
+                                <field name="phone" required="1" readonly="1"/>
+                                <field name="father_alive" attrs="{'readonly':[('state', '=','done')]}" widget='radio'
+                                       options="{'horizontal': true}"/>
+                                <field name="health_status" attrs="{'readonly':[('state', '=','done')]}"/>
+                                <field name="disability_status"
+                                       attrs="{'invisible': [('health_status', '!=','disabled')],'readonly':[('state', '=','done')]}"/>
+                                <field name="illness_type"
+                                       attrs="{'invisible': [('health_status', '!=','sick')], }"/>
+                                <field name="social_status" required="1" attrs="{'readonly':[('state', '=','done')]}"/>
+                                <field name="family_sponsor"
+                                       attrs="{'readonly':[('state', '=','done')], 'invisible': [('case_type', '!=','project')]}"/>
+                                <field name="family_left_education"
+                                       attrs="{'invisible': [('case_type', '!=','project')]}"/>
+                                <field name="case_study" readonly="1" invisible="1"/>
+                                <field name="create_project" context="{'ccc':create_project}"
+                                       attrs="{'invisible':[('case_type','!=','project')],'readonly':[('state', '=','done')],
+                                'required':[('case_type','=','project')]}"/>
+                                <field name="case_study_purpose"
+                                       attrs="{'invisible':[('case_type','!=','urgent')],'required':[('case_type', '=','urgent')],'readonly':[('state','=','done')]}"/>
+
+
+                            </group>
+                            <group>
+                                <field name="national_number" readonly="1" required="1"/>
+                                <field name="gender" readonly="1" required="1" widget='radio'
+                                       options="{'horizontal': true}"/>
+                                <field name="birth_date" readonly="1" required="1"/>
+                                <field name="job" readonly="1"/>
+                                <field name="mother_alive" attrs="{'readonly':[('state', '=','done')]}" widget='radio'
+                                       options="{'horizontal': true}"/>
+                                <field name="educational_status" attrs="{'readonly':[('state', '=','done')]}"/>
+                                <field name="sponsor_type"
+                                       attrs="{'invisible': [('family_sponsor', '!=','yes')],'readonly':[('state', '=','done')]}"/>
+                                <field name="monthly_income" attrs="{'invisible': [('case_type', '!=','project')]}"/>
+                                <field name="monthly_expenses" attrs="{'readonly':[('state','=','done')]}"/>
+                                <field name="reason"
+                                       attrs="{'invisible':[('family_left_education','!=','yes')],'readonly':[('state', '=','done')]}"/>
+                                <field name="case_type" readonly="1" required="1"/>
+
+
+                                <field name="company_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+
+
+                            <page string="Living Information">
+                                <group>
+                                    <group>
+                                        <field name="housing_ownership" attrs="{'readonly':[('state', '=','done')]}"/>
+                                        <field name="type_toilet" attrs="{'readonly':[('state', '=','done')]}"/>
+                                        <field name="other_toilet"
+                                               attrs="{'invisible': [('type_toilet', '!=','others')],'readonly':[('state', '=','done')]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="house_type" attrs="{'readonly':[('state', '=','done')]}"/>
+                                        <field name="other_house"
+                                               attrs="{'invisible': [('house_type', '!=','others')],'readonly':[('state', '=','done')]}"/>
+                                        <field name="cooking_fule" attrs="{'readonly':[('state', '=','done')]}"/>
+                                        <field name="other_fule"
+                                               attrs="{'invisible': [('cooking_fule', '!=','others')],'readonly':[('state', '=','done')]}"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Address">
+                                <group>
+                                    <group>
+                                        <field name="state_id" readonly="1" required="1"/>
+                                        <field name="admin_unit_id" readonly="1" required="1"/>
+                                        <field name="village" readonly="1"/>
+                                        <field name="sector" domain="[('sector_state','=',state_id)]" required="1"
+                                               attrs="{'readonly':[('state','=','done')]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="local_state_id" readonly="1" domain="[('state_id','=',state_id)]"
+                                               required="1"/>
+                                        <field name="city" required="1" readonly="1"/>
+                                        <field name="house_number" required="1" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Family Information">
+                                <field name="family_ids" attrs="{'readonly':[('state', '=','done')]}"
+                                       context="{'family_ids':family_ids, 'id':id}">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="national_number" required="1"/>
+                                        <field name="relation" required="1"/>
+                                        <field name="job_type" required="1"/>
+                                        <field name="educational_status"/>
+                                        <field name="health_status"/>
+                                        <field name="age" required="1"/>
+                                        <field name="is_orphan" readonly="1"/>
+                                        <field name="no_of_individual" readonly="1"
+                                               groups="zakat_base.group_insurance_health_state,zakat_base.group_insurance_health_local_state"/>
+                                    </tree>
+
+                                </field>
+                            </page>
+                            <page string="Grantee">
+                                <group col="4" colspan="2">
+                                    <field name="s_support" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="i_health" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="student" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="orphan" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="basal_drainage" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="project" attrs="{'invisible':[('case_type', '!=','project')]}"
+                                           readonly="1"/>
+                                </group>
+                                <group col="4" colspan="2" string="Social Status"
+                                       attrs="{'invisible':[('s_support', '=', False)], 'required':[('s_support', '=', True)]}">
+                                    <field name="status" attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="social_amount"
+                                           attrs="{'invisible':[('s_support', '=', False)], 'required':[('s_support', '=', True)] , 'readonly':[('state', '=','done')]}"/>
+                                </group>
+                            </page>
+
+                            <page string="Insurance Health" attrs="{'invisible':[('i_health', '!=',True)]}">
+
+                                <group col="4" colspan="2">
+
+                                    <field name="insurance_type"
+                                           attrs="{'readonly':[('state', '=','done')]}"/>
+                                    <field name="no_insurance"
+                                           attrs="{'readonly':[('state', '=','done')]}"/>
+
+                                    <field name="no_head_of_family"
+                                           attrs="{'readonly':[('state', '=','done')],'required':[('i_health' , '=' , True)]}"
+                                           readonly="1"/>
+
+                                    <field name="insurance_start_date"
+                                           attrs="{'readonly':[('state', '=','done')]}"/>
+
+                                    <field name="insurance_end_date"
+                                           readonly="1"/>
+
+                                </group>
+
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- Insurance Support list View -->
+        <record id="insurance_support_list_view" model="ir.ui.view">
+            <field name="name">Insurance Support List</field>
+            <field name="model">zakat.aplication.form</field>
+            <field name="arch" type="xml">
+                <tree create="false" edit="false" delete="false">
+                    <field name="faqeer_id"/>
+                    <field name="national_number"/>
+                    <field name="state_id"/>
+                    <field name="local_state_id"/>
+                    <field name="admin_unit_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Insurance Support  action -->
+        <record id="insurance_support_action" model="ir.actions.act_window">
+            <field name="name">Insurance Support</field>
+            <field name="res_model">zakat.aplication.form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('i_health', '=', True)]</field>
+            <field name="context">{'i_health': True}</field>
+            <field name="view_id" ref="insurance_support_list_view"/>
+        </record>
+
+        <!--Filter menu in dzc1_menu for view only -->
+        <menuitem id="insurance_support_list"
+                  name="Insurance Beneficiary"
+                  action="insurance_support_action"
+                  parent="health_insurance_main_menu"
+                  sequence="0"/>
+
+        <!-- 
+        2
+        2
+        2
+        2
+        2
+        2
+        2
+        2
+        2
+        2
+        2
+        2
+        2
+        2
+        2
+        @
+        @
+        @
+         -->
+        <!-- Insurance Health Support Form-->
+        <record id="monthly_support_case_study_form_view" model="ir.ui.view">
+            <field name="name">Case Study Monthly Support</field>
+            <field name="model">zakat.monthly.support</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_confirm" string="Confirm" states="draft" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_approve" string="Approve" states="confirm" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_done" states="approve" string="Done" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_cancel" string="Cancel" states="draft,approve,confirm" type="object"
+                                class="oe_highlight"/>
+
+                        <button name="action_draft" string="Set To Draft" states="cancel" type="object"
+                                class="oe_highlight"/>
+                        <field name="state" statusbar_visible="draft,approve,done" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <h1>
+                                <field name="name" readonly="1" style="width: 90%"/>
+                            </h1>
+                            <div class="oe_button_box" name="button_box">
+                                <button name="get_data"
+                                        attrs="{'invisible':[('state','in',['done','approve','cancel'])]}"
+                                        string="Get Data" type="object" class="oe_stat_button"
+                                        icon="fa-magnet"/>
+                            </div>
+                        </group>
+
+                        <group col="4" colspan="2">
+                            <field name="order_date" required="1"
+                                   attrs="{'readonly':[('state','in', ['done','approve', 'cancel'])]}"/>
+                            <field name="description"
+                                   attrs="{'readonly':[('state','in', ['done','approve', 'cancel'])]}"
+                                   required="1"/>
+                            <field name="amount" readonly="1"/>
+                            <field name="no_active_card" readonly="1"/>
+
+                            <field name="state_id" attrs="{'readonly':[('state','in', ['done','approve', 'cancel'])]}"
+                                   domain="[('company_id', '=', company_id)]" required="1"/>
+                            <field name="company_id" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Insurance">
+                                <field name="insurance_ids" required="1" readonly="1"/>
+                            </page>
+                            <page string="Voucher" attrs="{'invisible':[('state','!=','done')]}">
+                                <group>
+                                    <field name="voucher_id" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- Insurance Health Support List -->
+        <record id="monthly_support_case_study_tree_view" model="ir.ui.view">
+            <field name="name">Case Study Monthly Support List</field>
+            <field name="model">zakat.monthly.support</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="order_date"/>
+                    <field name="amount" sum="amount"/>
+                    <field name="no_active_card" sum="no_active_card"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- zakat insurance lines -->
+        <record id="zakat_monthly_support_lines_tree_view" model="ir.ui.view">
+            <field name="name">Monthly Support lines</field>
+            <field name="model">zakat.monthly.lines</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="guaranteed_id"/>
+                    <field name="i_enddate"/>
+                    <field name="insurance_amount"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Insurance Health Guarantees action -->
+        <record id="monthly_support_case_study_action" model="ir.actions.act_window">
+            <field name="name">Monthly Support Action</field>
+            <field name="res_model">zakat.monthly.support</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="monthly_support_case_study_tree_view"/>
+        </record>
+
+        <!-- Insurance Health Guarantees Menu-item -->
+        <menuitem id="monthly_support_case_study_menu"
+                  name="Monthly Support Payment"
+                  action="monthly_support_case_study_action"
+                  parent="dzc1_alfaqir_channel"
+                  sequence="5"/>
+
+    </data>
+</odoo>
+
+

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--report auto="False" menu="False" id="attendance_approved_report" model="training.form" name="attendance_approved_report.report" rml="addons/attendance_ntc/report/attendance_approved_report.rml" string="Approved Attendance Report" /-->
+        <record id="training_form_line_form" model="ir.ui.view">
+            <field name="name">training form line</field>
+            <field name="model">training.form.line</field>
+            <field name="arch" type="xml">
+                <form string="training form" version="7.0">
+                    <group>
+                        <field name="name" />
+                        <field name="dep_name" />
+                        <field name='state' invisible="1"/>
+                        <field name="reason" groups="base.group_training_manager"/>
+                    </group>
+                    <notebook>
+                        <page string="Lines">
+                            <field name="suggested"/>
+                        </page>
+                        <page string="new">
+                            <field name="suggested_blank">
+                                <tree version="7.0" editable="bottom">
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        <record id="hr_training_departments_form" model="ir.ui.view">
+            <field name="name">training.form.departments</field>
+            <field name="model">training.form.departments</field>
+            <field name="arch" type="xml">
+                <form string="training Department" version="7.0">
+                    <group>
+                        <field name="department_id"/>
+                        <field name="checked"/>
+                    </group>
+                    <notebook>
+                        <page string="Departments">
+                            <field name="lines_ids">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="checked" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        <record id="training_form_tree" model="ir.ui.view">
+            <field name="name">training tree</field>
+            <field name="model">training.form</field>
+            <field name="arch" type="xml">
+                <tree string="training tree" version="7.0">
+                    <field name="date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="training_form_form" model="ir.ui.view">
+            <field name="name">training form</field>
+            <field name="model">training.form</field>
+            <field name="arch" type="xml">
+                <form string="training form" version="7.0">
+                    <header>
+                        <button name="d_manager" context="{'lines_ids':lines_ids}" string="Direct Manager" type="object" attrs="{'invisible':[('checkeddm','=',True)]}" groups="attendance_ntc.group_attendace_direct_manager"/>
+                        <button name="gd_manager" string="General Department Manager" context="{'lines_ids':lines_ids}" type="object" attrs="{'invisible':[('checkedgdm','=',True)]}" groups="base_custom.group_general_department_manager"/>
+                        <button name="t_manager" string ="Training Manager" type="object" attrs="{'invisible':['|',('done','=',True),('state','!=','draft')]}" groups="base.group_training_manager"/>
+                        <button name="hr_manager" string ="HR Manager" type="object" states="t_manager" groups="base.group_hr_manager"/>
+                        <button name="haa_manager" string ="HR and Finicial Resources Manager" type="object" states="hr_manager" groups="base_custom.group_general_hr_manager"/>
+                        <button name="gm_confirm" string ="General Manager" type="object" states="haa_manager" groups="base_custom.group_account_general_manager"/>
+                        <!--button name="send_mail" string="Send Mail" type="object" groups="base.group_training_manager"/-->
+                        <button name="%(training_mail_wizard_form_action)d" colspan="2" string="Send Mail" groups="base.group_training_manager" type="action" icon="gtk-print" />
+                        <field name='state' widget="statusbar" invisible="1"/>
+                    </header>
+                    <field name="checkeddm"/>
+                    <field name="checkedgdm"/>
+                    <field name="done"/>
+                    <group>
+                        <field name="date" readonly="1"/>
+                        <field name="direct" groups="base.group_training_manager"/>
+                    </group>
+                    
+                    <group attrs="{'invisible':['|', ('state','!=', 'draft' ), ('lines_ids','=',False )]}" groups="base.group_training_manager">
+                        <field name="search"/>
+                        <button name="%(training_search_wizard_form_action)d" attrs="{'invisible':[('search','=',False)]}" context="{'search':search}" colspan="2" string="Search" type="action" />
+                    </group>
+                    <notebook>
+                        <page string="Lines">
+                            <field name="lines_ids" options="{'no_create':True}" attrs="{'readonly':[('state','!=', 'draft' )]}">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="dep_name" />
+                                    <field name="state" />
+                                    <button name="d_manager" string="Department Manager" type="object" icon="gtk-convert"
+                                    states="draft" groups="base_custom.group_general_department_manager" />
+                                    <!-- <button name="gd_manager" string="General Department Manager" type="object" icon="gtk-convert"
+                                    states="confirmed" groups="base_custom.group_account_general_manager" /> -->
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Departments" groups="base.group_training_manager">
+                            <field name="department_ids" attrs="{'readonly':[('state','!=', 'draft' )]}">
+                                <tree>
+                                    <field name="department_id" />
+                                    <field name="checked" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        <record id="training_form_report" model="ir.actions.act_window">
+            <field name="name">training form</field>
+            <field name="res_model">training.form</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem name="training form" action="training_form_report" id="training_form_report_menud" parent="hr_training.menu_training_root"/>
+        
+
+        <record id="training_eva_form" model="ir.ui.view">
+            <field name="name">training eva</field>
+            <field name="model">training.eva</field>
+            <field name="arch" type="xml">
+                <form string="training eva form" version="7.0">
+                    <group>
+                        <group>
+                            <field name="emp_id" readonly="1"/>
+                        </group>
+                        <group>
+                        </group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="place" readonly="1"/>
+                            <field name="trainer" readonly="1"/>
+                            <field name="template" invisible="1"/>
+                        </group>
+                        <group>
+                            
+                            <field name="from" readonly="1"/>
+                            <field name="to" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lines">
+                            <field name="eva_lines">
+                            <tree editable="top" create="false">
+                            <field name="name" readonly="1"/>
+                            <field name="value" />
+                            </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group>
+                        <field name="comments"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="training_eva_tree" model="ir.ui.view">
+            <field name="name">training eva</field>
+            <field name="model">training.eva</field>
+            <field name="arch" type="xml">
+                <tree string="training eva tree" create="false" version="7.0">
+                    <field name="name"/>
+                    <field name="place"/>
+                    <field name="trainer"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="training_eva_form_action" model="ir.actions.act_window">
+            <field name="name">training eva</field>
+            <field name="res_model">training.eva</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('template','=', False)]</field>
+            <field name="context">{'default_template':False}</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="training_eva_form_action_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="training_eva_tree"/>
+            <field name="act_window_id" ref="training_eva_form_action"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="training_eva_form_action_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="training_eva_form"/>
+            <field name="act_window_id" ref="training_eva_form_action"/>
+        </record>
+
+        <menuitem name="training eva form" action="training_eva_form_action" id="training_eva_form_action_menud" parent="hr_training.menu_training_root"/>
+        
+        <record id="training_eva_template_form" model="ir.ui.view">
+            <field name="name">training eva</field>
+            <field name="model">training.eva</field>
+            <field name="arch" type="xml">
+                <form string="training eva template form" version="7.0">
+                    <group>
+                        <field name="template_name" />
+                        <field name="type" />
+                        <field name="template" invisible="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Lines">
+                            <field name="eva_lines">
+                            <tree editable="top">
+                            <field name="name" />
+                            </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="training_eva_template_tree" model="ir.ui.view">
+            <field name="name">training eva template</field>
+            <field name="model">training.eva</field>
+            <field name="arch" type="xml">
+                <tree string="training eva template tree" version="7.0">
+                    <field name="template_name"/>
+                    <field name="type"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="training_eva_template_form_action" model="ir.actions.act_window">
+            <field name="name">training eva</field>
+            <field name="res_model">training.eva</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="training_eva_template_form"/>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('template','=', True)]</field>
+            <field name="context">{'default_template':True}</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="training_eva_template_form_action_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="training_eva_template_tree"/>
+            <field name="act_window_id" ref="training_eva_template_form_action"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="training_eva_template_form_action_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="training_eva_template_form"/>
+            <field name="act_window_id" ref="training_eva_template_form_action"/>
+        </record>
+        
+        <menuitem name="training eva template form" action="training_eva_template_form_action" id="training_eva_template_form_action_menud" parent="hr_training.menu_training_root"/>
+        
+        <act_window
+            context="{'default_template': False}"
+            domain="[('template', '=', False), ('course_id', '=', active_id)]"
+            id="act_training_eva"
+            name="eva"
+            res_model="training.eva"
+            src_model="hr.employee.training.approved"
+            view_type='form'
+            view_mode='tree,form'
+            target="current"
+            view_id='training_eva_tree'/>
+    
+    
+    
+    </data>
+</openerp>

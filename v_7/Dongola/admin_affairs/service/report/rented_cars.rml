@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+	
+
+	<template pageSize="(842.0,595.0)" title="Rented Cars" allowSplitting="20">
+    <pageTemplate id="first">
+      <!--frame id="first" x1="1cm" y1="0.7cm" width="28cm" height="19.5cm" showBoundary="0"/-->
+      <!--frame id="first"  x1="1.2cm" y1="2.7cm" width="18.5cm" height="23.5cm" showBoundary="0"/-->
+      <frame id="first"  x1="1.2cm" y1="1.7cm" width="27.5cm" height="16.5cm" showBoundary="0"/>
+      <!--header-->
+        <pageGraphics>
+            <!--image x="1.3cm" y="29.7cm" height="40.0" >[[ company.logo or removeParentNode('image') ]]</image-->
+            <image x="2cm" y="18.7cm" height="40.0" >[[ company.logo or removeParentNode('image') ]]</image>
+            <setFont name="DejaVu Sans" size="11"/>
+            <drawString x="13.1cm" y="19.7cm"  fontSize="14.0">[[ company.partner_id.name ]]</drawString>
+            <drawString x="13.3cm" y="18.9cm"  fontSize="14.0">نظام إدارة المؤسسة</drawString>
+            <setFont name="DejaVu Sans" size="8"/>
+            <fill color="black"/>
+            <stroke color="black"/>
+
+            <!-- page header -->
+            <lines>2cm 18.5cm 27.5cm 18.5cm</lines>
+            <lines>2cm 18.4cm 27.5cm 18.4cm</lines>
+            <lines>1.2cm 1.65cm 27.5cm 1.65cm</lines>
+
+            <drawString x="9.0cm" y="1.12cm" style="P13"> <pageCount/> </drawString>
+            <!--place x="1.3cm" y="0cm" height="2.55cm" width="27.7cm"-->
+            <place x="3.3cm" y="0cm" height="1.55cm" width="27.7cm">
+                <blockTable colWidths="10cm,10cm,7cm" >
+                    <tr>
+                        <td>
+                          <para leading="11" alignment="CENTER"> Page <pageNumber/> of <getName x="6cm" y="0cm" id="lastPage"/></para>
+                          
+                        </td>
+                        <td>
+                            <para leading="11" alignment="CENTER">المستخدم: [[ user.name ]] </para>
+                        </td>
+                        <td>
+                            <para></para>
+                        </td>
+                    </tr>
+                </blockTable>
+            </place>
+        </pageGraphics>
+      <!--/header-->
+    </pageTemplate>
+  </template>
+	<stylesheet>
+		<blockTableStyle id="Table2">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<blockBackground colorName="#D1D1ff" start="0,0"
+				stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+		<blockTableStyle id="Table3">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		<paraStyle name="Main_header" fontName="Helvetica-Bold"
+			fontSize="16.0" alignment="CENTER" spaceBefore="0.0" spaceAfter="20.0" />
+		<paraStyle name="P8" fontName="Helvetica" fontSize="8.0" alignment="RIGHT" rightIndent="4" />
+		<paraStyle name="P9" fontName="Helvetica-Bold" fontSize="9.0" alignment="CENTER" />
+		<images />
+	</stylesheet>
+	<story>
+		<para style="Main_header">إدارة الشئون الإدارية - قسم الخدمات</para>
+		<para style="Main_header">السيارات المؤجرة</para>
+
+		<blockTable colWidths="80,120,90,100,110,110,120,40" style="Table2">
+			<tr>
+				<td>
+					<para style="P9">المبلغ</para>
+				</td>
+				<td>
+					<para style="P9">الإدارة</para>
+				</td>
+				<td>
+					<para style="P9">رقم العربة</para>
+				</td>
+				<td>
+					<para style="P9">اسم العربة</para>
+				</td>
+				<td>
+					<para style="P9">المستفيد</para>
+				</td>
+				<td>
+					<para style="P9">اسم المورد</para>
+				</td>
+				<td>
+					<para style="P9">رقم العقد</para>
+				</td>
+				<td>
+					<para style="P9">الرقم</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="P8">
+					[[ repeatIn(line(data),'line') ]] [[ formatLang(line['amount'])]]
+					</para>
+				</td>
+				<td>
+					<para style="P8">[[ line['dept'] or '/' ]]</para>
+				</td>
+				<td>
+					<para style="P8">[[ line['license_plate'] or '/' ]]</para>
+				</td>
+				<td>
+					<para style="P8">[[ line['vehicle'] or '/' ]]</para>
+				</td>
+				<td>
+					<para style="P8">[[ line['employee'] or '/' ]]</para>
+				</td>
+
+				<td>
+					<para style="P8">[[ line['partner'] or '/' ]]</para>
+				</td>
+				<td>
+					<para style="P8">[[ line['contract_name'] or '/' ]]</para>
+				</td>
+
+				<td>
+					<para style="P8">
+						<seq id="L1" />
+					</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="80,690" style="Table3">
+			<tr>
+				<td>
+					<para style="P9">[[ formatLang(total(data))]]
+					</para>
+				</td>
+				<td>
+					<para style="P9">اﻹجمالى</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para>
+			<seqReset id="L1" />
+		</para>
+	</story>
+</document>

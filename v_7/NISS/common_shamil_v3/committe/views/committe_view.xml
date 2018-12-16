@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_hr_committe_search" model="ir.ui.view">
+            <field name="name">hr.committe.tree</field>
+            <field name="model">hr.committe</field>
+            <field name="arch" type="xml">
+                <search string="Type">
+                    <field name="details_type"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Type" icon="terp-folder-green" context="{'group_by':'details_type'}" help="Type"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="view_hr_committe_tree" model="ir.ui.view">
+            <field name="name">hr.committe.tree</field>
+            <field name="model">hr.committe</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="committes" version="7.0" create="0">
+                    <field name="details_type"/>
+                    <field name="date"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_hr_committe_form" model="ir.ui.view">
+            <field name="name">hr.committe.form</field>
+            <field name="model">hr.committe</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="committes" version="7.0">
+                    <header>
+                        <button string="Unlink All" name="cancel" states="draft" type="object" icon="gtk-no"  groups="hr_custom_military.hr_emp_process_user"/>
+                        <button string="Set to Draft" name="draft" states="confirmed" type="object" icon="gtk-convert"  groups="hr_custom_military.hr_emp_process_user"/>
+                        <button string="Confirm" name="confirm" states="draft" type="object" icon="gtk-apply"  groups="hr_custom_military.hr_emp_process_user"/>
+
+                        <button string="Link" name="link" states="canceled" type="object" icon="gtk-apply"  groups="hr_custom_military.hr_emp_process_user"/>
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed" statusbar_colors='{"confirmed":"blue","canceled":"red","draft":"green"}'/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="details_type" readonly="1"/>
+                            <field name="date" readonly="0"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <button string="Calculate" name="calculate" type="object" icon="gtk-no"  groups="hr_custom_military.hr_emp_process_user"/>
+                        <notebook>
+                            <page string="Manageral Details">
+                                <group>
+                                    <field name="committe_details_ids_manageral" nolabel="1">
+                                        <tree editable="top" create='0' delete="0">
+                                            <field name="emp_code" readonly="1"/>
+                                            <field name="degree" readonly="1"/>
+                                            <field name="employee_id" domain="[('state','=','approved')]" readonly="1"/>
+                                            <field name="degree_value" readonly="1"/>
+                                            <field name="ferocity_months" readonly="1"/>
+                                            <field name="operations_months" readonly="1"/>
+                                            <field name="ferocity_months_degree" readonly="1"/>
+                                            <field name="operations_months_degree" readonly="1"/>
+                                            <field name="total_service_years" readonly="1"/>
+                                            <field name="total_training" readonly="1"/>
+                                            <field name="total_certificates" readonly="1"/>
+                                            <field name="sum1" readonly="1"/>
+                                            <button name="open_record" type="object" icon="gtk-open"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Personal Details">
+                                <group>
+                                    <field name="committe_details_ids_personal" nolabel="1">
+                                        <tree editable="top" create='0'  delete="0">
+                                            <field name="emp_code" readonly="1"/>
+                                            <field name="degree" readonly="1"/>
+                                            <field name="employee_id" domain="[('state','=','approved')]" readonly="1"/>
+                                            <field name="general_look" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                            <field name="personality" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                            <field name="intelligence" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                            <field name="self_confidence" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                            <field name="express" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                            <field name="sum2" readonly="1"/>
+                                            <button name="open_record" type="object" icon="gtk-open" groups="hr_custom_military.hr_emp_process_user"/>
+                                            <field name="state" invisible="1"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Final Details">
+                                <group>
+                                    <field name="committe_details_ids_final" nolabel="1">
+                                        <tree editable="top" create='0'  delete="0">
+                                            <field name="emp_code" readonly="1"/>
+                                            <field name="degree" readonly="1"/>
+                                            <field name="employee_id" domain="[('state','=','approved')]" readonly="1"/>
+                                            <field name="sum1" readonly="1" string="Manageral Sum"/>
+                                            <field name="sum2" readonly="1" string="Personal Sum"/>
+                                            <field name="sum3" readonly="1" string="General Sum"/>
+                                            <field name="midecal" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                            <field name="self_securing" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                            <field name="notes" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                            <button name="open_record" type="object" icon="gtk-open"  groups="hr_custom_military.hr_emp_process_user"/>
+                                            <button name="confirm" type="object" icon="gtk-go-forward" states='draft' groups="hr_custom_military.hr_emp_process_user"/>
+                                            <button name="cancel" type="object" icon="gtk-cancel" states='draft' groups="hr_custom_military.hr_emp_process_user"/>
+                                            <button name="link" type="object" icon="gtk-ok" states='canceled' groups="hr_custom_military.hr_emp_process_user"/>
+                                            <button name="draft" type="object" icon="gtk-convert" states='confirmed' groups="hr_custom_military.hr_emp_process_user"/>
+                                            <field name="state" invisible="1"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" />
+                        <field name="message_ids" widget="mail_thread" />
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="action_hr_committe_form" model="ir.actions.act_window">
+            <field name="name">committes</field>
+            <field name="res_model">hr.committe</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_hr_committe_search"/>
+        </record>
+        <record model='ir.ui.view' id='view_salary_degree_form'>
+            <field name='name'>inherited.degree.form</field>
+            <field name='model'>hr.salary.degree</field>
+            <field name='inherit_id' ref='hr_payroll_custom.view_salary_degree_form'/>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <xpath expr="//field[@name='sequence']" position='after'>
+                    <field name="degree_value"/>
+                </xpath>
+            </field>
+        </record>
+        <record model='ir.ui.view' id='hr_qualification_form_view'>
+            <field name='name'>inherited.hr.qualification.form</field>
+            <field name='model'>hr.qualification</field>
+            <field name='inherit_id' ref='hr_custom.hr_qualification_form_view'/>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <xpath expr="//field[@name='amount']" position='after'>
+                    <field name="degree_value"/>
+                </xpath>
+            </field>
+        </record>
+        <record model='ir.ui.view' id='hr_qualification_form_view'>
+            <field name='name'>inherited.hr.qualification.form</field>
+            <field name='model'>hr.qualification</field>
+            <field name='inherit_id' ref='hr_custom.hr_qualification_form_view'/>
+            <field name='type'>form</field>
+            <field name='arch' type='xml'>
+                <xpath expr="//field[@name='amount']" position='after'>
+                    <field name="degree_value"/>
+                </xpath>
+            </field>
+        </record>
+        <menuitem name="Committes" id="menu_action_hr_committe_main" parent="hr_custom.menu_hr_payroll_processes"/>
+        <menuitem name="Committes Processes" action="action_hr_committe_form" id="menu_action_hr_committe_form" parent="menu_action_hr_committe_main"/>
+    </data>
+</openerp>

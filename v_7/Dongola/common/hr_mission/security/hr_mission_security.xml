@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data noupdate="1">
+		<record id="ir_rule_employeemissionsamountmanager0" model="ir.rule">
+			<field name="model_id" ref="hr_mission.model_hr_employee_mission_line"/>
+			<field name="domain_force">['|',('employee_id.company_id','child_of',[user.company_id.id]),('employee_id.company_id','=',False)]</field>
+			<field name="name">Employee Mission Line Manager</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('base.group_hr_manager'),ref('base.group_hr_user')])]" name="groups"/>
+		</record>
+	</data>
+	<data noupdate="1">
+		<record id="ir_rule_employeemissionsamountdepartment0" model="ir.rule">
+			<field name="model_id" ref="hr_mission.model_hr_employee_mission_line"/>
+			<field name="domain_force">['|',('employee_id.department_id','child_of',[user.context_department_id.id]),('employee_id.parent_id.department_id','child_of',[user.context_department_id.id])]</field>
+			<field name="name">Employee Mission Line Department</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('base.group_department_manager')])]" name="groups"/>
+		</record>
+	</data>
+	<data noupdate="1">
+		<record id="ir_rule_hrbasicemployeemissionsdepartment0" model="ir.rule">
+			<field name="model_id" ref="hr_mission.model_hr_employee_mission"/>
+			<field name="domain_force">['|',('mission_line.employee_id.department_id','child_of',[user.context_department_id.id]),('mission_line.employee_id.parent_id.department_id','child_of',[user.context_department_id.id])]</field>
+			<field name="name">Employee Mission Department</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('base.group_department_manager')])]" name="groups"/>
+		</record>
+	</data>
+	<data noupdate="1">
+		<record id="ir_rule_hrbasicemployeemissionsmanager0" model="ir.rule">
+			<field name="model_id" ref="hr_mission.model_hr_employee_mission"/>
+			<field name="domain_force">['|',('mission_line.employee_id.company_id','child_of',[user.company_id.id]),('mission_line.employee_id.company_id','=',False)]</field>
+			<field name="name">Employee Mission Manager</field>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('base.group_hr_manager'),ref('base.group_hr_user')])]" name="groups"/>
+
+		</record>
+	</data>
+</openerp>

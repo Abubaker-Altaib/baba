@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- environment and safety Activity-->
+
+        <record id="wkf_environment_and_safety" model="workflow">
+            <field name="name">wkf.environment.and.safety</field>
+            <field name="osv">environment.and.safety</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_environment_and_safety_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+
+        <record id="wkf_environment_and_safety_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>
+        </record>
+        
+        <record id="wkf_environment_and_safety_confirmed_m" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">confirmed_m</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_m()</field>
+        </record>
+        
+        <record id="wkf_environment_and_safety_confirmed_gm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">confirmed_gm</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_gm()</field>
+        </record>
+        
+         <record id="wkf_environment_and_safety_head" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">head</field>
+            <field name="kind">function</field>
+            <field name="action">head()</field>
+        </record>
+        
+        <record id="wkf_environment_and_safety_approv_gm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">approv_gm</field>
+            <field name="kind">function</field>
+            <field name="action">approv_gm()</field>
+        </record>
+        
+        <record id="wkf_environment_and_safety_admin_affair" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">admin_affair</field>
+            <field name="kind">function</field>
+            <field name="action">admin_affair()</field>
+        </record>
+        
+        <record id="wkf_environment_and_safety_service_section" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">service_section</field>
+            <field name="kind">function</field>
+            <field name="action">service_section()</field>
+        </record>
+        
+        <record id="wkf_environment_and_safety_execute" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">execute</field>
+            <field name="kind">function</field>
+            <field name="flow_stop">True</field>
+            <field name="action">execute()</field>
+        </record>
+        
+        <!--record id="wkf_environment_and_safety_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>
+        </record-->
+
+         <record id="wkf_environment_and_safety_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+        </record>
+        
+        <!--record id="wkf_environment_and_safety_contrct_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_environment_and_safety"/>
+            <field name="name">contrct_draft</field>
+            <field name="kind">function</field>
+            <field name="action">contrct_draft(notes)</field>
+        </record-->
+
+<!-- environment and safety Transition-->
+
+
+        <record id="wkf_environment_and_safety_draft_to_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_draft"/>
+            <field name="act_to" ref="wkf_environment_and_safety_confirmed"/>
+            <field name="signal">confirmed</field>
+            <field name="condition"> rented ()</field>     
+            
+        </record>
+       
+        <record id="wkf_environment_and_safety_draft_to_execute" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_draft"/>
+            <field name="act_to" ref="wkf_environment_and_safety_execute"/>
+            <field name="signal">confirmed</field>
+            <field name="condition">not rented()</field>     
+            
+        </record>
+       
+        
+       <record id="wkf_environment_and_safety_confirmed_to_confirmed_d" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_confirmed"/>
+            <field name="act_to" ref="wkf_environment_and_safety_confirmed_m"/>
+            <field name="signal">confirmed_m</field>
+        </record>
+        
+         <record id="wkf_environment_and_safety_confirmed_to_confirmed_gm" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_confirmed_m"/>
+            <field name="act_to" ref="wkf_environment_and_safety_approv_gm"/>
+            <field name="signal">approv_gm</field>
+        </record>
+        
+         <record id="wkf_environment_and_safety_confirmed_to_head" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_approv_gm"/>
+            <field name="act_to" ref="wkf_environment_and_safety_head"/>
+            <field name="signal">head</field>
+        </record>
+       
+        
+        <!--record id="wkf_environment_and_safety_confirmed_to_approv_gm" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_head"/>
+            <field name="act_to" ref="wkf_environment_and_safety_approv_gm"/>
+            <field name="signal">approv_gm</field>
+        </record-->
+        
+         <record id="wkf_environment_and_safety_confirmed_to_approv_admin_affair" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_head"/>
+            <field name="act_to" ref="wkf_environment_and_safety_admin_affair"/>
+            <field name="signal">admin_affair</field>
+            
+        </record>
+        
+         <record id="wkf_environment_and_safety_confirmed_to_service_section" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_admin_affair"/>
+            <field name="act_to" ref="wkf_environment_and_safety_service_section"/>
+            <field name="signal">service_section</field>
+        </record>
+        
+         <record id="wkf_environment_and_safety_confirmed_to_execute" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_service_section"/>
+            <field name="act_to" ref="wkf_environment_and_safety_execute"/>
+            <field name="signal">execute</field>
+        </record>
+        
+        <!--record id="wkf_environment_and_safety_confirmed_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_confirmed"/>
+            <field name="act_to" ref="wkf_environment_and_safety_cancel"/>
+            <field name="signal">cancel</field>
+        </record-->
+        
+        <record id="wkf_environment_and_safety_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_draft"/>
+            <field name="act_to" ref="wkf_environment_and_safety_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_environment_and_safety_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_environment_and_safety_cancel"/>
+            <field name="act_to" ref="wkf_environment_and_safety_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>
+

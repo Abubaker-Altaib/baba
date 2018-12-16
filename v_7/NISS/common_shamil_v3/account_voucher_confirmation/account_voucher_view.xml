@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_company_form">
+			<field name="name">res.company.form.inherit</field>
+			<field name="inherit_id" ref="base.view_company_form" />
+			<field name="model">res.company</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<data>
+					<xpath expr="//field[@name='currency_id']" position="after">
+						<field name="auto_budget" />
+					</xpath>
+				</data>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_purchase_receipt_form">
+			<field name="name">account.voucher.purchase.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher_custom.view_purchase_receipt_form"/>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='line_dr_ids']/tree" position="attributes">
+					<attribute name="colors">gray:state=='cancel';red:state=='no_approve'</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_dr_ids']/tree/field[@name='account_analytic_id']" position="after">
+					<field name="state"/>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_petty_cash_form">
+			<field name="name">account.voucher.petty.cash.form</field>
+			<field name="model">account.voucher</field>
+			<field name="inherit_id" ref="account_voucher_custom.view_petty_cash_form"/>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='line_dr_ids']/tree" position="attributes">
+					<attribute name="colors">gray:state=='cancel';red:state=='no_approve'</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_dr_ids']/tree/field[@name='account_analytic_id']" position="after">
+					<field name="state"/>
+				</xpath>
+			</field>
+		</record>
+<!-- Shourt Cuts -->
+		<act_window
+			domain="[('number', '=', reference)]"
+			id="act_voucher_budget_confirmation"
+			name="Voucher"
+			res_model="account.voucher"
+			src_model="account.budget.confirmation"/>
+	</data>
+</openerp>

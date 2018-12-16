@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <record id="view_account_period_form" model="ir.ui.view">
+            <field name="name">account.period.form</field>
+            <field name="model">account.period</field>
+            <field name="inherit_id" ref="account.view_account_period_form" />
+            <field name="arch" type="xml">
+                <xpath expr='/form/sheet/group[1]/group[1]/field[@name="name"]' position='before'>
+                    <field name="id" invisible="1"/>
+                    <field name="sequence_id" attrs="{'required':[('id','!=',False)]}"/>
+                </xpath>
+            </field>
+        </record>
+		
+		<record id="view_account_journal_form" model="ir.ui.view">
+			<field name="name">account.journal.form</field>
+			<field name="model">account.journal</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="account_check_writing_custom.view_account_journal_form" />
+			<field name="arch" type="xml">
+			    <field name="allow_check_writing" position="replace">
+				    <field name="allow_check_writing" string="Allow Check and Exchange writing" attrs="{'invisible':[('type','not in',['bank','cash'])]}" />
+			    </field>
+			
+		        <xpath expr="//field[@name='check_sequence']" position="replace">
+                        <field name="check_sequence"  string="Check and Exchange Sequence" attrs="{'invisible':[('allow_check_writing','=',False)]}" />
+                </xpath>
+			</field>
+		</record>
+		
+	
+<!-- ******************************** Done ******************************** -->
+
+
+        <record model="ir.ui.view" id="view_move_form1">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account_budget_custom.view_move_form1" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="period_id" position="after">
+                    <field name="internal_sequence_number"  />
+                </field>
+		<xpath expr="//button[@name='completed']" position="attributes">
+		    <attribute name="groups">account_ntc.group_account_move_complete</attribute>
+		</xpath>
+ 		<xpath expr="//button[@name='reverse']" position="attributes">
+                    <attribute name="groups">account_custom.group_account_auditor,account_custom.group_account_controller</attribute>
+                    <attribute name="states">closed,posted</attribute>
+                </xpath>
+		<xpath expr="//field[@name='state']" position="replace">
+		    <field name="state" widget="statusbar" statusbar_visible="draft,completed,closed,posted,reversed"/>                   
+		</xpath>
+            </field>
+        </record>
+
+
+        <record id="view_account_move_tree_inherit" model="ir.ui.view">
+            <field name="name">account.move.tree.inherit</field>
+            <field name="model">account.move</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account_custom.view_account_move_tree_inherit" />
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="internal_sequence_number"  />
+                </field>
+            </field>
+        </record>
+
+        <record id="view_account_move_filter" model="ir.ui.view">
+            <field name="name">account.move.select</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account_custom.view_account_move_filter" />
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <data>
+                    <field name="period_id" position="after">
+                        <field name="internal_sequence_number"  />
+                    </field>
+                </data>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_voucher_form_purchase">
+            <field name="name">account.voucher.form.inherit</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher_custom.view_purchase_receipt_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='department_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        
+        <record model="ir.ui.view" id="check_log_form_inhert">
+            <field name="name">check.log.form.inhert</field>
+            <field name="model">check.log</field>
+            <field name="inherit_id" ref="account_check_writing_custom.check_log_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="signed" position="after">
+                    <field name="check_delivered"  />
+                </field>
+		<field name="name" position="replace">
+                    <field name="amount"  />
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="check_log_tree_inhert">
+            <field name="name">check.log.form.inhert</field>
+            <field name="model">check.log</field>
+            <field name="inherit_id" ref="account_check_writing_custom.check_log_tree" />
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//field[@name='journal_id']" position="attributes">
+                    <attribute name="string">Bank or Cash</attribute>
+                </xpath>
+                
+                <xpath expr="//field[@name='check_no']" position="attributes">
+                    <attribute name="string">Check or Exchange Number</attribute>
+                </xpath>
+                
+                <xpath expr="//field[@name='status']" position="attributes">
+                    <attribute name="string">Check or Exchange Status</attribute>
+                </xpath>
+		 <xpath expr="//field[@name='name']" position="replace">
+                    <field name="amount"  />
+                </xpath>
+            </field>
+        </record>
+		<menuitem name="Check Log and Exchange" id="account_check_writing_custom.menu_check_log"
+		    action="account_check_writing_custom.action_check_log"
+			parent="account.menu_finance_reporting" groups="account_voucher_custom.group_account_expense_pay"
+			sequence="360" />
+
+        <!--journal entries form-->
+        <record model="ir.ui.view" id="account_move_form_ntc">
+            <field name="name">account.move.form.inhert</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account_custom.view_move_form1" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='analytic_completed']" position="replace">
+                    
+                </xpath>
+
+                <!--xpath expr="//button[@name='analytic']" position="replace">
+                    
+                </xpath-->
+            </field>
+        </record> 
+
+        <record model="ir.ui.view" id="account_move_budget_form_ntc">
+            <field name="name">account.move.budget.form.inhert</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account_budget_custom.view_move_form1" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='analytic']" position="replace">
+                    
+                </xpath>
+            </field>
+        </record>  
+
+        <record id="view_move_line_tree_inherit_ntc" model="ir.ui.view">
+            <field name="name">account.move.line.tree.inherit.ntc</field>
+            <field name="model">account.move.line</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="account.view_move_line_tree" />
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="partner_balance"  />
+                </field>
+            </field>
+        </record>
+
+        <record id="view_account_move_check_form_ntc" model="ir.ui.view">
+            <field name="name">account.move.check.form.ntc</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account_custom.view_move_form1" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="line_id"]/tree/field[@name="partner_id"]' position='after'>
+                    <field name="partner_balance"  />
+                </xpath>
+
+                <xpath expr='//field[@name="line_id"]/tree/field[@name="account_id"]' position='replace'>
+                    <field name="account_id" domain="[('journal_id','=',parent.journal_id)]" 
+                    on_change="change_account(account_id,parent.period_id)"/>
+                </xpath>
+		<xpath expr='//field[@name="line_id"]/tree/field[@name="currency_id"]' position='attributes'>
+                    <attribute name="groups"></attribute>
+                </xpath>
+                <xpath expr='//field[@name="line_id"]/tree/field[@name="amount_currency"]' position='attributes'>
+                    <attribute name="groups"></attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Bank Reconciliation -->
+		<!--record id="view_bank_statement_form_custom_ntc" model="ir.ui.view">
+			<field name="name">account.bank.statement.form</field>
+			<field name="model">account.bank.statement</field>
+			<field name="inherit_id" ref="account_bank_statement.view_bank_statement_form_custom" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='move_line_ids']" position="attributes">
+					<attribute name="domain">[('account_id','=',account_id),('statement_id', '=', False),('move_id.state','in',('posted','reversed','closed')),('date','&lt;=',date)]</attribute>
+				</xpath>
+            			<xpath expr="//field[@name='balance_start']" position="replace">
+					<field name="balance_start" string="Last Bank Balance"
+						widget="monetary" options='{"currency_field" : "currency"}' invisible="1"/>
+				</xpath>
+            </field>
+	</record-->
+
+		<!-- Bank Reconciliation >
+		<record id="view_bank_statement_form_custom_ntc" model="ir.ui.view">
+			<field name="name">account.bank.statement.form</field>
+			<field name="model">account.bank.statement</field>
+			<field name="inherit_id" ref="account_bank_statement_voucher.view_bank_statement_form_custom" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='move_line_ids']" position="attributes">
+					<attribute name="domain">[('account_id','=',account_id),('statement_id', '=', False),('move_id.state','in',('posted','reversed','closed')),('date','&lt;=',date)]</attribute>
+				</xpath>
+				<xpath expr="//button[@name='button_confirm_bank']" position="after">
+                    			<button name="button_close_bank" type="object" string= "Close" 
+					attrs="{'invisible':[('state', '!=', 'confirm')]}"
+                     			groups="account_ntc.group_account_bank_statement_close"/>
+				</xpath>
+                		<xpath expr="//button[@name='button_cancel']" position="attributes">
+					<attribute name="attrs">{'invisible':[('state', '=', 'draft')]}</attribute>
+				</xpath>
+                		<xpath expr="//field[@name='date']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state', '!=', 'draft')]}</attribute>
+                    		<attribute name="required">True</attribute>
+				</xpath>
+                		<xpath expr="//field[@name='balance_end_real']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state', '!=', 'draft')]}</attribute>
+				</xpath>
+            			<xpath expr="//field[@name='balance_start']" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_ids']/tree/field[@name='analytic_account_id']" position="attributes">
+                      			<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_ids']/tree/field[@name='account_id']" position="attributes">
+                      			<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_ids']/tree/field[@name='partner_id']" position="attributes">
+                      			<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_ids']/tree/field[@name='voucher_id']" position="attributes">
+                      			<attribute name="invisible">True</attribute>
+				</xpath>
+				<xpath expr="//field[@name='line_ids']/tree/button[@name='create_voucher']" position="attributes">
+                      			<attribute name="invisible">True</attribute>
+				</xpath>
+            		</field>
+		</record-->
+
+        <record model="ir.ui.view" id="account_fiscalyear_budget_view_form">
+			<field name="name">account.fiscalyear.budget.view.form</field>
+			<field name="model">account.fiscalyear.budget</field>
+            <field name="inherit_id" ref="account_budget_custom.account_fiscalyear_budget_view_form" />
+            <field name="type">form</field>
+			<field name="arch" type="xml">
+                <xpath expr="//field[@name='fiscalyear_id']" position="after">
+					<field name="budget_classification" widget="selection" 
+                    on_change="change_class(budget_classification,account_fiscalyear_budget_line)"/>"
+				</xpath>
+            </field>
+		</record>
+
+	<record id="view_account_journal_form" model="ir.ui.view">
+            <field name="name">account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form" />
+            <field name="arch" type="xml">
+                <field name="type" />
+                <field name="sequence_id" position="before">
+                    <field name="invoice_sequence_id" />
+                </field>
+            </field>
+        </record>
+        <record id="view_account_analytic_account_form" model="ir.ui.view">
+			<field name="name">account.analytic.account.inherit</field>
+			<field name="model">account.analytic.account</field>
+			<field name="inherit_id" ref="account_budget_custom.view_account_analytic_account_form" />
+			<field name="arch" type="xml">
+			<xpath expr="//page[@name='contract_page']" position="before">
+                    	    <page string="Groups">
+				<field name="group_ids" groups="account.group_account_manager" 
+                                       help="Use this field to give read access to this analytic account in some accounting reports"/>
+                    	    </page>
+                	</xpath>
+			<xpath expr="//field[@name='manager_id']" position="after">
+                    		<field name="revenue" />
+                	</xpath>
+			</field>
+	</record>  
+
+	<record id="account_check_print_wizard_view" model="ir.ui.view">
+			<field name="name">Print Checks</field>
+			<field name="model">account.check.print.wizard</field>
+			<field name="inherit_id" ref="account_check_writing_custom.account_check_print_wizard_view" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='new_no']" position="attributes">
+					<attribute name="widget">char_domain</attribute>
+				</xpath>
+				<xpath expr="//button[@name='do_delete']" position="replace">
+                    			<button name="cancel_check" string="Cancel Check"
+                     				states="printed" type="object" />				
+                		</xpath>
+                		<xpath expr="//button[@name='reprint_new']" position="attributes">
+                    			<attribute name="invisible">True</attribute>			
+                		</xpath>
+                	</field>
+	</record>
+
+	<record id="view_account_fiscalyear_form" model="ir.ui.view">
+			<field name="name">account.fiscalyear.form</field>
+			<field name="model">account.fiscalyear</field>
+			<field name="inherit_id" ref="account_custom_wafi.view_account_fiscalyear_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='state']" position="attributes">
+					<attribute name="statusbar_visible">draft,done</attribute>
+				</xpath>
+				<xpath expr="//button[@name='action_locked_temporarily']" position="attributes">
+					<attribute name="string">Close</attribute>
+                    			<attribute name="confirm">Are you sure you want to Close this year?</attribute>
+ 
+				</xpath>
+                		<xpath expr="//button[@name='action_locked_temporarily']" position="after">
+					<button name = "action_open" type="object" string ="Open" states="done"
+                        		confirm="Are you sure you want to ReOpen this year?" 
+                        		groups ="" />
+				</xpath>
+            		</field>
+	</record> 
+
+	<record id="view_account_form" model="ir.ui.view">
+			<field name="name">account.account.form</field>
+			<field name="model">account.account</field>
+			<field name="inherit_id" ref="account_custom_wafi.view_account_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='note']" position="after">
+					<field name="group_ids" groups="account.group_account_manager" 
+                           help="Use this field to give read access to specific in some accounting reports"/>
+				</xpath>
+			<xpath expr="//field[@name='reconcile']" position="after">
+					<field name="no_code"/>
+				</xpath>
+			<xpath expr="//field[@name='reconcile']" position="after">
+					<field name="detialed"/>
+				</xpath>
+			<xpath expr="//field[@name='reconcile']" position="after">
+					<field name="bl_report"/>
+				</xpath>
+			<xpath expr="//field[@name='reconcile']" position="after">
+					<field name="with_value"/>
+				</xpath>
+				<xpath expr="//field[@name='reconcile']" position="after">
+					<field name="reserve"/>
+				</xpath>
+				 
+			
+			<xpath expr="//field[@name='code']" position="attributes">
+					<attribute name="attrs">{'required':[('no_code', '=',False)]}</attribute>
+ 
+				</xpath>
+
+			<xpath expr="//field[@name='company_id']" position="after">
+                    			<button name="check_accounts" type="object" string= "check account" 
+					/>
+				</xpath>
+			<xpath expr="//field[@name='company_id']" position="after">
+                    			<button name="check_accounts_all" type="object" string= "check account all" 
+					/>
+				</xpath>
+			</field>
+	</record>   
+
+
+	<record model="ir.ui.view" id="view_company_form_type_inherit">
+			<field name="name">res.company.form.type.inherit</field>
+			<field name="model">res.company</field>
+			<field name="inherit_id" ref="base.view_company_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+ 
+			<xpath expr="//field[@name='parent_id']" position="after">
+					<field name="type"  colspan="2" />
+			</xpath>
+			<xpath expr="//field[@name='parent_id']" position="after">
+					<field name="out_budget"  colspan="2" />
+			</xpath>
+
+ 
+			</field>
+
+	</record>               
+             
+    </data>
+</openerp>

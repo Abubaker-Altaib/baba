@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+	<!-- Activities -->
+        <record id="act_send_to_purchase" model="workflow.activity">
+            <field name="wkf_id" ref="stock.wkf_picking"/>
+            <field name="name">send_to_purchase</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'in_progress'})</field>
+        </record>
+
+        <record id="act_goods_recieved" model="workflow.activity">
+            <field name="wkf_id" ref="stock.wkf_picking"/>
+            <field name="name">goods_recieved</field>
+            <field name="kind">function</field>
+            <field name="action">goods_recieved()</field>
+        </record>
+      
+	<!-- Transitions -->
+	
+
+	<record id="trans_confirmed_send_to_purchase" model="workflow.transition">
+	    <field name="act_from" ref="stock.act_confirmed"/>
+	    <field name="act_to" ref="act_send_to_purchase"/>
+	    <field name="signal">send_to_purchase</field>
+	</record>
+
+
+   <record id="trans_send_to_purchase_confirmed" model="workflow.transition">
+	    <field name="act_from" ref="act_send_to_purchase"/>
+	    <field name="act_to" ref="stock.act_confirmed"/>
+	    <field name="signal">goods_recieved</field>
+	</record>
+
+
+	
+
+      
+    </data>
+</openerp>
+
+

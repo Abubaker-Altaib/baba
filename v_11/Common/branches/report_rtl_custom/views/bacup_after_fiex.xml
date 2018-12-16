@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+        <template id="style">
+            .container{
+                direction: rtl !important;
+                text-align: rtl;
+            }
+            .pull-right{
+                float: left !important;
+            }
+            .header .text-right{
+                float: left !important;
+                text-align: left !important;
+            }
+            .footer .text-right{
+                float: left !important;
+                text-align: left !important;
+            }
+            
+        </template>
+        
+        <template id="html_container" inherit_id="web.html_container">
+            
+            <xpath expr="//t[@t-set='body_classname']" position="replace">
+                <t t-set="body_classname" t-value="'container '+lang_direction"/>
+            </xpath>
+        </template>
+        
+        <template id="minimal_layout" inherit_id="web.minimal_layout">
+
+            <xpath expr="//body" position="attributes">
+                <attribute name="class"></attribute>     
+                <attribute name="t-att-class">'container ' + lang_direction</attribute>      
+            </xpath>
+            <xpath expr="//t[@t-call-assets='web.report_assets_common']" position="after">
+                <link t-if="lang_direction == 'rtl'" rel="stylesheet" href="/report_rtl/static/src/css/bootstrap-rtl.min.css"/>
+                <link t-if="lang_direction == 'rtl'" rel="stylesheet" href="/report_rtl/static/src/css/rtl.css"/>
+                <style t-if="lang_direction == 'rtl'">
+                    <t t-call="report_rtl.style"/>
+                </style>
+
+                
+            </xpath>
+            
+            
+        </template>
+    </data>
+</openerp>

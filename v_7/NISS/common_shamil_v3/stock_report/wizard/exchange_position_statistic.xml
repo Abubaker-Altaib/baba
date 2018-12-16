@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="id_exchange_position_statistic_report_view" model="ir.ui.view">
+            <field name="name">exchange Position Statistic Report Wizard Form</field>
+            <field name="model">exchange.position.statistic</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+               <form string="Exchange Position Statistic Report Wizard" version="7.0">
+                    <separator string="exchange Position Statistic Report" colspan="4"/>
+
+                        <group>
+
+                        <group>
+                           
+                            <field name="type_pick"/>
+                            <field name="type"/>
+                            <field name="location_id"  domain="[('usage' , '=' , 'internal' )]"  required="True"/>
+                        </group>
+                        <group>
+
+                             <field name="from_date"/>
+                            <field name="to_date" />
+                            <!--field name="category_id" /-->
+                        </group>
+                        <group>
+                            <field name="department_id" />
+                             <field name="with_childern"   attrs="{'insivible' : [('department_id' , '=' , False)]}"/>
+                            <field name="company_id"/>
+                        </group>
+                        
+                        <group>
+
+                            <field name="product_id" />
+                            <field name="cat_id" />
+                            <field name="dept" />
+
+
+                        </group>
+                        
+                        </group>
+                    <footer>
+                      <button name="print_report" string="Print" type="object" icon="gtk-print" default_focus="1" class="oe_highlight" colspan="2"/>
+                        or
+            <button special="cancel" string="_Cancel" icon="gtk-cancel" class="oe_link" colspan="2"/>
+                            </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_exchange_position_statistic_report_wizard" model="ir.actions.act_window">
+            <field name="name">Action exchange Position Statistic Report Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">exchange.position.statistic</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="id_exchange_position_statistic_report_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem
+                icon="STOCK_PRINT"
+                name="Exchange Position Statistic Report"
+                parent="stock_report.menu_stock_Report"
+                action="action_exchange_position_statistic_report_wizard"
+                id="menu_exchange_position_statistic_report_wizard"
+                />
+
+    </data>
+</openerp>

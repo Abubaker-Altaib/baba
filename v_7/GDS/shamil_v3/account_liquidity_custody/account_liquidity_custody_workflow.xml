@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="wkf_account_liquidity_custody" model="workflow">
+            <field name="name">wkf.account.liquidity.custody</field>
+            <field name="osv">account.liquidity.custody</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_account_liquidity_custody_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_account_liquidity_custody"/>
+            <field name="flow_start"> True</field>
+            <field name="name">draft</field>
+			<field name="kind">function</field>
+            <field name="action">reset()</field>
+        </record>
+        <record id="wkf_account_liquidity_custody_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_account_liquidity_custody"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirm()</field>            
+        </record>
+        <record id="wkf_account_liquidity_custody_released" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_account_liquidity_custody"/>
+            <field name="name">release</field>
+            <field name="kind">function</field>
+            <field name="action">release()</field>
+            <field name="flow_stop">True</field>
+        </record>
+        <record id="wkf_account_liquidity_custody_trans_draft_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_account_liquidity_custody_draft"/>
+            <field name="act_to" ref="wkf_account_liquidity_custody_confirmed"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record id="wkf_account_liquidity_custody_trans_confirmed_released" model="workflow.transition">
+            <field name="act_from" ref="wkf_account_liquidity_custody_confirmed"/>
+            <field name="act_to" ref="wkf_account_liquidity_custody_released"/>
+			<field name="group_id" ref="group_account_liquidity_custody"/>
+            <field name="signal">release</field>
+        </record>
+	    <record id="wkf_account_liquidity_custody_trans_confirmed_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_account_liquidity_custody_confirmed"/>
+            <field name="act_to" ref="wkf_account_liquidity_custody_draft"/>
+            <field name="signal">reset</field>
+        </record>
+      </data>
+</openerp>
+

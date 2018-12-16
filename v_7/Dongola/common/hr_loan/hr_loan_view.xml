@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+       <!--record id="view_loan_filter" model="ir.ui.view">
+            <field name="name">loans</field>
+            <field name="model">hr.loan</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="loan">
+                    <field name="loan_limit"/>
+                    <field name="amount" />
+                    <field name="active"/>
+                </search>
+             </field>
+         </record-->
+       
+        <record model="ir.ui.view" id="loan_form_view">
+            <field name="name">hr.loan.form</field>
+            <field name="model">hr.loan</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Loans Names" version="7.0">
+					<header>
+	                    <button string="Confirme" name="confirmed" states="draft" class="oe_highlight" />
+	                    <button string="Approve" name="approved" states="confirmed" class="oe_highlight" />
+	                    <button string="Cancel" name="cancel" states="draft,confirmed,approved" class="oe_highlight" />
+	                    <button string="Set to Draft" name="set_to_draft" states="cancel" type="object"/>
+	                    <field name="state" widget="statusbar" statusbar_colors='{"cancel":"red"}'
+                                   statusbar_visible="draft,confirmed,approved,cancel"/>
+                    </header>
+                    <sheet>
+                        <group col="4" colspan="2">                      
+		                    <field name="name" />
+				            <field name="code" />
+
+
+				        <notebook colspan="4">
+		                    <page string="General Info" >
+                              <group col="4" colspan="2">                      
+		                    	<field name="loan_limit" />
+		                    	<field name="year_employment"/>
+
+				            	<field name="installment_type"/>
+		                    	<field name="amount" attrs="{'required':[('installment_type','=','fixed')],'invisible':[('installment_type','!=','fixed')]}"/> 
+
+				            	<field name="loan_type"/>
+  			                	<field name="refund_from"/>
+
+		                    	<field name="installment_no" attrs="{'invisible':[('refund_from','not in',('salary','both'))] , 'required':[('refund_from','!=',('addendum'))]}"/>
+						    	<field name="addendum_install_no" attrs="{'invisible':[('refund_from','not in',('addendum','both'))] , 'required':[('refund_from','!=',('salary'))]}"/>
+
+				            	<field name="addendum_percentage" attrs="{'invisible':[('refund_from','!=','both')], 'required':[('refund_from','=','both')]}"/>
+		                    	<field name="adden_percentage_from" attrs="{'invisible':[('refund_from','!=','both')],'required':[('refund_from','=','both')]}" />
+
+				            	<field name="remission_type"/>
+				            	<field name="remission"  attrs="{'invisible':[('remission_type','=','no')]}"/>
+
+
+				        		<field name="change_installment_no"/>
+				        		<field name="allow_interference" attrs="{'invisible':[('loan_limit','=','one')]}"/>
+				        		<field name="change_defult"/>
+				        		<field name="active"/>
+                              </group>
+		                    </page>
+		                    <page string="Company" groups="base.group_multi_company">
+		                         <field name="company_ids"  nolabel="1" />
+		                    </page>
+		                    <page string="Based on Salary" attrs="{'invisible':[('installment_type','=','fixed')]}">
+                                <group>
+		                            <field colspan="4" name="allowances_id" attrs="{'required':[('installment_type','=','salary')]}"/>
+		                            <field name="factor" attrs="{'required':[('installment_type','=','salary')]}"/>
+                                </group>
+		                    </page>
+		                    <page string="Addendums" attrs="{'invisible':[('refund_from','=','salary')]}">
+		                    	<label   colspan="4" string="If you add addendum/s this loan will be detucted from addendum instead of salary."/>
+		                          <field name="addendum_ids" nolabel="1" attrs="{'required':[('refund_from','!=','salary')]}"/>
+		                    </page>
+		                    <page string="Degrees">
+		                          <field name="degree_ids" nolabel="1"/>
+		                    </page>
+		                    <page string="Accounts Configration">
+                            <group col="4" colspan="2">
+		                         <field name="loan_account_id"/>
+					<field name="loan_remission_account_id" 
+                           attrs="{'required':[('remission_type','!=','no')], 'invisible':[('remission_type','=','no')]}"/>
+					 <!--field name="loan_account_analytic_id"/-->
+		                   <newline/>
+		                        <!--field name="loan_journal_id"/-->
+                            </group>
+		                   </page>
+		                   <page string="Comments" >
+		                       <field colspan="4" name="comments" nolabel="1"/>
+		                   </page>
+		                </notebook>
+                            </group>
+                        </sheet>
+                    </form>
+                </field>
+            </record>
+
+            <record model="ir.ui.view" id="loan_tree_view">
+                <field name="name">hr.loan.tree</field>
+                <field name="model">hr.loan</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                    <tree string="Loans Names">
+			 <field name="code" />
+                        <field name="name"/>
+			<field name="refund_from"/>
+			<field name="loan_account_id"/>
+			<field name="comments"/>
+			<field name="active"/>
+			 <field name="state" />
+                    </tree>
+                </field>
+            </record>   
+
+            <record id="loan_tree" model="ir.actions.act_window">
+		         <field name="name">Loans Names</field>
+			 <field name="res_model">hr.loan</field>
+			 <field name="view_type">form</field>
+			 <field name="view_mode">tree,form</field>
+			 <field name="view_id" ref="loan_tree_view"/>
+	    </record>   
+
+
+          <record id="hr_inherit_company_policy" model="ir.ui.view">
+            <field name="name">res.company</field>
+            <field name="model">res.company</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="hr_custom.hr_employee_types"/>
+            <field name="arch" type="xml">
+            	<xpath expr='//page[@string="HR Settings"]' position="inside" version="7.0"> 
+			<group col="2" colspan="2" string="Loan Policy">
+                              <field name="max_employee"  colspan="2"/>
+                              <field name="max_department" colspan="2"/>
+                              <field name="allowed_number" colspan="2"/>
+                        </group> 
+                        <group string="Comments">
+	                      <field name="comments" colspan="4"  nolabel="1" />
+	                </group>       
+                </xpath>
+                  
+            </field>
+          </record> 
+
+         <record id="hr_loan_policy_view" model="ir.ui.view">
+            <field name="name">res.company</field>
+            <field name="model">res.company</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+            <form string="Company" version="7.0">
+            	<sheet>
+                	<h1>
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                        <notebook colspan="4">
+                        	<page string="HR Settings">
+					<group col="2" colspan="2" string="Loan Policy">
+                              			<field name="max_employee"  colspan="2"/>
+                             			<field name="max_department" colspan="2"/>
+                                                <field name="allowed_number" colspan="2"/>
+                       			</group> 
+                        		<group string="Comments">
+	                      			<field name="comments" colspan="4"  nolabel="1" />
+	                		</group>
+                                </page>
+                        </notebook> 
+                </sheet> 
+            </form>     
+            </field>
+          </record> 
+
+           <record id="action_loan_policy" model="ir.actions.act_window">
+            <field name="name">Companies Loan Policy</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.company</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" eval="False"/>
+            <field name="target">current</field>
+        </record>
+
+          <record id="action_loan_policy_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="base.view_company_tree"/>
+            <field name="act_window_id" ref="action_loan_policy"/>
+        </record>
+
+        <record id="action_loan_policy_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_loan_policy_view"/>
+            <field name="act_window_id" ref="action_loan_policy"/>
+        </record>
+
+          <menuitem id="hr.menu_hr_configuration" name="Configuration" parent="hr.menu_hr_root" groups="base.group_hr_manager,hr_payroll_custom.group_payroll_user,base.group_loan_user" sequence="50"/>
+          <menuitem id="loan_menu" name="Loans"  parent="hr.menu_hr_configuration" groups="base.group_loan_user"/>
+	  <menuitem id="loan_names_tree_menu" name="Loan Name" parent="loan_menu" action="loan_tree" groups="base.group_loan_user"/>
+          <menuitem id="loan_policy_tree_menu" name="Loan Policy" parent="loan_menu" action="action_loan_policy" groups="base.group_loan_user"/>   
+ 
+
+    </data>
+</openerp>

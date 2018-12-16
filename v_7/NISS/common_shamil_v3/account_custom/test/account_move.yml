@@ -1,0 +1,273 @@
+
+-
+  I Check the workflow with out analytic check ----->
+-
+  
+- 
+  Creating a account.account parent record 
+- 
+  !record {model: account.account, id: account_account_expense0}:
+    code: '110000'
+    company_id: base.main_company
+    currency_mode: current
+    level: 3
+    name: Expense Account
+    parent_left: 31
+    parent_right: 32
+    type: view
+    user_type: account.data_account_type_expense 
+    
+- 
+  Creating a account.account child1 record
+- 
+  !record {model: account.account, id: account_account_expense_child1}:
+    code: '11000001'
+    company_id: base.main_company
+    currency_mode: current
+    level: 3
+    name: Child1 Expense Account
+    parent_left: 31
+    parent_right: 32
+    parent_id: account_account_expense0 
+    type: other
+    user_type: account.data_account_type_expense 
+    
+- 
+  Creating a account.account child2 record
+- 
+  !record {model: account.account, id: account_account_expense_child2}:
+    code: '110000002'
+    company_id: base.main_company
+    currency_mode: current
+    level: 3
+    name: Child2 Expense Account
+    parent_left: 31
+    parent_right: 32
+    parent_id: account_account_expense0 
+    type: other
+    user_type: account.data_account_type_expense 
+        
+- 
+  Creating a account.move record 1
+- 
+  !record {model: account.move, id: account_move_1}:
+    balance: 0.0
+    date: '2013-01-08'
+    journal_id: account.expenses_journal
+    line_id:
+      - account_id: account.a_pay
+        amount_currency: 0.0
+        analytic_account_id: account.analytic_administratif
+        analytic_lines:
+          - account_id: account.analytic_administratif
+            amount: 100.0
+            amount_currency: 0.0
+            date: '2013-01-08'
+            general_account_id: account_account_expense_child1
+            journal_id: account.exp
+            name: test move
+            unit_amount: 0.0
+            user_id: base.user_admin
+        credit: 100.0
+        date: '2013-01-08'
+        journal_id: account.expenses_journal
+        name: test move
+        partner_id: base.res_partner_desertic_hispafuentes
+        period_id: account.period_1
+        quantity: 0.0
+        state: valid
+        tax_amount: 0.0
+      - account_id: account_account_expense_child2
+        amount_currency: 0.0
+        analytic_account_id: account.analytic_administratif
+        analytic_lines:
+          - account_id: account.analytic_administratif
+            amount: -100.0
+            amount_currency: 0.0
+            date: '2013-01-08'
+            general_account_id: account_account_expense_child1
+            journal_id: account.exp
+            name: test move
+            unit_amount: 0.0
+            user_id: base.user_admin
+        date: '2013-01-08'
+        debit: 100.0
+        journal_id: account.expenses_journal
+        name: test move
+        period_id: account.period_1
+        quantity: 0.0
+        state: valid
+        tax_amount: 0.0
+    name: /
+    partner_id: base.res_partner_desertic_hispafuentes
+    period_id: account.period_1
+    state: draft
+    
+        
+- 
+  Creating a account.move record 2
+- 
+  !record {model: account.move, id: account_move_2}:
+    balance: 0.0
+    date: '2013-01-08'
+    journal_id: account.expenses_journal
+    line_id:
+      - account_id: account.a_pay
+        amount_currency: 0.0
+        analytic_account_id: account.analytic_administratif
+        analytic_lines:
+          - account_id: account.analytic_administratif
+            amount: 100.0
+            amount_currency: 0.0
+            date: '2013-01-08'
+            general_account_id: account_account_expense_child1
+            journal_id: account.exp
+            name: test move
+            unit_amount: 0.0
+            user_id: base.user_admin
+        credit: 100.0
+        date: '2013-01-08'
+        journal_id: account.expenses_journal
+        name: test move
+        partner_id: base.res_partner_desertic_hispafuentes
+        period_id: account.period_1
+        quantity: 0.0
+        state: valid
+        tax_amount: 0.0
+      - account_id: account_account_expense_child2
+        amount_currency: 0.0
+        analytic_account_id: account.analytic_administratif
+        analytic_lines:
+          - account_id: account.analytic_administratif
+            amount: -100.0
+            amount_currency: 0.0
+            date: '2013-01-08'
+            general_account_id: account_account_expense_child1
+            journal_id: account.exp
+            name: test move
+            unit_amount: 0.0
+            user_id: base.user_admin
+        date: '2013-01-08'
+        debit: 100.0
+        journal_id: account.expenses_journal
+        name: test move
+        period_id: account.period_1
+        quantity: 0.0
+        state: valid
+        tax_amount: 0.0
+    name: /
+    partner_id: base.res_partner_desertic_hispafuentes
+    period_id: account.period_1
+    state: draft
+    
+    
+   
+-
+  I check that Initially account move is in the "Draft" state
+-
+  !assert {model: account.move, id: account_move_1}:
+    - state == 'draft', 'state is not draft'
+
+
+-
+  I change the state of move to "Completed" by clicking Complete button
+-
+  !workflow {model: account.move, action: completed, ref: account_move_1}
+
+  
+-
+  I check that account move is in the "Completed" state
+-
+  !assert {model: account.move, id: account_move_1}:
+    - state == 'completed', 'state is not completed'
+
+
+-
+  I change the state of move to "Closed" by clicking Close button
+-
+  !workflow {model: account.move, action: closed, ref: account_move_1}
+  
+-
+  I check that account move is in the "Closed" state
+-
+  !assert {model: account.move, id: account_move_1}:
+    - state == 'closed', 'state is not close'
+
+
+-
+  I change the state of move to "Posted" by clicking Post button
+-
+  !workflow {model: account.move, action: post, ref: account_move_1}
+
+-
+  I check that account move is in the "Posted" state
+-
+  !assert {model: account.move, id: account_move_1}:
+    - state == 'posted', 'state is not post'
+
+-
+  I Check the workflow with analytic check ----->
+-
+
+   
+-
+  I check that Initially account move is in the "Draft" state
+-
+  !assert {model: account.move, id: account_move_2}:
+    - state == 'draft', 'state is not draft'
+
+
+-
+  I change the state of move to "analytic" by clicking Complete button
+-
+  !workflow {model: account.move, action: completed, ref: account_move_2}
+
+  
+-
+  I check that account move is in the "analytic" state
+-
+  !assert {model: account.move, id: account_move_2}:
+    - state == 'analytic', 'state is not analytic'
+
+
+-
+  I change the state of move to "Completed" by clicking analytic Complete button
+-
+  !workflow {model: account.move, action: analytic_completed, ref: account_move_2}
+  
+-
+  I check that account move is in the "Completed" state
+-
+  !assert {model: account.move, id: account_move_2}:
+    - state == 'completed', 'state is not completed'
+
+
+-
+  I change the state of move to "Closed" by clicking Close button
+-
+  !workflow {model: account.move, action: closed, ref: account_move_2}
+  
+-
+  I check that account move is in the "Closed" state
+-
+  !assert {model: account.move, id: account_move_2}:
+    - state == 'closed', 'state is not closed'
+
+
+-
+  I change the state of move to "Posted" by clicking Post button
+-
+  !workflow {model: account.move, action: post, ref: account_move_2}
+
+-
+  I check that account move is in the "Posted" state
+-
+  !assert {model: account.move, id: account_move_2}:
+    - state == 'posted', 'state is not post'
+    
+    
+-
+  Reverse wizard test
+-
+  !python {model: account.move}: |
+     self.reverse(cr, uid, [ref("account_move_1")], context={})

@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<document filename="Detailed Account Statement.pdf">
+
+  <template pageSize="(595.0,842.0)" title="Not Delivered Checks and Exchanges" author="NCTR" allowSplitting="20">
+    <pageTemplate id="first">
+      	<frame id="first" x1="28.0" y1="28.0" width="539" height="786"/>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+    <blockTableStyle id="Table2">
+      <blockAlignment value="CENTER" />
+      <lineStyle kind="GRID" colorName="#0E0C0C" />
+      <blockValign value="CENTER" />
+      <blockTopPadding length="8" />
+      <blockBottomPadding length="4" />
+    </blockTableStyle>
+
+
+
+    <initialize>
+      <paraStyle name="all" alignment="justify" />
+    </initialize>
+    <paraStyle name="Main_header" fontName="Helvetica-Bold"
+      fontSize="16.0" alignment="CENTER" spaceBefore="0.0" spaceAfter="20.0" />
+    <paraStyle name="P3" fontName="Helvetica-Bold" fontSize="10.0" alignment="CENTER" />
+    <paraStyle name="P2" fontName="Helvetica" fontSize="10.0" alignment="CENTER"  />
+   
+    <images />
+  </stylesheet>
+     <images/>
+
+    
+	<story>
+    <para> <font color="white"> </font> </para>
+  
+    
+    <para style="Main_header" leftIndent="60">[[ data['form']['journal_type']=='bank' and 'تقرير الشيكات التى لم يتم استلامها' or data['form']['journal_type']=='cash' and 'تقرير الأذونات التى لم تصرف' or '/' ]]</para>
+
+    <para> <font color="white"> </font> </para>
+    <para> <font color="white"> </font> </para>
+
+    <blockTable colWidths="120.0,100.0,230.0,70.0,40.0" style="Table2">
+      <tr>  
+        <td>
+          <para style="P3" leftIndent="10">المبلغ المدفوع</para>
+        </td>
+
+        <td>
+          <para style="P3" leftIndent="10">تاريخ الإستحقاق</para>
+        </td>
+        <td>
+          <para style="P3" leftIndent="5">المستفيد</para>
+        </td>
+        <td>
+          <para style="P3" leftIndent="5">الرقم</para>
+        </td>
+        <td>
+          <para style="P3" leftIndent="5">#</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+            <para style="P2">[[ repeatIn(line(data),'check') ]][[ formatLang(check['amount']) or '0.0' ]]</para>
+        </td>
+        <td>
+          <para style="P2">[[ formatLang(check['date'] , date=True) or check['date'] or '/' ]]</para>
+        </td>
+        <td>
+          <para style="P2" >[[ check['partner'] or '/']]</para>
+        </td>
+        <td>
+          <para style="P2" >[[ check['check_no'] or '/']]</para>
+        </td>
+        <td>
+          <para style="P2"><seq id="L1"/></para>
+        </td>
+      </tr>
+      
+    </blockTable>
+    <blockTable colWidths="120.0,440" style="Table2">
+      <tr>
+        <td>
+          <para style="P3">[[ formatLang(total(data)) or '0.0' ]]</para>
+        </td>
+        <td>
+          <para style="P3">الإجمالى</para>
+        </td>
+      </tr>
+    </blockTable>
+    <para>
+      <seqReset id="L1" />
+    </para>
+
+  </story>
+</document>
+
+	

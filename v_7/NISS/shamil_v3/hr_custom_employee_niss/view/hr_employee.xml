@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+
+		<record id="view_employee_form_niss_inherit2" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="priorty" >20</field>
+			<field name="inherit_id" ref="hr_custom.view_employee_form_inherit" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="otherid"]' position="replace" />
+				<xpath expr='//field[@name="emp_code"]' position="after">
+					<field name="otherid" attrs="{'readonly':[('state','not in', ('draft'))]}"/>
+			        <field name="curr_uid" invisible="1"/>
+			        <field name="curr_uid_hr" invisible="1"/>
+			    </xpath>
+				<xpath expr='//page[@string="HR Settings"]' position="attributes">
+			   	 	<attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute>
+				</xpath>
+				<xpath expr='//page[@string="Qualifications"]' position="attributes">
+			   	 	<attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute>
+				</xpath>
+				<xpath expr='//page[@string="Family Relations"]' position="attributes">
+			   	 	<attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute>
+				</xpath>
+				<xpath expr='//page[@string="Analytic"]' position="attributes">
+			   	 	<attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute>
+				</xpath>
+				<xpath expr='//page[@string="Personal Information"]' position="attributes">
+			   	 	<attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute>
+				</xpath>
+
+				<xpath expr='//button[@name="experiment"]' position="attributes">
+			   	 	<attribute name="groups">base.group_hr_user,hr_custom_military.hr_emp_data_entery</attribute>
+				</xpath>
+				<xpath expr='//button[@name="approve"]' position="attributes">
+			   	 	<attribute name="groups">base.group_hr_user,hr_custom_military.hr_emp_data_entery</attribute>
+				</xpath>
+				<xpath expr='//button[@name="refuse"]' position="attributes">
+			   	 	<attribute name="groups">base.group_hr_user,hr_custom_military.hr_emp_data_entery</attribute>
+				</xpath>
+				<xpath expr='//button[@name="set_to_draft"]' position="attributes">
+			   	 	<attribute name="groups">base.group_hr_user,hr_custom_military.hr_emp_data_entery</attribute>
+				</xpath>
+
+			</field>
+		</record>
+
+		<record id="view_employee_form_niss_inherit" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="priorty" >20</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_employee_form_inherit2" />
+			<field name="arch" type="xml">
+				
+				<xpath expr='//field[@name="name"]' position="after">
+			        <field name="curr_uid" invisible="1"/>
+			        <field name="curr_uid_hr" invisible="1"/>
+			    </xpath>
+				<xpath expr='//page[@string="Employee Salary"]' position="attributes">
+			   	 	<attribute name="attrs">{'invisible': [('curr_uid','=',False),('curr_uid_hr','=',False)]}</attribute>
+				</xpath>
+				
+
+			</field>
+		</record>
+
+		
+
+
+</data>
+
+</openerp>

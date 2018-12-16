@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data noupdate="0">
+
+
+		<record id="fuel_category" model="ir.module.category">
+			<field name="name">Fuel</field>
+		</record>
+
+		<!--record id="group_fuel_financial_oc" model="res.groups">
+			<field name="name">Financial Fuel Officer/OC</field>
+			<field name="category_id" ref="fuel_category" />
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root')])]"/>
+		</record-->
+		<record id="group_fuel_set_to_draft" model="res.groups">
+            <field name="name">Fuel Set To Draft</field>
+            <field name="implied_ids" eval="[(4, ref('admin_affairs.group_fleet_employee'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="category_id" ref="fuel_category"/>
+        </record>
+
+		<record id="group_fuel_financial_hq" model="res.groups">
+			<field name="name">Financial Fuel Officer/HQ</field>
+			<field name="category_id" ref="fuel_category" />
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root')])]"/>
+		</record>
+		<record id="group_fuel_pump_hq" model="res.groups">
+			<field name="name">Pump Fuel Officer/HQ</field>
+			<field name="category_id" ref="fuel_category" />
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root')])]"/>
+		</record>
+		
+		<record id="group_fuel_officer" model="res.groups">
+			<field name="name">Fuel Division Officer/HQ</field>
+			<field name="category_id" ref="fuel_category" />
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<field name="implied_ids" eval="[(4, ref('admin_affairs.group_fleet_employee'))]"/>
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root')])]"/>
+		</record>
+		
+		<record id="group_fuel_manager" model="res.groups">
+			<field name="name">Fuel Division Manager/HQ</field>
+			<field name="category_id" ref="fuel_category" />
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<!--field name="implied_ids" eval="[(4, ref('group_fuel_officer'))]"/-->
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root')])]"/>
+		</record>
+
+		<record id="group_fuel_officer_oc" model="res.groups">
+			<field name="name">Fuel Division Officer/OC</field>
+			<field name="category_id" ref="fuel_category" />
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<field name="implied_ids" eval="[(4, ref('admin_affairs.group_fleet_employee'))]"/>
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root')])]"/>
+		</record>
+
+		<record id="group_fuel_manager_oc" model="res.groups">
+			<field name="name">Fuel Division Manager/OC</field>
+			<field name="category_id" ref="fuel_category" />
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<!--field name="implied_ids" eval="[(4, ref('group_fuel_officer_oc'))]"/-->
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root')])]"/>
+		</record>
+
+		<record id="group_fuel_report" model="res.groups">
+			<field name="name">Fuel Report</field>
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root')])]"/>
+			<field name="category_id" ref="fuel_category" />
+		</record>
+
+		<record id="group_fuel_config" model="res.groups">
+			<field name="name">Fuel Configuration</field>
+			<field name="category_id" ref="fuel_category" />
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<field name="menu_access" eval="[(6,0,[ref('fleet.menu_root'),ref('fleet.fleet_configuration')])]"/>
+		</record>
+
+		<record id="admin_it_fuel" model="res.groups">
+			<field name="name">Admin IT/Fuel</field>
+			<field name="category_id" ref="fuel_category" />
+			<field name="users" eval="[(4, ref('base.user_root'))]"/>
+			<field name="implied_ids" eval="[(4, ref('group_fuel_set_to_draft')),(4, ref('group_fuel_financial_hq')),(4, ref('group_fuel_pump_hq')),(4, ref('group_fuel_officer')),(4, ref('group_fuel_manager')),(4, ref('group_fuel_officer_oc')),(4, ref('group_fuel_manager_oc')),(4, ref('group_fuel_report')),(4, ref('group_fuel_config'))]"/>
+		</record>
+
+
+	</data>
+
+	<data >
+		
+		<record id="vehicle_place_rule" model="ir.rule">
+            <field name="name">vehicle Place Rules For Fuels Group</field>
+            <field model="ir.model" name="model_id" ref="admin_affairs.model_vehicle_place"/>
+            <!--field name="domain_force">[('is_maintenance_location','=',True)]</field-->
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('group_fuel_officer'),ref('group_fuel_manager'),ref('group_fuel_officer_oc'),ref('fuel_management.group_fuel_report')])]" name="groups"/>
+			<field eval="0" name="perm_unlink"/>
+			<field eval="0" name="perm_write"/>
+			<field eval="1" name="perm_read"/>
+			<field eval="0" name="perm_create"/>
+        </record>
+
+        <!-- fuel.amount  -->
+		<record id="fuel_amount_user" model="ir.rule">
+			<field name="name">Fuel Amount user</field>
+			<field model="ir.model" name="model_id" ref="model_fuel_amount"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<!-- fuel.distance.amount  -->
+		<record id="fuel_distance_amount_user" model="ir.rule">
+			<field name="name">Fuel Distance Amount user</field>
+			<field model="ir.model" name="model_id" ref="model_fuel_distance_amount"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<!-- fuel.distance  -->
+		<record id="fuel_distance_user" model="ir.rule">
+			<field name="name">Fuel Distance user</field>
+			<field model="ir.model" name="model_id" ref="model_fuel_distance"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<!-- additional.fuel.purpose  -->
+		<record id="additional_fuel_purpose_user" model="ir.rule">
+			<field name="name">Additional Fuel Purposes user</field>
+			<field model="ir.model" name="model_id" ref="model_additional_fuel_purpose"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<!-- fuel.plan  -->
+		<record id="fuel_plan_user" model="ir.rule">
+			<field name="name">Fuel Plan user</field>
+			<field model="ir.model" name="model_id" ref="model_fuel_plan"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<!-- fuel.qty.line  -->
+		<record id="fuel_qty_line_user" model="ir.rule">
+			<field name="name">Fuel Qty Line user</field>
+			<field model="ir.model" name="model_id" ref="model_fuel_qty_line"/>
+			<field name="domain_force">['|','|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False),('share','=',True)]</field>
+		</record>
+
+
+		<!-- product.product  -->
+		<record id="product_product_user" model="ir.rule">
+			<field name="name">Product Fuel user</field>
+			<field model="ir.model" name="model_id" ref="product.model_product_product"/>
+			<field name="domain_force">[('fuel_ok','=',1)]</field>
+			<field name="groups" eval="[(4, ref('fuel_management.group_fuel_config')),(4, ref('fuel_management.group_fuel_pump_hq')),(4, ref('fuel_management.group_fuel_financial_hq')),(4, ref('admin_affairs.group_fleet_employee')),(4, ref('fuel_management.group_fuel_officer_oc'))]"/>
+		</record>
+
+		<!-- outgoing fuel type  -->
+		<record id="outgoing_fuel_type_user" model="ir.rule">
+			<field name="name">outgoing fuel type</field>
+			<field model="ir.model" name="model_id" ref="model_outgoing_fuel_type"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<!-- fuel delegate  -->
+		<record id="fuel_delegate_user" model="ir.rule">
+			<field name="name">fuel_delegate</field>
+			<field model="ir.model" name="model_id" ref="model_fuel_delegate"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<!--additional fuel Access Rule-->
+		<record id="add_fuel_rule" model="ir.rule">
+			<field name="name">additional fuel rule</field>
+			<field model="ir.model" name="model_id" ref="model_additional_fuel"/>
+			<field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+		</record>
+
+		<record id="add_fuel_groups_rule" model="ir.rule">
+			<field name="name">additional fuel rule</field>
+			<field model="ir.model" name="model_id" ref="model_additional_fuel"/>
+			<field name="domain_force">[(1,'=',1)]</field>
+			<field name="groups" eval="[(4,ref('group_fuel_officer')), (4,ref('group_fuel_manager')), (4,ref('group_fuel_officer_oc')), (4,ref('group_fuel_manager_oc')),(4,ref('group_fuel_set_to_draft'))]"/>
+		</record>
+
+		<record id="fleet_vehicle_fuel_user" model="ir.rule">
+			<field name="name">Fleet Fuel user</field>
+			<field model="ir.model" name="model_id" ref="fleet.model_fleet_vehicle"/>
+			<field name="domain_force">[(1,'=',1)]</field>
+			<field name="groups" eval="[(4,ref('group_fuel_officer')), (4,ref('group_fuel_manager')), (4,ref('group_fuel_officer_oc')),(4,ref('group_fuel_manager_oc')),(4,ref('group_fuel_set_to_draft'))]"/>
+		</record>
+
+		<!--fuel stop reasons Access Rule-->
+		<record id="fuel_stop_reason" model="ir.rule">
+			<field name="name">fuel stop reason</field>
+			<field model="ir.model" name="model_id" ref="model_fuel_stop_reasons"/>
+			<field name="domain_force">['|','|',('company_id','=',False),('company_id','child_of',[user.company_id.id]),('company_id','in',[g.id for g in user.company_ids])]
+			</field>
+		</record>
+
+	</data>
+</openerp>

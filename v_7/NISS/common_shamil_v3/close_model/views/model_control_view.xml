@@ -1,0 +1,58 @@
+<openerp>
+    <data>
+        <record id="view_model_control_tree" model="ir.ui.view">
+            <field name="name">model_control.tree</field>
+            <field name="model">model_control</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Model Control Configurations" version="7.0">
+                    <field name="name"/>
+                    <field name="is_active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_model_control_form" model="ir.ui.view">
+            <field name="name">model_control.form</field>
+            <field name="model">model_control</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Model Control Configuration" version="7.0">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="is_active"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+
+                        <notebook>
+                            <page string="Details">
+                                <group>
+                                    <field name="lines_ids" nolabel="1">
+                                        <tree editable="top">
+                                            <field name="model_id"/>
+                                            <field name="read"/>
+                                            <field name="write"/>
+                                            <field name="create"/>
+                                            <field name="unlink"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_model_control_form" model="ir.actions.act_window">
+            <field name="name">Model Control</field>
+            <field name="res_model">model_control</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem name="Model Control Configuration" id="menu_action_model_control_main"/>
+        <menuitem name="Model Control Configuration" id="menu_action_model_control_sub" parent="menu_action_model_control_main"/>
+        <menuitem name="Model Control Configuration Processes" action="action_model_control_form" id="menue_action_model_control_form" parent="menu_action_model_control_sub"/>
+    </data>
+</openerp>

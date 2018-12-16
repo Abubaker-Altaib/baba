@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="payroll_scale_view_inherit">
+			<field name="name">hr.salary.scale.view.inherit</field>
+			<field name="model">hr.salary.scale</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_salary_scale_form"/>
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="employee_type"]' position="after" version="7.0">
+					<field name="military_type" required="1"/>
+				</xpath>
+			</field>
+		</record>
+
+		<!--Employee -->
+		<record id="view_employee_form_inherit3" model="ir.ui.view">
+			<field name="name">hr.employee.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr_payroll_custom.view_employee_form_inherit2" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="payroll_id"]' position="attributes">
+					<attribute name="domain">[('military_type','=',military_type)]</attribute>
+				</xpath>
+			</field>
+		</record>
+
+	</data>
+</openerp>  

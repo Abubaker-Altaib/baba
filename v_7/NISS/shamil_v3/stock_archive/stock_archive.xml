@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="stock_archive_tree_view" model="ir.ui.view">
+            <field name="name">Stock Archive</field>
+            <field name="model">stock.archive</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Stock Archive" >
+                    <field name="name"/>
+                    <field name="location_id"/>
+                    <field name="date_from" />
+                    <field name="date_to"/>
+                    <field name="picking_state"/>
+                    <field name="picking_type"/>
+                    <field name="state"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+	        </tree>
+            </field>
+        </record>
+
+        <record id="stock_archive_form_view" model="ir.ui.view">
+            <field name="name">Stock Archive</field>
+            <field name="model">stock.archive</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+            <form string="Stock Archive" version="7.0">
+                <header>
+                    <button string="Generate Archive Picking" name="archive_picking" type="object" class="oe_highlight"
+			    attrs="{'invisible':[('state','!=','draft')]}"/>
+                    <button name="set_to_draft" type="object" string="Set To Draft" class="oe_highlight"
+			    attrs="{'invisible':[('state','!=','confirmed')]}"/>
+                    <button name="unlink_picking" type="object" string="Delete Old Picking" class="oe_highlight"
+			    attrs="{'invisible':[('state','!=','confirmed')]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done"/>
+                </header>
+                <sheet>
+                <group col="4" colspan="4">
+                    <field name="name"/>
+                    <field name="location_id" domain="[('usage','=','internal')]" required="1"/>
+                    <field name="date_from" required="1" />
+                    <field name="date_to" required="1"/>
+                    <field name="picking_state"/>
+                    <field name="picking_type" required="1"/>
+                    <field name="description" />
+                    <field name="sale_only" />
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </group>
+                <button string="Get Picking" name="get_picking" type="object" class="oe_highlight"
+			    attrs="{'invisible':[('state','!=','draft')]}"/>
+                 
+		<notebook>
+                    <page string="Stock Picking" >
+			<field name="picking_ids" colspan="4" nolabel="1" readonly="1">
+                            <tree create="false" >
+                                <field name="name" />
+                                <field name="location_id" />
+                                <field name="origin" />
+                                <field name="date" />
+                                <field name="stock_journal_id" />
+                                <field name="type" />
+                                <field name="state" />
+                            </tree>
+                        </field>
+		    </page>
+	            <page string="New Picking" >
+			<field name="new_picking_ids" colspan="4" nolabel="1" readonly="0">
+                            <tree create="false" >
+                                <field name="name" />
+                                <field name="location_id" />
+                                <field name="origin" />
+                                <field name="date" />
+                                <field name="stock_journal_id" />
+                                <field name="type" />
+                                <field name="state" />
+                            </tree>
+                        </field>
+		    </page>
+                    <page string="Summary" invisible="0">
+			<field name="summary" colspan="4" nolabel="1" readonly="0"/>
+		    </page>
+               	</notebook>
+                </sheet>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_stock_archive" model="ir.actions.act_window">
+            <field name="name">Stock Archive</field>
+            <field name="res_model">stock.archive</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="stock_archive.stock_archive_form_view"/>
+        </record>
+
+        <menuitem id="menu_stock_archive" name="Stock Archive" parent="stock.menu_stock_root" sequence="14"/>
+
+        <menuitem
+            name="Stock Archive"
+            parent="menu_stock_archive"
+            action="action_stock_archive"
+            id="menu_action_stock_archive"
+            sequence="1" 
+           />
+
+    </data>
+</openerp>

@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+	<template pageSize="(842.0,595.0)" title="Assets Details Report"
+		author="NCTR">
+		<pageTemplate id="first">
+			<frame id="first" x1="1.3cm" y1="0.9cm" width="800" height="500" />
+			<pageGraphics>
+				<image x="85" y="490" height="95" width="600">
+					[[ company.logo or removeParentNode('image') ]]
+				</image>
+			</pageGraphics>
+		</pageTemplate>
+	</template>
+
+	<stylesheet>
+		<blockTableStyle id="Table2">
+			<blockBackground colorName="#E5E1E1" start="0,0" stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="0" />
+			<blockBottomPadding length="0" />
+			<blockAlignment value="CENTER" />
+			<blockValign value="LEFT" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table7">
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="4" />
+			<blockBottomPadding length="8" />
+			<blockAlignment value="CENTER" />
+			<blockValign value="LEFT" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table3">
+			<lineStyle kind="GRID" colorName="#0E0C0C" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		<paraStyle name="Main_header" alignment="CENTER"
+			fontName="Microsoft Sans Serif-Bold" fontSize="16.0" spaceBefore="0.0"
+			spaceAfter="20.0" />
+		<paraStyle name="P8" fontName="Microsoft Sans Serif"
+			fontSize="8.0" alignment="CENTER" rightIndent="4" />
+		<paraStyle name="P9" fontName="Microsoft Sans Serif-Bold"
+			fontSize="9.30" alignment="CENTER" />
+
+		<!--<images />-->
+	</stylesheet>
+	<story>
+		
+        <para style="Main_header"> الهيئة القومية للإتصالات</para>
+        <para style="Main_header"> بيانات إضافات اﻷصول الثابتة في [[ data['form']['date'] ]]</para>
+        <blockTable colWidths="60,80,60,70,50,60,80,60,60,60,60,120" style="Table2">
+            <tr>
+                <td>
+                    <para style="P9">صافي القيمة الدفترية</para>
+                </td>
+                <td>
+                    <para style="P9">مجمع اﻹهلاك في31/12/[[ year(data) ]]</para>
+                </td>
+                <td>
+                    <para style="P9">إستبعاد مجمع اﻹهلاك</para>
+                </td>
+                <td>
+                    <para style="P9">مجمع اﻹهلاك في1/1/[[ year(data) ]]</para>
+                </td>
+                <td>
+                    <para style="P9">إهلاكات إضافية</para>
+                </td>
+                <td>
+                    <para style="P9">إهلاكات العام</para>
+                </td>
+                <td>
+                    <para style="P9">جملة اﻷصل في31/12/[[ year(data) ]]</para>
+                </td>
+                <td>
+                    <para style="P9">إستبعاد</para>
+                </td>
+                <td>
+                    <para style="P9">إضافات خلال العام</para>
+                </td>
+                <td>
+                    <para style="P9">اﻷصل في 1/1/[[ year(data) ]] </para>
+                </td>
+                <td>
+                    <para style="P9">المعدل</para>
+                </td>
+                <td>
+                    <para style="P9">البيان</para>
+                </td>
+            </tr>
+            
+            <tr><para style="P8">[[ repeatIn(lines(data),'line') ]]</para>
+                <td>
+                    <para style="P9">[[ line['book_value'] or '0.0' ]]</para>
+                </td>
+                <td>
+                    <para style="P9"> [[ line['depreciation_compound_last'] or '0.0' ]]</para>
+                </td>
+                <td>
+                    <para style="P9"> [[ line['cut_depreciation_sum_year_last'] or '0.0' ]]</para>
+                </td>
+                <td>
+                    <para style="P9"> [[ line['depreciation_compound_second'] or '0.0' ]]</para>
+                </td>
+                <td>
+                    <para style="P9"> [[ line['depreciation_at_start'] or '0.0' ]]</para>
+                </td>
+                <td>
+                    <para style="P9"> [[ line['depreciation_during_year'] or '0.0' ]]</para>
+                </td>
+                <td>
+                    <para style="P9"> [[ line['value_end_year'] or '0.0' ]]</para>
+                </td>
+                <td>
+                    <para style="P9"> [[ line['cut_during_year'] or '0.0' ]]</para>
+                </td>
+                <td>
+                    <para style="P9">[[ line['value_during_year'] or '0.0' ]]</para>
+                </td>
+                <td>
+                    <para style="P9">[[ line['value_at_start'] or '0.0' ]]</para>
+                </td>
+                <td>
+                    <para style="P9">[[ line['duration'] or '0.0' ]] %</para>
+                </td>
+                <td>
+                    <para style="P9">[[ line['name'] or '/' ]]</para>
+                </td>
+            </tr>
+        </blockTable>
+	</story>
+</document>

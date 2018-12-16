@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Customer State Report Template -->
+
+    <template id="customer_state_report_temp">
+        <t t-call="report.html_container">
+                <t t-call="report.external_layout">
+                    <div class="page">
+
+                        <center>
+                    <table>
+<tbody>
+<tr>
+<td  style="background:white; border-right: 0px solid #C1C3D1;"><center><img src="/microfinance/static/wa_report/logo.png"  width="70%" /></center></td>
+<td  style="background:white; border-right: 0px solid #C1C3D1; color:black;"><center><h1 width="30%" left="90">المؤسسة الوطنية للتمويل الأصغر</h1>
+
+                    <h1 width="30%" left="90">حالة الأقساط</h1>
+
+                </center></td>
+<td  style="background:white; border-right: 0px solid #C1C3D1;"><center><img src="/microfinance/static/wa_report/logo.png"  width="70%" /></center></td>
+</tr>
+</tbody>
+</table>
+                        </center>
+
+                       <hr width="100%" color="black"/>
+
+                         <table dir="rtl">  <td> وقت الطباعه <span t-esc="date_time"/> -إسم المستخدم <span t-esc="user.name"></span></td> </table>
+                         <table dir="rtl"> <td> من تاريخ <t t-esc="s_date"/></td> <td>إلى <t t-esc="e_date"/></td></table>
+                       <table dir="rtl">
+                           <td>الحالة <t t-esc="st"/></td>
+                           <t t-if="com != False">
+                               <td>
+الفرع                                 <t t-esc="com"/>
+                               </td>
+                           </t>
+                           <t t-if="us != False">
+                               <td>
+الأخصائي                               <t t-esc="us"/>
+                               </td>
+                           </t>
+                           <t t-if="se != False">
+                               <td>
+القطاع                               <t t-esc="se"/>
+                               </td>
+                           </t>
+
+                           <t t-if="fo != False">
+                               <td>
+الصيغة                               <t t-esc="fo"/>
+                               </td>
+                           </t>
+
+                       </table>
+                     <hr width="100%" color="black"/>
+
+<table dir="rtl">
+    <tr>
+        <th>الرقم المتسلسل</th>
+        <t t-if="com == False">
+        <th>الفرع</th>
+        </t>
+        <t t-if="us == False">
+        <th width="40%">الأخصائي</th>
+        </t>
+        <t t-if="fo == False">
+        <th>الصيغة</th>
+        </t>
+        <t t-if="se == False">
+        <th>القطاع</th>
+        </t>
+        <th>رقم العميل</th>
+        <th width="40%">الأسم</th>
+        <th>أصل القسط</th>
+        <th>الربح</th>
+        <th>التأمين</th>
+        <th>إجمالي القسط</th>
+        <th>عدد الأقساط</th>
+        <th>الأجمالي</th>
+        <t t-if="state !='done'">
+        <th>الرصيد القائم</th>
+        </t>
+    </tr>
+    <t t-foreach="len(res)" t-as="r">
+        <tr>
+            <td><t t-esc="r_index+1"/></td>
+            <t t-if="com == False">
+            <td><t t-esc="res[r]['company_name']"/></td>
+            </t>
+            <t t-if="us == False">
+            <td width="40%"><t t-esc="res[r]['officer']"/> </td>
+            </t>
+            <t t-if="fo == False">
+            <t t-if="res[r]['formula'] == 'murabaha'">
+                <td>مرابحة</td>
+            </t>
+
+            <t t-if="res[r]['formula'] == 'buying_murabaha'">
+                <td>مرابحة للآمر بالشراء</td>
+            </t>
+
+            <t t-if="res[r]['formula'] == 'salam'">
+                <td>سلم</td>
+            </t>
+
+            <t t-if="res[r]['formula'] == 'ejara'">
+                <td>إجارة منتهية بالتمليك</td>
+            </t>
+
+            <t t-if="res[r]['formula'] == 'gard_hassan'">
+                <td>قرض حسن</td>
+            </t>
+
+            <t t-if="res[r]['formula'] == 'estisnaa'">
+                <td>إستصناع</td>
+            </t>
+
+            <t t-if="res[r]['formula'] == 'mugawla'">
+                <td>مقاولة</td>
+            </t>
+
+            <t t-if="res[r]['formula'] == 'mudarba'">
+                <td>مضاربة</td>
+            </t>
+
+            <t t-if="res[r]['formula'] == 'musharka'">
+                <td>مشاركة</td>
+            </t>
+
+            <t t-if="res[r]['formula'] == 'muzaraa'">
+                <td>مزارعة</td>
+            </t>
+            </t>
+            <t t-if="se == False">
+            <td><t t-esc="res[r]['sector']"/></td>
+            </t>
+            <td><t t-esc="res[r]['code']"/></td>
+            <td width="40%"><t t-esc="res[r]['name']"/></td>
+            <td><t t-esc="res[r]['orgin']"/></td>
+            <td><t t-esc="res[r]['profit']"/></td>
+            <td><t t-esc="res[r]['insurance']"/></td>
+            <td>
+                <t t-if="res[r]['insurance'] != None">
+                <t t-esc="res[r]['amount'] + res[r]['insurance']"/>
+                </t>
+                <t t-if="res[r]['insurance'] == None">
+                    <t t-esc="res[r]['amount']"/>
+                </t>
+            </td>
+            <td><t t-esc="res[r]['ins_no']"/></td>
+            <td>
+                <t t-if="res[r]['insurance'] != None ">
+                <t t-esc="(res[r]['insurance'] + res[r]['amount']) * res[r]['ins_no']"/>
+                </t>
+                <t t-if="res[r]['insurance'] == None">
+                <t t-esc="res[r]['amount'] * res[r]['ins_no']"/>
+                </t>
+            </td>
+            <t t-if="state != 'done'">
+            <td><t t-esc="doc.get_rsd(res[r]['partner_id'])"/> </td>
+            </t>
+        </tr>
+    </t>
+
+</table>
+
+
+<style type="text/css">
+
+body {
+  font-family: "Roboto", helvetica, arial, sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+}
+
+div.table-title {
+   display: block;
+  margin: auto;
+  max-width: 600px;
+  padding:5px;
+  width: 100%;
+}
+
+.table-title h3 {
+   color: #fafafa;
+   font-size: 35px;
+   font-weight: 400;
+   font-style:normal;
+   font-family: "Roboto", helvetica, arial, sans-serif;
+   text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+   text-transform:uppercase;
+}
+
+
+/*** Table Styles **/
+
+.table-fill {
+  background: white;
+  border-radius:3px;
+  border-collapse: collapse;
+  height: 320px;
+  margin: auto;
+  max-width: 600px;
+  padding:5px;
+  width: 100%;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  animation: float 5s infinite;
+}
+
+th {
+  background-color: rgb(1, 196, 105);
+    color: white;
+    font-weight: normal;
+    padding: 20px 30px;
+    text-align: center;
+}
+
+th:first-child {
+  border-top-left-radius:3px;
+}
+
+th:last-child {
+  border-top-right-radius:3px;
+  border-right:none;
+}
+
+tr {
+  border-top: 1px solid #C1C3D1;
+  border-bottom-: 1px solid #C1C3D1;
+  color:#666B85;
+  font-size:16px;
+  font-weight:normal;
+  text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+}
+
+tr:hover td {
+  background:#4E5066;
+  color:#FFFFFF;
+  border-top: 1px solid #22262e;
+}
+
+tr:first-child {
+  border-top:none;
+}
+
+tr:last-child {
+  border-bottom:none;
+}
+
+tr:nth-child(odd) td {
+  background:#EBEBEB;
+}
+
+tr:nth-child(odd):hover td {
+  background:#4E5066;
+}
+
+tr:last-child td:first-child {
+  border-bottom-left-radius:3px;
+}
+
+tr:last-child td:last-child {
+  border-bottom-right-radius:3px;
+}
+
+td {
+  background:#FFFFFF;
+  padding:20px;
+  text-align:center;
+  vertical-align:middle;
+  font-weight:300;
+  font-size:20px;
+  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid #C1C3D1;
+}
+
+td:last-child {
+  border-right: 0px;
+}
+
+th.text-left {
+  text-align: left;
+}
+
+th.text-center {
+  text-align: center;
+}
+
+th.text-right {
+  text-align: right;
+}
+
+td.text-left {
+  text-align: left;
+}
+
+td.text-center {
+  text-align: center;
+}
+
+td.text-right {
+  text-align: right;
+}
+</style>
+
+
+                    </div>
+                </t>
+        </t>
+    </template>
+  <!-- ############################## second customer Template ######################## -->
+    <template id="one_customer_state_report_temp">
+         <t t-call="report.html_container">
+             <t t-call="report.external_layout">
+
+                    <div class="page">
+                        <body>
+
+                        <center>
+                    <table>
+<tbody>
+<tr>
+<td  style="background:white; border-right: 0px solid #C1C3D1;"><center><img src="/microfinance/static/wa_report/logo.png"  width="70%" /></center></td>
+<td  style="background:white; border-right: 0px solid #C1C3D1; color:black;"><center><h3 width="30%" left="90">المؤسسة الوطنية للتمويل الأصغر</h3>
+
+                    <h3 width="30%" left="90">حالة العميل</h3>
+
+                </center></td>
+<td  style="background:white; border-right: 0px solid #C1C3D1;"><center><img src="/microfinance/static/wa_report/logo.png"  width="70%" /></center></td>
+</tr>
+</tbody>
+</table>
+                        </center>
+
+                       <hr width="100%" color="black"/>
+
+                         <table class="minimalistBlack" dir="rtl">  <td align="right"> وقت الطباعه <span t-esc="date_time"/> -إسم المستخدم <span t-esc="user.name"></span></td> </table>
+                          <br/>
+                            <table class="minimalistBlack" dir="rtl"><td>الفرع</td><td align="center"><t t-esc="company"/></td></table>
+                       <br/>
+                        <table dir="rtl" class="minimalistBlack">
+                            <tr>
+                                <td>الأسم</td>
+                                <td align="right"><t t-esc="customer_name"/></td>
+                                <td>إسم المشروع</td>
+                                <td><t t-esc="project"/></td>
+                                <td>مكان المشروع</td>
+                                <td><t t-esc="project_address"/></td>
+                            </tr>
+                            <tr>
+                                <td>الهاتف 1</td>
+                                <td><t t-esc="phone"/></td>
+                                <td>الهاتف 2</td>
+                                <td><t t-esc="phone2"/></td>
+                                <td>الهاتف 3</td>
+                                <td><t t-esc="phone3"/></td>
+                            </tr>
+                            <tr>
+                                <td>السكن</td>
+                                <td><t t-esc="address_description"/></td>
+                                <td>رقم العميل</td>
+                                <td><t t-esc="code"/></td>
+                                <td>الصيغة</td>
+                                <td><t t-esc="formula"/></td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <br/>
+                        <br/>
+                            <t t-set="adv" t-value="0"/>
+                            <t t-set="do" t-value="0"/>
+                            <t t-set="de" t-value="0"/>
+                            <t t-set="dr" t-value="0"/>
+                            <!-- Totals -->
+                            <t t-set="total1" t-value="0"/>
+                            <t t-set="total2" t-value="0"/>
+                            <t t-set="total3" t-value="0"/>
+                            <t t-set="total4" t-value="0"/>
+                            <t t-set="total5" t-value="0"/>
+
+                            <t t-foreach="docs" t-as="ins">
+                                <t t-if="ins.state == 'draft'">
+                                     <t t-set="dr" t-value="dr+1"/>
+                                    </t>
+                                     <t t-if="ins.state == 'done'">
+                                     <t t-set="do" t-value="do+1"/>
+                                    </t>
+                                     <t t-if="ins.state == 'delay'">
+                                        <t t-set="de" t-value="de+1"/>
+                                    </t>
+                                     <t t-if="ins.state == 'adverse'">
+                                        <t t-set="adv" t-value="adv+1"/>
+                                    </t>
+                            </t>
+                             <table class="minimalistBlack">
+                                    <thead>
+                                        <th>تم  السداد</th>
+                                        <th>لم يستحق</th>
+                                        <th>متأخر</th>
+                                        <th>متعثر</th>
+                                    </thead>
+                                    <tbody>
+                                        <td><t t-esc="do"/></td>
+                                        <td><t t-esc="dr"/></td>
+                                        <td><t t-esc="de"/></td>
+                                        <td><t t-esc="adv"/></td>
+                                    </tbody>
+                                </table>
+                            <br/>
+                        <table dir="rtl" class="minimalistBlack">
+                            <thead>
+                                <th>رقم القسط</th>
+                                <th>تاريخ الأستحقاق</th>
+                                <th>تاريخ الدفع</th>
+                                <th>أصل القسط</th>
+                                <th>ربح القسط</th>
+                                <th>إجمالي القسط</th>
+                                <th>المبلغ المستلم</th>
+                                <th>المبلغ المتبقي</th>
+                                <th>الحالة</th>
+                            </thead>
+                            <tbody>
+                    <t t-foreach="docs" t-as="installment">
+                                    <tr>
+                                <td><t t-esc="installment.installment_no"/></td>
+                                <td><t t-esc="installment.due_date"/></td>
+                                <td>
+                                    <t t-esc="installment.date"/>
+                                    <t t-if="installment.date == False">
+                                    <p>---</p>
+                                    </t>
+
+                                </td>
+                                <td>
+                                    <t t-esc="installment.amount_before_profit"/>
+                                    <t t-set="total1" t-value="total1+installment.amount_before_profit"/>
+                                </td>
+                                <td>
+                                    <t t-esc="installment.profit_amount"/>
+                                    <t t-set="total2" t-value="total2+installment.profit_amount"/>
+                                </td>
+                                <td>
+                                    <t t-esc="installment.amount"/>
+                                    <t t-set="total3" t-value="total3+installment.amount"/>
+                                </td>
+                                <td>
+                                    <t t-esc="installment.receive_amount"/>
+                                    <t t-set="total4" t-value="total4+installment.receive_amount"/>
+                                </td>
+                                <td>
+                                    <t t-if="installment.amount &gt; installment.receive_amount">
+                                    <t t-esc="installment.amount - installment.receive_amount"/>
+                                        <t t-set="total5" t-value="total5+(installment.amount - installment.receive_amount)"/>
+                                    </t>
+                                    <t t-if="installment.amount &lt; installment.receive_amount">
+                                    <t t-esc="installment.receive_amount - installment.amount"/>
+                                        <t t-set="total5" t-value="total5+(installment.receive_amount - installment.amount)"/>
+                                    </t>
+                                    <t t-if="installment.amount == installment.receive_amount">
+                                    <t t-esc="0.0"/>
+                                    </t>
+                                </td>
+                                <td>
+                                    <t t-if="installment.state != 'done' and installment.state !='draft'">
+                              <t t-esc="dict(installment.fields_get(allfields=['state'])['state']['selection'])[installment.state]"/>
+                                    </t>
+                                    <t t-if="installment.state == 'done'">
+                                        <p>تم السداد</p>
+                                    </t>
+                                    <t t-if="installment.state == 'draft'">
+                                        <p>لم يستحق</p>
+                                    </t>
+                                </td>
+                                    </tr>
+                            </t>
+                            <tr>
+                                <td colspan="3">الأجمالي</td>
+                                <td><t t-esc="total1"/></td>
+                                 <td><t t-esc="total2"/></td>
+                                 <td><t t-esc="total3"/></td>
+                                 <td><t t-esc="total4"/></td>
+                                 <td colspan="2"><t t-esc="total5"/></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                         </body>
+                        <style type="text/css">
+
+
+table.minimalistBlack {
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
+}
+table.minimalistBlack td, table.minimalistBlack th {
+  border: 1px solid #000000;
+  text-align: center;
+  padding: 5px 4px;
+}
+table.minimalistBlack tbody td {
+  font-size: 15px;
+}
+table.minimalistBlack thead {
+  background: #919191;
+  background: -moz-linear-gradient(top, #acacac 0%, #9c9c9c 66%, #919191 100%);
+  background: -webkit-linear-gradient(top, #acacac 0%, #9c9c9c 66%, #919191 100%);
+  background: linear-gradient(to bottom, #acacac 0%, #9c9c9c 66%, #919191 100%);
+  border-bottom: 3px solid #000000;
+}
+table.minimalistBlack thead th {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000000;
+  text-align: center;
+}
+table.minimalistBlack tfoot {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000000;
+  border-top: 3px solid #000000;
+}
+table.minimalistBlack tfoot td {
+  font-size: 14px;
+}
+
+ body {
+
+ font-family: "DejaVu Serif";
+  font-style: normal;
+  font-weight: 60px;
+  bottom: 10px;
+  top: 1px;
+                 font-size: 90%;
+
+                }
+                 table
+                 {
+                 font-size: 90%;
+                 }
+                p{
+                 white-space: pre;
+
+                }
+
+
+
+                        </style>
+                    </div>
+                </t>
+</t>
+    </template>
+
+</odoo>
+

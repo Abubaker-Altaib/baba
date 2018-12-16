@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <record id="account_close_period_view_custom1" model="ir.ui.view">
+            <field name="name">Account</field>
+            <field name="model">account.close.period</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+            <form string="Close Period" version="7.0">
+                <group col="4" colspan="4">
+                    <field name="period_id"/>
+                    <field name="journal_id" />
+                    <field name="date_from" />
+                    <field name="date_to" />
+                    <field name="move_filled" invisible="1"/>
+                </group>
+
+                    <button string="Get Moves" name="get_moves" type="object" class="oe_highlight"/>
+                    <button string="Close Period" name="close_period" type="object" class="oe_highlight"
+                            attrs="{'invisible':[('move_filled','=',False)]}"/>
+                    or
+                    <button special="cancel" string="Cancel" class="oe_link"/>
+
+		<notebook>
+                    <page string="Account Moves" >
+			<field name="move_ids" colspan="4" nolabel="1" readonly="1">
+                            <tree create="false" >
+                                <field name="name" />
+                                <field name="ref" />
+                                <field name="date" />
+                                <field name="journal_id" />
+                                <field name="partner_id" />
+                                <field name="amount" />
+                                <field name="state" />
+                            </tree>
+                        </field>
+		    </page>
+               	</notebook>
+              
+                   
+               </form>
+            </field>
+        </record>
+
+        <record id="action_account_close_period" model="ir.actions.act_window">
+            <field name="name">Close Period</field>
+            <field name="res_model">account.close.period</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_close_period_view_custom1"/>
+            <field name="target">current</field>
+        </record>
+
+        <menuitem
+            name="Close Period"
+            parent="account.menu_finance_periodical_processing"
+            action="action_account_close_period"
+            id="menu_action_account_close_period"
+            sequence="30" 
+           />
+
+    </data>
+</openerp>

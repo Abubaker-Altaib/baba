@@ -1,0 +1,680 @@
+<odoo>
+    <data>
+
+        <template id="analytic_budget_report_tamplate">
+            <t t-call="web.html_container">
+                <t t-set="data_report_margin_top" t-value="12"/>
+                <t t-set="data_report_header_spacing" t-value="9"/>
+                <t t-set="data_report_dpi" t-value="110"/>
+                <t t-call="web.basic_layout">
+                    <div class="page">
+
+                        <html>
+                            <body>
+                                <head>
+                                    <style>
+
+
+
+
+
+
+
+                                        table, td, th {
+                                        border: 1px solid #ddd;
+                                        text-align: center;
+                                        }
+
+                                        table {
+                                        border-collapse: collapse;
+                                        width: 100%;
+                                        }
+
+                                        th, td {
+                                        padding: 15px;
+                                        }
+                                        th {
+                                        background-color:#cccccc;#E7D9D9
+                                        font-weight: bold;
+                                        }
+                                        td {
+                                        background-color:#E7D9D9;
+                                        font-weight: bold;
+
+
+
+                                        }
+                                        td, th {
+                                        border: 3px solid black;
+                                        padding: 3px 10px;
+                                        }
+
+                                        td,th,h1,h3,h4 { font-family: "Geeza Pro", "Nadeem",
+                                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                                        "Arial", serif;
+                                        }
+
+
+
+                                    </style>
+                                    <!--Font Name Helvetica-Bold-->
+                                </head>
+
+                                <center>
+                                    <h1>شركة الخدمات المصرفية الإلكترونية المحدودة</h1>
+
+
+
+                                </center>
+                                <center>
+                                    <h3>
+                                        الخرطوم شارع عثمان دقنة عمارة بنك السودان
+                                    </h3>
+                                </center>
+                                <center>
+                                    <h3>
+                                        Tel: (249)83 790840 - Fax: (249)83 790864
+                                    </h3>
+                                    <h3>
+                                        Budget Report
+                                    </h3>
+                                </center>
+
+                                <hr/>
+                                <br/>
+
+                                <table style="width:40%;">
+
+                                    <tr>
+                                        <th colspan="2">Main Information</th>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Date From :</th> <td><t t-esc="data.get('date_from')"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>To :</th> <td><t t-esc="data.get('date_to')"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Report Type : </th><td><t t-esc="data.get('report_type')"/></td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <th>Analytic Type :</th>   <td><t t-esc="data.get('analytic_type')"/></td>
+                                    </tr>
+                                </table>
+
+                                <br/>
+
+                                <t t-if="data.get('report_type') in ('analytic','summation')">
+
+                                    <t t-if="data.get('report_type') == 'analytic' and data.get('analytic_account',False)">
+                                        Analytic Account :   <t t-esc="data.get('analytic_account')"/>
+                                    </t>
+
+                                    <br/>
+                                    <br/>
+
+
+
+                                    <t t-if="data.get('show_up_totals') == True">
+                                        <!-- Declare Veriables-->
+                                        <t t-set="confirm_amount" t-value="0"></t>
+                                        <t t-set="planned_amount" t-value="0"></t>
+
+
+                                        <table>
+                                            <tr>
+                                                <th>Code</th>
+                                                <th>Name</th>
+                                                <th>Practical</th>
+                                                <th>Planned</th>
+                                                <th>Deviation</th>
+                                                <th>Percentage</th>
+                                            </tr>
+                                            <t t-if="data.get('group_totals') != True">
+                                                <t t-foreach="data.get('parents_query_result')" t-as="parent_result">
+
+                                                    <tr>
+                                                        <td><t t-esc="parent_result['code']"/></td>
+                                                        <td><t t-esc="parent_result['name']"/></td>
+                                                        <td><t t-esc="parent_result['practical']"/></td>
+                                                        <td><t t-esc="parent_result['planned_amount']"/></td>
+                                                        <td><t t-esc="parent_result['deviation']"/></td>
+                                                        <td><t t-esc="parent_result['percentage']"/> %</td>
+
+                                                        <t t-set="confirm_amount"
+                                                           t-value="confirm_amount + parent_result['practical']"/>
+                                                        <t t-set="planned_amount"
+                                                           t-value="planned_amount + parent_result['planned_amount']"/>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                            <t t-else="">
+
+
+                                                <t t-foreach="data.get('type_query_result')" t-as="parent_result">
+
+                                                    <tr>
+                                                        <td></td>
+                                                        <td><t t-esc="parent_result['account_name']"/></td>
+                                                        <td><t t-esc="parent_result['practical']"/></td>
+                                                        <td><t t-esc="parent_result['planned_amount']"/></td>
+                                                        <td><t t-esc="parent_result['deviation']"/></td>
+                                                        <td><t t-esc="parent_result['percentage']"/> %</td>
+
+                                                        <t t-set="confirm_amount"
+                                                           t-value="confirm_amount + parent_result['practical']"/>
+                                                        <t t-set="planned_amount"
+                                                           t-value="planned_amount + parent_result['planned_amount']"/>
+
+
+
+
+                                                    </tr>
+
+
+
+
+
+
+                                                </t>
+
+
+                                            </t>
+
+
+
+                                            <tr>
+
+
+
+
+                                                <t t-if="data.get('show_net_other_income') != True">
+                                                    <td colspan="2"><center>Total</center></td>
+                                                </t>
+                                                <t t-else="">
+                                                    <td colspan="2"><center>Total Of Net Running Profit</center></td>
+                                                </t>
+
+                                                <td><t t-esc="round(confirm_amount,2)"/></td>
+                                                <td><t t-esc="round(planned_amount,2)"/></td>
+                                                <td><t t-esc="round(confirm_amount - planned_amount,2)"/></td>
+                                                <td><t t-esc="round((confirm_amount / planned_amount) * 100,2)"/> %</td>
+
+                                            </tr>
+
+
+
+                                            <t t-if="data.get('show_net_other_income') == True">
+
+                                                <tr>
+
+
+                                                    <td></td>
+                                                    <td ><center>Total Of Other Income</center></td>
+
+                                                    <td><t t-esc="data.get('net_other_income_query_result')"/></td>
+                                                    <td> 0 </td>
+                                                    <td><t t-esc="data.get('net_other_income_query_result')"/></td>
+                                                    <td> 100 % </td>
+
+
+                                                    <t t-set="confirm_amount"
+                                                       t-value="confirm_amount + data.get('net_other_income_query_result')"/>
+
+
+                                                </tr>
+
+
+                                                <t t-set="running_net_profit_confirm_amount" t-value="0"></t>
+                                                <t t-set="running_net_profit_planned_amount" t-value="0"></t>
+                                                <t t-set="running_net_profit_dev_amount" t-value="0"></t>
+                                                <t t-set="running_net_profit_perc_amount" t-value="0"></t>
+
+                                                <tr>
+
+                                                    <td colspan="2"><center>Total Of Net Profit after Other Income</center></td>
+
+                                                    <td><t t-esc="round(confirm_amount,2)"/></td>
+                                                    <td><t t-esc="round(planned_amount,2)"/></td>
+                                                    <td><t t-esc="round(confirm_amount - planned_amount ,2)"/></td>
+                                                    <td><t t-esc="round((confirm_amount / planned_amount) * 100,2)"/> %</td>
+
+
+                                                    <t t-set="running_net_profit_confirm_amount"
+                                                       t-value="running_net_profit_confirm_amount + confirm_amount"/>
+                                                    <t t-set="running_net_profit_planned_amount"
+                                                       t-value="running_net_profit_planned_amount + planned_amount"/>
+
+                                                    <t t-set="running_net_profit_dev_amount"
+                                                       t-value="running_net_profit_dev_amount + round(confirm_amount - planned_amount ,2)"/>
+
+                                                    <t t-set="running_net_profit_perc_amount"
+                                                       t-value="running_net_profit_perc_amount + round((confirm_amount / planned_amount) * 100,2)"/>
+
+                                                </tr>
+
+
+
+                                            </t>
+
+
+
+
+
+
+
+
+                                        </table>
+                                    </t>
+
+                                    <br/>
+                                    <br/>
+
+
+                                    <!--<span> ssssssssssssssssssssssssss <t t-esc="type_ids"/> sssssssssssssssssssssssss </span>-->
+
+                                    <t t-if="data.get('report_type') in ('analytic','summation')">
+
+
+                                    </t>
+
+                                    <br/>
+                                    <br/>
+
+
+
+
+
+                                    <t t-if="data.get('report_type') in ('analytic')">
+                                        <t t-foreach="data.get('parents_query_result')" t-as="parent_result">
+                                            Parent Account : <t t-esc="parent_result['code']"/> <t t-esc="parent_result['name']"/>
+                                            <br/><br/>
+                                            <table>
+                                                <tr>
+                                                    <th>Code</th>
+                                                    <th>Name</th>
+                                                    <th>Practical</th>
+                                                    <th>Planned</th>
+                                                    <th>Deviation</th>
+                                                    <th>Percentage</th>
+                                                </tr>
+
+
+
+                                                <t t-set="confirm_amount" t-value="0"></t>
+                                                <t t-set="planned_amount" t-value="0"></t>
+
+
+
+                                                <t t-foreach="get.get_parents_childs(data.get('date_from'),data.get('date_to'),parent_result['id'],data)" t-as="childs">
+
+                                                    <tr>
+                                                        <td><t t-esc="childs['code']"/></td>
+                                                        <td><t t-esc="childs['name']"/></td>
+                                                        <td><t t-esc="childs['practical']"/></td>
+                                                        <td><t t-esc="childs['planned_amount']"/></td>
+                                                        <td><t t-esc="childs['deviation']"/></td>
+                                                        <td><t t-esc="childs['percentage']"/> %</td>
+                                                    </tr>
+                                                </t>
+
+                                                <tr>
+                                                    <td colspan="2"><center>Total</center></td>
+                                                    <td><t t-esc="round(parent_result['practical'],2)"/></td>
+                                                    <td><t t-esc="round(parent_result['planned_amount'],2)"/></td>
+                                                    <td><t t-esc="round(parent_result['deviation'],2)"/></td>
+                                                    <td><t t-esc="round(parent_result['percentage'],2)"/> %</td>
+
+
+
+                                                    <t t-set="confirm_amount"
+                                                       t-value="confirm_amount + parent_result['practical']"/>
+                                                    <t t-set="planned_amount"
+                                                       t-value="planned_amount + parent_result['planned_amount']"/>
+
+                                                </tr>
+
+
+                                            </table>
+
+                                            <br/>
+                                            <br/>
+
+                                        </t>
+
+
+
+                                    </t>
+
+                                    <t t-if="data.get('report_type') == 'summation'">
+                                        <t t-set="analytic_ids" t-value="()"></t>
+                                        <t t-foreach="data.get('parents_query_result')" t-as="parent_result">
+                                            Parent Account : <t t-esc="parent_result['code']"/> <t t-esc="parent_result['name']"/>
+                                            <br/><br/>
+                                            <table>
+                                                <tr>
+                                                    <th>Code</th>
+                                                    <th>Name</th>
+                                                    <th>Practical</th>
+                                                    <th>Planned</th>
+                                                    <th>Deviation</th>
+                                                    <th>Percentage</th>
+                                                </tr>
+
+
+
+
+                                                <t t-foreach="get.get_parents_analytics(data.get('date_from'),data.get('date_to'),parent_result['id'],data)" t-as="childs">
+
+                                                    <tr>
+                                                        <td><t t-esc="childs['code']"/></td>
+                                                        <td><t t-esc="childs['name']"/></td>
+                                                        <td><t t-esc="childs['practical']"/></td>
+                                                        <td><t t-esc="childs['planned_amount']"/></td>
+                                                        <td><t t-esc="childs['deviation']"/></td>
+                                                        <td><t t-esc="childs['percentage']"/> %</td>
+
+
+
+
+
+                                                    </tr>
+
+                                                </t>
+
+                                                <t t-set="analytic_ids"
+                                                   t-value="analytic_ids + (parent_result['id'],)"/>
+
+
+                                                <tr>
+                                                    <td colspan="2"><center>Total</center></td>
+                                                    <td><t t-esc="round(parent_result['practical'],2)"/></td>
+                                                    <td><t t-esc="round(parent_result['planned_amount'],2)"/></td>
+                                                    <td><t t-esc="round(parent_result['deviation'],2)"/></td>
+                                                    <td><t t-esc="round(parent_result['percentage'],2)"/> %</td>
+                                                </tr>
+
+
+                                            </table>
+
+                                            <br/>
+                                            <br/>
+
+                                        </t>
+
+
+                                        <t t-if="data.get('show_net_other_income') == True">
+                                            Net Running Profit
+                                            <br/>
+                                            <table>
+                                                <tr>
+                                                    <th>Code</th>
+                                                    <th>Name</th>
+                                                    <th>Practical</th>
+                                                    <th>Planned</th>
+                                                    <th>Deviation</th>
+                                                    <th>Percentage</th>
+                                                </tr>
+
+
+                                                <t t-set="confirm_amount" t-value="0"></t>
+                                                <t t-set="planned_amount" t-value="0"></t>
+
+                                                <t t-foreach="get.get_parents_analytics_net(data.get('date_from'),data.get('date_to'),analytic_ids,data)" t-as="childs">
+
+                                                    <tr>
+                                                        <td><t t-esc="childs['code']"/></td>
+                                                        <td><t t-esc="childs['name']"/></td>
+                                                        <td><t t-esc="childs['practical']"/></td>
+                                                        <td><t t-esc="childs['planned_amount']"/></td>
+                                                        <td><t t-esc="childs['deviation']"/></td>
+                                                        <td><t t-esc="childs['percentage']"/> %</td>
+
+                                                        <t t-set="confirm_amount"
+                                                           t-value="confirm_amount + childs['practical']"/>
+                                                        <t t-set="planned_amount"
+                                                           t-value="planned_amount + childs['planned_amount']"/>
+
+
+
+                                                    </tr>
+                                                </t>
+
+                                                <tr>
+
+                                                    <td colspan="2"><center>Total Of Net Running Profit</center></td>
+
+                                                    <td><t t-esc="round(confirm_amount,2)"/></td>
+                                                    <td><t t-esc="round(planned_amount,2)"/></td>
+                                                    <td><t t-esc="round(confirm_amount - planned_amount,2)"/></td>
+                                                    <td><t t-esc="round((confirm_amount / planned_amount) * 100,2)"/> %</td>
+
+                                                </tr>
+
+
+                                            </table>
+
+
+                                            <br/>
+                                            <br/>
+
+                                            Other Income
+                                            <br/>
+
+                                            <table>
+
+
+
+                                                <tr>
+                                                    <th>Code</th>
+                                                    <th>Name</th>
+                                                    <th>Practical</th>
+                                                    <th>Planned</th>
+                                                    <th>Deviation</th>
+                                                    <th>Percentage</th>
+                                                </tr>
+
+
+                                                <tr>
+
+
+                                                    <td></td>
+                                                    <td ><center>Other Income</center></td>
+
+                                                    <td><t t-esc="data.get('net_other_income_query_result')"/></td>
+                                                    <td> 0 </td>
+                                                    <td><t t-esc="data.get('net_other_income_query_result')"/></td>
+                                                    <td> 100 % </td>
+
+
+                                                    <t t-set="confirm_amount"
+                                                       t-value="confirm_amount + data.get('net_other_income_query_result')"/>
+
+
+                                                </tr>
+
+
+                                                <tr>
+
+
+                                                    <td></td>
+                                                    <td ><center>Total Of Other Income</center></td>
+
+                                                    <td><t t-esc="data.get('net_other_income_query_result')"/></td>
+                                                    <td> 0 </td>
+                                                    <td><t t-esc="data.get('net_other_income_query_result')"/></td>
+                                                    <td> 100 % </td>
+
+                                                </tr>
+
+
+
+
+
+                                            </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            <br/>
+                                            <br/>
+
+                                            Net Profit after Other Income
+                                            <br/>
+
+                                            <table>
+
+
+
+                                                <tr>
+                                                    <th>Code</th>
+                                                    <th>Name</th>
+                                                    <th>Practical</th>
+                                                    <th>Planned</th>
+                                                    <th>Deviation</th>
+                                                    <th>Percentage</th>
+                                                </tr>
+
+
+                                                <tr>
+
+
+                                                    <td></td>
+                                                    <td ><center>Net Profit after Other Income</center></td>
+
+                                                    <td><t t-esc="running_net_profit_confirm_amount"/></td>
+                                                    <td> <t t-esc="running_net_profit_planned_amount"/> </td>
+                                                    <td><t t-esc="running_net_profit_dev_amount"/></td>
+                                                    <td> <t t-esc="running_net_profit_perc_amount"/> %</td>
+
+
+
+                                                </tr>
+
+
+                                                <tr>
+
+
+
+                                                    <td colspan="2"><center> Total of Net Profit after Other Income</center></td>
+
+                                                    <td><t t-esc="running_net_profit_confirm_amount"/></td>
+                                                    <td> <t t-esc="running_net_profit_planned_amount"/> </td>
+                                                    <td><t t-esc="running_net_profit_dev_amount"/></td>
+                                                    <td> <t t-esc="running_net_profit_perc_amount"/> %</td>
+
+
+
+                                                </tr>
+
+
+
+
+
+                                            </table>
+
+
+
+
+
+
+
+
+
+
+
+                                            <br/>
+                                            <br/>
+
+                                            Cost Percentage
+                                            <br/>
+
+                                            <table>
+
+
+
+                                                <tr>
+                                                    <th>Code</th>
+                                                    <th>Name</th>
+                                                    <th>Practical</th>
+                                                    <th>Planned</th>
+                                                    <th>Deviation</th>
+                                                    <th>Percentage</th>
+                                                </tr>
+
+
+                                                <t t-foreach="get.get_cost_perc(data.get('date_from'),data.get('date_to'),data)" t-as="result">
+
+
+                                                    <tr>
+                                                        <td><t t-esc="result['code']"/></td>
+                                                        <td><t t-esc="result['name']"/></td>
+                                                        <td> <t t-esc="result['practical']"/> </td>
+                                                        <td><t t-esc="result['planned']"/></td>
+                                                        <td><t t-esc="result['deviation']"/></td>
+                                                        <td> <t t-esc="result['perc']"/> %</td>
+                                                    </tr>
+
+                                                </t>
+
+
+
+
+                                            </table>
+
+
+
+
+                                        </t>
+
+
+                                    </t>
+
+
+
+
+
+
+
+
+                                </t>
+
+
+
+
+
+
+
+
+
+
+
+                            </body>
+                        </html>
+                    </div>
+
+
+                </t>
+
+            </t>
+        </template>
+    </data>
+
+</odoo>

@@ -1,0 +1,403 @@
+<odoo>
+    <data>
+        <template id="budget_main_report_tamplate">
+            <t t-call="web.html_container">
+                <t t-set="data_report_margin_top" t-value="12"/>
+                <t t-set="data_report_header_spacing" t-value="9"/>
+                <t t-set="data_report_dpi" t-value="110"/>
+                <t t-call="web.basic_layout">
+                    <div class="page">
+
+                        <html>
+                            <body>
+                                <head>
+                                    <style>
+
+                                        table, td, th {
+                                        border: 1px solid #ddd;
+                                        text-align: center;
+                                        }
+
+                                        table {
+                                        border-collapse: collapse;
+                                        width: 100%;
+                                        }
+
+                                        th, td {
+                                        padding: 15px;
+                                        }
+                                        th {
+                                        background-color:#cccccc;#E7D9D9
+                                        font-weight: bold;
+                                        }
+                                        td {
+
+                                        font-weight: bold;
+
+                                        }
+                                        td, th {
+                                        border: 3px solid black;
+                                        padding: 3px 10px;
+                                        }
+
+                                        td,th,h1,h3,h4 { font-family:"DejaVu Serif";
+                                        }
+
+
+
+                                    </style>
+
+                                </head>
+
+
+
+
+                                <table style="width:40%;">
+
+                                    <tr>
+                                        <th colspan="2">Main Information</th>
+                                    </tr>
+
+                                    <tr>
+                                        <th >Date From :</th> <td name="form_date_th"><t t-esc="data.get('date_from')"/></td>
+                                    </tr>
+                                    <tr >
+                                        <th>To :</th> <td name="date_to_th"><t t-esc="data.get('date_to')"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Report Type : </th><td>
+                                        <t t-esc="dict(current_model.fields_get(allfields=['report_type'])['report_type']['selection'])[data.get('report_type')]"/>
+
+                                    </td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <th>Report Show :</th>   <td>
+
+                                        <t t-esc="dict(current_model.fields_get(allfields=['report_show'])['report_show']['selection'])[data.get('report_show')]"/>
+
+                                    </td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <th>Budget Type :</th>   <td>
+
+                                        <t t-esc="dict(get.fields_get(allfields=['budget_type'])['budget_type']['selection'])[data.get('budget_type')]"/>
+
+                                    </td>
+                                    </tr>
+
+
+
+                                </table>
+
+                                <br/>
+
+
+
+                                <t t-if="data['report_type'] == 'cost_center'">
+                                    <table>
+                                        <tr>
+                                            <t t-if="data.get('budget_type')=='out'">
+                                                <th>Analytic Code</th>
+                                                <th>Analytic Name</th>
+                                                <th>Planned</th>
+                                                <th>Transfere Amount</th>
+                                                <th>Allocation/Transfere</th>
+                                                <th>Confirm</th>
+                                                <th>Actual Expense</th>
+                                                <th>Residual</th>
+                                                <th>Percentage</th>
+                                            </t>
+                                            <t t-else="">
+                                                <th>Analytic Code</th>
+                                                <th>Analytic Name</th>
+                                                <th>Expected Income</th>
+                                                <th>Allocation/Transfere</th>
+                                                <th>Actual Revenue</th>
+                                                <th>Deviation</th>
+                                            </t>
+                                        </tr>
+                                        <t t-foreach="data['analytic_ids']" t-as="id">
+                                            <t t-foreach="get.get_analytic_summation(id,data)" t-as="line">
+                                                <t t-if="get.get_analytic_info(id,data).type=='view'">
+                                                    <tr style="background-color:#ba9191;">
+                                                        <t t-if="data.get('budget_type')=='out'">
+                                                            <td><t t-esc="get.get_analytic_info(id,data).code"/></td>
+                                                            <td><t t-esc="get.get_analytic_info(id,data).name"/></td>
+                                                            <td><t t-esc="line['planned_amount']"/></td>
+                                                            <td><t t-esc="line['transfer_amount']"/></td>
+                                                            <td><t t-esc="line['total_operation']"/></td>
+                                                            <td><t t-esc="line['confirm']"/></td>
+                                                            <td><t t-esc="line['practical_amount']*-1"/></td>
+                                                            <td><t t-esc="line['residual']"/></td>
+                                                            <td><t t-esc="round(100 - ((line['planned_amount']+line['total_operation']) != 0 and line['residual']*100/(line['planned_amount'] + line['total_operation']) or 100),2)  "/> %</td>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <td><t t-esc="get.get_analytic_info(id,data).code"/></td>
+                                                            <td><t t-esc="get.get_analytic_info(id,data).name"/></td>
+                                                            <td><t t-esc="line['planned_amount']"/></td>
+                                                            <td><t t-esc="line['total_operation']"/></td>
+                                                            <td><t t-esc="line['practical_amount']"/></td>
+                                                            <td><t t-esc="round( (line['planned_amount']+line['total_operation']) != 0 and line['residual']*100/(line['planned_amount'] + line['total_operation']) or 100,2)  "/></td>
+                                                        </t>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="get.get_analytic_info(id,data).type=='normal'">
+                                                    <tr style="background-color:#E7D9D9;">
+                                                        <t t-if="data.get('budget_type')=='out'">
+                                                            <td><t t-esc="get.get_analytic_info(id,data).code"/></td>
+                                                            <td><t t-esc="get.get_analytic_info(id,data).name"/></td>
+                                                            <td><t t-esc="line['planned_amount']"/></td>
+                                                            <td><t t-esc="line['transfer_amount']"/></td>
+                                                            <td><t t-esc="line['total_operation']"/></td>
+                                                            <td><t t-esc="line['confirm']"/></td>
+                                                            <td><t t-esc="line['practical_amount']*-1"/></td>
+                                                            <td><t t-esc="line['residual']"/></td>
+                                                            <td><t t-esc="round(100 - ((line['planned_amount']+line['total_operation']) != 0 and line['residual']*100/(line['planned_amount'] + line['total_operation']) or 100),2)  "/> %</td>
+
+                                                        </t>
+                                                        <t t-else="">
+                                                            <td><t t-esc="get.get_analytic_info(id,data).code"/></td>
+                                                            <td><t t-esc="get.get_analytic_info(id,data).name"/></td>
+                                                            <td><t t-esc="line['planned_amount']"/></td>
+                                                            <td><t t-esc="line['total_operation']"/></td>
+                                                            <td><t t-esc="line['practical_amount']"/></td>
+                                                            <td><t t-esc="round((line['planned_amount']+line['total_operation']) != 0 and line['residual']*100/(line['planned_amount'] + line['total_operation']) or 100,2)  "/></td>
+
+                                                        </t>
+                                                    </tr>
+
+                                                    <t t-if="data['report_show']=='details'">
+                                                        <t t-foreach="get.get_analytic_budgetry_positions(id,data)" t-as="bud">
+                                                            <tr style="background-color:white;">
+                                                                <t t-if="data.get('budget_type')=='out'">
+                                                                    <td colspan="2"><t t-esc="bud['general_budget_id'][1]"/></td>
+                                                                    <td><t t-esc="bud['planned_amount']"/></td>
+                                                                    <td><t t-esc="bud['transfer_amount']"/></td>
+                                                                    <td><t t-esc="bud['total_operation']"/></td>
+
+                                                                    <td><t t-esc="bud['confirm']"/></td>
+
+                                                                    <td><t t-esc="bud['practical_amount']*-1"/></td>
+                                                                    <td><t t-esc="bud['residual']"/></td>
+                                                                    <td><t t-esc=" round(100-((bud['planned_amount']+bud['total_operation']) != 0 and bud['residual']*100/(bud['planned_amount'] + bud['total_operation']) or 100),2)  "/> %</td>
+
+                                                                </t>
+                                                                <t t-else="">
+                                                                    <td colspan="2"><t t-esc="bud['general_budget_id'][1]"/></td>
+                                                                    <td><t t-esc="bud['planned_amount']"/></td>
+                                                                    <td><t t-esc="bud['total_operation']"/></td>
+                                                                    <td><t t-esc="bud['practical_amount']"/></td>
+                                                                    <td><t t-esc="round((bud['planned_amount']+bud['total_operation']) != 0 and bud['residual']*100/(bud['planned_amount'] + bud['total_operation']) or 100,2)  "/></td>
+
+                                                                </t>
+
+
+
+
+
+
+                                                            </tr>
+                                                        </t>
+                                                    </t>
+
+
+                                                </t>
+
+
+
+
+
+                                            </t>
+                                        </t>
+                                    </table>
+                                </t>
+                                <t t-elif="data['report_type']=='bud_position'">
+                                    <t t-if="data.get('budgetry_position_show') == 'without_analytic'">
+                                        <table>
+                                            <tr>
+                                                <t t-if="data.get('budget_type')=='out'">
+                                                    <th>Code</th>
+                                                    <th>Budgetry Position</th>
+                                                    <th>Planned</th>
+                                                    <th>Transfere Amount</th>
+                                                    <th>Allocation/Transfere</th>
+                                                    <th>Confirm</th>
+                                                    <th>Actual Expense</th>
+                                                    <th>Residual</th>
+                                                    <th>Percentage</th>
+                                                </t>
+                                                <t t-else="">
+                                                    <th>Code</th>
+                                                    <th>Budgetry Position</th>
+                                                    <th>Expected Income</th>
+                                                    <th>Allocation/Transfere</th>
+                                                    <th>Actual Revenue</th>
+                                                    <th>Deviation</th>
+                                                </t>
+                                            </tr>
+
+                                            <t t-foreach="get.get_budgetry_positions(data)" t-as="line">
+                                                <tr>
+                                                    <t t-if="data.get('budget_type')=='out'">
+                                                        <td></td>
+                                                        <td><t t-esc="line['general_budget_id'][1]"/></td>
+                                                        <td><t t-esc="line['planned_amount']"/></td>
+                                                        <td><t t-esc="line['transfer_amount']"/></td>
+                                                        <td><t t-esc="line['total_operation']"/></td>
+                                                        <td><t t-esc="line['confirm']"/></td>
+                                                        <td><t t-esc="line['practical_amount']*-1"/></td>
+                                                        <td><t t-esc="line['residual']"/></td>
+                                                        <td><t t-esc="round(100 - ((line['planned_amount']+line['total_operation']) != 0 and line['residual']*100/(line['planned_amount'] + line['total_operation']) or 100),2)  "/> %</td>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <td></td>
+                                                        <td><t t-esc="line['general_budget_id'][1]"/></td>
+                                                        <td><t t-esc="line['planned_amount']"/></td>
+                                                        <td><t t-esc="line['total_operation']"/></td>
+                                                        <td><t t-esc="line['practical_amount']"/></td>
+                                                        <td><t t-esc="round( (line['planned_amount']+line['total_operation']) != 0 and line['residual']*100/(line['planned_amount'] + line['total_operation']) or 100,2)  "/></td>
+
+                                                    </t>
+                                                </tr>
+                                            </t>
+                                        </table>
+                                    </t>
+                                    <t t-else="">
+                                        <table>
+                                            <tr>
+
+                                                <t t-if="data.get('budget_type')=='out'">
+                                                    <th>Code</th>
+                                                    <th>Budgetry Position</th>
+                                                    <th>Planned</th>
+                                                    <th>Transfere Amount</th>
+                                                    <th>Allocation/Transfere</th>
+                                                    <th>Confirm</th>
+                                                    <th>Actual Expense</th>
+                                                    <th>Residual</th>
+                                                    <th>Percentage</th>
+                                                </t>
+                                                <t t-else="">
+                                                    <th>Code</th>
+                                                    <th>Budgetry Position</th>
+                                                    <th>Expected Income</th>
+                                                    <th>Allocation/Transfere</th>
+                                                    <th>Actual Revenue</th>
+                                                    <th>Deviation</th>
+                                                </t>
+                                            </tr>
+                                            <t t-foreach="data['analytic_ids']" t-as="id">
+                                                <t t-foreach="get.get_analytic_summation_with_budgetry(id,data)" t-as="line">
+
+
+                                                    <t t-if="get.get_analytic_info(id,data).type=='view'">
+                                                        <tr style="background-color:#ba9191;">
+                                                            <t t-if="data.get('budget_type')=='out'">
+                                                                <td><t t-esc="get.get_analytic_info(id,data).code"/></td>
+                                                                <td><t t-esc="get.get_analytic_info(id,data).name"/></td>
+                                                                <td><t t-esc="line['planned_amount']"/></td>
+                                                                <td><t t-esc="line['transfer_amount']"/></td>
+                                                                <td><t t-esc="line['total_operation']"/></td>
+
+                                                                <td><t t-esc="line['confirm']"/></td>
+
+                                                                <td><t t-esc="line['practical_amount']*-1"/></td>
+                                                                <td><t t-esc="line['residual']"/></td>
+                                                                <td><t t-esc="round(100 - ((line['planned_amount']+line['total_operation']) != 0 and line['residual']*100/(line['planned_amount'] + line['total_operation']) or 100),2)  "/> %</td>
+
+                                                            </t>
+                                                            <t t-else="">
+
+                                                                <td><t t-esc="get.get_analytic_info(id,data).code"/></td>
+                                                                <td><t t-esc="get.get_analytic_info(id,data).name"/></td>
+                                                                <td><t t-esc="line['planned_amount']"/></td>
+                                                                <td><t t-esc="line['total_operation']"/></td>
+                                                                <td><t t-esc="line['practical_amount']"/></td>
+                                                                <td><t t-esc="round( (line['planned_amount']+line['total_operation']) != 0 and line['residual']*100/(line['planned_amount'] + line['total_operation']) or 100,2)  "/></td>
+
+                                                            </t>
+                                                        </tr>
+                                                    </t>
+
+                                                    <t t-if="get.get_analytic_info(id,data).type=='normal'">
+                                                        <tr style="background-color:#E7D9D9;">
+                                                            <t t-if="data.get('budget_type')=='out'">
+                                                                <td><t t-esc="get.get_analytic_info(id,data).code"/></td>
+                                                                <td><t t-esc="get.get_analytic_info(id,data).name"/></td>
+                                                                <td><t t-esc="line['planned_amount']"/></td>
+                                                                <td><t t-esc="line['transfer_amount']"/></td>
+                                                                <td><t t-esc="line['total_operation']"/></td>
+
+                                                                <td><t t-esc="line['confirm']"/></td>
+
+                                                                <td><t t-esc="line['practical_amount']*-1"/></td>
+                                                                <td><t t-esc="line['residual']"/></td>
+                                                                <td><t t-esc="round(100 - ((line['planned_amount']+line['total_operation']) != 0 and line['residual']*100/(line['planned_amount'] + line['total_operation']) or 100),2)  "/> %</td>
+
+                                                            </t>
+                                                            <t t-else="">
+                                                                <td><t t-esc="get.get_analytic_info(id,data).code"/></td>
+                                                                <td><t t-esc="get.get_analytic_info(id,data).name"/></td>
+                                                                <td><t t-esc="line['planned_amount']"/></td>
+                                                                <td><t t-esc="line['total_operation']"/></td>
+                                                                <td><t t-esc="line['practical_amount']"/></td>
+                                                                <td><t t-esc="round( (line['planned_amount']+line['total_operation']) != 0 and line['residual']*100/(line['planned_amount'] + line['total_operation']) or 100,2)  "/></td>
+
+                                                            </t>
+                                                        </tr>
+                                                        <t t-foreach="get.get_analytic_budgetry_positions(id,data)" t-as="bud">
+                                                            <tr style="background-color:white;">
+                                                                <t t-if="data.get('budget_type')=='out'">
+                                                                    <td colspan="2"><t t-esc="bud['general_budget_id'][1]"/></td>
+                                                                    <td><t t-esc="bud['planned_amount']"/></td>
+                                                                    <td><t t-esc="bud['transfer_amount']"/></td>
+                                                                    <td><t t-esc="line['total_operation']"/></td>
+
+                                                                    <td><t t-esc="bud['confirm']"/></td>
+                                                                    <td><t t-esc="bud['practical_amount']*-1"/></td>
+                                                                    <td><t t-esc="bud['residual']"/></td>
+                                                                    <td><t t-esc=" round(100-((bud['planned_amount']+bud['total_operation']) != 0 and bud['residual']*100/(bud['planned_amount'] + bud['total_operation']) or 100),2)  "/> %</td>
+                                                                </t>
+                                                                <t t-else="">
+                                                                    <td colspan="2"><t t-esc="bud['general_budget_id'][1]"/></td>
+                                                                    <td><t t-esc="bud['planned_amount']"/></td>
+                                                                    <td><t t-esc="bud['total_operation']"/></td>
+
+                                                                    <td><t t-esc="bud['practical_amount']"/></td>
+                                                                    <td><t t-esc=" round((bud['planned_amount']+bud['total_operation']) != 0 and bud['residual']*100/(bud['planned_amount'] + bud['total_operation']) or 100,2)  "/></td>
+
+                                                                </t>
+
+
+
+
+
+
+                                                            </tr>
+                                                        </t>
+
+
+
+                                                    </t>
+
+
+                                                </t>
+                                            </t>
+                                        </table>
+
+                                    </t>
+
+                                </t>
+
+                            </body>
+                        </html>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <!-- Default follow up message -->
+        <record id="email_hr_process_archive" model="email.template">
+            <field name="name">Default employee process notification e-mail</field>
+            <field name="email_from">erpmail@itisalat.ntc.org.sd</field>
+            <field name="subject">Employee Processes Notification</field>
+            <field name="email_to">${object.user_id.email}</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_hr_process_archive"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 15px; color: rgb(34, 34, 34); background-color: #FFF; ">
+
+    <p><strong>Hello </strong></p><br />
+
+    <p><strong>There is a process waiting your Approval</strong></p>    
+    <p style="margin-left: 30px;">
+       % if object.url :
+            <strong>&nbsp;&nbsp; <a href=${object.url}>Click here to access the record.</a> </strong><br /><br /> 
+        % endif
+        % if not object.url :
+            <strong>&nbsp;&nbsp;Contact system admin to check your access rules</strong><br /><br /> 
+        % endif                 	 
+
+    </p>  
+    <p>
+		
+		</p>
+    <p><strong>
+		Adminstrator
+		</strong></p>
+    </div>
+</div>
+            ]]></field>
+        </record>
+
+        
+        <!-- hr loan -->
+        <record id="email_hr_loan" model="email.template">
+            <field name="name">Default loan notification e-mail</field>
+            <field name="email_from">erpmail@itisalat.ntc.org.sd</field>
+            <field name="subject">Loan Notification</field>
+            <field name="email_to">${object.user_id.email}</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_hr_employee_loan"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html"><![CDATA[
+<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 15px; color: rgb(34, 34, 34); background-color: #FFF; ">
+
+    <p><strong>Hello </strong></p><br />
+	% if object.state == 'requested':
+        <p><strong>A Loan requset is waiting for Manager of the Commission approval</strong></p>
+    % endif
+    % if object.state == 'approved':
+        <p><strong>Loan requset is Approved and waiting for the payment</strong></p>
+    % endif
+    % if object.state == 'paid':
+        <p><strong>Loan was paid and The Deduction will be Started From This month's salary</strong></p>
+    % endif
+
+    <p><strong>Request details: </strong></p>    
+    <p style="margin-left: 30px;">
+        <strong>Employee name: </strong>${object.employee_id.name}</strong><br /><br />
+       <strong>&nbsp;&nbsp;Loan Name: </strong>${object.loan_id.name}<br /><br />
+       <strong>&nbsp;&nbsp;Loan Status: </strong>${object.state}<br /><br />
+
+       % if object.url :
+            <strong>&nbsp;&nbsp; <a href=${object.url}>Click here to access the record.</a> </strong><br /><br /> 
+        % endif
+        % if not object.url :
+            <strong>&nbsp;&nbsp;Contact system admin to check your access rules</strong><br /><br /> 
+        % endif                 	 
+
+    </p>  
+    <p>
+		
+		</p>
+    <p><strong>
+		Adminstrator
+		</strong></p>
+    </div>
+</div>
+            ]]></field>
+        </record>
+
+
+    </data>
+</openerp>

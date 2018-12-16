@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		
+<!-- Holiday transition -->
+	<record model="workflow.transition" id="hr_holidays.holiday_confirm2refuse"> <!-- 2. submitted->refused (refuse signal) -->
+        <field name="act_from" ref="hr_holidays.act_confirm" />
+        <field name="act_to" ref="hr_holidays.act_refuse" />
+        <field name="signal">refuse</field>
+        <field name="condition">True</field>
+        <field name="group_id" eval="False"/>
+    </record>
+
+<!--permission transition-->
+		
+		<record model="workflow.transition" id="t140">
+			<field name="act_from" ref="hr_holidays.act_draft" />
+			<field name="act_to" ref="hr_holidays.act_confirm" />
+			<field name="signal">permission_confirm</field>
+		</record>
+
+		<record model="workflow.transition" id="t122">
+			<field name="act_from" ref="hr_holidays.act_confirm" />
+			<field name="act_to" ref="hr_holidays.act_validate" />
+			<field name="signal">permission_validate</field>
+		</record>
+
+	</data>
+</openerp>

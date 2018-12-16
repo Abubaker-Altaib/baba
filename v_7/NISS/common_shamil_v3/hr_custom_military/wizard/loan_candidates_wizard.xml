@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_loan_candidates_wizard" model="ir.ui.view">
+            <field name="name">loan_candidates_wizard.form</field>
+            <field name="model">loan_candidates_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Loan candidates Report" version="7.0">
+                    <button name="print_report" string="Print" type="object"/>
+                    <group>
+                        <field name="num" required="1"/>
+                        <field name="loan_id" required="1"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="action_loan_candidates_wizard" model="ir.actions.act_window">
+            <field name="name">Loan candidates Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">loan_candidates_wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_loan_candidates_wizard"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="loan_candidates_wizard_menu" name="Loan candidates Report" action="action_loan_candidates_wizard" parent="hr_loan.hr_loan_menu"/>
+        <report menu="False" auto="False" id="loan_candidates_report_id" model="hr.employee" name="hr.loan_candidates.report" file="hr_custom_military/report/loan_candidates_report.mako" string="Loan Candidates Report" report_type="webkit" header="True"/>
+    </data>
+</openerp>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+ 
+ <record id="garmeen_planning_view_tree" model="ir.ui.view">
+      <field name="name"> Garmeen Planning Tree</field>
+      <field name="model">dzc_6.gorm.plan</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="code"/>
+          <field name="date_of_plan"/>
+          <field name="name"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Form view  model -->
+    <record id="‫‪garmeen_plan_view_form" model="ir.ui.view">
+      <field name="name">Garmeen Planning  Form</field>
+      <field name="model">dzc_6.gorm.plan</field>
+      <field name="arch" type="xml">
+        <form>
+
+          <header>
+           <button name="confirm_action" 
+            string="Confirm"
+            states="draft," 
+            type="object" 
+            class="oe_highlight" />
+
+            <button name="approve_action" string="Approve" states="confirm," type="object" class="oe_highlight" />
+
+            <button name="done_action" string="Done" states="approve," type="object" class="oe_highlight" />
+
+            <button name="cancel_action" string="Cancel" states="draft,confirm,approve" type="object" class="oe_highlight" />
+
+            <button name="set_to_draft_action" string="Set To Draft" states="cancel" type="object" class="oe_highlight" />
+
+            <field name="state" widget="statusbar"  />
+          </header>
+
+          <sheet>
+          	
+            <group col="4" colspan="2" string="Garmeen Planning Information">
+
+              <field name="code"  readonly="1"/>
+              <field name="date_of_plan" required="1"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+               <field name="name" required="1"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+           </group>
+           
+
+           <group col="4" colspan="2">
+              <field name="duration_from" required="1"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+              <field name="duration_to" required="1"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+              <field name="state_id" required="1" domain="[('company_id' ,'=' , company_id)]"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+              <field name="local_state_id" required="1"  domain="[('company_id' ,'=' , company_id)]"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+              <field name="total_amount" required="1"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+              <field name="company_id" readonly="1"/>
+            </group>
+            <notebook>
+              <page string="Types Planning Details">
+              <field name="order_lines_ids"  attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}">
+                <tree editable="bottom">
+                  <field name="type_id" required="1" />
+                  <field name="planned" required="1"/>
+                  <field name="executing_actual" required="1" readonly="1"/>
+                  <field name="no_of_orders" readonly="1" />
+                  <field name="percentage" required="1" widget="progressbar" /> <!--  -->
+
+                </tree>
+              </field>
+              </page>
+            </notebook> 
+
+
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+
+    <record id="gorm_plan_view_search" model="ir.ui.view">
+     <field name="name">gorm.type.search</field>
+     <field name="model">dzc_6.gorm.plan</field>
+     <field name="arch" type="xml">
+
+       <search string="Search Opportunities">
+         <field name="code"/>
+         <field name="name"/>
+       </search>
+
+     </field>
+   </record>
+
+
+
+<record id="dzc_6_gorm_plan_action" model="ir.actions.act_window">
+    <field name="name">Garmeen Planning</field>
+    <field name="res_model">dzc_6.gorm.plan</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+<menuitem id="dzc6_menu"
+      name="Garmeen Channel"    
+      sequence="2"
+      parent="dzc6_main_menu"
+      />
+
+       <menuitem id="dzc6_gorm_plan"
+      name="Garmeen Planning"    
+      sequence="2"
+      parent="dzc6_menu"
+      action="dzc_6_gorm_plan_action"/>
+
+  </data>
+</odoo>

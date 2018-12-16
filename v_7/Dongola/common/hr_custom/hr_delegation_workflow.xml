@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="delegation" model="workflow">
+            <field name="name">Delegation Basic Workflow</field>
+            <field name="osv">hr.employee.delegation</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="act_delegation_draft" model="workflow.activity">
+            <field name="wkf_id" ref="delegation"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+        <record id="act_delegation_complete" model="workflow.activity">
+            <field name="wkf_id" ref="delegation"/>
+            <field name="name">complete</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'complete'})</field>
+        </record>
+        <record id="act_delegation_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="delegation"/>
+            <field name="name">confirm</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'confirm'})</field>
+        </record>
+         <record id="act_delegation_approve" model="workflow.activity">
+            <field name="wkf_id" ref="delegation"/>
+            <field name="name">approve</field>
+            <field name="kind">function</field>
+            <field name="action">approved()</field>
+        </record>
+        <record id="act_delegation_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="delegation"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="flow_stop">True</field>
+            <field name="action">write({'state':'cancel'})</field>
+        </record>
+       
+        <record id="act_delegation_done" model="workflow.activity">
+            <field name="wkf_id" ref="delegation"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">my_done()</field>
+            <field name="flow_stop">True</field>
+        </record>
+
+        <record id="trans_draft_complete" model="workflow.transition">
+            <field name="act_from" ref="act_delegation_draft"/>
+            <field name="act_to" ref="act_delegation_complete"/>
+            <field name="signal">complete</field>
+        </record>
+        <record id="trans_complete_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_delegation_complete"/>
+            <field name="act_to" ref="act_delegation_cancel"/>
+            <field name="condition">not check_punishment() or not check_loan() or not check_holidays()</field>
+        </record>
+        <record id="trans_complete_cancel2" model="workflow.transition">
+            <field name="act_from" ref="act_delegation_complete"/>
+            <field name="act_to" ref="act_delegation_cancel"/>
+            <field name="signal">cancel</field>  
+        </record>
+        <record id="trans_complete_confirm" model="workflow.transition">
+            <field name="act_from" ref="act_delegation_complete"/>
+            <field name="act_to" ref="act_delegation_confirm"/>
+            <field name="signal">confirm</field>
+        </record>
+        <record id="trans_complete_draft" model="workflow.transition">
+            <field name="act_from" ref="act_delegation_complete"/>
+            <field name="act_to" ref="act_delegation_draft"/>
+            <field name="signal">draft</field>
+        </record>
+        <record id="trans_confirm_draft" model="workflow.transition">
+            <field name="act_from" ref="act_delegation_confirm"/>
+            <field name="act_to" ref="act_delegation_draft"/>
+            <field name="signal">draft</field>
+        </record>
+
+        
+        <record id="trans_confirm_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_delegation_confirm"/>
+            <field name="act_to" ref="act_delegation_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        
+         <record id="trans_confirm_approve" model="workflow.transition">
+            <field name="act_from" ref="act_delegation_confirm"/>
+            <field name="act_to" ref="act_delegation_approve"/>
+            <field name="signal">approve</field>
+        </record>
+       <record id="trans_approve_draft" model="workflow.transition">
+            <field name="act_from" ref="act_delegation_approve"/>
+            <field name="act_to" ref="act_delegation_draft"/>
+            <field name="signal">draft</field>
+            <field name="condition">action_draft()</field>
+        </record>
+        
+        <record id="trans_approve_done" model="workflow.transition">
+            <field name="act_from" ref="act_delegation_approve"/>
+            <field name="act_to" ref="act_delegation_done"/>
+            <field name="signal">done</field>
+        </record>
+        
+        
+
+    </data>
+</openerp>

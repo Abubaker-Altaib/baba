@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<!-- Activities -->
+		<record id="account_voucher.act_proforma" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="flow_start">True</field>
+			<field name="name">proforma</field>
+			<field name="action">write({'state':'draft'})</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_close" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="name">close</field>
+			<field name="action">complete_close()</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_confirm" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="name">Confirm</field>
+			<field name="action">write({'state':'confirm'})</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_budget_confirm_review" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="name">budget_confirm_review</field>
+			<field name="action">create_budget_confirmation()</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_budget_confirm_pay" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="name">budget_confirm_pay</field>
+			<field name="action">create_budget_confirmation()</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_review" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="name">review</field>
+			<field name="action">review_voucher()</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_pay" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="name">pay</field>
+			<field name="action">pay_voucher()</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="act_receive" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="name">receive</field>
+			<field name="action">action_move_line_create()
+			write({'state':'posted'})</field>
+			<field name="kind">function</field>
+		</record>
+		<!--<record id="act_post" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="name">post</field>
+			<field name="action">write({'state':'posted'})</field>
+			<field name="kind">function</field>
+		</record>
+		<record id="account_voucher.act_done" model="workflow.activity">
+			<field name="wkf_id" ref="account_voucher.wkf" />
+			<field name="name">done</field>
+			<field name="action">write({'state':'done'})</field>
+			<field name="kind">function</field>
+			<field eval="1" name="flow_stop" />
+		</record>-->
+
+		<!-- Transitions -->
+		<!-- Delete no need transition -->
+		<!-- <delete model="workflow.transition" search="[('act_from','=',ref('account_voucher.act_proforma')), 
+			('act_to','=',ref('account_voucher.act_done'))]" /> 
+		<delete model="workflow.transition"
+			search="[('act_from','=',ref('account_voucher.act_proforma')),
+													('act_to','=',ref('account_voucher_confirmation.act_no_approve'))]" />
+		<record id="account_voucher.t2" model="workflow.transition">
+            <field name="act_to" ref="act_post" />
+        </record>-->
+		<!-- Complete -->
+		<record id="voucher_t1" model="workflow.transition">
+			<field name="act_from" ref="account_voucher.act_proforma" />
+			<field name="act_to" ref="act_close" />
+			<field name="signal">complete_close</field>
+		</record>
+		<record id="voucher_t11" model="workflow.transition">
+			<field name="act_from" ref="act_close" />
+			<field name="act_to" ref="act_receive" />
+			<field name="signal">pay_receive</field>
+		</record>
+		<!--record id="account_voucher_2" model="workflow.transition">
+			<field name="act_from" ref="account_voucher.act_proforma" />
+			<field name="act_to" ref="act_confirm" />
+			<field name="signal">complete_confirm</field>
+		</record>
+		<record id="voucher_t3" model="workflow.transition">
+			<field name="act_from" ref="account_voucher.act_proforma" />
+			<field name="act_to" ref="act_review" />
+			<field name="signal">complete_review</field>
+		</record>-->
+
+		<!-- Close 
+		<record id="voucher_t4" model="workflow.transition">
+			<field name="act_from" ref="act_close" />
+			<field name="act_to" ref="act_confirm" />
+			<field name="signal">close_confirm</field>
+			<field name="condition">not special</field>
+		</record>-
+		<record id="voucher_t42" model="workflow.transition">
+			<field name="act_from" ref="act_close" />
+			<field name="act_to" ref="act_pay" />
+			<field name="signal">confirm_pay</field>
+			<field name="condition">special</field>
+		</record>-->
+
+		<!-- Confirm 
+		<record id="voucher_t5" model="workflow.transition">
+			<field name="act_from" ref="act_close" />
+			<field name="act_to" ref="act_pay" />
+			<field name="signal">confirm_review</field>
+		</record>--><!--
+		<record id="voucher_t6" model="workflow.transition">
+			<field name="act_from" ref="act_close" />
+			<field name="act_to" ref="act_budget_confirm_pay" />
+			<field name="signal">confirm_pay</field>
+		</record>-->
+
+		<!--<record id="t1" model="workflow.transition">
+			<field name="act_from" ref="act_budget_confirm_review" />
+			<field name="act_to" ref="act_review" />
+			<field name="trigger_model">account.budget.confirmation</field>
+			<field name="trigger_expr_id">confirmation_get()</field>
+			<field name="condition">test_state('finished')</field>
+		</record>
+		<record id="t2" model="workflow.transition">
+			<field name="act_from" ref="act_budget_confirm_pay" />
+			<field name="act_to" ref="act_pay" />
+			<field name="trigger_model">account.budget.confirmation</field>
+			<field name="trigger_expr_id">confirmation_get()</field>
+			<field name="condition">test_state('finished')</field>
+		</record>
+		<record id="t3" model="workflow.transition">
+			<field name="act_from" ref="act_budget_confirm_pay" />
+			<field name="act_to" ref="account_voucher_confirmation.act_no_approve" />
+			<field name="trigger_model">account.budget.confirmation</field>
+			<field name="trigger_expr_id">confirmation_get()</field>
+			<field name="condition">not test_state('finished')</field>
+		</record>
+		<record id="t4" model="workflow.transition">
+			<field name="act_from" ref="act_budget_confirm_review" />
+			<field name="act_to" ref="account_voucher_confirmation.act_no_approve" />
+			<field name="trigger_model">account.budget.confirmation</field>
+			<field name="trigger_expr_id">confirmation_get()</field>
+			<field name="condition">not test_state('finished')</field>
+		</record>
+		< replace no_approve -> done transition 
+		<record id="account_voucher_confirmation.t2" model="workflow.transition">
+			<field name="act_from" ref="account_voucher_confirmation.act_no_approve" />
+			<field name="act_to" ref="act_review" />
+			<field name="trigger_model">account.budget.confirmation</field>
+			<field name="trigger_expr_id">confirmation_get()</field>
+			<field name="condition">not special and test_state('finished')</field>
+		</record>
+		<record id="t6" model="workflow.transition">
+			<field name="act_from" ref="account_voucher_confirmation.act_no_approve" />
+			<field name="act_to" ref="act_pay" />
+			<field name="trigger_model">account.budget.confirmation</field>
+			<field name="trigger_expr_id">confirmation_get()</field>
+			<field name="condition">special and test_state('finished')</field>
+		</record>
+
+		<record id="voucher_t7" model="workflow.transition">
+			<field name="act_from" ref="act_review" />
+			<field name="act_to" ref="act_post" />
+			<field name="signal">review_post</field>
+		</record>
+		<record id="voucher_t15" model="workflow.transition">
+			<field name="act_from" ref="act_review" />
+			<field name="act_to" ref="act_post" />
+			<field name="condition">special and type=='sale'</field>
+		</record>
+		<record id="voucher_t8" model="workflow.transition">
+			<field name="act_from" ref="act_review" />
+			<field name="act_to" ref="act_pay" />
+			<field name="signal">review_schedule</field>
+		</record>
+		<record id="voucher_t9" model="workflow.transition">
+			<field name="act_from" ref="act_review" />
+			<field name="act_to" ref="act_confirm" />
+			<field name="signal">review_confirm</field>
+		</record>
+        -->
+		
+		<!--<record id="voucher_t12" model="workflow.transition">
+			<field name="act_from" ref="act_receive" />
+			<field name="act_to" ref="act_post" />
+			<field name="signal">receive_post</field>
+		</record>
+		<record id="voucher_t13" model="workflow.transition">
+			<field name="act_from" ref="act_post" />
+			<field name="act_to" ref="account_voucher.act_done" />
+			<field name="signal">post_done</field>
+		</record>-->
+	</data>
+</openerp>
+

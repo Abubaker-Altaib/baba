@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_receipt_document">
+            <t t-call="report.external_layout">
+                <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+                <div class="page">
+                    <p style="text-align:left;"><strong>Customer Copy</strong></p>
+                    <div class="header" style="text-align:center;"><h1><strong>Payment Receipt</strong></h1></div>
+			<br></br>
+                    <div class="row mt32 mb32">
+			
+			<table class="table table-bordered" style="border-color:black;">
+			<tbody class="payment_tbody">
+			<tr>
+                <td t-if="o.company_id" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Branchs:  </strong></td>
+                               <td> <p t-field="o.company_id"/> </td>
+
+                            <td t-if="o.payment_date" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Payment Date:</strong></td>
+                                <td> <p t-field="o.payment_date"/></td>
+			</tr>
+			<tr>
+			<td style="background-color:#a6a6a6; width:20%;">
+                            <strong><span t-field="o.partner_type"/><span>:</span></strong></td>
+                            <td><address t-field="o.partner_id"
+                                t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+
+				</td>
+                            <td t-if="o.partner_id.property_account_receivable_id" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Account:</strong></td>
+                                <td><p t-field="o.partner_id.property_account_receivable_id"/></td>
+
+                            <td t-if="o.journal_id" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Journal Name:</strong></td>
+                                <td><p t-field="o.journal_id.name"/></td>
+			</tr>
+			<tr>
+                            <td t-if="o.journal_id" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Payment Method:</strong></td>
+                                <td><p t-field="o.journal_id"/></td>
+
+                            <td t-if="o.amount" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Amount:</strong></td>
+                                <td><p t-field="o.amount"/></td>
+
+                            <td t-if="o.check_amount_in_words_general" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Amount Text:</strong></td>
+                                <td><p t-field="o.check_amount_in_words_general"/></td>
+			</tr>
+			<tr>
+                            <td t-if="o.communication" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Memo:</strong></td>
+                               <td> <p t-field="o.communication"/></td>
+			</tr>                        
+			</tbody>
+			</table>
+
+			<p><strong>Signature..........................</strong></p>
+                            <!--t t-if="o.account_move_line.move._id">
+                                <strong>Journal NO:</strong>
+                                <p t-field="o.account_move_line.move._id"/></t-->
+
+<br></br>
+                 
+			<p style="border-bottom:1px double black;"/>
+
+ 		    <p style="text-align:left;"><strong>Company Copy</strong></p>
+                    <div class="header" style="text-align:center;"><h1><strong>Payment Receipt</strong></h1></div>
+			<br></br>
+			
+			<table class="table table-bordered" style="border-color:#000;">
+			<tbody class="payment_tbody">
+			<tr>
+			    <td t-if="o.company_id" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Branch:</strong></td>
+                               <td> <p t-field="o.company_id"/></td>
+
+                            <td t-if="o.payment_date" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Payment Date:</strong></td>
+                                <td> <p t-field="o.payment_date"/></td>
+			</tr>
+			<tr>
+			<td style="background-color:#a6a6a6; width:20%;">
+                            <strong><span t-field="o.partner_type"/><span>:</span></strong></td>
+                            <td><address t-field="o.partner_id"
+                                t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+
+				</td>
+                            <td t-if="o.partner_id.property_account_receivable_id" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Account:</strong></td>
+                                <td><p t-field="o.partner_id.property_account_receivable_id"/></td>
+			                <td t-if="o.journal_id" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Journal Name:</strong></td>
+                                <td><p t-field="o.journal_id.name"/></td>
+            </tr>
+			<tr>
+                            <td t-if="o.journal_id" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Payment Method:</strong></td>
+                                <td><p t-field="o.journal_id"/></td>
+
+                            <td t-if="o.amount" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Amount:</strong></td>
+                                <td><p t-field="o.amount"/></td>
+                             <td t-if="o.check_amount_in_words_general" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Amount Text:</strong></td>
+                                <td><p t-field="o.check_amount_in_words_general"/></td>
+			</tr>
+			<tr>
+                            <td t-if="o.communication" style="background-color:#a6a6a6; width:20%;">
+                                <strong>Memo:</strong></td>
+                               <td> <p t-field="o.communication"/></td>
+			</tr>                        
+			</tbody>
+			</table>
+
+			<p><strong>Signature..........................</strong></p>
+
+
+		</div>
+		</div>
+            </t>
+        </template>
+
+        <template id="report_receipt">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="accounting_reports.report_receipt_document" t-lang="o.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_finance_reports_parent" name="Reports" parent="menu_finance_root" sequence="5" />
+    <menuitem id="reports_operation" name="Operations Reports" parent="menu_finance_reports_parent" sequence="1" />
+    <menuitem id="analytic_reports_operation" name="Analytic Operation Reports" parent="menu_finance_reports_parent" sequence="2" />
+    <menuitem id="menu_finance_reports_operation" name="Operations Reports" parent="analytic_reports_operation" sequence="1" />
+    <menuitem id="menu_finance_reports_operation_graph" name="Graph Reports" parent="analytic_reports_operation" sequence="2" />
+    <menuitem id="menu_finance_reports_general_report" name="General Reports" parent="menu_finance_reports_parent" sequence="3" />
+
+
+        <record id="report_report_finance_fundingsize_search" model="ir.ui.view">
+            <field name="name">Installment State</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Installment">
+                    <filter string="Funded This Year" name="thisyear"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-12-31')),('installment_due_date','&gt;=',time.strftime('%%Y-01-01'))]"
+                            help="Funded Amount with period in current year"/>
+                    <filter string="Last Year" domain="[('installment_due_date','&gt;=',(context_today()-relativedelta(years=1)).strftime('%%Y-01-01')),('installment_due_date','&lt;=', time.strftime('%%Y-01-01'))]"/>
+                    <separator/>
+                    <filter string="Funded Month 1" name="thismounth1"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-1-31')),('installment_due_date','&gt;=',time.strftime('%%Y-1-01'))]"
+                            help="Funded Amount with period in month 1"/>
+                    <filter string="Funded Month 2" name="thismounth2"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-2-28')),('installment_due_date','&gt;=',time.strftime('%%Y-2-01'))]"
+                            help="Funded Amount with period in month 2"/>
+                    <filter string="Funded Month 3" name="thismounth3"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-3-30')),('installment_due_date','&gt;=',time.strftime('%%Y-3-01'))]"
+                            help="Funded Amount with period in month 3"/>
+                    <filter string="Funded Month 4" name="thismounth4"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-4-30')),('installment_due_date','&gt;=',time.strftime('%%Y-4-01'))]"
+                            help="Funded Amount with period in month 4"/>
+                    <filter string="Funded Month 5" name="thismounth5"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-5-31')),('installment_due_date','&gt;=',time.strftime('%%Y-5-01'))]"
+                            help="Funded Amount with period in month 5"/>
+                    <filter string="Funded Month 6" name="thismounth6"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-6-30')),('installment_due_date','&gt;=',time.strftime('%%Y-6-01'))]"
+                            help="Funded Amount with period in month 6"/>
+                    <filter string="Funded Month 7" name="thismounth7"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-7-31')),('installment_due_date','&gt;=',time.strftime('%%Y-7-01'))]"
+                            help="Funded Amount with period in month 7"/>
+                    <filter string="Funded Month 8" name="thismounth8"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-8-31')),('installment_due_date','&gt;=',time.strftime('%%Y-8-01'))]"
+                            help="Funded Amount with period in month 8"/>
+                    <filter string="Funded Month 9" name="thismounth9"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-9-30')),('installment_due_date','&gt;=',time.strftime('%%Y-9-01'))]"
+                            help="Funded Amount with period in month 9"/>
+                    <filter string="Funded Month 10" name="thismounth10"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-10-31')),('installment_due_date','&gt;=',time.strftime('%%Y-10-01'))]"
+                            help="Funded Amount with period in month 10"/>
+                    <filter string="Funded Month 11" name="thismounth11"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-11-30')),('installment_due_date','&gt;=',time.strftime('%%Y-11-01'))]"
+                            help="Funded Amount with period in month  11"/>
+                    <filter string="Funded Month 12" name="thismounth12"
+                            domain="['|', ('installment_due_date', '=', False), '&amp;',('installment_due_date','&lt;=', time.strftime('%%Y-12-31')),('installment_due_date','&gt;=',time.strftime('%%Y-12-01'))]"
+                            help="Funded Amount with period in month 12"/>
+                    <separator/>
+                    <filter string="Funded" name="state_funded" icon="terp-accessories-archiver"
+                        domain="[('order_state_together','=','d')]" />
+                    <separator/>
+                    <filter name="_draft" string="Not In Periode" domain="[('amount_residual_inst_state', '=', 'draft')]" />
+                    <filter name="_delay" string="Delay" domain="[('amount_residual_inst_state', '=', 'delay')]" />
+                    <filter name="_adverse" string="Adverse" domain="[('amount_residual_inst_state', '=', 'adverse')]" />
+                    <filter name="_done" string="Done" domain="[('amount_residual_inst_state', '=', 'done')]" />
+                    <group string="Group By">
+                    <filter name="company_id" string="Branch" context="{'group_by':'company_id'}" />
+                    <filter string="Customer" context="{'group_by':'customer'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+                    <!-- funding size report -->
+        <record id="view_report_finance_fundingsize_pivot" model="ir.ui.view">
+            <field name="name">Funding Size Report</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <pivot string="Funding SIze" >
+                    <field name="type" type="col"/>
+                    <field name="company_id" type="row"/>
+                    <field name="amount" type="measure"/>
+                    <field name="customer_count" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="view_report_finance_fundingsize_graph" model="ir.ui.view">
+            <field name="name">Funding Gender Graph</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <graph string="Funding Gender Graph" type="pie">
+                    <field name="type" type="row"/>
+                    <field name="amount" type="measure"/>
+                     </graph>
+            </field>
+        </record>
+
+        <record id="action_report_finance_fundingsize" model="ir.actions.act_window">
+            <field name="name">Funding Size Report</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="context">{ 'search_default_state_funded': True, }</field>
+             <field name="view_id" ref="view_report_finance_fundingsize_pivot"/>
+        </record>
+
+        <record id="action_report_finance_fundingsize_graph" model="ir.actions.act_window">
+            <field name="name">Funding Size Report</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">graph</field>
+             <field name="view_id" ref="view_report_finance_fundingsize_graph"/>
+        </record>
+
+
+        <menuitem id="menu_report_finance_fundingsize" name="Funding Size Report"
+        action="action_report_finance_fundingsize"
+                  parent="menu_finance_reports_operation" sequence="1"/>
+        <menuitem id="menu_report_finance_fundingsize_graph" name="Funding Size Graph"
+        action="action_report_finance_fundingsize_graph"
+                  parent="menu_finance_reports_operation_graph" sequence="1"/>
+
+
+
+
+                <!-- funding share based on sector report -->
+        <record id="view_report_finance_funding_share_sector__pivot" model="ir.ui.view">
+            <field name="name">funding share based on sector</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <pivot string="funding share based on sector" >
+                    <field name="sector_id" type="col"/>
+                    <field name="company_id" type="row"/>
+                    <field name="amount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="view_report_finance_funding_share_sector_graph" model="ir.ui.view">
+            <field name="name">Graph</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <graph string="finance funding share sector graph" type="pie">
+                    <field name="sector_id" type="row"/>
+                    <field name="amount" type="measure"/>
+                     </graph>
+            </field>
+        </record>
+
+        <record id="action_report_finance_funding_share_sector" model="ir.actions.act_window">
+            <field name="name">Funding Share Based On Sector</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="context">{ 'search_default_state_funded': True, }</field>
+
+            <!--field name="context">{'search_default_state_done':1}</field-->
+             <field name="view_id" ref="view_report_finance_funding_share_sector__pivot"/>
+        </record>
+        <record id="action_report_finance_funding_share_sector_graph" model="ir.actions.act_window">
+            <field name="name">Funding Share Based On Sector</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">graph</field>
+            <!--field name="context">{'search_default_state_done':1}</field-->
+             <field name="view_id" ref="view_report_finance_funding_share_sector_graph"/>
+        </record>
+
+        <!--record id="report_finance_funding_share_sector_search" model="ir.ui.view">
+            <field name="name">Installment State</field>
+            <field name="model">finance.report.fundingsize</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Installment">
+                    <filter string="done" name="state_done" icon="terp-accessories-archiver"
+                        domain="[('installmentstate','=','done')]" />
+                </search>
+            </field>
+        </record-->
+
+
+
+        <menuitem id="menu_report_finance_funding_share_sector" name="Finance Funding Share/Sector"
+        action="action_report_finance_funding_share_sector"
+                  parent="menu_finance_reports_operation" sequence="2"/>
+        <menuitem id="menu_report_finance_funding_share_sector_graph" name="Finance Funding Share/Sector Graph"
+        action="action_report_finance_funding_share_sector_graph"
+                  parent="menu_finance_reports_operation_graph" sequence="2"/>
+
+
+
+                    <!-- funding done based on fomula report -->
+        <record id="view_report_finance_funding_done_formula__pivot" model="ir.ui.view">
+            <field name="name">funding done based on formula</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <pivot string="funding done based on formula" >
+                    <field name="formula" type="col"/>
+                    <field name="company_id" type="row"/>
+                    <field name="amount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="view_report_finance_funding_done_formula_graph" model="ir.ui.view">
+            <field name="name">Graph</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <graph string="finance funding done graph" type="pie">
+                    <field name="formula" type="col"/>
+                    <field name="amount" type="measure"/>
+                     </graph>
+            </field>
+        </record>
+
+        <record id="action_report_finance_funding_done_formula" model="ir.actions.act_window">
+            <field name="name">Funding Done Based On Formula</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="context">{ 'search_default_state_funded': True, }</field>
+
+            <!--field name="context">{'search_default_state_done':1}</field-->
+             <field name="view_id" ref="view_report_finance_funding_done_formula__pivot"/>
+        </record>
+        <record id="action_report_finance_funding_done_formula_graph" model="ir.actions.act_window">
+            <field name="name">Funding Done Based On Formula</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">graph</field>
+            <!--field name="context">{'search_default_state_done':1}</field-->
+             <field name="view_id" ref="view_report_finance_funding_done_formula_graph"/>
+        </record>
+
+        <!--record id="report_report_finance_funding_done_formula_search" model="ir.ui.view">
+            <field name="name">Installment State</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Installment">
+                    <filter string="done" name="state_done" icon="terp-accessories-archiver"
+                        domain="[('installmentstate','=','done')]" />
+                </search>
+            </field>
+        </record-->
+
+
+        <menuitem id="menu_report_finance_funding_done_formula" name="Finance Funding Done/Formula"
+        action="action_report_finance_funding_done_formula"
+                  parent="menu_finance_reports_operation" sequence="3"/>
+        <menuitem id="menu_report_finance_funding_done_formula_graph" name="Finance Funding Done/Formula"
+        action="action_report_finance_funding_done_formula_graph"
+                  parent="menu_finance_reports_operation_graph" sequence="3"/>
+
+			<!-- Files Move -->
+        <record id="view_report_finance_filesmoves_pivot" model="ir.ui.view">
+            <field name="name">Files Moves</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <pivot string="Files Moves" >
+                    <field name="order_state_together" type="col"/>
+                    <field name="type" type="col"/>
+                    <field name="company_id" type="row"/>
+                    <field name="customer_count" type="measure"/>
+                    <field name="asl" type="measure"/>
+                    <field name="rebih" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="view_report_finance_filesmoves_graph" model="ir.ui.view">
+            <field name="name">Files Moves Graph</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <graph string="Files Moves" type="pie">
+                    <field name="order_state_together" type="row"/>
+                    <field name="amount" type="measure"/>
+                     </graph>
+            </field>
+        </record>
+
+        <record id="action_report_finance_filesmoves" model="ir.actions.act_window">
+            <field name="name">Files Moves Report</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="context">{'group_by_no_leaf':1,'group_by':[]}</field>
+             <field name="view_id" ref="view_report_finance_filesmoves_pivot"/>
+        </record>
+        <record id="action_report_finance_filesmoves_graph" model="ir.actions.act_window">
+            <field name="name">Files Moves Report</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">graph</field>
+            <field name="context">{'group_by_no_leaf':1,'group_by':[]}</field>
+             <field name="view_id" ref="view_report_finance_filesmoves_graph"/>
+        </record>
+
+        <menuitem id="menu_report_finance_filesmoves" name="Files Moves Pivot"
+        action="action_report_finance_filesmoves"
+                  parent="menu_finance_reports_operation" sequence="4"/>
+
+        <!--menuitem id="menu_report_finance_filesmoves_graph" name="Files Moves Graph"
+        action="action_report_finance_filesmoves_graph"
+                  parent="menu_finance_reports_operation_graph" sequence="4"/-->
+
+
+
+
+                <!-- Funding based on Gender report -->
+
+
+
+        <record id="view_report_funding_genderreport_pivot" model="ir.ui.view">
+            <field name="name">finance.report.funding.genderreport.pivot</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <pivot string="Funding Based on Gender" >
+                    <field name="gender" type="col"/>
+                    <field name="company_id" type="raw"/>
+                    <field name="customer_count" type="measure"/>
+                    <field name="amount" type="measure"/>
+                    <!--field name="date" interval="day" type="col"/-->
+                    <!--field name="amount"  type="measure" /-->
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="view_report_funding_genderreport_graph" model="ir.ui.view">
+            <field name="name">report.order.graph</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <graph string="Funding By Gender" type="pie">
+                    <field name="gender" type="row"/>
+                    <field name="amount" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="action_report_funding_genderreport" model="ir.actions.act_window">
+            <field name="name">Funding By Gender</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="context">{ 'search_default_state_funded': True, }</field>
+            <field name="view_id" ref="view_report_funding_genderreport_pivot"/>
+        </record>
+        <record id="action_report_funding_genderreport_graph" model="ir.actions.act_window">
+            <field name="name">Funding By Gender</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">graph</field>
+            <field name="context">{'group_by_no_leaf':1,'group_by':[]}</field>
+            <field name="view_id" ref="view_report_funding_genderreport_graph"/>
+        </record>
+
+        <menuitem id="menu_report_funding_gender" name="Funding Based on Gender"
+        action="action_report_funding_genderreport"
+                  parent="menu_finance_reports_operation" sequence="5"/>
+        <menuitem id="menu_report_funding_gender_graph" name="Funding Based on Gender Graph"
+        action="action_report_funding_genderreport_graph"
+                  parent="menu_finance_reports_operation_graph" sequence="5"/>
+
+
+
+
+                        <!-- resuidual state  report -->
+        <record id="view_report_finance_resuidual_state_pivot" model="ir.ui.view">
+            <field name="name">Resuidual State Report</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <pivot string="Resuidual State" >
+                    <field name="type" type="col"/>
+                    <field name="company_id" type="row"/>
+                    <field name="customer" type="row"/>
+                    <field name="amount_residual_inst_state" type="row"/>
+                    <field name="amount_residual_inst" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="view_report_finance_resuidual_state_graph" model="ir.ui.view">
+            <field name="name">Resuidual State Graph</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <graph string="Resuidual State Graph" type="pie">
+                    <field name="company_id" type="row"/>
+                    <field name="amount_residual_inst_state" type="row"/>
+                    <field name="amount_residual_inst" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="action_report_finance_resuidual_state" model="ir.actions.act_window">
+            <field name="name">Resuidual State Report</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="view_report_finance_resuidual_state_pivot"/>
+        </record>
+
+        <record id="action_report_finance_fundingsize_graph" model="ir.actions.act_window">
+            <field name="name">Funding Size Report</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="view_report_finance_resuidual_state_graph"/>
+        </record>
+
+
+        <menuitem id="menu_report_finance_resuidual_state" name="Customer State"
+        action="action_report_finance_resuidual_state"
+                  parent="menu_finance_reports_operation" sequence="6"/>
+        <menuitem id="menu_report_finance_resuidual_state_graph" name="Customer State Graph"
+        action="action_report_finance_fundingsize_graph"
+                  parent="menu_finance_reports_operation_graph" sequence="6"/>
+
+
+
+
+
+
+        <!-- Installments -->
+        <record id="view_finance_installments_filter_asreport" model="ir.ui.view">
+            <field name="name">finance.installments.select</field>
+            <field name="model">finance.installments</field>
+            <field name="arch" type="xml">
+                <search string="Search Installments">
+                    <field name="partner_id" />
+                    <field name="user_id" />
+                    <field name="company_id" />
+                    <filter name="_draft" string="In Periode" domain="[('state', 'in', ('draft'))]" />
+                    <filter name="_delay" string="Delay" domain="[('state', 'in', ('delay'))]" />
+                    <filter name="_adverse" string="Adverse" domain="[('state', 'in', ('adverse'))]" />
+                    <filter name="_done" string="Done" domain="[('state', 'in', ('done'))]" />
+                    <group string="Group By">
+                    <filter name="partner_id" string="Customer" context="{'group_by':'partner_id'}" />
+                    <filter string="Due Date" context="{'group_by':'due_date'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_finance_installment_tree_asreport" model="ir.ui.view">
+            <field name="name">finance.installments.tree.asreport</field>
+            <field name="model">finance.installments</field>
+            <field name="arch" type="xml">
+                <tree string="Approval" create="false" delete="false">
+                    <field name="partner_id" />
+                    <field name="installment_no" />
+                    <field name="due_date" />
+                    <field name="date" />
+                    <field name="profit_amount" sum='Total Profit'/>
+                    <field name="amount_before_profit" sum="Total Before Profit"/>
+                    <field name="amount" sum="Total"/>
+                    <field name="receive_amount" sum="Total" />
+                    <field name="residual" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="finance_installment_action_asreport" model="ir.actions.act_window">
+            <field name="name">Customers Installments</field>
+            <field name="res_model">finance.installments</field>
+            <field name="context">{ 'search_default_f_draft': True, }</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_finance_installment_tree_asreport"/>
+        </record>
+
+        <menuitem id="menu_finance_installment_asreport"
+                  name="Installments Details"
+                  sequence="6"
+                  parent="menu_finance_reports_operation"
+                  action="finance_installment_action_asreport" />
+
+
+
+
+                    <!--Design Your Own Report-->
+        <record id="view_design_report" model="ir.ui.view">
+            <field name="name">Design Report</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <pivot string="Design Report" >
+                    <!--field name="type" type="col"/>
+                    <field name="company_id" type="row"/>
+                    <field name="amount" type="measure"/-->
+                    <field name="amount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="action_design_report" model="ir.actions.act_window">
+            <field name="name">Design your Report</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="view_design_report"/>
+        </record>
+
+        <menuitem id="menu_design_report"
+                  name="Design your own Report"
+                  action="action_design_report"
+                  parent="menu_finance_reports_general_report" sequence="4"/>
+
+
+
+             <!-- General Report menu_finance_reports_general_report -->
+
+            <!-- best officer -->
+
+        <record id="view_report_finance_best_officer" model="ir.ui.view">
+            <field name="name">Best Officer</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <pivot string="Best Officer" >
+                    <field name="user_id" type="row"/>
+                    <!--field name="type" type="col"/>
+                    <field name="company_id" type="row"/>
+                    <field name="amount" type="measure"/-->
+                <field name="amount" type="measure"/>
+                <field name="approve_amount_order" type="measure"/>
+                <field name="customer_count" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="action_finance_best_officer" model="ir.actions.act_window">
+            <field name="name">Best Officer</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="view_report_finance_best_officer"/>
+        </record>
+
+        <menuitem id="menu_finance_best_officer"
+                  name="Best Officer"
+                  action="action_finance_best_officer"
+                  parent="menu_finance_reports_general_report" sequence="1"/>
+
+
+                        <!-- best branch -->
+
+        <record id="view_report_finance_best_company" model="ir.ui.view">
+            <field name="name">Best Branch</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <pivot string="Best Branch" >
+                    <field name="company_id" type="row"/>
+                    <!--field name="type" type="col"/>
+                    <field name="company_id" type="row"/>
+                    <field name="amount" type="measure"/-->
+                    <field name="amount" type="measure"/>
+                    <field name="approve_amount_order" type="measure"/>
+                    <field name="customer_count" type="measure"/>
+                    </pivot>
+            </field>
+        </record>
+
+        <record id="action_finance_best_company" model="ir.actions.act_window">
+            <field name="name">Best Branch</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="view_report_finance_best_company"/>
+        </record>
+
+        <menuitem id="menu_finance_best_company"
+                  name="Best Branch"
+                  action="action_finance_best_company"
+                  parent="menu_finance_reports_general_report" sequence="2"/>
+
+
+                            <!-- formula Branch -->
+
+        <record id="view_report_finance_best_formula" model="ir.ui.view">
+            <field name="name">Best formula</field>
+            <field name="model">finance.report.funding.genderreport</field>
+            <field name="arch" type="xml">
+                <pivot string="Best Branch" >
+                    <field name="formula" type="row"/>
+                    <!--field name="type" type="col"/>
+                    <field name="company_id" type="row"/>
+                    <field name="amount" type="measure"/-->
+                    <field name="amount" type="measure"/>
+                    <field name="approve_amount_order" type="measure"/>
+                    </pivot>
+            </field>
+        </record>
+
+        <record id="action_finance_best_formula" model="ir.actions.act_window">
+            <field name="name">Best Formula</field>
+            <field name="res_model">finance.report.funding.genderreport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="view_report_finance_best_formula"/>
+        </record>
+
+        <menuitem id="menu_finance_best_formula"
+                  name="Best Formula"
+                  action="action_finance_best_formula"
+                  parent="menu_finance_reports_general_report" sequence="3"/>
+
+
+
+
+    <!--inherit account financial report to add line and select fileds -->
+        <record id="view_account_financial_report_form_inherit" model="ir.ui.view">
+            <field name="name">view.account.financial.report.form.inherit</field>
+            <field name="model">account.financial.report</field>
+            <field name="inherit_id" ref="account.view_account_financial_report_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='style_overwrite']" position="after">
+                    <field name="line" />
+                </xpath>
+                <xpath expr="//field[@name='style_overwrite']" position="after">
+                    <field name="select" />
+                </xpath>
+            </field>
+        </record>
+
+    <!--seep template wizard-->
+
+    <record id="finance_report_seep_template_wizard_view" model="ir.ui.view">
+			<field name="name">SEEP Template</field>
+			<field name="model">finance.report.seep.template.wizard</field>
+			<field name="arch" type="xml">
+				<form string="SEEP Template">
+					<group>
+						<field name="main_year" invisible="0"/>
+						<field name="first_month_year" />
+						<field name="first_year"/>
+						<field name="second_year"/>
+                        <field name="third_year" attrs="{'invisible':[('second_year','=','4')]}"/>
+                        <field name="forth_year" attrs="{'invisible':['|',('second_year','=','4'),'|',('third_year','=','4')]}"/>
+                        <field name="fifth_year" attrs="{'invisible':['|',('second_year','=','4'),'|',('third_year','=','4'),'|',('forth_year','=','2')]}"/>
+					</group>
+					<footer>
+						<button string="Print" name="save_to_template" type="object" class="oe_highlight"/>
+                        <!--button string="Cancel" class="oe_link" special="cancel"/-->
+					</footer>
+				</form>
+			</field>
+		</record>
+ 	    <record model="ir.actions.act_window" id="finance_report_seep_template_wizar_action">
+			<field name="name">SEEP Template</field>
+			<field name="res_model">finance.report.seep.template.wizard</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+        </record>
+
+	    <menuitem id="menu_finance_report_seep_template_wizard" name="SEEP Template"  action="finance_report_seep_template_wizar_action" parent="account.menu_finance_legal_statement" sequence="5"/>
+
+
+
+
+
+</odoo>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<record id="view_training_report_wizard" model="ir.ui.view">
+            <field name="name">Training Reports</field>
+            <field name="model">training.wiz</field>
+            <field name="arch" type="xml">
+            	<form string="Training Reports" version="7.0">
+
+			<group>
+				<field name="report_type"/>
+			</group>
+			<group col="4" colspan="6">
+				<group>
+				
+	    			<field name="partner_id" attrs="{'invisible': [('report_type','not in',('maselhi','attract'))],'required':[('report_type','in',('maselhi','attract'))]}"/>
+	    			<field name="year" attrs="{'invisible': [('report_type','not in',('maselhi','limited'))]}"/>
+	    			
+	    			<field name="salary" attrs="{'invisible': [('report_type','!=','file')],'required':[('report_type','=','file')]}" />
+	    			
+	    			<field name="start_date" attrs="{'invisible': [('report_type','in',('maselhi','limited'))],'required':[('report_type','not in',('maselhi','limited'))]}"/>
+
+				<field name="end_date" attrs="{'invisible': [('report_type','in',('maselhi','limited'))],'required':[('report_type','not in',('maselhi','limited'))]}"/>
+				
+				</group>
+			</group>
+			<notebook attrs="{'invisible': [('report_type','!=','file')]}">
+			    <page String="Employees">
+			        <field name="emp" attrs="{'invisible': [('report_type','!=','file')]}" domain="[('state','=','approved'),('payroll_id','=',salary)]"/>
+			    </page>
+			</notebook>
+			<footer>
+       	    		<button name="print_report" string="Print Report" type="object"  default_focus="1" class="oe_highlight" />
+                         or   
+              		<button string="Cancel" class="oe_link" special="cancel"/>
+			</footer>
+    		</form>
+            </field>
+	</record>
+	
+<!-- Training Reports Wiz Action -->	
+	<record id="action_training_report" model="ir.actions.act_window">
+            <field name="name">Training Reports</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">training.wiz</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_training_report_wizard"/>
+            <field name="target">new</field>
+   	</record>
+
+       <menuitem id="training_report_menu" name="Training Reports" parent="hr_training.training_report_menue" action="action_training_report"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_account_analytic_line_tree_inherit" model="ir.ui.view">
+            <field name="name">account.analytic.line.tree.inherit</field>
+            <field name="model">account.analytic.line</field>
+            <field eval="8" name="priority"/>
+            <field name="inherit_id" ref="analytic.view_account_analytic_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='unit_amount']" position="replace">
+                    <field name="unit_amount" sum="Quantity" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="replace">
+                   <field name="amount" sum="Total" invisible="1"/>
+               </xpath>
+                <xpath expr="//field[@name='amount']" position="before">
+                   <field name="debit"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="after">
+                   <field name="credit"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="view_account_analytic_line_form_inherit" model="ir.ui.view">
+            <field name="name">account.analytic.line.form.inherit</field>
+            <field name="model">account.analytic.line</field>
+            <field eval="8" name="priority"/>
+            <field name="inherit_id" ref="analytic.view_account_analytic_line_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='unit_amount']" position="replace">
+                    <field name="unit_amount"  invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="replace">
+                   <field name="amount" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='amount']" position="before">
+                   <field name="debit"/>
+               </xpath>
+                <xpath expr="//field[@name='amount']" position="before">
+                   <field name="credit"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_analytic_account_form1" model="ir.ui.view">
+            <field name="name">account.analytic.account.form</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="currency_id" position="before">
+                    <field name="parent_id" domain="[('type','=', 'view')]" attrs="{'required':[('type' ,'=','normal')]}" />
+                </field>
+                <field name="currency_id" position="after">
+                    <field name="type"/>
+                    <field name="cost_type"/>
+                </field>
+            </field>
+        </record>
+        
+       <record id="view_account_analytic_account_list" model="ir.ui.view">
+            <field name="name">account.analytic.account.list</field>
+            <field name="model">account.analytic.account</field>
+            <field name="inherit_id" ref="analytic.view_account_analytic_account_list" />
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="replace">
+                    <tree string="Analytic Accounts" toolbar="1" decoration-info="type=='view'">
+                        <field name="code"/>
+                        <field name="display_name"/>
+                        <field name="parent_id"/>
+                         <field name="type" />
+                        <field name="active" invisible="1"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="debit"/>
+                        <field name="credit"/>
+                        <field name="balance"/>
+                    </tree>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
+

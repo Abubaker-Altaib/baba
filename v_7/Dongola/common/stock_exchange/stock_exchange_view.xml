@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    
+        <menuitem id="menu_exchange_management" name="Stock Exchange Management"  parent="stock.menu_stock_root" sequence="3"/>
+        
+	    <record model="ir.ui.view" id="view_stock_journal_form1">
+            <field name="name">Stock Journals</field>
+            <field name="model">stock.journal</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock.view_stock_journal_form"/>
+            <field name="arch" type="xml">
+                <field name="user_id" position="after">
+                    <field name="location_id"/> 
+                    <field name="request_no"/> 
+                </field>
+            </field>
+        </record>
+    
+        <record model="ir.ui.view" id="view_product_category_form1">
+            <field name="name">product.category</field>
+            <field name="model">product.category</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+            	<field name="type" position="after">
+                          <group colspan="4">
+                                 <field name="meters"/> 
+                          </group>
+                    </field>
+            </field>
+        </record>
+
+	<!-- 
+	Store Order
+    -->
+        <record id="store_order_form" model="ir.ui.view">
+            <field name="name">store.order.form</field>
+            <field name="model">exchange.order</field>
+            <field name="arch" type="xml">
+                <form string="Store Order" version="7.0">
+                    <header>
+                        <button name="exchange_confirms" states="draft" string="Confirm Exchange Order" class="oe_highlight"/>
+                        <button name="exchange_confirm1" states="confirmed" string="Department Confirm" class="oe_highlight"/>
+                        <button name="exchange_approve_qtys" states="confirmed1" string="Waiting Supply Department Approval " />
+                        <button name="exchange_approve_meters_qtys" states="confirmed2" string="Waiting meters Department Approval" />
+                        <button name="action_done_order" states="picking" string="Manualy Done" type="object"/>
+                        <button name="exchange_approves" states="budget_yes" string="Waiting Supply Department Approval" />
+                        <button name="action_process" states="approved"  string="Process" type="object"/>
+                        <button name="exchange_cancels" states="draft,confirmed,confirmed1,confirmed2,budget_no,budget_yes"
+                                string="Cancel" confirm="Are you sure you want to cancel this request?"/>
+                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object"/>
+                        <button name="action_cancel" states="approved,picking" string="Cancel Exchange Order" type="object" />
+          			    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,approved,done" />
+                    </header> 
+                    <sheet>
+                        <h1> 
+                            <label string="Order Reference "/>
+                            <field name="name" class="oe_inline" readonly="1"/>
+                        </h1>
+                        <group>
+                            <group>
+                                
+                                <field name="categ_id" required="1"/>
+                                <field name="location_id" required="1" 
+                                       domain="[('usage','=','transit'),('chained_location_type','=','fixed')]"/>
+                            </group>
+                            <group>
+                                <field name="date_order"/>
+                                <field name="location_dest_id"   attrs="{'required':[('state', '!=', 'draft')]}" />
+                                <field name="department_id" required="1" domain="[('company_id','=',company_id)]"/>
+                            </group>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Store Order">
+                                <field colspan="4" name="order_line" nolabel="1" >
+                                    <tree colors="red:real_qty&lt;0 and state in ('draft','confirmed','confirmed1')"  editable="bottom" string="Store Order Lines">
+                                        <field name="product_id" colspan="4"  on_change="product_id_change(product_id,product_qty,product_uom, parent.date_order,parent.categ_id,name,price_unit)" domain="[('categ_id','=',parent.categ_id)]" />
+                                        <field name="name"/>
+                                        <field name="product_qty" on_change="onchange_product_qty(product_qty)"/>
+                                        <field name="approved_qty"/>
+                                        <field name="delivered_qty"/>
+                                        <field name="product_uom" context="{'quantity':product_qty,'uom':product_uom}" on_change="product_uom_change(product_id,product_uom,product_qty, parent.date_order,name)" groups="product.group_uom"/>
+                                        <field name="real_qty" />
+                                        <field name="price_unit" groups="analytic.group_analytic_accounting" />
+                                        <field name="price_subtotal" groups="analytic.group_analytic_accounting" />
+                                        <field name="state" invisible="1"/>
+                                    </tree>
+                                 </field>
+                                 <group class="oe_subtotal_footer oe_right">
+                                    <field name="total_amount" sum="Amount"  groups="analytic.group_analytic_accounting"/>
+                                 </group>
+                                 <div class="oe_clear"/>
+                                 <field name="notes" class="oe_inline" placeholder="Terms and conditions..."/>
+                            </page>
+                            <page string="Other Information">
+                                <group>
+                                    <group>
+                                        <field name="validator"/>
+                                        <field name="date_approve"/>
+                                        <field name="shipped"/>
+                                    </group>
+                                    <group>
+                                        <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                                        <field name="ttype" groups="base.group_extended"/>
+                                        <field name="acc_bud_confirm_id"/>
+                                        <field name="account_id"  groups="account.group_account_user" />
+                                        <field name="account_analytic_id"  groups="analytic.group_analytic_accounting" 
+                                               domain="[('parent_id','!=',False)]" />
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_store_order_filter" model="ir.ui.view">
+            <field name="name">store.order.list.select</field>
+            <field name="model">exchange.order</field>
+            <field name="arch" type="xml">
+                <search string="Search Store Order">
+     		       <group>
+                        <filter icon="terp-document-new" name="draft" string="New" domain="[('state','=','draft')]" separator="1" />
+                        <filter icon="terp-camera_test" name="confirmed" string="To Approve" domain="[('state','in',('budget_yes','budget_no','confirmed'))]" separator="1"/>
+                     	<filter icon="terp-check" name="done" string="Done" domain="[('state','=','done')]" separator="1" />
+                        <separator orientation="vertical"/>
+                        <field name="name" select="1" string="Reference"/>
+                        <field name="product_id" select="1"/>
+                        <field name="categ_id" widget="selection" />
+                        <field name="state"/>
+                        <field name="company_id" widget="selection" groups="base.group_multi_company" />
+     		        </group>
+                    <group expand="0" string="Extended Filters..." colspan="4" col="20" >
+			           <field name="location_id"/>
+                        <field name="location_dest_id" />
+                        <field name="department_id" widget="selection">
+                        <filter icon="terp-personal+" domain="[('department_id','=',context.get('department_id',False))]" string="Department"/>
+                        </field>
+                    </group>
+                    <newline/>                        
+                    <group expand="0" string="Group By..." colspan="4" col="10" groups="base.group_extended">
+                        <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="Order Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_order'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="store_order_tree" model="ir.ui.view">
+            <field name="name">store.order.tree</field>
+            <field name="model">exchange.order</field>
+            <field name="arch" type="xml">
+                <tree colors="grey:state in ('cancel','done');blue:state in ('approved_qty','confirmed');red:state =='budget_no'"
+                      string="Exchange Order">
+                    <field name="name" string="Reference" readonly="1"/>
+                    <field name="date_order" string="Order Date"/>
+                    <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                    <field name="location_id"/>
+                    <field name="department_id" />
+                    <field name="progress_rate" widget="progressbar"/>
+                    <field name="total_amount" sum="Total Amount"  groups="analytic.group_analytic_accounting"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="store_form_action" model="ir.actions.act_window">
+            <field name="name">Store Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">exchange.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('ttype','=','store')]</field>            
+            <field name="context">{'search_default_confirmed': 1,'ttype':'store'}</field>
+            <field name="search_view_id" ref="view_store_order_filter"/>
+        </record>
+
+	    <record id="action_store_tree__view1" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="store_order_tree"/>
+            <field name="act_window_id" ref="store_form_action"/>
+        </record>
+
+        <record id="action_store_tree__view2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="store_order_form"/>
+            <field name="act_window_id" ref="store_form_action"/>
+        </record>
+
+        <menuitem action="store_form_action" id="menu_store_form_action" name="Store Orders" parent="menu_exchange_management"  sequence="4"/>
+
+	<!-- 
+	Exchange Order 
+	-->
+        <record id="exchange_order_form" model="ir.ui.view">
+            <field name="name">exchange.order.form</field>
+            <field name="model">exchange.order</field>
+            <field name="arch" type="xml">
+                <form string="Exchange Order" version="7.0">
+                    <header>
+                        <button name="exchange_confirm" states="draft" string="Confirm Exchange Order" class="oe_highlight"/>
+                        <button name="exchange_confirm11" states="confirmed" string="Department Confirm" class="oe_highlight"/>
+                        <button name="exchange_approve_qty" states="confirmed1" string="Waiting Warehouse User Approval" />
+                        <button name="action_done_order" states="picking" string="Manualy Done" type="object"/>
+                        <button name="exchange_approve" states="budget_yes" string="Waiting Warehouse User Approval" />
+                        <button name="action_process" states="approved"  string="Process" type="object"/>
+                        <button name="exchange_cancel" states="draft,confirmed,confirmed1,budget_no,budget_yes" string="Cancel"
+                                confirm="Are you sure you want to cancel this request?"/>
+                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object"/>
+                        <button name="action_cancel" states="picking,approved" string="Cancel exchange Order" type="object" />
+		                <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,approved,done" />
+                    </header>
+                    <sheet>
+                        <h1> 
+                           <label string="Order Reference "/>
+                            <field name="name" class="oe_inline" readonly="1"/>
+                        </h1>
+	                    <group>
+	                        <group>
+                                <field name="stock_journal_id"  on_change="onchange_journal_id(stock_journal_id)" required="1"/>
+                                <field name="allow_req" invisible="1" />
+                                <field name="req_no"  
+		                attrs="{'readonly':[('state', '=', 'cancel'),('allow_req', '=', False)] , 'required':[('allow_req', '=', True)]}"/>
+		                         <field name="rec_by_categ" invisible="1"/>
+		                         <field name="categ_id"  on_change="onchange_category_id(categ_id)" attrs="{'required':[('rec_by_categ','=',True)], 'invisible':[('rec_by_categ','=',False)]}" />
+	                        </group>
+	                        <group>
+	                            <field name="date_order"/>
+                                <field name="department_id" required="1" domain="[('company_id','=',company_id)]" />
+                                <field name="location_dest_id" />                       
+                            </group>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Exchanges Order">
+	                            
+                                <field colspan="4" name="order_line" nolabel="1"  context="{'categ_id': categ_id,}">
+                                    <tree  editable="bottom" string="Exchange Order Lines">
+                                        <field name="categ_id" invisible="1" on_change="onchange_category(parent.categ_id,parent.rec_by_categ)"/>
+                                        <field name="product_id" colspan="4"  on_change="product_id_change(product_id,product_qty,product_uom, parent.date_order,parent.categ_id,name,price_unit)" />
+                                        <field name="name"/>
+                                        <field name="product_qty" on_change="onchange_product_qty(product_qty)"/>
+                                        <field name="approved_qty"/>
+                                        <field name="delivered_qty"/>
+                                        <field name="product_uom" context="{'quantity':product_qty,'uom':product_uom}" on_change="product_uom_change(product_id,product_uom,product_qty, parent.date_order,name)" groups="product.group_uom"/>
+                                        <field name="stock_available" />
+                                        <field name="price_unit" groups="analytic.group_analytic_accounting" />
+                                        <field name="price_subtotal" groups="analytic.group_analytic_accounting" />
+                                        <field name="state" invisible="1"/>
+                                    </tree>
+                                 </field>
+                                 <group class="oe_subtotal_footer oe_right">
+                                    <field name="total_amount" sum="Amount"  groups="analytic.group_analytic_accounting"/>
+                                 </group>
+                                 <div class="oe_clear"/>
+                                 <field name="notes" class="oe_inline" placeholder="Terms and conditions..."/>
+                            </page>
+                            <page string="Other Information">
+                                <group>
+                                    <group>
+                                        <field name="validator"/>
+                                        <field name="date_approve"/>
+                                        <field name="shipped"/>
+                                    </group>
+                                    <group>
+                                        <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                                        <field name="ttype" groups="base.group_extended"/>
+                                        <field name="acc_bud_confirm_id" />
+                                        <field name="account_id"  groups="account.group_account_user" />
+                                        <field name="account_analytic_id"  groups="analytic.group_analytic_accounting" domain="[('parent_id','!=',False)]" />
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_exchange_order_filter" model="ir.ui.view">
+            <field name="name">exchange.order.list.select</field>
+            <field name="model">exchange.order</field>
+            <field name="arch" type="xml">
+                <search string="Search exchange Order">
+                   <group>
+                        <filter icon="terp-document-new" name="draft" string="New" domain="[('state','=','draft')]" separator="1" help="exchange order which are in draft state"/>
+                        <filter icon="terp-camera_test" name="confirmed" string="To Approve" domain="[('state','in',('budget_yes','budget_no','confirmed'))]" separator="1" help="exchange order to be approved"/>
+                        <filter icon="terp-check" name="done" string="Done" domain="[('state','=','done')]" separator="1" />
+                        <separator orientation="vertical"/>
+                        <field name="name" select="1" string="Reference"/>
+                        <field name="product_id" select="1"/>
+                        <field name="state"/>
+                        <field name="stock_journal_id" widget="selection" />
+                    </group>
+                    <newline/> 
+                    <group expand="0" string="Extended Filters..." colspan="4" col="20" >
+                        <field name="location_dest_id" />
+                        <field name="department_id" widget="selection">
+                        <filter icon="terp-personal+" domain="[('department_id','=',context.get('department_id',False))]" string="Department"/>
+                        </field>
+                        <field name="company_id" widget="selection" groups="base.group_multi_company" />
+                    </group>
+                    <newline/>                        
+                    <group expand="0" string="Group By..." colspan="4" col="10" groups="base.group_extended">
+                        <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="Department" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'department_id'}"/>
+                        <filter string="Stock Journal" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'stock_journal_id'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="Order Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_order'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+    
+        <record id="exchange_order_tree" model="ir.ui.view">
+                <field name="name">exchange.order.tree</field>
+                <field name="model">exchange.order</field>
+                <field name="type">tree</field>
+                <field name="arch" type="xml">
+                    <tree colors="grey:state in ('cancel','done');blue:state in ('approved_qty','confirmed');red:state =='budget_no'" string="Exchange Order">
+                        <field name="name" string="Reference" readonly="1"/>
+                        <field name="date_order" string="Order Date"/>
+                        <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                        <field name="department_id"/>
+                        <field name="stock_journal_id" />
+                         <field name="req_no"/>
+                        <field name="progress_rate" widget="progressbar"/>
+                        <field name="total_amount" sum="Total Amount"  groups="analytic.group_analytic_accounting"/>
+                        <field name="state"/>
+                    </tree>
+                </field>
+            </record>
+
+        <record id="exchange_form_action" model="ir.actions.act_window">
+            <field name="name">Exchange Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">exchange.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('ttype','=','other')]</field>
+            <field name="context">{'search_default_confirmed': 1,'ttype':'other'}</field>
+            <field name="search_view_id" ref="view_exchange_order_filter"/>
+        </record>
+        
+        <record id="action_exchange_tree__view1" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="exchange_order_tree"/>
+            <field name="act_window_id" ref="exchange_form_action"/>
+        </record>
+
+        <record id="action_exchange_from__view2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="exchange_order_form"/>
+            <field name="act_window_id" ref="exchange_form_action"/>
+        </record>
+
+        <menuitem action="exchange_form_action" id="menu_exchange_form_action" name="Exchange Orders" parent="menu_exchange_management"  sequence="1"/><!--groups="group_exchange_user,group_exchange_approved,group_exchange_approved2"-->
+
+        
+        
+	    <act_window
+	        domain="[('acc_bud_confirm_id', '=', active_id)]"
+            id="act_budget_confirmation_stock"
+            name="Exchange Requst"
+            res_model="exchange.order"
+            src_model="account.budget.confirmation"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_withparent_form" model="ir.ui.view">
+            <field name="name">account.account.form</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form" />
+            <field name="arch" type="xml">
+                <field name="code" position="after">
+                    <field name="parent_id" domain="[('user_type_id.type','=','view')]"
+                        options="{'no_create_edit': True}"
+                        groups="account_parent.group_coas_user"
+                        context="{'show_parent_account':True}" />
+                    <field name="level" groups="account_parent.group_coas_user"
+                        context="{'show_parent_account':True}" />
+                    <field name="close_year" invisible="1" />
+		            <field name="child_ids" invisible="1" />
+                </field>
+            </field>
+        </record>
+
+        <record id="account.action_account_form" model="ir.actions.act_window">
+            <field name="context">{'show_parent_account':True}</field>
+        </record>
+    
+            <record id="view_account_list" model="ir.ui.view">
+            <field name="name">account.account.list</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_list" />
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="replace">
+                    <tree string="Chart of accounts" toolbar="1" decoration-info="internal_type=='view'" decoration-danger="level ==0 and internal_type=='view'">
+                        <field name="level" />
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="user_type_id"/>
+                        <field name="internal_type" invisible="1"/>
+                        <field name="close_year"/>
+                        <field name="currency_id" options="{'no_create': True}" groups="base.group_multi_currency" invisible="1"/>
+                        <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                        <field name="debit" sum="Total Debit" groups="account.group_account_user"/>
+                        <field name="credit" sum="Total Credit" groups="account.group_account_user"/>
+                        <field name="balance" sum="Total Balance" groups="account.group_account_user"/>
+                        </tree>
+                </xpath>
+            </field>
+        </record>
+             
+        <!-- account.account.type form view inherit -->
+        <record model="ir.ui.view" id="view_account_type_form_inherit">
+            <field name="name">account.account.type.form.inherit</field>
+            <field name="model">account.account.type</field>
+            <field name="inherit_id" ref="account.view_account_type_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='include_initial_balance']" position="after">
+                    <field name="close_year" />
+                 </xpath>
+                <!--xpath expr="//field[@name='name']" position="before">
+                    <field name="code"/>
+                </xpath-->
+                
+           </field>
+       </record>
+
+        <!--record id="view_account_type_tree" model="ir.ui.view">
+            <field name="name">account.account.type.tree</field>
+            <field name="model">account.account.type</field>
+            <field name="inherit_id" ref="account.view_account_type_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="code"/>
+                </xpath>
+            </field>
+        </record-->
+
+
+       
+    </data>
+</odoo>

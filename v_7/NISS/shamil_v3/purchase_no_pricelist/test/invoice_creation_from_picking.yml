@@ -1,0 +1,38 @@
+-
+  I create a purchase order.
+-
+  !record {model: purchase.order, id: purchase_order4}:
+    partner_id: base.res_partner_3
+    invoice_method: picking
+    order_line:
+      - product_id: product.product_product_pc3
+        price_unit: 900
+        
+-
+ I confirm apurchase order where invoice control is 'Based on receptions'.
+-
+  !workflow {model: purchase.order, action: purchase_confirm, ref: purchase.order_purchase2}
+  
+  
+-
+  I check that no invoice for order.
+-
+  !python {model: purchase.order}: |
+    purchase_order = self.browse(cr, uid, ref("purchase_order4"))
+    assert len(purchase_order.invoice_ids) == 0, "Invoice should not be generated on order confirmation."
+
+
+-
+  Now I create an invoice for order on reception.
+-
+  !python {model: stock.picking}: |
+    pick_ids = self.search(cr, uid, [('purchase_id','=',ref('purchase_order4'))])
+    self.action_invoice_create(cr, uid, pick_ids, ref('account.expenses_journal'))
+
+
+-
+ I check that the invoice of order.
+-
+ !python {model: purchase.order}: |
+    purchase_order = self.browse(cr, uid, ref("purchase_order4"))
+    assert len(purchase_order.invoice_ids) == 1, "Invoice should be generated."

@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- RTL have problem with ODOO v11  so we gonna use additional styles + IF-->
+<odoo>
+    <template id="template_purchase_order_report">
+        <t t-call="web.html_container">
+            <t t-set="data_report_margin_top" t-value="5"/>
+            <t t-set="data_report_dpi" t-value="140"/>
+            <t t-call="web.basic_layout">
+                <div class="page">
+                    <html>
+                        <body>
+
+                            <head>
+                                <style>
+
+                                
+
+
+                                    table ,td, th {
+                                    text-align: center;
+                                    }
+
+
+                                    table {
+
+                                    width: 100%;
+                                    }
+
+                                    th, td {
+                                    padding: 15px;
+                                    }
+                                    th {
+                                    background-color:#cccccc;#E7D9D9
+                                    font-weight: bold;
+                                    }
+                                    td {
+                                    background-color:#E7D9D9;
+                                    font-weight: bold;
+
+
+                                    }
+                                    td, th {
+                                    border: 0px solid black;
+                                    padding: 3px 10px;
+                                    }
+
+                                    td,th,h1,h3,h4 { font-family: "Geeza Pro", "Nadeem",
+                                    "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                                    "STFangsong", "STHeiti", "STKaiti", "STSong",
+                                    "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                                    "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                                    "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                                    "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                                    "Arial", serif;
+                                    }
+
+                                </style>
+
+                            </head>
+
+
+                            <center>
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                                <!--<center>-->
+                                                <!--<img src="/purchase_custom/static/src/img/index.jpeg" />-->
+                                                <!--</center>-->
+                                            </td>
+                                            <td style="background:white; border-right: 0px solid #C1C3D1; color:black;">
+                                                <center>
+
+                                                    <h1>شركة الخدمات المصرفية الإلكترونية المحدودة</h1>
+
+                                                    <h3>
+                                                        Management of Services and Purchases
+                                                    </h3>
+                                                    <h3>
+                                                        Purchase Order Report
+                                                    </h3>
+
+
+                                                </center>
+                                            </td>
+                                            <td style="background:white; border-right: 0px solid #C1C3D1;">
+                                                <center>
+                                                    <img src="/purchase_custom/static/src/img/index.jpeg"/>
+                                                </center>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </center>
+
+
+                            <font style="font-size:20">
+                                <table style='width:100% ; border-collapse:separate; border-spacing: 15px 40px;'>
+                                    <tr>
+
+                                        <td>
+                                            <b>
+                                                <t t-if="date_from">
+                                                    Date From :
+                                                    <span t-esc="date_from"/>
+                                                </t>
+                                                -
+                                                <t t-if="date_to">
+                                                    Date To :
+                                                    <span t-esc="date_to"/>
+                                                </t>
+                                            </b>
+
+                                        </td>
+                                    </tr>
+                                </table>
+                            </font>
+                            <hr></hr>
+                            <br></br>
+
+
+                            <table class="table table-hover o_portal_my_doc_table"
+                                   style="border:1px solid black;overflow: visible !important;">
+                                <thead>
+                                    <tr>
+                                        <th style="border:1px solid black;">
+                                            <h4>
+                                                <b>Refrence</b>
+                                            </h4>
+                                        </th>
+
+
+                                        <th style="border:1px solid black;">
+                                            <h4>
+                                                <b>Date</b>
+                                            </h4>
+                                        </th>
+                                        <th style="border:1px solid black;">
+                                            <h4>
+                                                <b>Ordering Department</b>
+                                            </h4>
+                                        </th>
+                                        <th style="border:1px solid black;">
+                                            <h4>
+                                                <b>Vendor</b>
+                                            </h4>
+                                        </th>
+                                        <th style="border:1px solid black;">
+                                            <h4>
+                                                <b>Product</b>
+                                            </h4>
+                                        </th>
+
+                                        <th style="border:1px solid black;">
+                                            <h4>
+                                                <b>Quantity</b>
+                                            </h4>
+                                        </th>
+                                        <th style="border:1px solid black;">
+                                            <h4>
+                                                <b>Price</b>
+                                            </h4>
+                                        </th>
+                                        <th style="border:1px solid black;">
+                                            <h4>
+                                                <b>Total</b>
+                                            </h4>
+                                        </th>
+
+                                        <th style="border:1px solid black;">
+                                            <h4>
+                                                <b>State</b>
+                                            </h4>
+                                        </th>
+
+
+                                    </tr>
+                                </thead>
+
+
+                                <t t-set='a' t-value='0'/>
+                                <!--if the user choces a product-->
+                                <t t-foreach="docs" t-as="d">
+                                    <t t-if="product_id">
+                                        <t t-if="check_list[a]">
+                                            <tr style="page-break-inside: avoid;">
+                                                <td style="border:1px solid black;">
+                                                    <h4>
+                                                        <span t-esc="d.name"/>
+                                                    </h4>
+                                                </td>
+
+
+                                                <td style="border:1px solid black;">
+                                                    <h4>
+                                                        <span t-esc="d.date_order[0:11]"/>
+                                                    </h4>
+                                                </td>
+                                                <td style="border:1px solid black;">
+                                                    <h4>
+                                                        <span t-esc="d.department_id.name"/>
+                                                    </h4>
+                                                </td>
+                                                <td style="border:1px solid black;">
+                                                    <h4>
+                                                        <span t-esc="d.partner_id.name"/>
+                                                    </h4>
+                                                </td>
+
+                                                <!--  product -->
+                                                <td style="border:1px solid black;">
+                                                    <t t-foreach="d.order_line" t-as="o">
+                                                        <table>
+                                                            <tr>
+                                                                <td style="width:60%">
+                                                                    <h4>
+                                                                        <span t-esc="o.product_id.name"/>
+                                                                    </h4>
+                                                                </td>
+
+                                                            </tr>
+                                                        </table>
+                                                    </t>
+                                                </td>
+                                                <!--  product -->
+
+
+                                                <!--  Quantity -->
+                                                <td style="border:1px solid black;">
+                                                    <t t-foreach="d.order_line" t-as="o">
+                                                        <table>
+                                                            <tr>
+
+                                                                <td style="width:20%">
+                                                                    <h4>
+                                                                        <span t-esc="o.product_qty"/>
+                                                                    </h4>
+                                                                </td>
+
+                                                            </tr>
+                                                        </table>
+                                                    </t>
+                                                </td>
+                                                <!--  Quantity -->
+
+                                                <!--  Price -->
+                                                <td style="border:1px solid black;">
+                                                    <t t-foreach="d.order_line" t-as="o">
+                                                        <table>
+                                                            <tr>
+
+                                                                <td style="width:20%">
+                                                                    <h4>
+                                                                        <span t-esc="o.price_unit"/>
+                                                                    </h4>
+                                                                </td>
+
+                                                            </tr>
+                                                        </table>
+                                                    </t>
+                                                </td>
+                                                <!--  Price -->
+
+                                                <!--  Total -->
+                                                <td style="border:1px solid black;">
+                                                    <t t-foreach="d.order_line" t-as="o">
+                                                        <table>
+                                                            <tr>
+
+                                                                <td style="width:20%">
+                                                                    <h4>
+                                                                        <span t-esc="o.price_unit * o.product_qty"/>
+                                                                    </h4>
+                                                                </td>
+
+                                                            </tr>
+                                                        </table>
+                                                    </t>
+                                                </td>
+                                                <!--  Total -->
+
+                                                <!--  State -->
+                                                <td style="border:1px solid black;">
+                                                    <t t-foreach="d.order_line" t-as="o">
+                                                        <table>
+                                                            <tr>
+
+                                                                <td style="width:20%">
+                                                                    <h4>
+                                                                        <span t-esc="dict(o.fields_get(allfields=['state'])['state']['selection'])[o.state]"/>
+                                                                    </h4>
+                                                                </td>
+
+                                                            </tr>
+                                                        </table>
+                                                    </t>
+                                                </td>
+                                                <!--  State -->
+
+                                            </tr>
+                                        </t>
+                                    </t>
+                                    <t t-set='a' t-value='a+1'/>
+                                </t>
+                                <!-- end of if user selected a product-->
+
+                                <!-- if user did not slelect a product -->
+                                <t t-foreach="docs" t-as="d">
+                                    <t t-if="product_id == False">
+
+                                        <tr style="page-break-inside: avoid;">
+                                            <td style="border:1px solid black;">
+                                                <h4>
+                                                    <span t-esc="d.name"/>
+                                                </h4>
+                                            </td>
+
+
+                                            <td style="border:1px solid black;">
+                                                <h4>
+                                                    <span t-esc="d.date_order[0:11]"/>
+                                                </h4>
+                                            </td>
+                                            <td style="border:1px solid black;">
+                                                <h4>
+                                                    <span t-esc="d.department_id.name"/>
+                                                </h4>
+                                            </td>
+                                            <td style="border:1px solid black;">
+                                                <h4>
+                                                    <span t-esc="d.partner_id.name"/>
+                                                </h4>
+                                            </td>
+
+                                            <!--  product -->
+                                            <td style="border:1px solid black;">
+                                                <t t-foreach="d.order_line" t-as="o">
+                                                    <table>
+                                                        <tr>
+                                                            <td style="width:60%">
+                                                                <h4>
+                                                                    <span t-esc="o.product_id.name"/>
+                                                                </h4>
+                                                            </td>
+
+                                                        </tr>
+                                                    </table>
+                                                </t>
+                                            </td>
+                                            <!--  product -->
+
+
+                                            <!--  Quantity -->
+                                            <td style="border:1px solid black;">
+                                                <t t-foreach="d.order_line" t-as="o">
+                                                    <table>
+                                                        <tr>
+
+                                                            <td style="width:20%">
+                                                                <h4>
+                                                                    <span t-esc="o.product_qty"/>
+                                                                </h4>
+                                                            </td>
+
+                                                        </tr>
+                                                    </table>
+                                                </t>
+                                            </td>
+                                            <!--  Quantity -->
+
+                                            <!--  Price -->
+                                            <td style="border:1px solid black;">
+                                                <t t-foreach="d.order_line" t-as="o">
+                                                    <table>
+                                                        <tr>
+
+                                                            <td style="width:20%">
+                                                                <h4>
+                                                                    <span t-esc="o.price_unit"/>
+                                                                </h4>
+                                                            </td>
+
+                                                        </tr>
+                                                    </table>
+                                                </t>
+                                            </td>
+                                            <!--  Price -->
+
+                                            <!--  Total -->
+                                            <td style="border:1px solid black;">
+                                                <t t-foreach="d.order_line" t-as="o">
+                                                    <table>
+                                                        <tr>
+
+                                                            <td style="width:20%">
+                                                                <h4>
+                                                                    <span t-esc="o.price_unit * o.product_qty"/>
+                                                                </h4>
+                                                            </td>
+
+                                                        </tr>
+                                                    </table>
+                                                </t>
+                                            </td>
+                                            <!--  Total -->
+
+                                            <!--  State -->
+                                            <td style="border:1px solid black;">
+                                                <t t-foreach="d.order_line" t-as="o">
+                                                    <table>
+                                                        <tr>
+
+                                                            <td style="width:20%">
+                                                                <h4>
+                                                                    <span t-esc="dict(o.fields_get(allfields=['state'])['state']['selection'])[o.state]"/>
+                                                                </h4>
+                                                            </td>
+
+                                                        </tr>
+                                                    </table>
+                                                </t>
+                                            </td>
+                                            <!--  State -->
+
+
+                                        </tr>
+                                    </t> <!-- end if -->
+                                </t> <!-- end foreach -->
+                                <!-- end of if user did not select a product -->
+
+
+                            </table>
+                        </body>
+                    </html>
+
+                    <div class="footer">
+                        <div class="text-center" style="border-top: 1px solid black;">
+
+                            <span>
+                                <center>Page:
+                                    <span class="page"/>
+                                    /
+                                    <span class="topage"/>
+                                </center>
+
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

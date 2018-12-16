@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+  <data>
+    <!-- Social Support Registration Order-->
+
+    <record model='ir.ui.view' id='social_registration_order_tree'>
+
+      <field name='name'> Social Support Registration Order Tree</field>
+      <field name='model'>social.support.registration.order</field>
+      <field name='arch' type='xml'>
+        <tree string='Social Support Registration Order Tree'>
+
+          <field name="code"/>
+
+          <field name="date"/>
+          <field name="name"/>
+
+          <field name="company_id"/>
+
+          <field name="state" />
+
+        </tree>
+      </field>
+    </record>
+
+    <!-- Search View For d model -->
+    <record id="social_registration_order_search" model="ir.ui.view">
+      <field name="name">Social Support Registration Order Search</field>
+      <field name="model">social.support.registration.order</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="code"/>
+          <field name="name"/>
+
+        </search>
+      </field>
+    </record>
+
+
+    <record id="social_registration_order_form" model="ir.ui.view">
+      <field name="name">Social Support Registration Order</field>
+      <field name="model">social.support.registration.order</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml" >
+        <form >
+          <header>
+            <button name="confirm_action" states="draft," string="Confirm" type="object" class="oe_highlight" />
+
+            <button name="done_action" states="confirm," string="Done" type="object" class="oe_highlight" />
+           
+            <button name="cancel_action" states="draft,confirm" string="Cancel" type="object" class="oe_highlight" />
+           
+            <button name="set_to_draft_action" states="cancel," string="Set To Draft" type="object" class="oe_highlight" />
+
+            <field name="state" widget="statusbar"/>
+          </header>
+          <sheet>
+
+            <group col="2" colspan="2">
+              <group>
+                <field name="code" readonly="1"/>
+                <field name="name" required="1"  attrs="{'readonly':['|',('state', '=', 'done') , ('state', '=', 'cancel')]}"/>
+                <field name="user_id" readonly="1"/>
+
+              </group>
+
+              <group>
+                <field name="date" required="1" attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+                <field name="type" required="1" attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}"/>
+
+                <field name="company_id" required="1" readonly="1"/>
+              </group>
+            </group>
+            <notebook>
+
+             <page string="Al-Faqir Social Support Details">
+              <field name="fageer_ids" attrs="{'readonly':['|',('state', '=', 'done'),('state', '=', 'cancel')]}" >
+                <tree editable="bottom">
+                 
+                  <field name="fageer_new_id" required="1" domain="['|',('s_support' , '=' ,False) , ('state' , '=' , 'done')]" context="{'f_ids':parent.fageer_ids ,'my_ids': id}"/>
+                  
+                  <field name="fageer_old_id" attrs="{'column_invisible':[('parent.type', '!=', 'replace')] , 'required':[('parent.type' ,'=' ,'replace')]}" 
+
+                    domain="['&amp;',('id' , '!=' , fageer_new_id),('state' , '=' , 'done')]" context="{'old_ids':parent.fageer_ids ,'my_ids': id}"/>
+
+                  <field name="status" required="1"/>
+
+                  <field name="support_type" required="1"/>
+
+                  <field name="amount" attrs="{'readonly':[('support_type', '!=', 'not_fixed')] , 'required':[('support_type' ,'=' ,'not_fixed')]}" context="{'amount':amount}"/>
+                  <field name="name" invisible="1"/>
+
+                </tree>
+              </field>
+            </page>
+
+          </notebook>
+
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Social Support Registration Order action -->
+  <record id="social_registration_order_action" model="ir.actions.act_window">
+    <field name="name">Social Support Registration Order</field>
+    <field name="res_model">social.support.registration.order</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+
+  <!--Social Support Registration Order menu -->
+  <menuitem id="social_registration_order_menu"
+    parent="guarantees_main_menu"
+    name="Social Support Registration Order"
+    action="social_registration_order_action"
+    sequence="1"
+
+    />
+  </data>
+</odoo>

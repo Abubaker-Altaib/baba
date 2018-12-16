@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_allow_deduct_loan_sum_report_wizard" model="ir.ui.view">
+            <field name="name">allow_deduct_loan_sum_report_wizard.form</field>
+            <field name="model">allow_deduct_loan_sum_report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="allow deduct loan sum report" version="7.0">
+                    <header>
+                        <button name="print_report" string="Print" type="object"/>                    or                                            
+                        <button special="cancel" string="Cancel" class="oe_link"/>
+                    </header>
+                    <sheet>
+                        <group colspan="4" col="4">
+                            <field name="company_id" widget="many2many_tags" colspan="2"/>
+                            <field name="payroll_ids" widget="many2many_tags" colspan="2" />
+                            <newline/>
+                            <field name="year" colspan="2"/>
+                            <field name="month" colspan="2" />
+                            <newline/>
+                            <field name="state_id" colspan="2"/>
+                            <field name="type" colspan="2" />
+                            <newline/>
+                        </group>
+                        <notebook>
+                            <page string="Allowances" attrs="{'invisible':[('type','!=','allow')]}">
+                                <field name="allow_ids" domain="[('name_type','=','allow')]" nolabel="1"/>
+                            </page>
+                            <page string="Deductions" attrs="{'invisible':[('type','!=','deduct')]}">
+                                <field name="deduct_ids" domain="[('name_type','=','deduct')]" nolabel="1"/>
+                            </page>
+                            <page string="Loans" attrs="{'invisible':[('type','!=','loan')]}">
+                                <field name="loan_ids" nolabel="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_allow_deduct_loan_sum_report_wizard" model="ir.actions.act_window">
+            <field name="name">allow deduct loan sum report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">allow_deduct_loan_sum_report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_allow_deduct_loan_sum_report_wizard"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="allow_deduct_loan_sum_report_wizard_menu" name="allow deduct loan sum report" action="action_allow_deduct_loan_sum_report_wizard" parent="hr_payroll_custom.menu_hr_payroll_reporting"/>
+        <report menu="False" auto="False" id="allow_deduct_loan_sum_report_id" model="hr.employee" name="hr.allow_deduct_loan_sum.report" file="hr_payroll_custom_niss/report/allow_deduct_loan_sum_report.mako" string="allow_deduct_loan_sum Report" report_type="webkit" header="True"/>
+    </data>
+</openerp>

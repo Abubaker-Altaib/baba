@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+<!-- Loan Request -->
+    <record id="view_loan_add_detail" model="ir.ui.view">
+            <field name="name">Employee Loan Request</field>
+            <field name="model">hr.employee.loan.request</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Loan Request" version="7.0">
+                 <group col="4">
+					<field name="company_id" colspan="4" widget="selection" groups="base.group_multi_company"/>
+				   	<field name="department_id" domain= "[('company_id','=',company_id)]" on_change="onchange_employee(department_id)" colspan="4" />
+				   	<field name="loan_id" domain="['|',('company_ids','=',False),('company_ids', 'in', (company_id))]" colspan="4"/>
+					<field name="start_date" />
+					<field name="end_date" />
+				 </group >
+                        <notebook colspan="4">
+                	    <page string="Employees">
+				<field name="employee_id" on_change="onchange_employee(department_id)" nolabel="1"/>
+			  </page>
+		        </notebook>
+                <footer>
+		 		    <button name="assign_emp_loan" string="Request" type="object"  />
+		 		    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="employee_loan_request_action" model="ir.actions.act_window">
+            <field name="name">Employee Loan Request</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee.loan.request</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+<!-- end Loan Request -->
+<!-- Loan paid -->
+
+       <!--record id="view_loan_paid_detail" model="ir.ui.view">
+            <field name="name">Employee Loan Paid</field>
+            <field name="model">hr.employee.loan.paid</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Loan Paid" version="7.0">
+                     <group col="4">
+			        <field name="employee_id" domain= "[('state','!=','refuse')]" colspan="4" attrs="{'invisible':[('state','=','paid')]}" on_change="onchange_employee(employee_id)" />
+		 		<field name="loan_id" domain= "[('employee_id','=',employee_id),('state','=','paid')]" colspan="4" attrs="{'invisible':[('state','=','paid')]}"/>
+		   		<field name="loan_amount" colspan="4" attrs="{'invisible':[('state','=','paid')]}"/>
+				<field name="month" attrs="{'invisible':[('state','=','paid')],'required':[('state','=','draft')]}"/>
+				<field name="year" attrs="{'invisible':[('state','=','paid')]}" />
+				<field name="installment_no" attrs="{'invisible':[('state','=','draft')]}" />
+				<field name="rais"  attrs="{'invisible':[('state','=','draft')]}"/>
+				<field name="state" invisible="1"/>
+				<field name="comments"  colspan="4" attrs="{'invisible':[('state','=','paid')]}"/>
+                      </group>
+		         <footer>
+ 				<button name="compute" string="Pay Installments" type="object" class="oe_highlight" attrs="{'invisible':[('state','=','paid')]}"  colspan="1"/>
+				<button name="paid_loan" string="Pay Once" type="object" class="oe_highlight"  attrs="{'invisible':[('state','=','paid')]}" colspan="1"/>
+                            	<button name="assign_emp_paid_loan" string="Confirm" type="object" class="oe_highlight"  attrs="{'invisible':[('state','=','draft')]}" colspan="1"/>
+                                or
+                  		<button string="Cancel" class="oe_link" special="cancel"/>
+	 		</footer>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="employee_loan_paid_action" model="ir.actions.act_window">
+            <field name="name">Employee Loan Paid</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee.loan.paid</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record-->
+<!--end Loan paid -->
+
+<!-- Loan suspend -->
+
+    <record id="view_loan_suspend_detail" model="ir.ui.view">
+            <field name="name">Employee Loan Suspend</field>
+            <field name="model">hr.employee.loan.suspend</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Loan Suspend" version="7.0">
+                     <group col="2">
+		         <field name="start_date"/>
+		         <field name="end_date"/>                                
+		         <field name="comments" />
+                      </group>
+		      <group>
+			 <button icon='gtk-cancel' special="cancel" string="Close" />
+ 		         <button name='suspend_loan' string="Suspend" type="object" class="oe_highlight" />
+		      </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="employee_loan_suspend_action" model="ir.actions.act_window">
+            <field name="name">Employee Loan Suspend</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee.loan.suspend</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+<!--end loan suspend -->
+
+        <menuitem id="hr_loan_menu"  parent="hr.menu_hr_root"    name="Loans" groups="base.group_loan_user,base.group_loan_manager"/>
+        <menuitem id="menu_loan_request" parent="hr_loan_menu"  name="Employee Loan Request" action="employee_loan_request_action" groups="base.group_loan_user"/>
+	<!--menuitem id="menu_paid_loan"    parent="hr_loan_menu"  name="Employee Loan Paid"    action="employee_loan_paid_action"    groups="base.group_loan_user"/-->
+
+
+
+    </data>
+</openerp>
+

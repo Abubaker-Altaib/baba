@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     <record id="report_all_services_sales_view_pivot" model="ir.ui.view">
+         <field name="name">report.all.services.sales.pivot</field>
+         <field name="model">report.all.services.sales</field>
+         <field name="arch" type="xml">
+            <pivot string="All Bank Card Services Quotation Analysis">
+                <field name="name" type="row"/>
+                 <field name="partner_id" type="measure"/>
+                <field name="price_total" string="Total Price" type="measure"/>
+                 <field name="product_qty" type="measure"/>
+                 <field name="price_subtotal" type="measure"/>
+            </pivot>
+         </field>
+    </record>
+
+    <record id="report_all_services_sales_view_search" model="ir.ui.view">
+        <field name="name">report.all.services.sales.search</field>
+        <field name="model">report.all.services.sales</field>
+        <field name="arch" type="xml">
+            <search string="All Bank Card Services Quotation Analysis">
+                <field name="date_order"/>
+                
+                <group expand="1" string="Group By">
+                	<filter string="Reference" name="team_id" context="{'group_by':'name'}"/>
+                    <filter string="Services" name="team_id" context="{'group_by':'product_id'}"/>
+
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="report_all_services_sales_action" model="ir.actions.act_window">
+        <field name="name"> Bank Card Services Quotation Analysis</field>
+        <field name="res_model">report.all.services.sales</field>
+        <field name="view_mode">pivot</field>
+        <field name="view_id" ref="report_all_services_sales_view_pivot"/>
+        <field name="search_view_id" ref="report_all_services_sales_view_search"/>
+        <field name="context">{'search_default_team_id': 1, 'search_default_current_year': 1}</field>
+    </record>
+
+    <menuitem id="report_all_services_sales"
+            action="report_all_services_sales_action"
+            name=" Bank Card Quotation Report"
+            parent="sale.menu_sale_report"
+            sequence="5"/>
+</odoo>

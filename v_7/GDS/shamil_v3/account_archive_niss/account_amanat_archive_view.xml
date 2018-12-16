@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+                <record model="ir.ui.view" id="view_account_amanat_archive">
+			<field name="name">account.amanat.archive.tree</field>
+			<field name="model">account.amanat.archive</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+                             <tree string="Amanat details">
+			        <field name="account_id" />
+				<field name="transaction_time"/>
+				<field name="transaction_no"/>
+				<field name="debit" />
+				<field name="credit" />
+				<field name="balance" />
+				<field name="partner_code" />
+				<field name="partner_name" />
+				<field name="partner_id" />
+				<field name="currency_id" />
+				<field name="ready" />
+			     </tree>
+			</field>
+		</record>
+
+	<record id="view_account_amanat_archive_filter" model="ir.ui.view">
+        <field name="name">account.amanat.archive.select</field>
+        <field name="model">account.amanat.archive</field>
+        <field name="arch" type="xml">
+            <search string="Amanat details">
+               <group>
+		    <field name="partner_code" />
+                    <field name="partner_name"/>
+                    <field name="transaction_no"/>
+                    <field name="debit"/>
+                    <field name="credit" />
+		    <field name="transaction_time" />
+                </group>
+                <group expand="0" string="Group By..." colspan="4" col="10" >
+                    <filter string="Partner" context="{'group_by':'partner_code'}"/>
+                    <filter string="transaction" context="{'group_by':'transaction_no'}"/>
+                    <filter string="Time" context="{'group_by':'transaction_time'}"/>
+                </group>
+            </search>
+	</field>
+	</record>
+
+		<record id="action_viewaccount_amanat_archive_tree" model="ir.actions.act_window">
+			<field name="name">Amanat details</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.amanat.archive</field>
+			<field name="view_mode">tree</field>
+			<field name="domain">[]
+                        </field>
+			<field name="view_id" ref="view_account_amanat_archive" />
+                        <field name="search_view_id" ref="view_account_amanat_archive_filter"/>
+		</record>
+
+               <menuitem name="Amanat details" parent="account.menu_finance_payables" sequence="40"
+		action="action_viewaccount_amanat_archive_tree" id="menu_account_amant_archive"
+			icon="STOCK_PRINT" />
+
+	</data>
+</openerp>

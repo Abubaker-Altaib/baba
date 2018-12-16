@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<record id="wkf_hr_training_plan" model="workflow">
+			<field name="name">hr.training.plan.wkf</field>
+			<field name="osv">hr.training.plan</field>
+			<field name="on_create">True</field>
+		</record>
+<!-- Activities -->
+		<record id="act_draft1" model="workflow.activity" >
+			<field name="wkf_id" ref="wkf_hr_training_plan" />
+			<field name="flow_start">True</field>
+			<field name="name">draft</field>
+			<field name="kind">dummy</field>
+		</record>
+
+		<record id="act_approve1" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_hr_training_plan" />
+			<field name="name">approve</field>
+			<field name="action">approve()</field>
+			<field name="kind">function</field>
+		</record>
+
+		<record id="act_confirm1" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_hr_training_plan" />
+			<field name="name">confirm</field>
+			<field name="action">confirm()</field>
+			<field name="kind">function</field>
+		</record>
+
+		<record id="act_reject1" model="workflow.activity">
+			<field name="wkf_id" ref="wkf_hr_training_plan" />
+			<field name="name">reject</field>
+			<field name="action">reject()</field>
+			<field name="kind">function</field>
+		</record>
+		
+
+<!-- Transactions -->
+		<record model="workflow.transition" id="t11">
+			<field name="act_from" ref="act_draft1" />
+			<field name="act_to" ref="act_approve1" />
+			<field name="signal">approve</field>
+		</record>
+		<record model="workflow.transition" id="t12">
+			<field name="act_from" ref="act_draft1" />
+			<field name="act_to" ref="act_reject1" />
+			<field name="signal">rejected</field>
+		</record>
+		<record model="workflow.transition" id="t13">
+			<field name="act_from" ref="act_approve1" />
+			<field name="act_to" ref="act_confirm1" />
+			<field name="signal">confirm</field>
+		</record>
+	
+	</data>
+</openerp>

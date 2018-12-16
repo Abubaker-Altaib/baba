@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+		<!-- sea insurance Record Form,Tree View & Action -->
+
+		<record id="id_sea_insurance_view_form" model="ir.ui.view">
+			<field name="name">sea.insurance.form</field>
+			<field name="model">sea.insurance</field>
+			<field name="arch" type="xml">
+				<form string="Sea Insurance Record" version="7.0">
+					<header col="11" colspan="6">
+
+								<button name="confirmed" states="draft" string="Confirm"
+									confirm="Are you sure you want to confirm this Record?" />
+
+								<button name="insurance_confirm" states="confirmed" string="Supply Manager to confirm"
+									confirm="Are you sure you want to confirm this Record?" />
+								<button name="admin_affaris_confirm" states="insurance_confirm" string="Insurance Section to Process"
+									confirm="Are you sure you want to confirm this Record?" />
+								<button name="gm_aprrove" 		states="admin_affaris_confirm" string="Admin Affaris Manager to confirm"
+									confirm="Are you sure you want to confirm this Record?" />
+
+								<button name="insurance_service" 		states="gm_aprrove" string="Gm to approved"
+									confirm="Are you sure you want to confirm this Record?" />
+
+								<button name="done" 		states="insurance_service" string="Final Process and Create Voucher"
+									confirm="Are you sure you want to confirm this Record?" />
+								<button name="cancel" states="draft,confirmed,admin_affaris_confirm,insurance_confirm,gm_aprrove,insurance_service" string="Cancel Request"
+									icon="gtk-cancel" confirm="Are you sure you want to Cancel this Record?" />
+								<button name="ir_action_cancel_draft" states="cancel,done"
+									string="Set to Draft" type="object" icon="gtk-convert" groups="media.group_send_to_draft"/>
+								<field name="state" widget="statusbar" statusbar_visible="draft,done,cancel" />
+							</header>
+							<sheet>
+
+					<group col="4">
+						<field name="name" colspan="1" />
+						<field name="date" colspan="1"/>
+						<field name="begin_date" colspan="1"/>
+						<field name="end_date" colspan="1"/>
+						<field name="operation_type" colspan="1"/>
+						<field name="department_id" colspan="1"/>
+					</group>
+					<group col="4">
+					        <separator string="Shipping Information" colspan="6"/>
+						<field name="bill_of_lading" colspan="1"/>
+						<field name="bill_no" colspan="1"/>
+						<field name="shipping_port" colspan="1"/>
+						<field name="shipping_date" colspan="1" attrs="{'required':[('state','=','insurance_confirm')]}" />
+						<field name="discharge_port" colspan="1"/>
+						<field name="arrival_date" colspan="1" attrs="{'required':[('state','=','insurance_confirm')]}"/>
+						<field name="total_amount" colspan="1"/>
+					</group>
+					<group col="4">
+					        <separator string="Insurance &amp; Extra Information" colspan="6"/>
+						<field name="partner_id" colspan="1" attrs="{'required':[('state','=','insurance_confirm')],'readonly':[('state','!=','insurance_confirm')],'invisible':[('state','in',('draft','confirmed'))]}"/>
+						<field name="total_insurance_cost" colspan="1" 						attrs="{'required':[('state','=','insurance_confirm')],'readonly':[('state','!=','insurance_confirm')],'invisible':[('state','in',('draft','confirmed'))]}"/>
+						<field name="currency" colspan="1" 						attrs="{'required':[('state','=','insurance_confirm')],'readonly':[('state','!=','insurance_confirm')],'invisible':[('state','in',('draft','confirmed'))]}"/>
+						<field name="voucher_no" colspan="1" attrs="{'invisible':[('state','!=','done')]}"/>
+						<field name="user_id" colspan="1"/>
+						<field name="company_id" colspan="1"/>
+					</group>
+					<notebook colspan="4">
+						<page string="Sea Insurance Goods">
+								<field colspan="4" name="sea_insurance_lines" nolabel="1"
+									>
+									<tree editable="bottom" string="Goods Lines">
+										<field name="goods_type_id"/>
+										<field name="goods_qty"/>
+                                        					<field name="goods_cost" />
+                                        		                        <field name="purchase_order_ref" />
+										<field name="name"/>
+										<field name="lines_id" invisible="1"/>
+
+									</tree>
+								</field>
+							<group colspan="4" col="3">
+							</group>
+							
+						</page>
+						<page string="Notes">
+							<field name="notes" colspan="4" nolabel="1" />
+						</page>
+					</notebook>
+				    </sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="id_sea_insurance_view_tree" model="ir.ui.view">
+			<field name="name">sea.insurance.tree</field>
+			<field name="model">sea.insurance</field>
+			<field name="arch" type="xml">
+				<tree string="Sea Insurance">
+						<field name="name" />
+						<field name="date" />
+						<field name="department_id"/>
+						<field name="bill_of_lading" />
+						<field name="bill_no" />
+						<field name="discharge_port" />
+						<field name="shipping_date" />
+						<field name="shipping_port" />
+						<field name="arrival_date" />
+						<field name="total_amount"/>
+						<field name="state"/>
+						<field name="user_id" />
+						<field name="company_id"/>
+				</tree>
+			</field>
+		</record>
+
+		<!-- Sea Insurance Lines Form and Tree -->
+
+		<record id="sea_insurance_lines_form" model="ir.ui.view">
+			<field name="name">sea.insurance.lines.form</field>
+			<field name="model">sea.insurance.lines</field>
+			<field name="arch" type="xml">
+				<form string="Insurance Lines" version="7.0">
+                                    <sheet>
+					<notebook colspan="4">
+						<page string="Goods">
+							<separator string="Goods Information" colspan="6" />
+                                                     <group  col="4"  colspan="2">
+							<field name="goods_type_id"/>
+							<field name="goods_qty"/>
+                                        		<field name="goods_cost" />
+                                        		<field name="purchase_order_ref" />
+					                <separator string="Extra Info..." colspan="4"/>
+							<field name="name" colspan="4"/>
+                                                   </group>
+						</page>						
+					</notebook>
+                                    </sheet>
+				</form>
+			</field>
+		</record>
+		<record id="sea_insurance_lines_tree" model="ir.ui.view">
+			<field name="name">sea.insurance.lines.tree</field>
+			<field name="model">sea.insurance.lines</field>
+			<field name="arch" type="xml">
+				<tree string="Items">
+					<field name="goods_type_id"/>
+					<field name="goods_qty"/>
+                                        <field name="goods_cost" />
+                                        <field name="purchase_order_ref" />
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+
+
+		<!-- sea insurance Search Filter -->
+
+		<record id="view_sea_insurance_filter" model="ir.ui.view">
+			<field name="name">sea.insurance.list.select</field>
+			<field name="model">sea.insurance</field>
+			<field name="arch" type="xml">
+				<search string="Search for Sea Insurance Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="shipping_date" />
+					<separator orientation="vertical" />
+					<field name="bill_of_lading" />
+					<separator orientation="vertical" />
+					<field name="bill_no" />
+					<newline />
+					<group expand="0" string="Extra..." colspan="4" col="10">
+						<field name="discharge_port" select="1" />
+						<separator orientation="vertical" />
+						<field name="shipping_port" />
+						<separator orientation="vertical" />
+						<field name="arrival_date" />
+						<separator orientation="vertical" />
+						<field name="state"/>
+
+					</group>
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="state" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+						<filter string="Responsible" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'user_id'}" />
+						<filter string="Comapny" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'company_id'}" />
+						<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+
+					</group>
+				</search>
+			</field>
+		</record>
+
+	<!-- sea_insurance_goods Cofigruation Form & Tree & search -->
+
+		<record id="id_sea_insurance_goods_view_form" model="ir.ui.view">
+			<field name="name">sea.insurance.goods.form</field>
+			<field name="model">sea.insurance.goods</field>
+			<field name="arch" type="xml">
+				<form string="Sea Insurance Goods" version="7.0">
+                                        <sheet>
+                                               <group>
+					            <field name="code"/>
+					            <field name="name"/>
+                                               </group>
+                                        </sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="sea_insurance_goods_tree" model="ir.ui.view">
+			<field name="name">sea.insurance.goods.tree</field>
+			<field name="model">sea.insurance.goods</field>
+			<field name="arch" type="xml">
+				<tree string="Sea Insurance Goods">
+					<field name="code"/>
+                                        <field name="name" />
+				</tree>
+			</field>
+		</record>
+
+
+		<record id="sea_insurance_goods_action" model="ir.actions.act_window">
+			<field name="res_model">sea.insurance.goods</field>
+			<field name="domain">[]</field>
+		</record>
+
+		<record id="view_sea_insurance_goods_filter" model="ir.ui.view">
+			<field name="name">sea.insurance.goods.list.select</field>
+			<field name="model">sea.insurance.goods</field>
+			<field name="arch" type="xml">
+				<search string="Search for sea insurance goods">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="code" select="1" />
+					<newline />
+				</search>
+			</field>
+		</record>
+
+		<!-- Menu -->
+
+		<record id="id_sea_insurance_action" model="ir.actions.act_window">
+			<field name="res_model">sea.insurance</field>
+			<field name="domain">[]</field>
+		</record>
+
+ 
+       
+       <menuitem id="id_extra_insurance_menu" name="Extra Insurance"
+			parent="admin_affairs.menu_admin_affairs_operations" sequence="5"/>
+
+       <menuitem id="id_sea_insurance_menu" name="Sea Insurance"
+			parent="id_extra_insurance_menu" action="id_sea_insurance_action" />
+
+      <menuitem id="menu_sea_insurance_goods_configuration" name="Sea Insurance configuration"
+                          parent="admin_affairs.admin_affairs_configuration_menu"/>
+
+
+       <menuitem id="id_sea_insurance_goods_menu" name="Goods Type"
+			parent="menu_sea_insurance_goods_configuration" action="sea_insurance_goods_action" />
+
+
+
+
+
+	</data>
+</openerp>

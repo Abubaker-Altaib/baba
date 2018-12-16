@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+          <!-- ********************************* Main Budget ********************************* -->
+                <record model="ir.ui.view" id="view_account_budget_niss_tree">
+			<field name="name">account.budget.niss.tree</field>
+			<field name="model">account.budget.niss</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+                             <tree string="Main Budget">
+			        <field name="number" />
+			        <field name="name" />
+			        <field name="date" />
+			     </tree>
+			</field>
+		</record>
+
+                <record model="ir.ui.view" id="view_account_budget_niss_form">
+			<field name="name">account.budget.niss.form</field>
+			<field name="model">account.budget.niss</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+                             <form string="Main Budget">
+                                <group  col="4" colspan="4">
+			        <field name="number" readonly ="1"/>
+			        <field name="date" readonly="1"/>
+			        <field name="name" required ="1"/>
+			        <newline/>
+				<field name="fiscalyear_id" invisible="1"/>
+				<field name="type" invisible="1"/>
+                                </group>
+                                <group  col="4" colspan="4">
+			        	<field name="date_actual" required ="1"/>
+					<button name ="get_actual_amount" string="Get Actual Amount" type = "object"/>
+                                </group>
+                                <group  col="4" colspan="4">
+				<field name="line_ids" nolabel="1">
+                                    <tree editable="bottom" string="Main Budget">
+			        	<field name="name" required ="1"/>
+			       		<field name="account_id" />
+					<field name="plannet_amount"/>
+					<field name="actual_amount"/>
+			     	    </tree>
+			        </field>
+                                </group>
+			     </form>
+			</field>
+		</record>
+
+
+	<record id="view_account_budget_niss_filter" model="ir.ui.view">
+        <field name="name">account.budget.niss.select</field>
+        <field name="model">account.budget.niss</field>
+        <field name="arch" type="xml">
+            <search string="Main Budget">
+               <group>
+		    <field name="number" />
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="fiscalyear_id"/>
+                </group>
+                <group expand="0" string="Group By..." colspan="4" col="10" >
+                    <filter string="Date" context="{'group_by':'date'}"/>
+                </group>
+            </search>
+	</field>
+	</record>
+
+		<record id="action_view_account_budget_niss" model="ir.actions.act_window">
+			<field name="name">Main Budget</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.budget.niss</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[('type','=','main')]</field>
+                        <field name="context">{'type':'main',}</field>
+                        <field name="search_view_id" ref="view_account_budget_niss_filter"/>
+		</record>
+    	<record id="view_account_budget_niss_tree_eval" model="ir.actions.act_window.view">
+       	 	<field eval="1" name="sequence"/>
+        	<field name="view_mode">tree</field>
+       		<field name="view_id" ref="view_account_budget_niss_tree"/>
+        	<field name="act_window_id" ref="action_view_account_budget_niss"/>
+    	</record>
+
+	<record id="view_account_budget_niss_form_eval" model="ir.actions.act_window.view">
+        	<field eval="2" name="sequence"/>
+       	 	<field name="view_mode">form</field>
+        	<field name="view_id" ref="view_account_budget_niss_form"/>
+        	<field name="act_window_id" ref="action_view_account_budget_niss"/>
+    	</record>
+
+               <menuitem name="Main Budget" parent="account_budget_custom.budget_menu" sequence="40"
+		action="action_view_account_budget_niss" id="account_budget_niss_main"
+		groups="account_budget_custom.group_budget_user" />
+
+          <!-- ********************************* Detail Budget ********************************* -->
+
+		<record model="ir.ui.view" id="view_account_budget_niss_detail_tree">
+			<field name="name">account.budget.niss.detail.tree</field>
+			<field name="model">account.budget.niss</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+                             <tree string="Detail Budget">
+			        <field name="number" />
+			        <field name="name" />
+			        <field name="date" />
+			     </tree>
+			</field>
+		</record>
+
+                <record model="ir.ui.view" id="view_account_budget_niss_detail_form">
+			<field name="name">account.budget.niss.detail.form</field>
+			<field name="model">account.budget.niss</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+                             <form string="Detail Budget">
+                                <group  col="4" colspan="4">
+			        <field name="number" readonly ="1"/>
+			        <field name="date" readonly="1"/>
+			        <field name="name" required ="1"/>
+				<field name="type" invisible="1"/>
+                                </group>
+				<group  col="4" colspan="4">
+			        	<field name="date_actual" required ="1"/>
+					<button name ="get_actual_amount" string="Get Actual Amount" type = "object"/>
+                                </group>
+                                <group  col="4" colspan="4">
+				<field name="line_ids" nolabel="1">
+                                    <tree editable="bottom" string="Detail Budget">
+			        	<field name="name" required ="1"/>
+			       		<field name="account_id" />
+					<field name="plannet_amount"/>
+					<field name="actual_amount"/>
+			     	    </tree>
+			        </field>
+                                </group>
+			     </form>
+			</field>
+		</record>
+
+
+	<record id="view_account_budget_niss_detail_filter" model="ir.ui.view">
+        <field name="name">account.budget.niss.detail.select</field>
+        <field name="model">account.budget.niss</field>
+        <field name="arch" type="xml">
+            <search string="Detail Budget">
+               <group>
+		    <field name="number" />
+                    <field name="name"/>
+                    <field name="date"/>
+                </group>
+                <group expand="0" string="Group By..." colspan="4" col="10" >
+                    <filter string="Date" context="{'group_by':'date'}"/>
+                </group>
+            </search>
+	</field>
+	</record>
+
+		<record id="action_view_account_budget_detail_niss" model="ir.actions.act_window">
+			<field name="name">Detail Budget</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.budget.niss</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[('type','=','detail')]</field>
+                        <field name="context">{'type':'detail',}</field>
+                        <field name="search_view_id" ref="view_account_budget_niss_detail_filter"/>
+		</record>
+
+		<record id="view_account_budget_niss_tree_detail_eval" model="ir.actions.act_window.view">
+       	 		<field eval="1" name="sequence"/>
+        		<field name="view_mode">tree</field>
+       			<field name="view_id" ref="view_account_budget_niss_detail_tree"/>
+        		<field name="act_window_id" ref="action_view_account_budget_detail_niss"/>
+    		</record>
+
+		<record id="view_account_budget_niss_detail_form_eval" model="ir.actions.act_window.view">
+        		<field eval="2" name="sequence"/>
+       	 		<field name="view_mode">form</field>
+        		<field name="view_id" ref="view_account_budget_niss_detail_form"/>
+        		<field name="act_window_id" ref="action_view_account_budget_detail_niss"/>
+    		</record>
+
+               <menuitem name="Detail Budget" parent="account_budget_custom.budget_menu" sequence="41"
+		action="action_view_account_budget_detail_niss" id="account_budget_niss_detail"
+		groups="account_budget_custom.group_budget_user" />
+
+	</data>
+</openerp>

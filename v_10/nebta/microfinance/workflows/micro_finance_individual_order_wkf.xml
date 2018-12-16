@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+
+<odoo>
+    <data>
+
+        <!--Workflow Definition-->
+
+<record id="finance_individual_order_workflow" model="workflow">
+    <field name="name">finance.individual.order.workflow</field>
+    <field name="osv">finance.order</field>
+    <field name="on_create">True</field>
+</record>
+
+
+        <!--Workflow Activities-->
+
+
+         <record id="act1" model="workflow.activity">
+            <field name="name">draft</field>
+            <field name="wkf_id" ref="finance_individual_order_workflow"/>
+            <field name="flow_start">True</field>
+        </record>
+
+         <record id="act2" model="workflow.activity">
+            <field name="name">visit_confirm</field>
+            <field name="wkf_id" ref="finance_individual_order_workflow"/>
+            <field name="action">action_visit_confirm()</field>
+            <field name="Kind">function</field>
+         </record>
+
+
+        <record id="act3" model="workflow.activity">
+            <field name="name">recommend</field>
+            <field name="wkf_id" ref="finance_individual_order_workflow"/>
+            <field name="action">action_su_recommend()</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act4" model="workflow.activity">
+            <field name="name">br_recommend</field>
+            <field name="wkf_id" ref="finance_individual_order_workflow"/>
+            <field name="action">action_br_recommend()</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act5" model="workflow.activity">
+            <field name="name">br_confirm</field>
+            <field name="wkf_id" ref="finance_individual_order_workflow"/>
+            <field name="flow_stop">True</field>
+            <field name="action">action_br_confirm()</field>
+            <field name="kind">function</field>
+        </record>
+
+
+        <record id="act6" model="workflow.activity">
+            <field name="name">op_recommend</field>
+            <field name="wkf_id" ref="finance_individual_order_workflow"/>
+            <field name="action">action_op_recommend()</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act7" model="workflow.activity">
+            <field name="name">op_confirm</field>
+            <field name="wkf_id" ref="finance_individual_order_workflow"/>
+            <field name="flow_stop">True</field>
+            <field name="action">action_op_confirm()</field>
+            <field name="kind">function</field>
+        </record>
+
+         <record id="act8" model="workflow.activity">
+            <field name="name">gm_confirm</field>
+            <field name="wkf_id" ref="finance_individual_order_workflow"/>
+            <field name="flow_stop">True</field>
+            <field name="action">action_gm_confirm()</field>
+            <field name="kind">function</field>
+        </record>
+
+
+         <record id="act9" model="workflow.activity">
+            <field name="name">refuse</field>
+            <field name="wkf_id" ref="finance_individual_order_workflow"/>
+            <field name="action">write({'state': 'refuse'})</field>
+            <field name="Kind">function</field>
+        </record>
+
+        <record id="act10" model="workflow.activity">
+            <field name="name">cancel</field>
+            <field name="wkf_id" ref="finance_individual_order_workflow"/>
+            <field name="flow_stop">True</field>
+            <field name="action">write({'state': 'cancel'})</field>
+            <field name="Kind">function</field>
+        </record>
+
+
+
+
+
+        <!--Workflow Transition-->
+
+        <!--
+        draft ==> visit confirm
+        draft ==> Cancel
+        draft ==> refuse
+        -->
+         <record id="trans_act1_to_act2" model="workflow.transition">
+            <field name="act_from" ref="act1"/>
+            <field name="act_to" ref="act2"/>
+            <field name="signal">action_visit_confirm</field>
+         </record>
+
+
+         <record id="trans_act1_to_act9" model="workflow.transition">
+            <field name="act_from" ref="act1"/>
+            <field name="act_to" ref="act9"/>
+            <field name="signal">action_refuse</field>
+         </record>
+
+        <record id="trans_act1_to_act10" model="workflow.transition">
+            <field name="act_from" ref="act1"/>
+            <field name="act_to" ref="act10"/>
+            <field name="signal">action_cancel</field>
+         </record>
+
+        <!--################## End of Draft #######################-->
+       <!--
+       visit_confirm ==> su_recommend
+       su_recommend ==> cancel
+       su_recommend ==> refuse
+       -->
+
+
+        <record id="trans_act2_to_act3" model="workflow.transition">
+            <field name="act_from" ref="act2"/>
+            <field name="act_to" ref="act3"/>
+            <field name="signal">action_su_recommend</field>
+         </record>
+
+         <record id="trans_act3_to_act9" model="workflow.transition">
+            <field name="act_from" ref="act3"/>
+            <field name="act_to" ref="act9"/>
+            <field name="signal">action_refuse</field>
+         </record>
+
+        <record id="trans_act3_to_act10" model="workflow.transition">
+            <field name="act_from" ref="act3"/>
+            <field name="act_to" ref="act10"/>
+            <field name="signal">action_cancel</field>
+         </record>
+
+        <!-- ################ End of visit Confirm ################-->
+
+        <!--
+        su_recommend ==> confirm
+        su_recommend ==> br_recommend
+        su_recommend ==> Cancel
+        su_recommend ==> refuse
+        -->
+        <record id="trans_act3_to_act4" model="workflow.transition">
+            <field name="act_from" ref="act3"/>
+            <field name="act_to" ref="act4"/>
+            <field name="signal">action_br_recommend</field>
+        </record>
+
+        <record id="trans_act3_to_act5" model="workflow.transition">
+            <field name="act_from" ref="act3"/>
+            <field name="act_to" ref="act5"/>
+            <field name="signal">action_br_confirm</field>
+        </record>
+
+        <record id="trans_act3_to_act9" model="workflow.transition">
+            <field name="act_from" ref="act3"/>
+            <field name="act_to" ref="act9"/>
+            <field name="signal">action_refuse</field>
+        </record>
+
+        <record id="trans_act3_to_act10" model="workflow.transition">
+            <field name="act_from" ref="act3"/>
+            <field name="act_to" ref="act10"/>
+            <field name="signal">action_cancel</field>
+        </record>
+
+
+
+        <!--################# End of su_recommend ###################-->
+
+        <!--
+        br_recommend ==> op_recommend
+        br_recommend ==> confirm
+        br_recommend ==> cancel
+        br_recommend ==> refuse
+        -->
+
+        <record id="trans_act4_to_act6" model="workflow.transition">
+            <field name="act_from" ref="act4"/>
+            <field name="act_to" ref="act6"/>
+            <field name="signal">action_op_recommend</field>
+        </record>
+
+         <record id="trans_act4_to_act7" model="workflow.transition">
+            <field name="act_from" ref="act4"/>
+            <field name="act_to"   ref="act7"/>
+            <field name="signal">action_op_confirm</field>
+        </record>
+
+        <record id="trans_act4_to_act9" model="workflow.transition">
+            <field name="act_from" ref="act4"/>
+            <field name="act_to" ref="act9"/>
+            <field name="signal">action_refuse</field>
+        </record>
+
+
+         <record id="trans_act4_to_act10" model="workflow.transition">
+            <field name="act_from" ref="act4"/>
+            <field name="act_to" ref="act10"/>
+            <field name="signal">action_cancel</field>
+        </record>
+
+
+        <!--############## End of br_recommend #################-->
+
+        <!--
+        op_recommend ==> gm_confirm
+        op_recommend ==> cancel
+        op_recommend ==> refuse
+        -->
+
+         <record id="trans_act6_to_act8" model="workflow.transition">
+            <field name="act_from" ref="act6"/>
+            <field name="act_to" ref="act8"/>
+            <field name="signal">action_gm_confirm</field>
+        </record>
+
+        <record id="trans_act6_to_act9" model="workflow.transition">
+            <field name="act_from" ref="act6"/>
+            <field name="act_to" ref="act9"/>
+            <field name="signal">action_refuse</field>
+        </record>
+
+         <record id="trans_act6_to_act10" model="workflow.transition">
+            <field name="act_from" ref="act6"/>
+            <field name="act_to" ref="act10"/>
+            <field name="signal">action_cancel</field>
+        </record>
+
+
+        <!--############## End of op_recommend #################-->
+
+
+    </data>
+</odoo>

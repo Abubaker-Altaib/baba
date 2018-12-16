@@ -1,0 +1,130 @@
+-
+  I check the total untaxed amount of the Exchange is correctly computed
+-
+  !assert {model: exchange.order, id: exchange_order_rec1, string: The amount of Exchange is not correctly computed}:
+    - sum([l.price_subtotal for l in order_line]) == total_amount
+-
+  I confirm the Store Order.
+-
+  !workflow {model: exchange.order, action: exchange_confirms, ref: exchange.exchange_order_rec1}
+-
+  I check the "Confirm" status  after confirmed 
+-
+  !python {model: exchange.order}: |
+    exchange_order = self.browse(cr, uid, ref("exchange.exchange_order_rec1"))
+    assert exchange_order.state == 'confirmed', "state."
+-
+  I Department Confirm the Store Order.
+-
+  !workflow {model: exchange.order, action: exchange_confirm1, ref: exchange.exchange_order_rec1}
+  
+-
+  I Department Confirm2 the Store Order.
+-
+  !workflow {model: exchange.order, action: exchange_approve_meters_qtys, ref: exchange.exchange_order_rec1}
+-
+  I exchange_approve_qty Store Order.
+-
+  !workflow {model: exchange.order, action: exchange_approve_qty, ref: exchange.exchange_order_rec1}
+
+-
+  I check the "Approved" status  
+-
+  !python {model: exchange.order}: |
+    exchange_order = self.browse(cr, uid, ref("exchange.exchange_order_rec1"))
+    assert exchange_order.state == 'approved_qty', "state."
+
+-
+  I check that related Budget Confirmationr after approve.
+-
+  !python {model: exchange.order}: |
+    exchange_order = self.browse(cr, uid, ref("exchange.exchange_order_rec1"),context={})
+    assert exchange_order.acc_bud_confirm_id, "Account Budget Confirmation should be created."
+-
+  !record {model: account.journal, id: stock.stock_journal}:
+    user_id: base.user_root
+    name: Stock Journal
+    code: STJ
+    type: general
+    sequence_id: stock.stock_journal_sequence 
+    view_id: account.account_journal_view 
+    analytic_journal_id: account.sit
+- 
+  Creating a account.analytic.accoun Record
+- 
+  !record {model: account.analytic.account, id: account.analytic_administratif}:
+    parent_id: account.analytic_internal
+    name: Administrative
+    code: 1
+    type: normal
+    budget: 0    
+-
+  I account.budget.confirmation workflow.
+-
+  !python {model: exchange.order}: |
+    import netsvc
+    wf_service = netsvc.LocalService("workflow")
+    order = self.browse(cr, uid, ref("exchange.exchange_order_rec1"))
+    self.pool.get('account.budget.confirmation').write(cr, uid, [order.acc_bud_confirm_id.id],{'partner_id': ref("base.res_partner_fabiendupont0"),'general_account_id': ref("account.a_recv"), 'analytic_account_id': ref("account.analytic_administratif")})
+    wf_service.trg_validate(uid, 'account.budget.confirmation', order.acc_bud_confirm_id.id, 'complete', cr)
+    wf_service.trg_validate(uid, 'account.budget.confirmation', order.acc_bud_confirm_id.id, 'check', cr)
+-
+  I check that an order has been budget.
+-
+  !python {model: exchange.order}: |
+    order = self.browse(cr, uid, ref("exchange.exchange_order_rec1"))
+    assert order.state == 'budget_yes', 'Order should be in Budget Approved state.'
+-
+  I store_approve Store Order.
+-
+  !workflow {model: exchange.order, action: exchange_approve, ref: exchange.exchange_order_rec1}
+-
+ !record {model: stock.inventory, id: stock_inventory_store}:
+    name: Inventory for store
+    inventory_line_id:
+      - product_id: stock.product_icecream
+        product_uom: product.product_uom_kgm
+        product_qty: 5.0
+        location_id: stock.stock_location_components
+- 
+  I confirm inventory .
+-
+  !python {model: stock.inventory}: |
+    self.action_confirm(cr, uid, [ref('exchange.stock_inventory_store')], context=context)
+    
+-
+  I close  inventory .
+-
+  !python {model: stock.inventory}: |
+    self.action_done(cr, uid, [ref('exchange.stock_inventory_store')], context=context)
+-
+  I Store partial picking.
+-
+  !python {model: exchange.partial.picking}: |
+    context.update({'active_model': 'exchange.order', 'active_id': ref('exchange.exchange_order_rec1'), 'active_ids': [ref('exchange.exchange_order_rec1')]})
+
+-
+  !record {model: exchange.partial.picking, id: partial_test2}:
+     exchange_id: exchange.exchange_order_rec1
+-
+  !python {model: exchange.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_test2')], context=context)
+-
+  Now, I dispatch delivery order.
+-
+  !python {model: stock.partial.picking}: |
+    order = self.pool.get('exchange.order').browse(cr, uid, ref("exchange.exchange_order_rec1"))    
+    for pick in order.picking_ids:
+        print "pick.type", pick.type
+        data = pick.force_assign()
+        if data == True:
+          partial_id = self.create(cr, uid, {}, context={'active_model': 'stock.picking','active_ids': [pick.id]})
+          print "partial_id",
+          self.do_partial(cr, uid, [partial_id])
+-
+  I check that an order has been closed.
+-
+  !python {model: exchange.order}: |
+    order = self.browse(cr, uid, ref("exchange.exchange_order_rec1"))
+    assert order.state == 'done', 'Order should be in closed.'
+

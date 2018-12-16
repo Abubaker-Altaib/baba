@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="hr_suggested_course_form_view_inherit">
+			<field name="name">hr.suggested.course.form.inherit</field>
+			<field name="model">hr.employee.training.suggested</field>
+			<field name="inherit_id" ref="hr_training.hr_suggested_course_form_view" />
+			<field name="arch" type="xml">
+				<button name="approve" position='replace' />
+				<xpath expr='//field[@name="plan_id"]' position="attributes">
+					<attribute name="domain">[('state','=','draft')]</attribute>
+				</xpath>
+				<xpath expr='//header' position="replace">
+					<header>
+						<button name="request" string="Request" states="draft"
+							groups="base.group_department_manager,base.group_unit_manager" />
+						<button name="confirm" string="Confirm" states="requested"
+							groups="base.group_department_manager" />
+						<button name="validate" string="Validate" states="confirmed"
+							groups="base.group_unit_manager" />
+						
+						<button name="approve" string="Approve Training" states="validated"
+							groups="base.group_unit_manager" />
+							
+						<button string="Set to Draft" name="set_to_draft" type="object"
+							states="requested,confirmed,validated" icon="gtk-convert" />
+
+						<field name="state" widget="statusbar" statusbar_visible="draft,confirmed,approved" />
+					</header>
+				</xpath>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_approved_course_form_view_inherit">
+			<field name="name">hr.approved.course.form.inherit</field>
+			<field name="model">hr.employee.training.approved</field>
+			<field name="inherit_id" ref="hr_training.hr_approved_course_form_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="request"]' position="after">
+					<button name="approve1" string="General manager Approve"
+						states="requested" groups="base.group_training_manager,base.group_training_user" />
+				</xpath>
+				<xpath expr='//button[@name="approve"]' position="attributes">
+					<attribute name="states">approved2</attribute>
+				</xpath>
+				<xpath expr="//notebook" position="before">
+					<group attrs="{'invisible':[('state','not in','rejected')]}" colspan="4">
+						<separator colspan="2" string="Reject Reason" />
+						<field name="reject_reason" nolabel="1" />
+					</group>
+				</xpath>
+				<xpath expr='//field[@name="plan_id"]' position="attributes">
+					<attribute name="domain">[('state','not in',['draft','rejected'])]
+					</attribute>
+				</xpath>
+			</field>
+		</record>
+	</data>
+</openerp>

@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+    
+   <!--
+     Customization Purchase workflow changing buttons string
+   -->
+      <record model="ir.ui.view" id="purchase_order_form_inherit_customization">
+            <field name="name">purchase.order.form.inherit.customization</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase_no_pricelist.purchase_order_form_inherit"/>
+            <field name="arch" type="xml">
+
+            <!--  workflow buttons -->
+
+            <button name="purchase_cancel" position="replace" >
+                <button name="purchase_cancel" confirm="Are you sure you want to cancel this order?" states="draft,confirmed,sign" string="Cancel Order"/>
+            </button>
+            
+           <button name="purchase_sign"  position="replace">
+               <button name="purchase_sign" 
+                        colspan="2"
+                		states="draft" 
+                		string="Progress" confirm="Are you sure you want to process this order?" 
+                		icon="gtk-go-forward" groups="purchase_customization.group_purchase_order_inprogress"/>
+           </button>
+           <button name="purchase_confirm"  position="replace">
+               <button name="%(purchase_customization.action_create_partial_picking)d" 
+                        colspan="2"
+                		states="sign" 
+                		string="Complete" type="action"
+                		icon="gtk-go-forward" groups="purchase_customization.group_purchase_order_complete"/>
+           </button>
+           <button name="purchase_approve"  position="replace">
+               <button name="purchase_approve" 
+                        colspan="2"
+                		states="confirmed" 
+                		string="Closed" confirm="Are you sure you want to close this order?"
+                		icon="gtk-go-forward"/>
+           </button>
+           <button name="wkf_send_rfq"  position="replace">
+               <button name="wkf_send_rfq" 
+                        colspan="2"
+                		states="draft" 
+                		string="Send by Email" 
+				groups="base.group_purchase_order_custom"/>
+           </button>
+           <button name="print_quotation"  position="replace">
+               <button name="print_quotation" 
+                        colspan="2"
+                		states="draft" 
+                		string="Print" 
+				groups="base.group_purchase_order_custom"/>
+           </button>
+           <button string="Resend Purchase Order"  position="replace">
+                    <button name="wkf_send_rfq" states="confirmed" string="Resend Purchase Order" type="object" class="oe_highlight"
+				groups="base.group_purchase_order_custom"/>
+           </button>
+           <button name="action_cancel_draft"  position="replace">
+                    <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" />
+           </button>
+
+          <field name="location_id" position='after'>
+                               <field name="executing_agency" groups="purchase_customization.group_purchase_order_custom"/>
+          </field>
+
+          <field name="location_id" position='replace'>
+                               <field name="location_id" required="1" attrs="{ 'readonly' : [('state' , 'not in' , ('draft','sign'))] }" domain="[('usage' , '=' , 'internal')]"/>
+          </field>
+
+
+
+            </field>  
+            
+      </record>
+
+      
+      <record id="purchase_order_tree_inherit_customization" model="ir.ui.view">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+            <field name="arch" type="xml">
+          <xpath expr="//tree[@string='Purchase Order']" position="replace">
+             <tree colors="red:state in ('draft','sign');grey:state not in ('draft','sign')" string="Request for approval of a purchase">
+                        <field name="minimum_planned_date" position="replace"/>
+            
+            <field name="origin" position="replace"/>
+            
+            <field name="amount_untaxed" position="replace"/>
+            
+            <field name="partner_id" position="after">
+                <field name="ir_id" />
+                <field name="department_id" colspan="2"/>
+            </field>
+             
+           <field name="state"/>
+           </tree>
+
+
+           </xpath>
+
+
+        </field>
+    </record>
+
+
+      <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+            <field name="name">Purchase Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">tree,form,graph,calendar</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="search_view_id" ref="purchase.view_purchase_order_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a quotation that will be converted into a purchase order. 
+              </p><p>
+                Use this menu to search within your purchase orders by
+                references, supplier, products, etc. For each purchase order,
+                you can track the related discussion with the supplier, control
+                the products received and control the supplier invoices.
+              </p>
+            </field>
+        </record>
+      
+ </data>
+</openerp>

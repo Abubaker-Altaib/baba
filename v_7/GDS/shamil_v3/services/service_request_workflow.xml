@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Service Request Activity-->
+
+        <record id="wkf_service_request" model="workflow">
+            <field name="name">wkf.service.request</field>
+            <field name="osv">service.request</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_service_request_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_service_request"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+        <record id="wkf_service_request_confirmed_d" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_service_request"/>
+            <field name="name">confirmed_d</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_d()</field>  
+        </record>
+        
+        <record id="wkf_service_request_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_service_request"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>  
+        </record>
+
+        <record id="wkf_service_request_approved_gn" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_service_request"/>
+            <field name="name">approved_gn</field>
+            <field name="kind">function</field>
+            <field name="action">approved_gn()</field>  
+        </record>
+
+        <record id="wkf_service_request_approved_sc" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_service_request"/>
+            <field name="name">approved_sc</field>
+            <field name="kind">function</field>
+            <field name="action">approved_sc()</field>  
+        </record>
+
+        <record id="wkf_service_request_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_service_request"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>  
+            <field name="flow_stop">True</field>          
+        </record>
+        <record id="wkf_service_request_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_service_request"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+        </record>
+
+<!-- hospitality service Transition-->
+
+        <record id="wkf_service_request_darft_confirmed_d" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_draft"/>
+            <field name="act_to" ref="wkf_service_request_confirmed_d"/>
+            <field name="signal">confirmed_d</field>
+        </record>
+
+        <record id="wkf_service_request_confirmed_d_to_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_confirmed_d"/>
+            <field name="act_to" ref="wkf_service_request_confirmed"/>
+            <field name="signal">confirmed</field>
+	    <field name="condition">is_hq()</field>
+        </record>
+
+        <record id="wkf_service_request_confirmed_d_to_approve_sc" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_confirmed_d"/>
+            <field name="act_to" ref="wkf_service_request_approved_sc"/>
+            <field name="signal">confirmed</field>
+	    <field name="condition">not is_hq()</field>
+        </record>
+        
+        <record id="wkf_service_request_confirmed_approved_gn" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_confirmed"/>
+            <field name="act_to" ref="wkf_service_request_approved_gn"/>
+            <field name="signal">approved_gn</field>
+        </record>
+
+        <!--record id="wkf_service_request_confirmed_approved" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_confirmed"/>
+            <field name="act_to" ref="wkf_service_request_approved"/>
+            <field name="signal">approved</field>
+        </record-->
+
+        <record id="wkf_service_request_confirmed_approved_sc" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_approved_gn"/>
+            <field name="act_to" ref="wkf_service_request_approved_sc"/>
+            <field name="signal">approved_sc</field>
+        </record>
+
+        <record id="wkf_service_request_confirmed_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_approved_sc"/>
+            <field name="act_to" ref="wkf_service_request_done"/>
+            <field name="signal">done</field>
+        </record>
+
+		<record id="wkf_service_request_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_draft"/>
+            <field name="act_to" ref="wkf_service_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+		<record id="wkf_service_request_confirmed_d_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_confirmed_d"/>
+            <field name="act_to" ref="wkf_service_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+		<record id="wkf_service_request_approved_gn_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_approved_gn"/>
+            <field name="act_to" ref="wkf_service_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_service_request_approved_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_confirmed"/>
+            <field name="act_to" ref="wkf_service_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+		<record id="wkf_service_request_approved_sc_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_approved_sc"/>
+            <field name="act_to" ref="wkf_service_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <!--record id="wkf_service_request_done_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_approved"/>
+            <field name="act_to" ref="wkf_service_request_cancel"/>
+            <field name="signal">cancel</field>
+        </record-->
+
+        <record id="wkf_service_request_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_service_request_cancel"/>
+            <field name="act_to" ref="wkf_service_request_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>
+

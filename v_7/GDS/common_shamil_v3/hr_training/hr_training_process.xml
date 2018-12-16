@@ -1,0 +1,354 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+		<!-- Employee Training [Suggested Course] -->
+		<record model="ir.ui.view" id="hr_suggested_course_search_view">
+			<field name="name">hr.suggested.course.search</field>
+			<field name="model">hr.employee.training.suggested</field>
+			<field name="arch" type="xml">
+				<search>
+					<field name="start_date" />
+					<field name="course_id" />
+					<field name="plan_id" />
+				</search>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_suggested_course_tree_view">
+			<field name="name">hr.suggested.course.tree</field>
+			<field name="model">hr.employee.training.suggested</field>
+			<field name="arch" type="xml">
+				<tree string="Suggested Courses">
+					<field name="name" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="plan_id" />
+					<field name="course_id" />
+					<field name="code"  />
+					<field name="training_place" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_suggested_course_form_view">
+			<field name="name">hr.suggested.course.form</field>
+			<field name="model">hr.employee.training.suggested</field>
+			<field name="arch" type="xml">
+				<form string="Suggested Courses" version="7.0">
+					<header>
+						<button name="request" string="Request" states="draft"
+							groups="base.group_department_manager,base.group_unit_manager" />
+						<button name="confirm" string="Confirm" states="requested"
+							groups="base.group_department_manager" />
+						<button name="validate" string="Validate" states="confirmed"
+							groups="base.group_unit_manager" />
+						<button name="approve" string="Approve" states="validated"
+							groups="base.group_unit_manager" />
+						<button string="Set to Draft" name="set_to_draft" type="object"
+							states="requested,confirmed,validated" icon="gtk-convert" />
+						<field name="state" widget="statusbar" statusbar_visible="confirmed,validated,approved" />
+					</header>
+					<sheet string="Suggested Courses">
+						<h1>
+							<field name="name" class="oe_inline" readonly="True" />
+						</h1>
+						<group>
+							<group>
+								<field name="plan_id" />
+								<field name="request_date" />
+								<field name="start_date" required="1" />
+								<field name="company_id" groups="base.group_multi_company" />
+							</group>
+							<group>
+								<field name="course_id" />
+								<field name="code"  />
+								<field name="end_date" required="1" />
+								<field name="type" invisible="True" />
+							    <field name="training_place" required="1" />
+							</group>
+							<group>
+								<field name="course_type" />
+							</group>
+							<notebook colspan="2">
+								<page string="Departments">
+									<field name="department_ids" context="{'default_type':type}"
+										widget="one2many_list">
+										<tree editable="top" string="Departments">
+											<field name="department_id" context="{'department_ids':parent.department_ids}" />
+											<field name="candidate_no" />
+											<field name="type" invisible="True" />
+										</tree>
+									</field>
+								</page>
+								<page string="Employees">
+									<field name="line_ids" widget="one2many_list"
+										context="{'start_date':start_date, 'end_date':end_date}">
+										<tree editable="top" string="Employees">
+											<field name="employee_id" domain="[('state','!=','refuse')]"
+												context="{'department_ids':parent.department_ids,'line_ids':parent.line_ids}"
+												on_change="onchange_employee(employee_id)" />
+											<field name="department_id" />
+										</tree>
+									</field>
+								</page>
+							</notebook>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id="action_hr_suggested_course" model="ir.actions.act_window">
+			<field name="name">Suggested Courses</field>
+			<field name="res_model">hr.employee.training.suggested</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">
+				[('type','=','hr.suggested.course')]
+			</field>
+			<field name="context">
+				{'default_type':'hr.suggested.course'}
+			</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					Click to suggest new course.
+				</p>
+			</field>
+		</record>
+		<record id="action_hr_suggested_course_tree" model="ir.actions.act_window.view">
+			<field eval="1" name="sequence" />
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="hr_suggested_course_tree_view" />
+			<field name="act_window_id" ref="action_hr_suggested_course" />
+		</record>
+		<record id="action_hr_suggested_course_form" model="ir.actions.act_window.view">
+			<field eval="2" name="sequence" />
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="hr_suggested_course_form_view" />
+			<field name="act_window_id" ref="action_hr_suggested_course" />
+		</record>
+		<menuitem id="menu_hr_suggested_course" name="Suggested Courses"
+			parent="menu_training_process" action="action_hr_suggested_course"
+			groups="base.group_training_manager,base.group_training_user,base.group_department_manager,base.group_unit_manager" />
+
+		<!-- Employee Training [Approved Course] -->
+		<record model="ir.ui.view" id="hr_approved_course_search_view">
+			<field name="name">hr.approved.course.search</field>
+			<field name="model">hr.employee.training.approved</field>
+			<field name="arch" type="xml">
+				<search>
+					<field name="start_date" />
+					<field name="course_id" />
+					<field name="partner_id" />
+				</search>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_approved_course_tree_view">
+			<field name="name">hr.approved.course.tree</field>
+			<field name="model">hr.employee.training.approved</field>
+			<field name="arch" type="xml">
+				<tree string="Approved Courses">
+					<field name="name" />
+					<field name="company_id" groups="base.group_multi_company" />
+					<field name="plan_id" />
+					<field name="course_id" />
+					<field name="code"  />
+					<field name="training_place" />
+					<field name="partner_id" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+		<record model="ir.ui.view" id="hr_approved_course_form_view">
+			<field name="name">hr.approved.course.form</field>
+			<field name="model">hr.employee.training.approved</field>
+			<field name="arch" type="xml">
+				<form string="Approved Courses" version="7.0">
+					<header>
+						<button name="request" string="Request" states="draft"
+							groups="base.group_training_manager,base.group_training_user" />
+						<button name="approve" string="Approve" states="requested"
+							groups="base.group_training_manager,base.group_training_user" />
+						<button name="done" string="Done" states="approved"
+							groups="base.group_training_manager,base.group_training_user" />
+                        <button name="rejected2" string="Reject" states="requested"
+						        groups="base.group_training_manager,base.group_training_user" />
+                        <button string="Set to Draft" name="set_to_draft" states="rejected" type="object"
+                                groups="base.group_hr_user"/>
+						<field  name="state" widget="statusbar" statusbar_visible="requested,approved,done" />
+
+					</header>
+					<sheet string="Approved Courses">
+						<h1>
+							<field name="name" class="oe_inline" readonly="True" />
+						</h1>
+						<group>
+							<group>
+								<field name="plan_id" />
+								<field name="course_id" />
+								<field name="start_date" required="1" />
+								<field name="start_time" widget="float_time" />
+								<field name="company_id" groups="base.group_multi_company" />
+							    <field name="code"  />
+							</group>
+							<group>
+								<field name="training_place" required="1" />
+								<field name="location" />
+								<field name="end_date" required="1" />
+								<field name="end_time" widget="float_time" />
+								<field name="department_id" />
+								<field name="type" invisible="True" />
+							</group>
+							<group>
+								<separator colspan="2" string="Trainer Info" />
+								<field name="partner_id" required="1" attrs="{'readonly':[('trainer_payment_no','!=',False)]}"/>
+								<field name="currency_id" required="1" />
+								<field name="trainer_cost" attrs="{'readonly':[('trainer_payment_no','!=',False)]}" context="{'default_trainer':True, 'default_supplier':True, 'default_customer':False}" />
+								<field name="trainer_payment_no" />
+								<button name="trainer_transfar" string="Transfer" class="oe_link"
+									attrs="{'invisible':['|',('state','!=','done'),('trainer_payment_no','!=',False)]}"
+									type="object" />
+							</group>
+							<group>
+								<separator colspan="2" string="Enrich Details" />
+								<field name="enrich_id" required="1" attrs="{'readonly':[('enrich_payment_no','!=',False)]}" />
+								<field name="enrich_payment_no" />
+								<button name="enrich_transfar" string="Transfer" class="oe_link"
+									attrs="{'invisible':['|',('state','!=','done'),('enrich_payment_no','!=',False)]}"
+									type="object" />
+							</group>
+							<notebook colspan="2">
+								<page string="Employees">
+									<button string="Update Days" name="update_days" class="oe_link oe_edit_only"
+										type="object" />
+									<field name="line_ids" widget="one2many_list"
+										context="{'start_date':start_date, 'end_date':end_date}">
+										<tree editable="top" string="Employees">
+											<field name="employee_id" domain="[('state','!=','refuse')]"
+												context="{'department_ids':parent.department_ids,'line_ids':parent.line_ids}"
+												on_change="onchange_employee(employee_id)" />
+											<field name="department_id" />
+											<field name="days" />
+											<field name="final_amount" attrs="{'readonly':[('supervisor','=',False)]}" />
+											<field name="supervisor" />
+											<field name="age" />
+											<field name="match" />
+											<field name="suggest" />
+										</tree>
+									</field>
+								</page>
+								<page string="Departments">
+									<field name="department_ids" context="{'default_type':type}"
+										widget="one2many_list">
+										<tree editable="top" string="Departments">
+											<field name="department_id" />
+											<field name="candidate_no" />
+											<field name="type" invisible="True" />
+										</tree>
+									</field>
+								</page>
+							</notebook>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<record id="action_hr_approved_course" model="ir.actions.act_window">
+			<field name="name">Approved Courses</field>
+			<field name="res_model">hr.employee.training.approved</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">
+				[('type','=','hr.approved.course')]
+			</field>
+			<field name="context">
+				{'default_type':'hr.approved.course'}
+			</field>
+		</record>
+		<record id="action_hr_approved_course_tree" model="ir.actions.act_window.view">
+			<field eval="1" name="sequence" />
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="hr_approved_course_tree_view" />
+			<field name="act_window_id" ref="action_hr_approved_course" />
+		</record>
+		<record id="action_hr_approved_course_form" model="ir.actions.act_window.view">
+			<field eval="2" name="sequence" />
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="hr_approved_course_form_view" />
+			<field name="act_window_id" ref="action_hr_approved_course" />
+		</record>
+
+		<menuitem id="menu_hr_approved_course" name="Approved Courses"
+			parent="menu_training_process" action="action_hr_approved_course"
+			groups="base.group_training_manager,base.group_training_user" />
+
+		<!-- Employee Training Line -->
+		<record model="ir.ui.view" id="hr_employee_training_line_tree_view">
+			<field name="name">hr.employee.training.line.tree</field>
+			<field name="model">hr.employee.training.line</field>
+			<field name="arch" type="xml">
+				<tree string="Employee Training Line" create="false" delete="false"
+					editable="top">
+					<field name="training_employee_id" readonly="1" />
+					<field name="employee_id" on_change="onchange_employee(employee_id)"
+						readonly="1" />
+					<field name="department_id" />
+					<field name="course_id" />
+					<field name="training_place" />
+					<field name="start_date" />
+					<field name="end_date" />
+					<field name="match" />
+					<field name="enrich_payment_no" invisible="1" />
+					<field name="days" attrs="{'readonly':[('enrich_payment_no','!=',False)]}" />
+					<field name="amount" />
+					<field name="final_amount" />
+					<field name="attendance" attrs="{'readonly':[('enrich_payment_no','!=',False)]}" />
+					<field name="supervisor" readonly="1" />
+					<field name="suggest" />
+					<field name="currency_id" />
+					<field name="code" />
+					<field name="age" />
+					<field name="plan_id"/>
+					<field name="emp_code"/>
+				</tree>
+			</field>
+		</record>
+		<record id="action_hr_employee_training_line" model="ir.actions.act_window">
+			<field name="name">Employee Training Line</field>
+			<field name="res_model">hr.employee.training.line</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+			<field name="domain">
+				[('type','=','hr.approved.course')]
+			</field>
+			<field name="view_id" ref="hr_employee_training_line_tree_view" />
+		</record>
+		<menuitem id="menu_hr_employee_training_line" name="Employee Training Line"
+			parent="menu_training_enrich" action="action_hr_employee_training_line" />
+
+		<record id="view_employee_training_form_inherit" model="ir.ui.view">
+			<field name="name">hr.employee.training.form.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr.view_employee_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//page[@string="HR Settings"]' position="after"
+					version="7.0">
+					<page string="Training">
+						<field name="training" />
+						<field colspan="4" name="course_ids" nolabel="1">
+							<form>
+								<field name="course_id" select="1" colspan="2" />
+								<field name="start_date" />
+								<field name="end_date" />
+							</form>
+							<tree>
+								<field name="course_id" select="1" colspan="2" />
+								<field name="start_date" />
+								<field name="end_date" />
+							</tree>
+						</field>
+					</page>
+				</xpath>
+			</field>
+		</record>
+	</data>
+</openerp>

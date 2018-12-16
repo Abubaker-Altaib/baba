@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record id="view_voucher_filter_vendor_inherit" model="ir.ui.view">
+            <field name="name">account.voucher.purchase.select</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_voucher_filter_vendor" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="amount"/>
+                    <field name="account_analytic_id" string="Expense On"/>
+                    <field name="department_id"/>
+                    <field name="name"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem name="Expense Requests" id="expense_request_root" sequence="40" />
+        
+        <record model="ir.ui.view" id="view_expense_request_tree">
+            <field name="name">account.voucher.tree.expense</field>
+            <field name="model">account.voucher</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'submit'" decoration-muted="state == 'refused'"  decoration-danger="color == 'red'" decoration-warning="color == 'brown'" decoration-bf="color == 'black'" string="Expense Requests" >
+                    <field name="number"/>
+                    <field name="date" string="Date"/>
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="partner_id" string="Beneficiary"/>
+                    <field name="journal_id" string="Purpose"/>
+                    <field name="voucher_type" invisible="context.get('visible', True)"/>
+                    <field name="amount" sum="Total Amount"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="color" invisible="1"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="view_expense_request_form">
+            <field name="name">account.voucher.expense.form</field>
+            <field name="model">account.voucher</field>
+            <field name="arch" type="xml">
+                <form string="Expense Request">
+                <header>
+                    <button name="submit_expenses" states="submit" string="Submit to Manager" type="object" class="oe_highlight"/>
+                    <button name="complete_voucher" string="Confirm" confirm="Are you sure that this request is in compliance with the rules and regulations of the association?" states="complete" class="oe_highlight" type="object"/>
+                    <button name="action_proforma" string="Submit to Finance" states="reported" class="oe_highlight" type="object"/>
+                    <button name="action_to_edit" type="object" states="complete,refused" string="To Edit"/>
+                    <button name="%(account_voucher_custom.action_voucher_reject_reason)d" type="action" string="Refuse" states="complete,reported"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="submit,complete,reported,posted"/>
+                </header>
+                <sheet string="Expense Requests">
+                
+                    <div class="oe_button_box">
+                        <button name="action_get_attachment_view"
+                            class="oe_stat_button"
+                            icon="fa-book"
+                            type="object">
+                            <field name="attachment_number" widget="statinfo" string="Documents"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                    <label for="number" string="Expense Request"/>
+                    <h1>
+                        <field name="number" readonly="1"/>
+                    </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="voucher_type" invisible="True"/>
+                            <field name="department_id" attrs="{'readonly': [('state','!=','submit')],'required': True}" />
+                            <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="date" string="Date" required="1" attrs="{'readonly': [('state','!=','submit')]}"/>
+                            <field name="validity_date" />
+                            <field name="journal_id" attrs="{'readonly': [('state','!=','submit')]}"
+                                   domain="[('type','=','purchase')]"
+                                   widget="selection" string="Purpose"
+                                   groups="account.group_account_user"/>
+                            <field name="partner_id" domain="[('supplier','=',True)]" 
+                                   attrs="{'readonly': True,'invisible': [('partner_id', '=', False)]}"
+                                   string="Beneficiary" 
+                                   context="{'default_customer': 0, 'search_default_supplier': 1, 'default_supplier': 1}" />
+                            <field name="priority" required="1" widget="selection"/>
+                            <field name="account_analytic_id" invisible="1"/>
+                            <field name="financial_era" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Expense Lines">
+                            <field name="line_ids" attrs="{'readonly': [('state','!=','submit')]}" 
+                                context="{'default_account_analytic_id': account_analytic_id,'line_ids': line_ids}" widget="one2many_list">
+                                <tree string="Voucher Lines" editable="bottom">
+                                    <field name="product_id" domain="[('financial_era','=',parent.financial_era)]" options="{'no_create_edit': True}" context="{'form_view_ref':'account_expense.product_product_expense_form_view'}"/>
+                                    <field name="partner_id" domain="[('supplier','=',True)]" string="Beneficiary" 
+                                   context="{'default_customer': 0, 'search_default_supplier': 1, 'default_supplier': 1}" />
+                                    <field name="name"/>
+                                    <field name="account_id" groups="account.group_account_user" />
+                                    <field name="account_analytic_id"  required="1" 
+                                           domain="[('company_id', '=', parent.company_id),('stop','=',False)]" 
+                                           groups="analytic.group_analytic_accounting" string="Expense On"/>
+                                    <field name="quantity" invisible="True"/>
+                                    <field name="price_unit" />
+                                    <field name="tax_ids" widget="many2many_tags" domain="[('type_tax_use','=','purchase')]" />
+                                    <!-- <field name="price_subtotal" /> -->
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="company_id" invisible="1"/>
+                                </tree>
+                                <form string="Expense Lines">
+                                    <group>
+                                        <field name="product_id" domain="[('financial_era','=',parent.financial_era)]" options="{'no_create_edit': True}" context="{'form_view_ref':'account_expense.product_product_expense_form_view'}"/>
+                                        <field name="partner_id" domain="[('supplier','=',True)]" string="Beneficiary" 
+                                       context="{'default_customer': 0, 'search_default_supplier': 1, 'default_supplier': 1}" />
+                                        <field name="name"/>
+                                        <field name="account_id" groups="account.group_account_user" />
+                                        <field name="account_analytic_id"  required="1" 
+                                               domain="[('company_id', '=', parent.company_id),('stop','=',False)]" 
+                                               groups="analytic.group_analytic_accounting" string="Expense On"/>
+                                        <field name="quantity" invisible="True"/>
+                                        <field name="price_unit" />
+                                        <field name="tax_ids" widget="many2many_tags" domain="[('type_tax_use','=','purchase')]" />
+                                        <!-- <field name="price_subtotal" /> -->
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="company_id" invisible="1"/>
+                                    </group>
+                                </form>
+                            </field>
+                            <group>
+                                <group class="oe_subtotal_footer oe_right">
+                                    <field name="tax_amount" />
+                                    <field name="tax_correction" attrs="{'invisible': [('tax_amount','=',0)]}" />
+                                    <field name="amount"/>
+                                </group>
+                            </group>
+                            <div class="oe_title oe_left">
+                                <label for="amount_in_words" string=" "/>
+                                        <field name="amount_in_words" readonly="1"/>
+                            </div>
+                            <field name="narration" placeholder="Internal Notes" nolabel="1" attrs="{'readonly': [('state','!=','submit')]}"/>
+                        </page>
+                        <page string="Other Information" groups="account.group_account_user">
+                            <group col="4" >
+                                <field name="employee_id" attrs="{'readonly': [('state','!=','submit')]}"/>
+                                <field name="reference" string="Reference" attrs="{'readonly': [('state','!=','submit')]}"/>
+                                <field name="currency_id" attrs="{'readonly': [('state','!=','submit')]}" />
+                                <field name="move_id" attrs="{'invisible': [('move_id', '=', False)],'readonly':True}"/>
+                                
+                                <field name="pay_now" invisible="1"/>
+                                <field name="payment_journal_id"
+                                  attrs="{'invisible': [('state','not in',['final_confirm','approve','pay','paid','posted'])]}" widget="selection"/>
+                            <field name="account_id" invisible="1" />
+                            <field name="paid" invisible="1"/>
+                            <field name="name" colspan="2" attrs="{'invisible': ['|',('pay_now', '=', 'pay_later'),('name', '=', '')],'readonly':True}"/>
+                            </group>
+                        </page>
+                    </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="action_expense_request" model="ir.actions.act_window">
+            <field name="name">Expense Requests</field>
+            <field name="res_model">account.voucher</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban</field>
+            <field name="domain">[('journal_id.type','=','purchase'), ('voucher_type','=','purchase')]</field>
+            <field name="context">{'default_voucher_type': 'purchase', 'voucher_type': 'purchase', 'default_state': 'submit'}</field>
+            <field name="view_id" eval="view_expense_request_tree"/>
+            <field name="target">current</field>
+        </record>
+        <record id="action_expense_request_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_expense_request_tree"/>
+            <field name="act_window_id" ref="action_expense_request"/>
+        </record>
+        <record id="action_expense_request_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_expense_request_form"/>
+            <field name="act_window_id" ref="action_expense_request"/>
+        </record>
+
+        <menuitem id="menu_action_expense_request"
+            action="action_expense_request" parent="expense_request_root" sequence="1"/>
+            
+          <record id="account_voucher.action_purchase_receipt" model="ir.actions.act_window">
+            <field name="domain">[('journal_id.type','=','purchase'), ('voucher_type','=','purchase'),('state','not in',('submit','complete','reported','refused'))]</field>
+            
+            
+        </record>
+        
+        <record id="product_product_expense_form_view" model="ir.ui.view">
+            <field name="name">product.product.expense.form</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <form string="Expense Services">
+                    <sheet>
+                        <field name='product_variant_count' invisible='1'/>
+                        <field name="id" invisible="True"/>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                    class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button"
+                                    options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <field name="image_medium" widget="image" class="oe_avatar"/>
+                        <div class="oe_title">
+                            <label class="oe_edit_only" for="name" string="Service Name"/>
+                            <h1><field name="name" placeholder="e.g. Lunch"/></h1>
+                            <div name="options" groups="base.group_user" invisible="1">
+                                <div>
+                                    <field name="sale_ok"/>
+                                    <label for="sale_ok"/>
+                                </div>
+                            </div>
+                        </div>
+                        <group name="product_details">
+                            <group string="General Information">
+                                <field name="type" invisible="1"/>
+                                <field name="list_price" string="Amount" />
+                                <field name="standard_price" invisible="1" />
+                                <field name="uom_id" groups="product.group_uom" options="{'no_create': True}"/>
+                                <field name="require_attachment"/>
+                                <field name="financial_era"/>
+                                <field name="uom_po_id" invisible="1"/>
+                                <label for="default_code" invisible="1"/>
+                                <div>
+                                    <field name="default_code"/>
+                                    <i class="text-muted oe_edit_only">Use [Reference] as a subject prefix for incoming receipts</i>
+                                </div>
+                            </group>
+                            <group string="Accounting">
+                                <field name="property_account_expense_id" required="1" groups="account.group_account_user"/>
+                                <field name="supplier_taxes_id" widget="many2many_tags" invisible="1"/>
+                            </group>
+                            
+                            <group string="Policy" invisible="1">
+                                <field name="periodical" />
+                                <field name="allowed_department_ids" widget="many2many_tags"/>
+                                <field name="allowed_job_ids" widget="many2many_tags"/>
+                                <field name="allowed_employee_ids" widget="many2many_tags"/>
+                            </group>
+                            
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_expense_product" model="ir.actions.act_window">
+            <field name="name">Expense Services</field>
+            <field name="res_model">product.product</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{"default_sale_ok": 1, 'default_type': 'service'}</field>
+            <field name="domain">[('sale_ok', '=', True)]</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a new expense category.
+              </p>
+            </field>
+        </record>
+
+        <record id="hr_expense_product_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">tree</field>
+            <field name="act_window_id" ref="account_expense_product"/>
+        </record>
+
+        <record id="hr_expense_product_kanban" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">kanban</field>
+            <field name="act_window_id" ref="account_expense_product"/>
+        </record>
+
+        <record id="hr_expense_product_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="3"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="product_product_expense_form_view"/>
+            <field name="act_window_id" ref="account_expense_product"/>
+        </record>
+        
+        <!-- configuration menu-->
+        <menuitem id="menu_expense_request_config" name="Configuration" parent="expense_request_root" sequence="100"/>
+
+        <menuitem id="menu_account_product" name="Expense Services" parent="menu_expense_request_config"
+            action="account_expense_product"  sequence="100"/>
+
+        <menuitem name="Reject Reason" id="account_voucher_custom.reject_reason_menu" parent="menu_expense_request_config" action="account_voucher_custom.action_account_reject_reason" sequence="11"/>
+
+
+        <!-- Account voucher priority views-->
+        <record model="ir.ui.view" id="account_voucher_priority_form">
+            <field name="name">account.voucher.priority.form</field>
+            <field name="model">account.voucher.priority</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Account voucher priority">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" required="1"/>
+                            </group>
+                            <group>
+                                <field name="color_name" required="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="priority Lines">
+                                <field name="line_ids" nolabel="1">
+                                    <tree editable="bottom" string="priority Detail">
+                                        <field name="department_id" required="1"/>
+                                        <field name="according_to" required="1"/>
+                                        <field name="limit" required="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="account_voucher_priority_tree" model="ir.ui.view">
+            <field name="name">account.voucher.priority.tree</field>
+            <field name="model">account.voucher.priority</field>
+            <field name="arch" type="xml">
+                <tree string="Account voucher priority">
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+        <!-- Action -->
+        <record id="action_account_voucher_priority" model="ir.actions.act_window">
+            <field name="name">Account voucher priority</field>
+            <field name="res_model">account.voucher.priority</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Click to add a new Account voucher priority</p>
+            </field>
+        </record>
+
+        <menuitem name="Expense priority" id="account_voucher_priority_menu" parent="menu_expense_request_config" action="action_account_voucher_priority" sequence="10"/>
+
+        <!-- hr.department Inherit-->
+        <record id="view_department_form_inherit" model="ir.ui.view">
+            <field name="name">hr.department.form</field>
+            <field name="inherit_id" ref="hr.view_department_form" />
+            <field name="model">hr.department</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="account_analytic_id" />
+                </xpath>
+            </field>
+        </record>
+
+</odoo>

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<!--inherit add to holiday.status check default -->
+
+		<record id="hr_inherit_holidays_status_ntc" model="ir.ui.view">
+			<field name="name">hr.holidays.status.form.inherit</field>
+			<field name="model">hr.holidays.status</field>
+			<field name="type">form</field>
+			<!--field name="inherit_id" ref="hr_holidays_custom.hr_inherit_holidays_status" /-->
+			<field name="inherit_id" ref="hr_holidays_buy.hr_inherit_holidays_status" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='save_leave']" position="before">
+					<field name="sick_leave" />
+					<field name="sick_day" />
+					<field name="allow_cut" />
+				</xpath>
+				<xpath expr="//field[@name='save_years']" position="after">
+					<field name="advance_leave" />
+					<field name="advance_leave_days" attrs="{'invisible':[('advance_leave','=',False)], 'required':[('advance_leave','=',True)]}" />
+				</xpath>
+				<xpath expr="//form" position="attributes">
+					<attribute name="groups">base.group_hr_user</attribute>
+				</xpath>
+
+				<xpath expr="//group[@string='Leave Details']" position="attributes">
+				   <attribute name="attrs">{}</attribute>
+				</xpath>
+				<!--xpath expr='//field[@name="absence"]' position="attributes">
+				    <attribute name="invisible">1</attribute>
+			</xpath-->
+			</field>
+		</record>
+
+		<!--inherit add to hr.holidays -->
+
+		<record id="hr_inherit_holidays" model="ir.ui.view">
+			<field name="name">hr.holidays.form.inherit</field>
+			<field name="model">hr.holidays</field>
+			<field name="type">form</field>
+			<!--field name="inherit_id" ref="hr_holidays_custom.hr_inherit_holidays" /-->
+			<field name="inherit_id" ref="hr_holidays_buy.hr_holidays_inherit_buy" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='name']" position="replace">
+					<field name="name" invisible="1" />
+				</xpath>
+				<xpath expr="//field[@name='postpone']" position="after">
+					<field name="advance_leave2" invisible="1" />
+					<field name="advance_leave" attrs="{'invisible':[('advance_leave2','!=',True)],'readonly': [('state','!=','draft')]}"/>
+					<field name="active" groups="base.group_hr_user"/>
+					<field name="allow_cut" invisible="1"/>
+				</xpath>
+				<xpath expr="/form/sheet/group/group[2]" position="after">
+					<group attrs="{'invisible':[('state','in',('draft','hr_finance2_cut','hr_finance2','validate'))]}">
+						<label for="reject_reason" string="Reject Reasons" />
+						<div>
+							<field name="reject_reason"  colspan="5" placeholder="Add a reason..." />
+						</div>
+					</group>
+				</xpath>
+				<xpath expr='//field[@name="cut_postpone_date"]' position="attributes">
+				    <attribute name="widget">date</attribute>
+					<attribute name="attrs">{'invisible':[('state','not in',('draft','validate','cut','approve_cut','done_cut','postpone','refuse','hr_finance2_cut'))],'readonly':[('state','in',('done_cut'))]}</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/group/group/div" position="replace">
+					<div margin="0" padding="0" style="margin=0px 0px 0px 0px ; padding=0px 0px 0px 0px">
+						<group col="3" style="width: 60%%; margin: 0;" >
+	                        <field name="date_from" nolabel="1"
+							on_change="onchange_date_from(date_from, date_to, number_of_days_temp,'date_from')"
+							required="1" class="oe_inline" widget="date" style="margin=0px 0px 0px 0px ; padding=0px 0px 0px 0px"/>
+	                        <label string="-" class="oe_inline" style="margin=0px 0px 0px 0px ; padding=0px 0px 0px 0px"/>
+	                        <field name="date_to" nolabel="1"
+							on_change="onchange_date_from(date_from, date_to, number_of_days_temp,'date_to')"
+							required="1" class="oe_inline" widget="date" style="margin=0px 0px 0px 0px ; padding=0px 0px 0px 0px"/>
+	                    </group>
+	                    <newline />
+	                    <group>
+	                    	<field name="notes" nolabel="1" colspan="5" placeholder="Add a reason..." />
+	                    </group>
+               	 </div>
+				</xpath>
+
+				<xpath expr="//field[@name='holiday_status_id']" position="after">
+					<field name="remaining_days" invisible="1"/>
+				</xpath>
+
+
+			<xpath expr='//button[@name="confirm"]' position="attributes">
+				    <attribute name="string">Request</attribute>
+			</xpath>
+			<xpath expr='//button[@name="confirm"]' position="after">
+
+				<button string="leader" name="unit_manager_app" states="confirm" icon="gtk-apply" colspan="2" groups="base.group_unit_manager"/>
+				<button string="Refuse" name="unit_manager_refuse" states="confirm" icon="gtk-no" colspan="2" groups="base.group_unit_manager"/>
+
+				<button string="section manager" name="dep_manager_app" states="unit_manag" icon="gtk-apply" colspan="2" groups="base.group_department_manager"/>
+				<button string="Refuse" name="dep_manager_refuse" states="unit_manag" icon="gtk-no" colspan="2" groups="base.group_department_manager"/>
+
+				<button string="General Department Manager" name="general_dep_app" states="dep_manag" icon="gtk-apply" colspan="2" groups="base_custom.group_general_department_manager"/>
+				<button string="Refuse" name="general_dep_refuse" states="dep_manag" icon="gtk-no" colspan="2" groups="base_custom.group_general_department_manager"/>
+
+				<button string="Financial and Hummans Manager" name="fin_humm_mgr" states="general_dep" icon="gtk-apply" colspan="2" groups="base_custom.group_general_hr_manager"/>
+				<!--button string="Refuse" name="fin_humm_mgr_refuse" states="general_dep" icon="gtk-no" colspan="2" groups="base_custom.group_general_hr_manager"/--> 
+
+				<button string="General Manager" name="general_manag_app" states="hr_finance1" icon="gtk-apply" colspan="2" groups="base_custom.group_account_general_manager"/>
+				<button string="Refuse" name="general_manag_refuse" states="hr_finance1" icon="gtk-no" colspan="2" groups="base_custom.group_account_general_manager"/>
+			</xpath>
+			<xpath expr='//button[@name="validate"]' position="attributes">
+				    <attribute name="string">HR Implementation</attribute>
+				    <attribute name="groups">base.group_hr_user</attribute>
+				    <attribute name="states">hr_finance2</attribute>
+			</xpath>
+			<xpath expr='//button[@name="refuse"]' position="attributes">
+				    <attribute name="groups">base_custom.group_general_hr_manager</attribute>
+				    <attribute name="states">general_dep</attribute>
+			</xpath>
+		
+			<xpath expr='//button[@name="postpone"]' position="attributes">
+ 			<attribute name="invisible">1</attribute>
+			</xpath>
+
+			<xpath expr='//button[@name="approve_postpone"]' position="attributes">
+ 			<attribute name="invisible">1</attribute>
+			</xpath>
+			
+			<xpath expr='//button[@name="cut_leave"]' position="replace">
+				    <!--attribute name="groups">base.group_unit_manager</attribute-->
+				    <button string="Cut Leave" name="cut_leave"
+						icon="gtk-apply" colspan="2" groups="base.group_unit_manager" attrs="{'invisible':['|',('allow_cut','=',False),('state','!=','validate')]}" />
+			</xpath>
+
+			<xpath expr='//button[@name="approve_cut"]' position="attributes">
+				    <attribute name="groups">base.group_department_manager</attribute>
+			</xpath>
+			<xpath expr='//button[@name="refuse_cut"]' position="attributes">
+				    <attribute name="groups">base.group_department_manager</attribute>
+				    <attribute name="states">cut</attribute>
+			</xpath>
+
+			<xpath expr='//button[@name="done_cut"]' position="attributes">
+					<attribute name="string">HR Implementation</attribute>
+				    <attribute name="groups">base.group_hr_user</attribute>
+				    <attribute name="states">hr_finance2_cut</attribute>
+			</xpath>
+
+			<xpath expr='//button[@name="approve_cut"]' position="after">
+				    <button string="General Department Manager" name="general_dep_app_cut" states="approve_cut" icon="gtk-apply" colspan="2" groups="base_custom.group_general_department_manager"/>
+					<button string="Refuse" name="general_dep_refuse_cut" states="approve_cut" icon="gtk-no" colspan="2" groups="base_custom.group_general_department_manager"/>
+
+					<button string="Financial and Hummans Manager" name="fin_humm_mgr_cut" states="general_dep_cut" icon="gtk-apply" colspan="2" groups="base_custom.group_general_hr_manager"/>
+					<button string="Refuse" name="fin_humm_mgr_refuse_cut" states="general_dep_cut" icon="gtk-no" colspan="2" groups="base_custom.group_general_hr_manager"/>
+
+					<button string="Reviewer" name="review_app" states="review" icon="gtk-apply" colspan="2" groups="purchase_ntc.group_internal_auditor"/>
+					<button string="Refuse" name="review_refuse" states="review" icon="gtk-no" colspan="2" groups="purchase_ntc.group_internal_auditor"/> 
+
+					<button string="General Manager" name="general_manag_app_cut" states="hr_finance1_cut" icon="gtk-apply" colspan="2" groups="base_custom.group_account_general_manager"/>
+					<!--button string="Refuse" name="general_manag_refuse_cut" states="hr_finance1" icon="gtk-no" colspan="2" groups="base_custom.group_account_general_manager"/-->
+			</xpath>
+
+			<xpath expr="//button[@name='set_to_draft']" position="attributes">
+					<attribute name="groups">base.group_hr_user</attribute>
+				    <attribute name="states">refuse</attribute>
+				</xpath>
+
+				<!--xpath expr='//field[@name="alternative_employee"]' position="attributes">
+				    <attribute name="attrs">{'readonly':[('state','not in',['draft','confirm','unit_manag','dep_manag','general_dep','hr_finance1','hr_finance2'])]}</attribute>
+				</xpath-->
+				<xpath expr="//field[@name='alternative_employee']" position="attributes">
+					<attribute name="attrs">{'readonly':[('state','=','validate')]}</attribute>
+				    <attribute name="context">{'model':'hr.holidays','active_id':active_id}</attribute>
+				</xpath>
+				<xpath expr='//field[@name="notes"]' position="attributes">
+					<attribute name="required">1</attribute>
+				</xpath>
+
+				<xpath expr='//field[@name="message_follower_ids"]' position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+
+
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="hr_holidays_tree_view_ntc">
+			<field name="name">hr.holidays.tree.inherit</field>
+			<field name="model">hr.holidays</field>
+			<field name="type">tree</field>
+			<field name="inherit_id" ref="hr_holidays_custom.hr_holidays_tree_view" />
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="date_from"]' position="attributes">
+				    <attribute name="widget">date</attribute>
+				</xpath>
+				<xpath expr='//field[@name="date_to"]' position="attributes">
+				    <attribute name="widget">date</attribute>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_hr_holidays_filter" model="ir.ui.view">
+            <field name="name">hr.holidays.filter</field>
+            <field name="model">hr.holidays</field>
+            <field name="inherit_id" ref="hr_holidays.view_hr_holidays_filter" />
+            <field name="arch" type="xml">
+            	<xpath expr='//filter[@name="validated"]' position="after">
+				    <filter icon="terp-camera_test" domain="[('state','=','dep_manag')]" string="Waiting General Department Manager Approve" name="dep_manag"/>
+				    <filter icon="terp-camera_test" domain="[('state','=','approve_cut')]" string="Waiting Cut Approval From General Department Manager" name="approve_cut"/>
+				    <filter icon="terp-camera_test" domain="[('state','=','general_dep')]" string="Waiting General Financial and Hummans Manager Approve" name="general_dep"/>
+				</xpath>
+                
+            </field>
+        </record>
+
+	<record id="hr_permission_form" model="ir.ui.view">
+			<field name="name">Permission</field>
+			<field name="model">hr.holidays</field>
+			<field name="inherit_id" ref="hr_holidays_custom.hr_permission_form" />
+			<field name="arch" type="xml">
+				<xpath expr='//button[@name="permission_confirm"]' position="attributes">
+					<attribute name="string">Confirm</attribute>
+					<attribute name="groups"></attribute>
+				</xpath>
+				<xpath expr='//button[@name="permission_validate"]' position="replace">
+                    <button string="Confirm Permission" name="permission_hr_finance2" states="confirm"
+							type="workflow" groups="base.group_unit_manager" class="oe_highlight"/>
+					<button string="Approve Permission" name="validate" states="hr_finance2"
+							groups="base.group_hr_user" class="oe_highlight"/>
+				</xpath>
+				<xpath expr='//button[@name="refuse"]' position="replace">
+					<button string="Refuse" name="unit_manager_refuse" states="confirm"
+                    	icon="gtk-no" groups="base.group_unit_manager"/>
+				</xpath>
+				<xpath expr='//button[@name="set_to_draft"]' position="attributes">
+					<attribute name="groups">base.group_unit_manager,base.group_hr_user</attribute>
+				</xpath>
+
+				<xpath expr='////field[@name="number_hours"]' position="attributes">
+					<attribute name="on_change">onchange_number_hours(date_from,number_hours)</attribute>
+				</xpath>
+				<xpath expr='////field[@name="date_from"]' position="attributes">
+					<attribute name="on_change">onchange_date_to(date_to, date_from)</attribute>
+				</xpath>
+				<xpath expr='////field[@name="notes"]' position="attributes">
+					<attribute name="required">1</attribute>
+				</xpath>
+			</field>
+		</record>
+
+        <report
+                auto="False" 
+                menu="True"
+                id="hr_holidays_custom.wiz_sickness_form"
+                model="hr.employee"
+                name="sickness_form"
+                string="Employee Sickness Form"
+                rml="hr_holidays_custom/report/sickness_form_2.rml"
+                header="True"
+
+                /> 
+
+        <record id="hr_holidays_status_absence" model="ir.ui.view">
+			<field name="name">hr.holidays.status.absence</field>
+			<field name="model">hr.holidays.status</field>
+			<field name="inherit_id" ref="hr_holidays_custom.hr_holidays_status_absence" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='absence']" position="attributes">
+					<attribute name="invisible">1</attribute>
+                </xpath>
+                
+			</field>
+		</record>
+
+		<record id="hr_holidays_custom.action_permission_tree" model="ir.actions.act_window.view">
+		    <field eval="1" name="sequence"/>
+		    <field name="view_mode">tree</field>
+		    <field name="view_id" ref="hr_holidays_custom.view_permission_tree"/>
+		    <field name="act_window_id" ref="hr_holidays_custom.hr_permission_action"/>
+		</record>
+
+
+	</data>
+</openerp>

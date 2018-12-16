@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="print_budget_template">
+        <t t-call="web.html_container">
+
+                <t t-call="web.external_layout">
+                    <t t-foreach="docs" t-as="o">
+                    <div class="page">
+                              
+                          <table style="border:1px solid black" class="table">
+                              <tbody class="budget_tbody">
+
+                               <tr>
+                                    <th style="width:100%" >
+                                        Notice Balance Sheet Financial
+                                    </th>
+                              </tr>
+                      
+                              <tr>
+                                  <td style="width:100% ,height:100%">
+                                      Analytic Account :
+                                      <span t-esc="o.analytic_account_id.name" />
+                                  </td>
+                              </tr>
+                            
+                              <tr>
+                                  <td style="width:100%">
+                                      Total  Of planned Amount :
+                                    <span t-esc="sum([line.planned_amount for line in o.crossovered_budget_line])"/>
+                                  </td>
+                              </tr>
+                              </tbody>
+                          </table>
+                           
+                        
+                              <table style="border:1px solid black" class="table">
+                             
+                                <tr>
+                                <th style="border:1px solid black;">Budgetary Position</th>
+                                <th style="border:1px solid black;">In/Decrease Amount</th>
+                                <th style="border:1px solid black;">planned Amount</th>
+                                <th style="border:1px solid black;">Exchange rate of approved</th>
+                                <th style="border:1px solid black;">Confirm Amount</th>
+                                <th style="border:1px solid black;">Practical Amount</th>
+                                <th style="border:1px solid black;">Residual Amount</th>
+                               </tr>
+                              
+
+                              <tr t-foreach="o.crossovered_budget_line" t-as="line">
+                                
+                              
+                                  <td style="border: 1px solid black">
+                                      <span t-esc="line.general_budget_id.name" />
+                                  </td>
+
+                                  <td style="border: 1px solid black">
+                                      <span t-esc="line.total_operation" />
+                                  </td>
+
+                                  <td style="border: 1px solid black">
+                                      <span t-esc="line.planned_amount" />
+                                  </td>
+
+                                  <td style="border: 1px solid black">
+                                      
+                                  </td>
+
+                                  <td style="border: 1px solid black">
+                                      <span t-esc="line.confirm" />
+                                  </td>
+
+                                  <td style="border: 1px solid black">
+                                      <span t-esc="line.practical_amount" />
+                                  </td>
+
+                                  <td style="border: 1px solid black">
+                                      <span t-esc="line.residual" />
+                                  </td>
+                                  
+                              </tr>
+                         
+                              </table>
+                              <p style="page-break-after:always;"/>
+
+                    </div>
+                     </t>
+
+            </t>
+        </t>
+    </template>
+</odoo>

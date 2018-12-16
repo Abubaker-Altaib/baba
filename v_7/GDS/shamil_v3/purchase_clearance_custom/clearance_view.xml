@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+		<!-- Clearance Form, View inherit -->
+	<data>		
+		
+    <record model="ir.ui.view" id="id_purchase_clearance_view_form_inherit">
+            <field name="name">purchase.clearance.form.inherit</field>
+            <field name="model">purchase.clearance</field>
+            <field name="inherit_id" ref="purchase_clearance.id_purchase_clearance_view_form"/>
+            <field name="arch" type="xml">
+
+            <!--  workflow buttoms -->
+            
+            <button name="gm" position="replace" >
+                <button name="done" states="confirmed" string="Send To Accounting" 
+		confirm="Are you sure you want to Confirm?"/>  
+            </button>
+            <!--  Fields inherits -->
+            <field name="project_id" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+            </field>
+            <field name="bill_of_lading" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','!=','draft')],'required':[('clearance_purpose', '=', 'purchase')]}</attribute>
+            </field>
+            <field name="clearance_bills" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','!=','confirmed')]}</attribute>
+            </field>
+            <field name="date" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="clearance_purpose" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="clearance_type" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="purchase_order_ref" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="type" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="company_id" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="user" position="attributes">
+                  <attribute name="attrs">{'readonly':['|',('type', '!=', 'internal'),('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="partner_id" position="attributes">
+                  <attribute name="attrs">{'readonly':['|',('type', '!=', 'external'),('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <!--*************** Inherit for page clearance ******************* -->
+            <field name="document_hand_date" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="bill_of_lading_date" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="final_invoice_no" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="final_invoice_amount" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="currency" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="origin_certificate" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="packing_list" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="ministry_date" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="im_date" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="im_no" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="exemption_date" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="send_to_clearance_date" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="receive_document_date" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="clearance_date" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="delivery_date" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="customs_certificate_no" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="clearance_products_ids" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            
+            <!--*************** Inherit for page Other information ******************* -->
+
+            <field name="ship_method" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="insurance_no" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="insurance_duties" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="supplier_duties" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <field name="insurance_certificate" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </field>
+            <xpath expr="/form/notebook/page/group/field[@name='description']" position="attributes">
+                  <attribute name="attrs">{'readonly':[('state','in',('done','cancel'))]}</attribute>
+            </xpath>
+            
+
+            </field>  
+      </record>
+
+	</data>
+</openerp>
+
+
+
+

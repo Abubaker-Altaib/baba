@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="direct_ireq_m_form" model="ir.ui.view">
+			<field name="name">ireq.m.form</field>
+			<field name="model">ireq.m</field>
+			<field name="inherit_id" ref="purchase_custom.ireq_m_form" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+
+				<field name="purpose" colspan="2" position="replace">
+					<field name="purpose" colspan="2" />
+				</field>
+				<!-- Need Test -->
+				<xpath expr="/form/sheet/notebook/page[@string='Quotations']"
+					position="after">
+					<page string="accounting" attrs="{'invisible':[('state', '!=', 'checked')]}">
+						<field name="budget_confirm_id" colspan="2" nolabel="0"
+							readonly="1" />
+					</page>
+				</xpath>
+			</field>
+		</record>
+ 
+                <!-- to solve the subflow problem-->
+		<record id="direct_ireq_m_tree" model="ir.ui.view">
+			<field name="name">ireq.m.tree.inherit</field>
+			<field name="model">ireq.m</field>
+			<field name="inherit_id" ref="purchase_custom.ireq_m_tree" />
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="test_budget_state" invisible="1"/>
+                </field>
+			</field>
+		</record>
+
+		<act_window domain="[('budget_confirm_id', '=', active_id)]"
+			id="act_budget_confirmation_purchase" name="Internal Requestion"
+			res_model="ireq.m" src_model="account.budget.confirmation" />
+
+	</data>
+</openerp>

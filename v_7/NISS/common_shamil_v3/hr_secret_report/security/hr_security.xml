@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+	<record id="hr_secret_report_setting" model="res.groups">
+            <field name="name">HR secret report Setting</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_setting_military'))]"/>
+            <field name="category_id" ref="hr_custom_military.hr_military_category"/>
+        </record>
+
+        <record id="hr_secret_report_user" model="res.groups">
+            <field name="name">HR secret report User</field>
+            <field name="implied_ids" eval="[(4, ref('hr_custom_military.hr_emp_base_military'))]"/>
+            <field name="category_id" ref="hr_custom_military.hr_military_category"/>
+        </record>
+        
+    </data>
+    <data noupdate="1">
+    	<!-- hr_secret_report_character -->
+        <record id="hr_secret_report_character_user" model="ir.rule">
+            <field name="name">hr secret report character rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_secret_report_character"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+        <!-- hr_secret_report_process -->
+        <record id="hr_secret_report_process_user" model="ir.rule">
+            <field name="name">hr secret report process rule</field>
+            <field model="ir.model" name="model_id" ref="model_hr_secret_report_process"/>
+            <field name="domain_force">['|','|','|',('company_id','child_of',[x.id for x in user.company_ids]),('company_id.child_ids','child_of',[user.company_id.id]),('company_id','child_of',[user.company_id.id]),('company_id','=',False)]</field>
+        </record>
+
+
+    </data>
+</openerp>

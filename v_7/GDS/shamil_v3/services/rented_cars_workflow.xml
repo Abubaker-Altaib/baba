@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- Rented Cars Activity-->
+
+        <record id="wkf_rented_cars" model="workflow">
+            <field name="name">wkf.rented.cars</field>
+            <field name="osv">rented.cars</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_rented_cars_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_rented_cars"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+
+        <record id="wkf_rented_cars_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_rented_cars"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>
+        </record>
+
+         <record id="wkf_rented_cars_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_rented_cars"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel(notes)</field>
+        </record>
+
+<!-- Rented Cars Transition-->
+
+
+        <record id="wkf_rented_cars_draft_to_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_rented_cars_draft"/>
+            <field name="act_to" ref="wkf_rented_cars_confirmed"/>
+            <field name="signal">confirmed</field>
+        </record>
+        
+ 
+
+        <record id="wkf_rented_cars_confirmed_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_rented_cars_confirmed"/>
+            <field name="act_to" ref="wkf_rented_cars_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        
+        <record id="wkf_rented_cars_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_rented_cars_draft"/>
+            <field name="act_to" ref="wkf_rented_cars_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+
+        <record id="wkf_rented_cars_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_rented_cars_cancel"/>
+            <field name="act_to" ref="wkf_rented_cars_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>
+

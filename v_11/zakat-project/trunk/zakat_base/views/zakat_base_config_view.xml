@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+
+        <!-- this is the state search view -->
+        <record id="state_search_view" model="ir.ui.view">
+            <field name="name">state.search</field>
+            <field name="model">zakat.state</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="name"/>
+                    <field name="state_number"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- this is the state tree view -->
+        <record model='ir.ui.view' id='state_tree_view'>
+            <field name='name'>zakat.state</field>
+            <field name='model'>zakat.state</field>
+            <field name='arch' type='xml'>
+                <tree string='State Tree'>
+                    <field name="state_number"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- this is the state form view -->
+        <record model="ir.ui.view" id="state_form_view">
+            <field name="name">zakat.state</field>
+            <field name="model">zakat.state</field>
+            <field name="arch" type="xml">
+                <form string=" State ">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="state_number"/>
+                                <field name="company_id" required="1"/>                                
+                            </group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- this is the state action -->
+        <record id="state_action" model="ir.actions.act_window">
+            <field name="name">State</field>
+            <field name="res_model">zakat.state</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- this is the state menu -->
+        <menuitem id="state_zakat"
+                  name="State"
+                  parent="configuration_zakat"
+                  action="state_action"
+        />
+
+
+        <!-- this is the local state -->
+        <!-- this is the local state action -->
+        <record id="local_state_action" model="ir.actions.act_window">
+            <field name="name">Local State</field>
+            <field name="res_model">zakat.local.state</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!-- this is the local state tree view -->
+        <record model='ir.ui.view' id='local_state_tree_view'>
+            <field name='name'>zakat.local.state</field>
+            <field name='model'>zakat.local.state</field>
+            <field name='arch' type='xml'>
+                <tree string='Local State Tree'>
+                    <field name="state_id"/>
+                    <field name="name"/>
+                    <field name="poor_percentage" widget="progressbar"/>                    
+                </tree>
+            </field>
+        </record>
+        <!-- this is the local state form view -->
+        <record model="ir.ui.view" id="local_state_form_view">
+            <field name="name">zakat.local.state</field>
+            <field name="model">zakat.local.state</field>
+            <field name="arch" type="xml">
+                <form string=" State ">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="local_state_number" required="1"/>
+                                <field name="name" required="1"/>
+                                <field name="company_id" required="1"/>
+                            </group>
+                            <group>
+                                <field name="state_id" required="1"/>
+                                <field name="poor_percentage"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- this is the local state search view -->
+        <record id="local_state_search_view" model="ir.ui.view">
+            <field name="name">local.state.search</field>
+            <field name="model">zakat.local.state</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="name"/>
+                    <field name="local_state_number"/>
+                    <group expand="0" string="Group By">
+                        <filter string="State" name="state_id" domain="[]" context="{'group_by':'state_ids'}"/>
+                    </group>
+                </search>
+
+            </field>
+        </record>
+        <!-- this is the local state menu -->
+        <menuitem id="locat_state_zakat"
+                  name="Local State"
+                  parent="configuration_zakat"
+                  action="local_state_action"
+        />
+
+
+        <!-- this is the administrative unit -->
+        <!-- this is the administrative unit action -->
+        <record id="admin_unit_action" model="ir.actions.act_window">
+            <field name="name">Administrative Unit</field>
+            <field name="res_model">zakat.admin.unit</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!-- this is the state tree view -->
+        <record model='ir.ui.view' id='admin_unit_tree_view'>
+            <field name='name'>zakat.admin.unit</field>
+            <field name='model'>zakat.admin.unit</field>
+            <field name='arch' type='xml'>
+                <tree string='Administrative Unit Tree'>
+                    <field name="local_state_id"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <!-- this is the administrative unit form view -->
+        <record model="ir.ui.view" id="admin_unit_form_view">
+            <field name="name">zakat.admin.unit</field>
+            <field name="model">zakat.admin.unit</field>
+            <field name="arch" type="xml">
+                <form string=" State ">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="admin_unit_number"/>
+                                <field name="name"/>
+
+                            </group>
+                            <group>
+                                <field name="local_state_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- this is the administrative unit search view -->
+        <record id="admin_unit_search_view" model="ir.ui.view">
+            <field name="name">administrative.unit.search</field>
+            <field name="model">zakat.admin.unit</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="name"/>
+                    <field name="admin_unit_number"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Local State" name="local_state_id" domain="[]"
+                                context="{'group_by':'local_state_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- this is the administrative unit menu -->
+        <menuitem id="admin_unit_zakat"
+                  name="Administrative Unit"
+                  parent="configuration_zakat"
+                  action="admin_unit_action"/>
+
+        
+
+
+        <!-- SECTORS-->
+  <record id="sectors_view_tree" model="ir.ui.view">
+    <field name="name"> Sectors Tree</field>
+    <field name="model">zakat.sectors</field>
+    <field name="arch" type="xml">
+      <tree>
+
+        <field name="sectors_number"/>
+        <field name="name"/>
+        <field name="sector_state"/>
+
+      </tree>
+    </field>
+  </record>
+
+  <!-- Form view for sectors model -->
+  <record id="‫‪sectors_view_form" model="ir.ui.view">
+    <field name="name">Sectors Form</field>
+    <field name="model">zakat.sectors</field>
+    <field name="arch" type="xml">
+      <form>
+
+        <sheet>
+          <group>
+            <group>
+              <field name="sectors_number" required="1"/>
+              <field name="name" required="1"/>
+            </group>
+            <group>
+              <field name="sector_state" required="1"/>
+              <field name="company_id" required="1" readonly="1"/>
+            </group>
+          </group>
+
+          <notebook>
+            <page string="Sector Local States">
+          <field name="states_sec">
+            <tree editable="bottom">
+              <field name="sector_local_states" required="1"  context="{'states_sec':parent.states_sec , 'model' : 'states_sectors'  }"  domain="[('state_id' , '=' ,parent.sector_state)]"/>
+            </tree>
+          </field>
+        </page>
+      </notebook>
+
+
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- sectors serch view-->
+
+  <record id="oranizations_view_search" model="ir.ui.view">
+   <field name="name">zakat.sectors.search</field>
+   <field name="model">zakat.sectors</field>
+   <field name="arch" type="xml">
+
+     <search string="Search Opportunities">
+       <field name="sectors_number"/>
+       <field name="name"/>
+       <field name="sector_state"/>
+
+     </search>
+
+   </field>
+ </record>
+
+ <!-- sectors action -->
+ <record id="sectors_action" model="ir.actions.act_window">
+  <field name="name">Sectors</field>
+  <field name="res_model">zakat.sectors</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record>
+<!-- sectors menu -->
+<menuitem name="Sectors"
+  id="sectors_form_menu_action"
+  parent="configuration_zakat"
+  action="sectors_action"/>
+
+<!-- Orgnization -->
+<record id="organizations_view_tree" model="ir.ui.view">
+    <field name="name"> Organizations Tree</field>
+    <field name="model">dzc2.organizations</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="channel_type"/>
+        <field name="activity"/>        
+      </tree>
+    </field>
+  </record>
+
+  <!-- Form view for Organizations model -->
+  <record id="‫‪organizations_view_form" model="ir.ui.view">
+    <field name="name">Organizations Form</field>
+    <field name="model">dzc2.organizations</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+          <group>
+            <field name="name"/>
+            <field name="date" required="1"/>
+            <field name="activity" widget="radio" options="{'horizontal': true}" attrs="{'invisible': [('channel_type', '!=','fageer')]}"/>
+            <field name="address" attrs="{'invisible': [('channel_type', '!=','fageer')]}"/>
+          </group>
+          <group>
+            <field name="channel_type" required="1" />
+            <field name="support_type" widget="radio" options="{'horizontal': true}" attrs="{'invisible': [('channel_type', '!=','fageer')]}"/>
+            <field name="company_id" required="1" readonly="1"/>
+          </group>
+          </group>  
+          <notebook>
+              <page string="Accounting Information">
+                    <group colspan="2">
+                        <group>
+                            <field name="property_account_id"  domain="[('company_id', '=' , company_id)]" required="1"/>
+                        </group>
+                        <group>
+                            <field name="journal_id"  domain="[('company_id', '=' , company_id)]" required="1"/>
+                        </group>
+
+                    </group>
+                </page>
+          </notebook>        
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- Organizations serch view-->
+
+  <record id="oranizations_view_search" model="ir.ui.view">
+   <field name="name">dzc2.organizations.search</field>
+   <field name="model">dzc2.organizations</field>
+   <field name="arch" type="xml">
+    <search string="Search Opportunities">
+    <field name="name"/>
+    </search>
+  </field>
+</record>
+<!-- Organizations Main form action-->
+<record id="organizations_action" model="ir.actions.act_window">
+  <field name="name">Organizations</field>
+  <field name="res_model">dzc2.organizations</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record>
+
+<!-- Organizations menu -->
+<menuitem name="Organizations"
+  id="organizations_form_menu_action"
+  parent="zakat_base.configuration_zakat"
+  action="organizations_action"/>
+
+
+        <!--
+        #########################################################
+        #                                                       #
+        #             Zakat General Settings                    #
+        #                                                       #
+        -->
+
+        <record id="zakat_settings_form" model="ir.ui.view">
+            <field name="name">Zakat Settings</field>
+            <field name="model">zakat.settings</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="Apply" type="object" name="set_company_values" class="oe_highlight" />
+                        <button string="Cancel" type="object" name="cancel" class="oe_link"/>
+                    </header>
+                     <group string="Company" col="2" colspan="2">
+                        <field name="company_id" readonly="1"/>
+                    </group>
+                    <group string="Almasaref Accounts" col="4" colspan="2">
+                        <field name="property_basal_drainage_account_id"/>
+                        <field name="property_basal_drainage_analytic_account_id"/>
+                        <field name="property_basal_drainage_journal"/>
+                    </group>
+                    <group string="Iban Alsabil Accounts" col="4" colspan="2">
+                        <field name="ibanalsabil_journal"/>
+                        <field name="property_ibanalsabil_account_id"/>
+                        <field name="property_ibanalsabil_analytic_account_id"/>
+                    </group>
+                    <group string="Fe Sabel Allah Accounts" col="4" colspan="2">
+                        <field name="fesabeelallah_journal"/>
+                        <field name="property_fesabeelallah_account_id"/>
+                        <field name="property_fesabeelallah_analytic_account_id"/>
+                    </group>
+                     <group string="Prisoners Accounts" col="4" colspan="2">
+                        <field name="property_prisoners_account_id"/>
+                        <field name="property_prisoners_analytic_account_id"/>
+                        <field name="property_prisoners_journal"/>
+                    </group>
+                    <group string="Api Integration Feature">
+                        <field name="ncms_integration"/>
+                        <field name="health_ins_integration"/>
+                    </group>
+                    <div>
+                        <span>(*) This configuration is related to the company you're logged into.</span>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="zakat_settings_action" model="ir.actions.act_window">
+            <field name="name">Zakat Settings</field>
+            <field name="res_model">zakat.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+        </record>
+
+        <menuitem id="menu_zakat_settings" name="Settings" parent="configuration_zakat" sequence="0"
+            action="zakat_settings_action"/>
+
+        <!-- ################################ End of Zakat General Settings ####################################### -->
+        <!-- Channels -->
+        
+        
+    <record id="channels_form_view" model="ir.ui.view">
+    <field name="name">Channels Form</field>
+    <field name="model">zakat.channels</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group colspan="2">
+          <group>
+            <field name="code" readonly="1"/>
+            <field name="name" required="1"/>
+            <field name="analytic_account" required="1"/>
+          </group>
+          <group>
+            <field name="parent"  /> 
+            <field name="type"  required="1"/>
+            <field name="responsible" required="1" />
+          </group>
+          </group>  
+        </sheet>
+      </form>
+    </field>
+  </record>
+  
+  <act_window
+            id="channels_action"
+            name="Channels"
+            res_model="zakat.channels"
+            view_mode="search,tree,form" />
+    <menuitem
+            action="channels_action"
+            id="channels_menu"
+            parent="account.account_account_menu"
+            name="Channels"
+            sequence="1"/>
+
+
+<record id="‫expence_portions" model="ir.ui.view">
+    <field name="name">Expence Portins Form</field>
+    <field name="model">expense.portions</field>
+    <field name="arch" type="xml">
+      <form>
+
+    <header>
+        <button name="action_valid" string="Confirm" states="draft" type="object"
+                                class="oe_highlight"/>
+        <button name="action_draft" string="Re-open" states="cancel" type="object"
+                                class="oe_highlight"/>
+        <button name="action_cancel" string="Cancel" states="draft,approve" type="object"
+                                class="oe_highlight"/>
+        <field name="state" widget="statusbar"/>
+    </header>
+        <sheet>
+            <div class="oe_button_box"  name="button_box">
+                                <button name="get_data" string="Get Data" type="object"  class="oe_stat_button" icon="fa-magnet"/>
+                              </div>
+          <group colspan="2">
+          <group>
+            <field name="date" required="1" attrs="{'readonly':[('state','=','valid')]}"/>
+            <field name="date_from" required="1" attrs="{'readonly':[('state','=','valid')]}"/> 
+           
+            
+          </group>
+          <group>
+             <field name="type" required="1" attrs="{'readonly':[('state','=','valid')]}"/>
+            <field name="date_to"  required="1" attrs="{'readonly':[('state','=','valid')]}"/>
+        </group>
+        <group>
+            <field name="company_id" required="1" readonly="1" />
+          </group>
+          </group> 
+           <notebook>
+              <page string="Channels Portions">
+                <field name="portion_lines" attrs="{'readonly':[('state','=','valid')]}">
+                <tree editable="bottom">
+                  <field name="channel_ids" required="1"  readonly="1"/>
+                  <field name="portions" />  
+                </tree>
+              </field>
+                </page>
+          </notebook>   
+
+
+        </sheet>
+      </form>
+    </field>
+  </record>
+  
+ <record id="expences_portion_tree" model="ir.ui.view">
+    <field name="name"> expence portions tree</field>
+    <field name="model">expense.portions</field>
+    <field name="arch" type="xml">
+      <tree>
+
+         <field name="date_from"  /> 
+            <field name="date_to" />
+        <field name="type"/>
+        <field name="company_id"/>
+
+      </tree>
+    </field>
+  </record>
+
+  <record id="expence_portions_action" model="ir.actions.act_window">
+  <field name="name">Expenses Portions</field>
+  <field name="res_model">expense.portions</field>
+  <field name="view_type">form</field>
+  <field name="view_mode">tree,form</field>
+</record>
+    <menuitem
+            action="expence_portions_action"
+            id="expences_portions_menu"
+            parent="account.account_account_menu"
+            name="Expenses Portions"
+            sequence="2"/>
+        
+
+
+    </data>
+</odoo>

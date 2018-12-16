@@ -1,0 +1,85 @@
+-
+  print Account Voucher From Entries 
+-
+
+  !python {model: account.move}: |
+    import netsvc, tools, os
+    print'&&&&&&&&&&&&',ref('account.bank_journal')   
+    val={'balance': 0.0,
+    'date': '2013-01-08',
+    'journal_id': 5,
+    'period_id': ref('account.period_1'),
+    'state': 'draft'}
+    move_id=self.create(cr, uid, val)
+    (data, format) = netsvc.LocalService('report.account.move.voucher.arabic').create(cr, uid, [move_id], {}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'account-move.'+format), 'wb+').write(data)
+
+-
+  Print the General Ledger Report in Normal Mode
+-
+  !python {model: account.account}: |
+    ctx={}
+    ctx.update({'model': 'account.account','active_ids':[ref('account.chart0')]})
+    data_dict = {'chart_account_id': ref('account.chart0') ,'landscape':False}
+    from tools import test_reports
+    test_reports.try_report_action(cr, uid, 'account_arabic_reports.action_account_general_ledger_menu2',wiz_data=data_dict, context=ctx, our_module='account')
+-
+  Prrint the General Ledger Report in Landscape Mode
+-
+  !python {model: account.account}: |
+    ctx={}
+    ctx.update({'model': 'account.account','active_ids':[ref('account.chart0')]})
+    data_dict = {'chart_account_id':ref('account.chart0'),'landscape':True}
+    from tools import test_reports
+    test_reports.try_report_action(cr, uid, 'account_arabic_reports.action_account_general_ledger_menu2',wiz_data=data_dict, context=ctx, our_module='account')
+
+-
+  Print the Trial Balance Report in Landscape Mode
+-
+  !python {model: account.account}: |
+    ctx={}
+    ctx.update({'model': 'account.account','active_ids':[ref('account.chart0')]})
+    data_dict = {'chart_account_id':ref('account.chart0'),'landscape':True}
+    from tools import test_reports
+    test_reports.try_report_action(cr, uid, 'account_arabic_reports.action_account_balance_menu2',wiz_data=data_dict, context=ctx, our_module='account')
+
+-
+  Print the Account Statment Report in Landscape Mode
+-
+  !python {model: account.account}: |
+    ctx={}
+    ctx.update({'model': 'account.account','active_ids':[ref('account.chart0')]})
+    data_dict = {'chart_account_id':ref('account.chart0'),'landscape':True ,'account_id': ref('account.rsa')}
+    from tools import test_reports
+    test_reports.try_report_action(cr, uid, 'account_arabic_reports.action_account_account_statement2',wiz_data=data_dict, context=ctx, our_module='account')
+
+
+-
+  Print the Partner Balance Report
+-
+  !python {model: account.account}: |
+    ctx={}
+    data_dict = {'chart_account_id':ref('account.chart0')}
+    ctx.update({'model': 'account.account','active_ids':[ref('account.chart0')],'active_id':ref('account.chart0')})
+    from tools import test_reports
+    test_reports.try_report_action(cr, uid, 'account_arabic_reports.action_account_partner_balance2',wiz_data=data_dict, context=ctx, our_module='account')
+
+-
+  Print the Partner Ledger Report
+-
+  !python {model: account.account}: |
+    ctx={}
+    data_dict = {'chart_account_id':ref('account.chart0'),'initial_balance': False}
+    ctx.update({'model': 'account.account','active_ids':[ref('account.chart0')],'active_id':ref('account.chart0')})
+    from tools import test_reports
+    test_reports.try_report_action(cr, uid, 'account_arabic_reports.action_account_partner_ledger2',wiz_data=data_dict, context=ctx, our_module='account')
+
+-
+  Print the Analytic Balance Report through the wizard
+-
+  !python {model: account.analytic.account}: |
+    import netsvc, tools, os
+    (data, format) = netsvc.LocalService('report.account.move.voucher').create(cr, uid, [ref('account.account_analytic_account_balance')], {}, {})
+    if tools.config['test_report_directory']:
+        file(os.path.join(tools.config['test_report_directory'], 'account-invoice.'+format), 'wb+').write(data)       

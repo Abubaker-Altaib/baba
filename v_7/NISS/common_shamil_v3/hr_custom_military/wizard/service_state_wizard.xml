@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_service_state_wizard" model="ir.ui.view">
+            <field name="name">service_state_wizard.form</field>
+            <field name="model">service_state_wizard</field>
+            <field name="arch" type="xml">
+                <form string="service State Report" version="7.0">
+                    <button name="print_report" string="Print" type="object"/>
+                    <group>
+                        <field name="type" required="1"/>
+                        <field name="service_state_id" domain="[('type','=',type)]"/>
+                        <field name="department_id" required="0"/>
+                        <field name="with_childs"/>
+                        <field name="job_id"/>
+                        <field name="degree_id"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="action_service_state_wizard" model="ir.actions.act_window">
+            <field name="name">service State Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">service_state_wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_service_state_wizard"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="service_state_wizard_menu" name="service State Report" action="action_service_state_wizard" parent="hr_custom.menu_hr_process_report"/>
+        <report menu="False" auto="False" id="service_state_report_id" model="hr.employee" name="hr.service_state.report" file="hr_custom_military/report/service_state_report.mako" string="Service State Report" report_type="webkit" header="True"/>
+        
+    </data>
+</openerp>

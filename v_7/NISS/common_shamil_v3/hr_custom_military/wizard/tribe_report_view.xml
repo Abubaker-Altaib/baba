@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_tribe_wizard" model="ir.ui.view">
+            <field name="name">tribe_wizard.form</field>
+            <field name="model">tribe.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Tribe Report" version="7.0">
+                    <header>
+                    <button name="print_report" string="Print" type="object"/>
+                    or
+                    <button special="cancel" string="Cancel" class="oe_link"/>
+                    </header>
+                    <sheet>
+                        <group colspan="2" col="4">
+                            <field name="parent_tribe"
+							domain="[('type','=','view')]" context="{'default_type':'view','form_view_ref':'hr_custom_military.tribe_form'}" on_change="on_change_basic(parent_tribe)"/>
+						    <field name="tribe"
+							domain="[('type','=','normal'),('parent_id','=',parent_tribe)]" 
+							context="{'default_type':'normal','form_view_ref':'hr_custom_military.tribe_form'}"/>
+                            <newline/>
+                            <newline/>
+                            <field name="department_id"/>
+                            <field name="with_childs"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="job_id"/>
+                            <field name="degree_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_tribe_wizard" model="ir.actions.act_window">
+            <field name="name">Tribe Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tribe.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_tribe_wizard"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="tribe_wizard_menu" name="Tribe Report" action="action_tribe_wizard" parent="hr_custom.menu_hr_process_report"/>
+        <report menu="False" auto="False" id="tribe_report_id" model="hr.employee" name="hr.tribe.report" file="hr_custom_military/report/tribe_report.mako" string="Tribe Report" report_type="webkit" header="True"/>
+    </data>
+</openerp>

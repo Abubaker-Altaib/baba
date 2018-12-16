@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_currency_form">
+			<field name="name">res.currency.form</field>
+			<field name="model">res.currency</field>
+			<field name="inherit_id" ref="base.view_currency_form" />
+			<field name="arch" type="xml">
+				<field name="symbol" position="after">
+					<field name="units_name" />
+					<field name="cents_name" />
+				</field>
+			</field>
+		</record>
+
+		<!-- Records Values Updating -->
+		<record id="update_record_view" model="ir.ui.view">
+			<field name="name">Updating Records Values</field>
+			<field name="model">update.records</field>
+			<field name="arch" type="xml">
+				<form string="Records Values Updating" version="7.0">
+					<sheet string="Approve Suggested Courses">
+						<h1>
+							<label colspan="4" nolabel="1"
+								string="This wizard allow you to update all Records Values for selected model! " />
+						</h1>
+						<group>
+								<field name="obj" />
+								<field name="val" />
+								<field name="domain" />
+						</group>
+					</sheet>
+					<footer>
+						<group>
+							<button icon="gtk-print" name="compute" string="Compute"
+								type="object" />
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</group>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_update_record_menu" model="ir.actions.act_window">
+			<field name="name">Updating Records Values</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">update.records</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="update_record_view" />
+			<field name="target">new</field>
+		</record>
+
+		<menuitem name="Updating Records Values" parent="base.next_id_4"
+			action="action_update_record_menu" id="menu_record_update" />
+
+		<!-- Groups view -->
+		<record id="base.user_groups_view" model="ir.ui.view">
+			<field name="name">res.users.groups</field>
+			<field name="model">res.users</field>
+			<field name="inherit_id" ref="base.view_users_form" />
+			<field name="arch" type="xml">
+				<field name="groups_id" position="replace">
+					<field name="groups_id" nolabel="1" />
+				</field>
+			</field>
+		</record>
+	</data>
+</openerp>

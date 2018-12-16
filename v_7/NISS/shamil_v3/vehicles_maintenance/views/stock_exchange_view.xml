@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    
+    <!--menuitem id="menu_exchange_management" name="Stock Exchange Management"  parent="stock.menu_stock_root" sequence="3"/-->
+        
+    <!-- Create Purchace Requesition -->
+
+    <record id="view_create_purchase_requestion_maintenance" model="ir.ui.view">
+            <field name="name">Create Purchase requestion</field>
+            <field name="model">create.purchase.requestion</field>
+            <field name="priority" eval="20"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Requestion Rreation" version="7.0">
+                     <field name="current_date" />
+                     <separator string=" Please chose the amount of items you wont to create Purchase Order for" colspan="4"/>
+                     <newline />
+                     <field colspan="12" name="products_ids" nolabel="1" mode="tree">
+                         <tree editable="bottom" string="Items Lines">
+                              <field name="product_id" readonly="1"/>
+                              <field name="product_qty" />
+                              <field name="description" readonly="1" />
+                         </tree>
+                      </field>
+                    <footer>
+                        <button string="Make Purchase Requestion" name="create_purchase_requestion_maintenance"  type="object" />
+                                        or  
+                        <button string="Cancel" special="cancel" icon="gtk-cancel"/>
+                    </footer>
+                </form>
+            </field>
+    </record>
+
+
+
+    <record id="action_create_purchase_requestion_maintenance" model="ir.actions.act_window">
+           <field name="name">creating Purchase Requestion</field>
+           <field name="res_model">create.purchase.requestion</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">form</field>
+           <field name="view_id" ref="view_create_purchase_requestion_maintenance"/>
+           <field name="target">new</field>
+    </record>
+
+	<!-- 
+	Exchange Order 
+	-->
+    <record id="exchange_order_maintenance_form" model="ir.ui.view">
+        <field name="name">exchange.order.form</field>
+        <field name="model">exchange.order</field>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <form string="Spare Exchange Order" version="7.0">
+                   <header>
+
+                        <!--button name="%(vehicles_maintenance.action_create_purchase_requestion_maintenance)d" string="Create Purchase Requestion" type="action" states="approved" groups="vehicles_maintenance.group_maintenance_stock"/-->
+                        <button name="%(vehicles_maintenance.action_create_purchase_requestion_maintenance)d" string="Create Purchase Requestion" type="action" attrs="{'invisible':['|',('purchase_requestion_id','!=',False),('state','!=','approved')]}" groups="vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc"/>
+
+                        <button name="exchange_maintenance_approve" states="draft" string="Approve Exchange Order" icon="gtk-go-forward" groups="vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc"/>
+
+                        <button name="exchange_cancel" states="draft" string="Cancel" icon="gtk-cancel" confirm="Are you sure you want to cancel this request?" groups="vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc"/>
+
+                        <button name="exchange_maintenance_cancel" states="approved" string="Cancel" icon="gtk-cancel" confirm="Are you sure you want to cancel this request?" groups="vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc"/>
+
+                        <button name="action_process" states="approved,goods_in_stock"  string="Process" type="object" icon="gtk-go-forward" groups="vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc" />
+
+                        <!--button name="approve_exchange" string="Approve" type="object" states="goods_in_stock" groups="vehicles_maintenance.group_maintenance_stock"/-->
+
+                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" groups="vehicles_maintenance.group_maintenance_set_to_draft" invisible="1"/>
+                        
+                        <button name="%(vehicles_maintenance.act_stock_exchange_return)d" string="Reverse Transfer"  type="action" attrs="{'invisible':[('state','!=','done')]}"/> <!-- [('maintenace_exchange_type','!=','move')] -->
+
+                        <!--button name="action_cancel" states="picking,approved,wait_purchase" string="Cancel exchange Order" type="object" icon="gtk-cancel" confirm="Are you sure you want to cancel this request?"/-->
+
+                        <!--button name="action_done_order" states="picking" string="Manualy Done" type="object" icon="gtk-convert" groups="stock_exchange.group_exchange_department" />
+
+                        <button name="exchange_confirm" states="draft" string="Confirm Exchange Order" icon="gtk-go-forward" groups="stock_exchange.group_exchange_department"/>
+                        <button name="exchange_approve" states="confirmed" string="Department Approve" icon="gtk-go-forward"  groups="stock_exchange.group_exchange_approved" />
+                        <button name="exchange_approve" states="category_manager" string="Category manager Approve" icon="gtk-go-forward" groups="stock_exchange.group_exchange_department_g"  /-->
+                        
+  			           <field name="state" widget="statusbar" statusbar_visible="draft,approved,picking,done" />
+                    </header>
+                    <sheet>
+                    	<group>
+                        	<group>
+                                <field name="name"/>
+                                <field name="maintenace_exchange_type" attrs="{'required':[('state','=','draft')]}" on_change="onchange_maintenace_exchange_type(maintenace_exchange_type)" />
+                                <field name="job_id" attrs="{'required':[('maintenace_exchange_type','=','job'),('state','=','draft')], 'readonly':['|',('maintenace_exchange_type','=','move'),('state','!=','draft')]}" domain="[('company_id','=',company_id),('state','=','requested')]" on_change="onchange_job_id(job_id)" />
+                                <field name="maintenance_department_id" domain="[('company_id','=',company_id)]" required="1" on_change="onchange_maintenance_department_id(maintenance_department_id)" attrs="{'readonly':[('state','!=','draft')], 'required':[('state','=','draft')]}"/>
+                                <field name="purchase_requestion_id" readonly="1" attrs="{'invisible':[('purchase_requestion_id','=',False)]}" context="{'form_view_ref':'vehicles_maintenance.vehicles_maintenance_purchase_form',                     'tree_view_ref':'vehicles_maintenance.vehicles_maintenance_purchase_tree'}"/>
+                                <field name="stock_journal_id"  on_change="onchange_journal_id(stock_journal_id)" required="0" invisible="1"/>
+                                <field name="allow_req" invisible="1" />
+                                <field name="maintenance" invisible="1" />
+                                <field name="req_no"  
+                		          attrs="{'readonly':[('state', '=', 'cancel'),('allow_req', '=', False)] , 'required':[('allow_req', '=', True)]}" invisible="1"/>
+                	       </group>
+	                       <group>
+                                <!--field name="address_id"/-->
+                                <field name="department_id" domain="[('company_id','=',company_id)]" invisible="1"/>
+                                <field name="location_dest_id" string="Location" required="1"  attrs="{'readonly':[('state','not in',('draft'))]}" domain="[('is_maintenance_location','=',True)]" context="{'default_is_maintenance_location':True}"/>
+
+                                 <field name="location_id" required="1" string="Destination Location" domain="[('is_maintenance_location','=',True)]" context="{'default_is_maintenance_location':True}" attrs="{'readonly':[('state','=','draft')]}"/>
+
+                                <field name="shipped"/>
+                                <!--field name="categ_id" attrs="{'required':[('rec_by_categ','=',True)], 'invisible':[('rec_by_categ','=',False)]}" /-->
+                                <field name="date_order"/>
+                           </group>
+                           <group string="External task information" attrs="{'invisible':[('maintenace_exchange_type','!=','move')]}">
+                                <field name="mission_no" attrs="{'readonly':[('state','!=','draft')], 'required':[('maintenace_exchange_type','=','move')]}"/>
+                                <field name="mission_distance" attrs="{'readonly':[('state','!=','draft')], 'required':[('maintenace_exchange_type','=','move')]}"/>
+                                <field name="mission_leader" attrs="{'readonly':[('state','!=','draft')], 'required':[('maintenace_exchange_type','=','move')]}"/>
+                                <field name="mission_date" attrs="{'readonly':[('state','!=','draft')], 'required':[('maintenace_exchange_type','=','move')]}"/>
+                           </group>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Spare Exchange Order">
+            	                <group  colspan="4" >
+                                </group>
+                                <field colspan="4" name="order_line" nolabel="1" context="{'form_view_ref':'exchange_order_line_form_maintenance'}" attrs="{'readonly':[('state','not in',['draft','approved','goods_in_stock'])]}">
+                                    <form string="Exchange Order Line">
+                                        <notebook colspan="4">
+                                            <page string="Order Line">
+                                                <field name="product_id" domain="[('spare_ok','=',True)]" colspan="4"   on_change="product_id_change(product_id,product_qty,product_uom, parent.date_order,name,price_unit)" 
+                                                    context="{'default_spare_ok':True,'form_view_ref':'vehicles_maintenance.spare_normal_form_view'}" />
+                                                <field name="product_qty" on_change="onchange_product_qty(product_qty)"/>
+                                                <field name="approved_qty"/>
+                                                <field name="delivered_qty"/>
+                                                <field name="returned_qty" readonly="1" />
+                                                <field name="product_uom" context="{'quantity':product_qty,'uom':product_uom}" on_change="product_uom_change(product_id,product_uom,product_qty, parent.date_order,name)"/><!--product_uom_qty-->
+                                                <field name="price_unit"  groups="analytic.group_analytic_accounting"/>
+                                                <newline/><field colspan="4" name="name"/>
+                                                <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                                                
+                                                <field name="state" readonly="1"/> 
+                                            </page>
+                                            <!--page string="Notes">
+                                                <field colspan="4" name="notes" nolabel="1"/>
+                                            </page-->
+                                            <page string="History" >
+                                                <separator colspan="4" string="Stock Moves"/>
+                                                <!--field colspan="4" name="move_ids" nolabel="1" widget="one2many_list"/-->
+                                            </page>
+                                        </notebook>
+                                    </form>
+                                    <tree string="Exchange Order Lines">
+                                        <field name="product_id"/>
+                                        <field name="product_qty"/>
+                                        <field name="approved_qty"/>
+                                        <field name="delivered_qty"/>
+                                        <field name="returned_qty" />
+                                        <field name="product_uom"/>
+                                        <field name="stock_available" string="Available quantity in Location"/>
+                                        <!--field name="real_qty"/-->
+                                        <!--field name="price_unit" groups="analytic.group_analytic_accounting" />
+                                        <field name="price_subtotal" groups="analytic.group_analytic_accounting" /-->
+                                        <field name="state" invisible="1"/>
+                                    </tree>
+                                </field>
+                                <group col="11" colspan="4">
+                                </group>
+                            </page><!-- 'invisible':[('maintenace_exchange_type','!=','move')] -->
+                            <page string="Spares Exchange Data" attrs="{'readonly':[('state','!=','done')],'invisible':[('maintenace_exchange_type','!=','move')]}">
+                                <field name="exchange_move_line" context="{'default_exchange_id':active_id}">
+                                    <tree editable="top" >
+                                        <field name="vehicle_id" required="1"/>
+                                        <field name="product_id" domain="[('spare_ok','=',True)]" colspan="4"  
+                                            context="{'default_spare_ok':True,'form_view_ref':'vehicles_maintenance.spare_normal_form_view', 'model': 'exchange.move.fuel', 'exchange_move': True, 'exchange_line': parent.order_line}" on_change="onchange_product(product_id, exchange_id)" required="1" />
+                                        <field name="product_qty" required="1" />
+                                        <field name="exchange_id" invisible="1"/>
+                                        <field name="exchange_line_id" invisible="1"/>
+                                    </tree>
+                                </field>
+
+                            </page>
+                            <page string="Other Information">
+                              <group>
+
+                                <field name="company_id" groups="base.group_multi_company,stock_exchange.group_exchange_information" widget="selection"/>
+                                <field name="validator" groups="stock_exchange.group_exchange_information" />
+                                <!--field name="rec_by_categ" groups="stock_exchange.group_exchange_information"/-->
+                                <field name="date_approve" groups="stock_exchange.group_exchange_information"/>
+                                <field name="ttype" groups="stock_exchange.group_exchange_information" invisible="1"/>
+                                <separator colspan="4" string="Purposes" groups="stock_exchange.group_exchange_information"/>
+                                <field colspan="4" name="purposes" nolabel="1" groups="stock_exchange.group_exchange_information"/>
+                                <separator colspan="4" string="Notes"/>
+                                <field colspan="4" name="notes" nolabel="1"/>
+                              </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_exchange_order_maintenance_filter" model="ir.ui.view">
+        <field name="name">exchange.order.list.select</field>
+        <field name="model">exchange.order</field>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <search string="Search spare exchange Order">
+               <group string="Status">
+                    <filter icon="terp-document-new" name="draft" string="New" domain="[('state','=','draft')]" separator="1" help="exchange order which are in draft state"/>
+                    <filter icon="terp-check" name="done" string="Done" domain="[('state','=','done')]" separator="1" />
+                    <filter string="Waiting" icon="terp-personal" name="waiting" domain="[('state','not in', ['cancel','done'])]"/>
+                    <separator orientation="vertical"/>
+                    <field name="name" select="1" string="Reference"/>
+                    <field name="product_id" select="1"/>
+                    <field name="state"/>
+                    <field name="stock_journal_id" widget="selection" />
+                </group>
+                <newline/> 
+                <group expand="0" string="Extended Filters..." colspan="4" col="20" >
+                    <field name="location_dest_id" />
+                    <field name="department_id" widget="selection">
+                    <filter icon="terp-personal+" domain="[('department_id','=',context.get('department_id',False))]" string="Department"/>
+                    </field>
+                    <field name="company_id" widget="selection" groups="base.group_multi_company" />
+                </group>
+                <newline/>                        
+                <group expand="0" string="Group By..." colspan="4" col="10" >
+                    <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                    <separator orientation="vertical"/>
+                    <filter string="Department" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'department_id'}"/>
+                    <filter string="Maintenance Department" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'maintenance_department_id'}"/>
+                    <!--filter string="Stock Journal" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'stock_journal_id'}"/-->
+                    <separator orientation="vertical"/>
+                    <filter string="Order Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_order'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+    <record id="exchange_order_maintenance_tree" model="ir.ui.view">
+            <field name="name">exchange.order.tree</field>
+            <field name="model">exchange.order</field>
+            <field name="priority" eval="20"/>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree colors="grey:state in ('cancel','done');blue:state in ('approved_qty','confirmed')" string="Spares Exchange Orders">
+                    <field name="name" string="Reference" readonly="1"/>
+                    <field name="date_order" string="Order Date"/>
+                    <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                    <field name="job_id"/>
+                    <field name="maintenance_department_id"/>
+                    <field name="department_id" invisible="1"/>
+                    <field name="stock_journal_id" invisible="1"/>
+                     <field name="req_no" invisible="1"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+    <record id="exchange_form_maintenance_action" model="ir.actions.act_window">
+        <field name="name">Spares Exchange Order</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">exchange.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('ttype','=','other'),('maintenance','=',True)]</field>
+        <field name="context">{'search_default_waiting': 1,'ttype':'other', 'default_maintenance':True}</field>
+        <field name="search_view_id" ref="view_exchange_order_maintenance_filter"/>
+    </record>
+    
+    <record id="action_exchange_tree__view1" model="ir.actions.act_window.view">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="exchange_order_maintenance_tree"/>
+        <field name="act_window_id" ref="exchange_form_maintenance_action"/>
+    </record>
+
+    <record id="action_exchange_from__view2" model="ir.actions.act_window.view">
+        <field eval="2" name="sequence"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="exchange_order_maintenance_form"/>
+        <field name="act_window_id" ref="exchange_form_maintenance_action"/>
+    </record>
+
+    <menuitem action="exchange_form_maintenance_action" id="menu_exchange_form_maintenance_action" name="Exchange Orders" parent="menu_vehicles_maintenance"  sequence="3" groups="vehicles_maintenance.maintenance_manager,vehicles_maintenance.maintenance_user,vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc,vehicles_maintenance.group_maintenance_set_to_draft"/><!--groups="group_exchange_user,group_exchange_approved,group_exchange_approved2"-->
+
+
+<!-- ************************************************************************** -->
+    <record id="exchange_order_line_form_maintenance" model="ir.ui.view">
+        <field name="name">exchange.order.line.form.maintenance</field>
+        <field name="model">exchange.order.line</field>
+        <field name="arch" type="xml">
+            <form string="Exchange Order Line">
+                <notebook colspan="4">
+                    <page string="Order Line">
+                        <field name="product_id" colspan="4"   on_change="product_id_change(product_id,product_qty,product_uom, parent.date_order,name,price_unit)" domain="[('categ_id','=',parent.categ_id)]" />
+                        <field name="product_qty" on_change="onchange_product_qty(product_qty)"/>
+                        <field name="approved_qty"/>
+                        <field name="delivered_qty"/>
+                        <field name="returned_qty" readonly="1"/>
+                        <field name="product_uom" context="{'quantity':product_qty,'uom':product_uom}" on_change="product_uom_change(product_id,product_uom,product_qty, parent.date_order,name)"/><!--product_uom_qty-->
+                        <field name="price_unit"  groups="analytic.group_analytic_accounting"/>
+                        <newline/><field colspan="4" name="name"/>
+                        <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                        
+                        <field name="state" readonly="1"/> 
+                    </page>
+                    <!--page string="Notes">
+                        <field colspan="4" name="notes" nolabel="1"/>
+                    </page-->
+                    <page string="History" >
+                        <separator colspan="4" string="Stock Moves"/>
+                        <!--field colspan="4" name="move_ids" nolabel="1" widget="one2many_list"/-->
+                    </page>
+                </notebook>
+            </form>
+        </field>
+    </record>
+
+    <!-- Stock Picking -->
+        <record id="view_picking_form" model="ir.ui.view">
+            <field name="name">stock.picking.form</field>
+            <field name="model">stock.picking</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Internal Picking List" version="7.0" create="false">
+                    <header>
+                        <button name="draft_force_assign" states="draft" string="Confirm" type="object" class="oe_highlight" groups="base.group_user" />
+                        <button name="draft_validate" states="draft" string="Confirm &amp; Transfer" type="object" class="oe_highlight" groups="base.group_user"/>
+                        <button name="action_assign" states="confirmed" string="Check Availability" type="object" class="oe_highlight" />
+                        <button name="force_assign" states="confirmed" string="Force Availability" type="object" class="oe_highlight" />
+                        <button name="action_process" states="assigned" string="Confirm &amp; Transfer" type="object" class="oe_highlight"/>
+                        <button name="%(stock.action_stock_invoice_onshipping)d" string="Create Invoice/Refund" attrs="{'invisible': ['|','|',('state','&lt;&gt;','done'),('invoice_state','=','invoiced'),('invoice_state','=','none')]}" type="action" class="oe_highlight" groups="base.group_user"/>
+                        <button name="%(stock.act_stock_return_picking)d" string="Reverse Transfer" states="done" type="action" />
+                        <button name="button_cancel" states="assigned,confirmed,draft" string="Cancel Transfer" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,assigned,done" statusbar_colors='{"shipping_except":"red","invoice_except":"red","waiting_date":"blue"}'/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" class="oe_inline" attrs="{'invisible': [('name','=','/')]}" readonly="1"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="partner_id" on_change="onchange_partner_in(partner_id)"/>
+                                <field name="backorder_id" readonly="1" attrs="{'invisible': [('backorder_id','=',False)]}"/>
+                                <field name="exchange_id" readonly="1" attrs="{'invisible': [('exchange_id','=',False)]}" string="Exchange Order" context="{'form_view_ref':'vehicles_maintenance.exchange_order_maintenance_form'}"/>
+                                <field name="invoice_state" string="Invoice Control" groups="account.group_account_invoice"/>
+                                <field name="stock_journal_id" widget="selection" groups="account.group_account_user"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="min_date" readonly="1" attrs="{'invisible': [('min_date','=',False)]}"/>
+                                <field name="origin" placeholder="e.g. PO0032" class="oe_inline" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Products">
+                                <field name="move_lines" string="Stock Move" context="{'address_in_id': partner_id,                                     'form_view_ref':'view_move_picking_form',                                   'tree_view_ref':'view_move_picking_tree',                                   'picking_type': 'internal'}" options='{"reload_on_button": true}'/>
+                                <field name="note" placeholder="Add an internal note..." class="oe_inline"/>
+                            </page>
+                            <page string="Additional Info">
+                                <group>
+                                    <group>
+                                        <field name="move_type"/>
+                                        <field name="type" invisible="1"/>
+                                        <field name="auto_picking" groups="base.group_user" invisible="1"/>
+                                        <!--field name="executing_agency" invisible="1"/-->
+                                    </group>
+                                    <group>
+                                        <field name="company_id" groups="base.group_multi_company" string="Company" widget="selection"/>
+                                        <field name="date_done" />
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+
+        <!-- Incomming Shipments -->
+        <record model="ir.ui.view" id="stock_picking_in_calendar">
+            <field name="name">stock.picking.in.calendar</field>
+            <field name="model">stock.picking.in</field>
+            <field name="priority" eval="20"/>
+            <field name="arch" type="xml">
+                <calendar string="Calendar View" date_start="min_date" date_stop="max_date" color="partner_id">
+                    <field name="origin"/>
+                    <field name="type"/>
+                    <field name="partner_id"/>
+                </calendar>
+            </field>
+        </record>
+        <record id="view_picking_in_tree" model="ir.ui.view">
+            <field name="name">stock.picking.in.tree</field>
+            <field name="model">stock.picking.in</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <tree colors="blue:state == 'draft';grey:state == 'done';red:state not in ('cancel', 'done') and min_date &lt; current_date" string="Picking list">
+                    <field name="name"/>
+                    <field name="partner_id" string="Supplier"/>
+                    <field name="backorder_id"/>
+                    <field name="origin" invisible="1"/>
+                    <field name="date"/>
+                    <field name="min_date" invisible="1"/>
+                    <field name="invoice_state" groups="account.group_account_invoice" invisible="1" />
+                    <field name="stock_journal_id" widget="selection" groups="account.group_account_user" invisible="1"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+        <!-- Stock Picking In -->
+        <record id="view_picking_in_form" model="ir.ui.view">
+            <field name="name">stock.picking.in.form</field>
+            <field name="model">stock.picking.in</field>
+            <field eval="20" name="priority"/>
+            <field name="inherit_id" ref="view_picking_form"/>
+            <field name="arch" type="xml">
+                <field name="date_done" position="attributes" version="7.0">
+                    <attribute name="string">Date of Reception</attribute>
+                </field>
+                <field name="min_date" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="partner_id" position="after" version="7.0">
+                    <field name="department_id" string="Requesting Party" attrs="{'readonly': [('state','!=','draft')]}" required="1"/>
+
+                    <field name="job_id" attrs="{'invisible':[('job_id','=',False)]}" readonly="1"/>
+                </field>
+                <xpath expr="/form/header//button[@name='%(stock.act_stock_return_picking)d']" position="replace">
+                    <button name="%(stock.act_stock_return_picking)d" string="Return Products" states="done" type="action" invisible="1"/>
+                </xpath>
+                <xpath expr="//button[@name='draft_validate']" position="replace">
+                    <button name="draft_validate" states="draft" string="Confirm &amp; Receive" type="object" class="oe_highlight" groups="vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc" />
+                </xpath>
+                <xpath expr="//button[@name='draft_force_assign']" position="replace">
+                    <button name="draft_force_assign" states="draft" string="Confirm" type="object" class="oe_highlight" invisible="1" />
+                </xpath>
+                <xpath expr="//button[@name='action_process']" position="replace">
+                    <button name="action_process" states="assigned" string="Receive" type="object" class="oe_highlight" groups="vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc"/>
+                </xpath>
+                <xpath expr="/form/header//button[@name='button_cancel']" position="replace">
+                    <button name="button_cancel" states="assigned,confirmed,draft" string="Cancel Transfer" groups="vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc"/>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="replace">
+                    <field name="partner_id" on_change="onchange_partner_in(partner_id)" string="Supplier" domain="[('supplier','=',True)]" attrs="{'invisible':[('partner_id','=',False)]}" context="{'default_supplier':1,'default_customer':0}" />
+                </xpath>
+                <xpath expr="//field[@name='move_lines']" position="replace">
+                    <field name="move_lines" string="Stock Move" context="{'address_in_id': partner_id, 'picking_type': 'in', 'default_maintenance':True, 
+                        'form_view_ref':'vehicles_maintenance.view_move_picking_form',                             'tree_view_ref':'vehicles_maintenance.view_move_picking_tree'}" options='{"reload_on_button": true}'/>
+                </xpath>
+                <xpath expr="/form/sheet" position="after">
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </xpath>
+                <field name="invoice_state" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <!--field name="origin" position="attributes" version="7.0"><attribute name="invisible">1</attribute></field-->
+                <field name="stock_journal_id" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="auto_picking" position="attributes" version="7.0">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="date" position="after" version="7.0">
+                    <field name="purchase_id" />
+                    <field name="maintenance" invisible="1" />
+                </field>
+                <!--field name="move_lines" position="after" version="7.0">
+                    <group class="oe_right">
+                        <field name="amount_total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field name="amount_total_ch" />
+                    </group>
+                </field-->
+            </field>
+        </record>
+        <record id="view_picking_in_search" model="ir.ui.view">
+            <field name="name">stock.picking.in.search</field>
+            <field name="model">stock.picking.in</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <search string="Incoming Shipments">
+                    <field name="name" string="Incoming Shipments" filter_domain="['|',('name','ilike',self),('origin','ilike',self)]"/>
+                    <filter icon="terp-check" name="available" string="Ready to Process" domain="[('state','=','assigned')]" help="Incoming Shipments Available"/>
+                    <filter icon="terp-dialog-close" name="done" string="Done" domain="[('state','=','done')]" help="Incoming Shipments already processed"/>
+                    <separator/>
+                    <filter icon="terp-accessories-archiver-minus" string="Back Orders" domain="[('backorder_id', '!=', False)]" help="Is a Back Order"/>
+                    <separator/>
+                    <!--filter string="To Invoice" name="to_invoice" icon="terp-dolar" domain="[('invoice_state', '=', '2binvoiced')]"/-->
+                    <field name="partner_id" filter_domain="[('partner_id','child_of',self)]" select="1"/>
+                    <field name="date" select="1"/>
+                    <!-- field name="stock_journal_id"/-->
+                    <field name="product_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter icon="terp-stock_effects-object-colorize" name="state" string="Status" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Creation Date" icon="terp-go-month" domain="[]" context="{'group_by':'date'}"/>
+                        <!--filter string="Expected Date" icon="terp-go-month" domain="[]" context="{'group_by':'min_date'}"/-->
+                        <!--filter string="Journal" icon="terp-folder-orange" domain="[]" context="{'group_by':'stock_journal_id'}"/-->
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="action_picking_tree4" model="ir.actions.act_window">
+            <field name="name">Incoming Maintenance Stock</field>
+            <field name="res_model">stock.picking.in</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="domain">[('type','=','in'),('maintenance','=',True)]</field>
+            <field name="context">{'contact_display': 'partner_address', 'default_type': 'in', 'default_maintenance': True}</field>
+            <field name="search_view_id" ref="view_picking_in_search"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">                Click to create an incoming shipment.               </p>
+                <p>                The Incoming Shipments is the list of all orders you will                receive from your suppliers. An incoming shipment contains a                list of products to be received according to the original                purchase order.              </p>
+            </field>
+        </record>
+        <record id="action_invoice_tree5_view1" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_picking_in_tree"/>
+            <field name="act_window_id" ref="action_picking_tree4"/>
+        </record>
+        <record id="action_invoice_tree5_view2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_picking_in_form"/>
+            <field name="act_window_id" ref="action_picking_tree4"/>
+        </record>
+        <record id="action_invoice_tree5_view2_cal" model="ir.actions.act_window.view">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">calendar</field>
+            <field name="view_id" ref="stock_picking_in_calendar"/>
+            <field name="act_window_id" ref="action_picking_tree4"/>
+        </record>
+        <menuitem action="action_picking_tree4" id="menu_action_picking_tree4" parent="menu_vehicles_maintenance"  sequence="4"/>
+
+
+        <!-- Stock Move -->
+        <record id="view_move_picking_form" model="ir.ui.view">
+            <field name="name">stock.move.form</field>
+            <field name="model">stock.move</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Stock Moves" version="7.0">
+                    <header>
+                        <!--button name="force_assign" states="confirmed" string="Force Availability" type="object" groups="base.group_user"/><button name="action_confirm" states="draft" string="Confirm" type="object" groups="base.group_user"/><button name="cancel_assign" states="assigned" string="Cancel Availability" type="object" groups="base.group_user"/-->
+                        <field name="state" widget="statusbar" statusbar_visible="draft,assigned,done"/>
+                    </header>
+                    <group>
+                        <group>
+                            <field name="name" invisible="1"/>
+                            <field name="product_id" on_change="onchange_product_id(product_id,location_id,location_dest_id, parent.partner_id)" domain="[('spare_ok','=',True)]" context="{'default_spare_ok':True,'form_view_ref':'vehicles_maintenance.spare_normal_form_view'}"/>
+                            <field name="type" invisible="1"/>
+                            <label for="product_qty"/>
+                            <div>
+                                <field name="product_qty" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)" class="oe_inline"/>
+                                <!--field name="product_qty_ch" readonly="1"/-->
+                                <field name="product_uom" string="Unit Of Measure" groups="product.group_uom" class="oe_inline" invisible="1"/>
+                                <!--button name="%(stock.move_scrap)d" string="Scrap" type="action" icon="terp-gtk-jump-to-ltr" context="{'scrap': True}" states="draft,waiting,confirmed,assigned" groups="base.group_user"/-->
+                            </div>
+                            <!--field name="product_amount" attrs="{'invisible':[('type','!=','in')]}"/>
+                            <field name="product_amount_ch" readonly="1" attrs="{'invisible':[('type','!=','in')]}"/-->
+                            <label for="product_uos_qty" groups="product.group_uos" invisible="1"/>
+                            <div groups="product.group_uos" invisible="1">
+                                <field name="product_uos_qty" on_change="onchange_uos_quantity(product_id, product_uos_qty, product_uos, product_uom)" class="oe_inline"/>
+                                <field name="product_uos" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)" class="oe_inline"/>
+                            </div>
+                            <field name="product_packaging" groups="product.group_stock_packaging" domain="[('product_id','=',product_id)]" invisible="1"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group invisible="1">
+                            <field name="create_date" invisible="1"/>
+                            <field name="date"/>
+                            <field name="date_expected" on_change="onchange_date(date,date_expected)"/>
+                            <!--field name="fuel_ok" invisible="1" /-->
+                        </group>
+                        <group string="Locations">
+                            <field name="location_id" domain="[('usage','&lt;&gt;','view'),('is_maintenance_location','=',True)]" string="Transferer Location"/>
+                            <field name="location_dest_id" domain="[('usage','in', ['internal', 'supplier', 'customer']),('is_maintenance_location','=',True)]" string="Destination Location"/>
+                        </group>
+                        <group groups="stock.group_tracking_lot,stock.group_production_lot" string="Traceability" invisible="1">
+                            <label for="tracking_id"/>
+                            <div>
+                                <field name="tracking_id" groups="stock.group_tracking_lot" class="oe_inline"/>
+                                <button name="%(stock.split_into)d" string="New Pack" type="action" icon="terp-accessories-archiver+" states="draft,assigned,confirmed"/>
+                            </div>
+                            <label for="prodlot_id"/>
+                            <div>
+                                <field name="prodlot_id" groups="stock.group_production_lot" context="{'location_id':location_id, 'product_id':product_id}" domain="[('product_id','=?',product_id)]" on_change="onchange_lot_id(prodlot_id,product_qty, location_id, product_id, product_uom)" class="oe_inline"/>
+                                <button name="%(stock.track_line)d" groups="stock.group_production_lot" states="draft,waiting,confirmed,assigned" string="Split" type="action" icon="gtk-justify-fill"/>
+                            </div>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_move_picking_tree" model="ir.ui.view">
+            <field name="name">stock.move.tree</field>
+            <field name="model">stock.move</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <tree colors="grey:scrapped == True" string="Stock Moves">
+                    <field name="product_id"/>
+                    <field name="product_qty" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)"/>
+                    <!--field name="product_qty_ch"/-->
+                    <field name="product_uom" string="Unit of Measure" groups="product.group_uom"/>
+                    <!--field name="product_amount" />
+                    <field name="product_amount_ch" /-->
+                    <field name="product_uos_qty" groups="product.group_uos" invisible="1"/>
+                    <field name="product_uos" groups="product.group_uos" invisible="1"/>
+                    <field name="location_id" string="Transferer Location"/>
+                    <field name="picking_id" invisible="1" />
+                    <field name="create_date" invisible="1" />
+                    <field name="date_expected" invisible="1" />
+                    <button name="%(stock.move_scrap)d" string="Scrap Products" type="action" icon="terp-gtk-jump-to-ltr" context="{'scrap': True}" states="draft,waiting,confirmed,assigned" groups="base.group_user" invisible="1" />
+                    <field name="scrapped" invisible="1"/>
+                    <field name="prodlot_id" groups="stock.group_production_lot" invisible="1"/>
+                    <button name="%(stock.track_line)d" string="Split in Serial Number" groups="stock.group_production_lot" type="action" icon="gtk-justify-fill" states="draft,waiting,confirmed,assigned" invisible="1"/>
+                    <field groups="stock.group_tracking_lot" name="tracking_id" invisible="1"/>
+                    <button name="setlast_tracking" string="Put in current pack" type="object" attrs="{'invisible': [('tracking_id','&lt;&gt;',False)]}" icon="terp-accessories-archiver" groups="stock.group_tracking_lot" states="draft,assigned,confirmed" invisible="1"/>
+                    <button name="%(stock.split_into)d" string="Put in a new pack" type="action" groups="stock.group_tracking_lot" icon="terp-accessories-archiver+" states="draft,assigned,confirmed" invisible="1"/>
+                    <field name="location_dest_id" string="Destination Location"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- Stock Inventory -->
+
+         <record id="view_inventory_filter" model="ir.ui.view">
+            <field name="name">stock.inventory.filter</field>
+            <field name="model">stock.inventory</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <search string="Search Inventory">
+                    <field name="sequence"/>
+                    <field name="name" string="Inventory Reference"/>
+                    <field name="location_id"/>
+                    <field name="date"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Status" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Date" icon="terp-go-month" domain="[]" context="{'group_by':'date'}"/>
+                    </group>
+                </search>
+
+            </field>
+        </record>
+
+        <record id="view_inventory_tree" model="ir.ui.view">
+            <field name="name">stock.inventory.tree</field>
+            <field name="model">stock.inventory</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Lot Inventory" colors="grey:state == 'cancel'">
+                    <field name="sequence"/>
+                    <field name="name"/>
+                    <field name="location_id"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_inventory_form" model="ir.ui.view">
+            <field name="name">stock.inventory.form</field>
+            <field name="model">stock.inventory</field>
+            <field eval="20" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Physical Inventory" version="7.0">
+                <header>
+                    <button name="action_confirm" states="draft" string="Confirm Inventory" type="object" class="oe_highlight" groups="vehicles_maintenance.group_maintenance_stock_hq,vehicles_maintenance.group_maintenance_stock_oc"/>
+                    <button name="action_done" states="confirm" string="Validate Inventory" type="object" class="oe_highlight" groups="vehicles_maintenance.maintenance_manager"/>
+                    <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" groups="vehicles_maintenance.group_maintenance_set_to_draft"/>
+                    <button name="action_cancel_inventory" states="confirm,done" string="Cancel Inventory" type="object" groups="vehicles_maintenance.maintenance_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+                </header>
+                <sheet>
+                    <div class="oe_right oe_button_box" invisible="1">
+                        <button name="%(stock.action_view_stock_fill_inventory)d" context="{'default_location_id':location_id}" string="Fill Inventory" states="draft" type="action" />
+                    </div >
+                    <group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="name" placeholder="e.g. Annual inventory"/>
+                            <field name="location_id" domain="[('usage','=','internal'),('is_maintenance_location','=',True)]"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="company_id" groups="base.group_multi_company" widget="selection" string="Company" readonly="1"/>
+                            <field name="maintenance" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                    <page string="General Information" attrs="{'readonly':[('state','!=', 'draft')]}">
+                        <field name="inventory_line_id" attrs="{'readonly':[('state','!=', 'draft')]}">
+                            <tree string="Products" editable="bottom">
+                                <field domain="[('usage','=','internal')]" name="location_id" groups="stock.group_locations" invisible="1"/>
+                                <field name="product_id" on_change="on_change_maintenance_product_id(location_id,product_id,product_uom,parent.date)" domain="[('type','&lt;&gt;','service'),('spare_ok','=',True)]" context="{'location':location_id, 'uom':product_uom, 'to_date':parent.date, 'default_spare_ok':True,'form_view_ref':'vehicles_maintenance.spare_normal_form_view'}" />
+                                <field name="product_qty"/>
+                                <field name="product_uom" />
+                                <field name="prod_lot_id" groups="stock.group_production_lot" invisible="1"/>
+                                <button name="%(stock.action_view_stock_inventory_line_split)d"
+                                    string="Split inventory lines" groups="stock.group_inventory_valuation"
+                                    type="action" icon="gtk-justify-fill" states="draft,confirm" invisible="1"/>
+                                <field name="state" invisible="True"/>
+                            </tree>
+                            <!--form string="Products" version="7.0">
+                                <group>
+                                    <group>
+                                        <field domain="[('usage','=','internal')]" name="location_id"/>
+                                        <field context="{'location':location_id, 'uom':product_uom, 'to_date':parent.date}" name="product_id" on_change="on_change_product_id(location_id,product_id,product_uom,parent.date)"  domain="[('type','&lt;&gt;','service')]"/>
+                                    </group>
+                                    <group>
+                                        <label for="product_qty"/>
+                                        <div>
+                                            <field name="product_qty" class="oe_inline"/>
+                                            <field name="product_uom" class="oe_inline" groups="product.group_uom"/>
+                                        </div>
+                                        <field name="prod_lot_id" groups="stock.group_production_lot" invisible="1" />
+                                        <button name="%(stock.action_view_stock_inventory_line_split)d"
+                                        string="Split inventory lines" groups="stock.group_inventory_valuation"
+                                        type="action" icon="gtk-justify-fill" invisible="1"/>
+                                    </group>
+                                </group>
+                            </form-->
+                        </field>
+                    </page>
+                    <page string="Posted Inventory">
+                         <field name="move_ids" context="{'inventory_id':active_id}" options='{"reload_on_button": true}' readonly="1">
+                            <tree string="Stock Moves">
+                                <field name="product_id"/>
+                                <field name="product_qty" on_change="onchange_quantity(product_id, product_qty, product_uom, product_uos)"/>
+                                <field name="product_uom" string="Unit of Measure" groups="product.group_uom"/>
+                                <field name="prodlot_id" groups="stock.group_production_lot" invisible="1"/>
+                                <button name="%(stock.track_line)d" string="Split in serial numbers" type="action"
+                                    icon="gtk-justify-fill"
+                                    attrs="{'invisible': [('prodlot_id','&lt;&gt;',False)]}"
+                                    states="draft,done,cancel"
+                                    context="{'inventory_id':parent.id}"
+                                    groups="stock.group_production_lot" invisible="1"/>
+                                <field groups="stock.group_tracking_lot" name="tracking_id" invisible="1"/>
+                                <button name="%(stock.split_into)d" string="Put in a new pack" type="action"
+                                    groups="stock.group_tracking_lot"
+                                    icon="terp-accessories-archiver+"
+                                    context="{'inventory_id':parent.id}"
+                                    states="draft,done,cancel" invisible="1"/>
+                                <field name="location_id" />
+                                <field name="location_dest_id" />
+                                <field name="date" string="Date"/>
+                                <field name="state"  invisible="True"/>
+                            </tree>
+                         </field>
+                    </page>
+                    <page string="Additional information" >
+                        <group colspan="4" col="4">
+                        <field name="user_id"/>
+                        <field name="creation_date"/>
+                        <separator string="Account information" colspan="4"/>
+                        <field name="amount"/>
+                        <field name="move_id"/>
+                        <button name="get_amount_difference" states="confirm" string="Refresh Amount difference" type="object" colspan="2"/>
+                        <newline/>
+                        </group>
+                        <separator string="Notes" colspan="4"/>
+                        <newline/>
+                        <field name="note" nolabel ="1" colspan="4"/>
+                    </page>
+                    </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_inventory_form" model="ir.actions.act_window">
+            <field name="name">Physical Inventories</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.inventory</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_inventory_tree"/>
+            <field name="search_view_id" ref="view_inventory_filter"/>
+            <field name="domain">[('maintenance','=',True)]</field>
+            <field name="context">{'default_maintenance':True}</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to start an inventory. 
+              </p><p>
+                Periodical Inventories are used to count the number of products
+                available per location. You can use it once a year when you do
+                the general inventory or whenever you need it, to adapt the
+                current inventory level of a product.
+              </p>
+            </field>
+        </record>
+
+        <record id="action_inventory_tree_view" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_inventory_tree"/>
+            <field name="act_window_id" ref="action_inventory_form"/>
+        </record>
+        <record id="action_inventory_form_view" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_inventory_form"/>
+            <field name="act_window_id" ref="action_inventory_form"/>
+        </record>
+        
+        <menuitem action="action_inventory_form" id="menu_action_inventory_form" parent="menu_vehicles_maintenance"  sequence="5"/>
+
+        <!-- inherit spare product to add inventory location -->
+        <record id="spare_normal_form_view2" model="ir.ui.view">
+            <field name="name">spare.normal.form</field>
+            <field name="model">product.product</field>
+            <field eval="50" name="priority" />
+            <field name="inherit_id" ref="vehicles_maintenance.spare_normal_form_view"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="property_stock_inventory" domain="[('usage','=','inventory')]" attrs="{'readonly':[('type','=','service')]}" groups="vehicles_maintenance.admin_it_maintenance"/>
+                </field>
+            </field>
+        </record>
+    
+    </data>
+</openerp>

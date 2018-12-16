@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+		<!-- asset.custody.form.inherit-->
+	<data>	
+
+    <!--    ________________________________________release form________________________________________      -->
+
+    <record model="ir.ui.view" id="view_custody_release_form">
+        <field name="name">custody.release.form</field>
+        <field name="model">asset.custody</field>
+        <field name="arch" type="xml">
+            <form string="Custody Release" version="7.0">
+            <header>
+                <button name="confirm" string="Confirm" states="draft" type="workflow" class="oe_highlight" />
+                <button name="release" states="confirmed" string="Release" confirm="Are you sure you want to Release this custody/s?" class="oe_highlight"/>        
+                <button name="cancel" string="Cancel" confirm="Are you sure you want to cancel this?" 
+                                states="confirmed" type="workflow" class="oe_highlight" icon="gtk-cancel"/>
+                <button name="action_cancel_draft" states="canceled" string="Set to Draft" type="object" icon="gtk-convert"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,recived" />
+            </header>
+                <sheet>
+                    <group col="4" colspan="4" >
+                        <field name="name"/>
+                        <field name="type"  />
+                        <field name="date" />
+
+                        <field name="custody_type" required ='1'   attrs="{'readonly' : [('state','not in',('draft'))]}" on_change="onchange_all(custody_type,False,False,False,False,False,False)"/>
+
+                        <field name="cat_id" attrs="{'readonly' : [('state','not in',('draft'))]}" on_change="onchange_all(cat_id,False,False,False,False,False,False)"/>
+
+                        <field name="product_id" attrs="{'readonly' : [('state','not in',('draft'))]}" on_change="onchange_all(product_id,False,False,False,False,False,False)"/>
+                        
+                        <field name="department_id" attrs="{'required' : [('custody_type','=','management')],'readonly' : [('state','not in',('draft'))]}"  on_change="onchange_all(department_id,False,False,False,False,False,False)"/>
+                        <!-- attrs="{'required' : [('custody_type','=','management')],-->
+                        <field name="office" widget="selection" attrs="{'readonly' : [('state','not in',('draft'))]}"  on_change="onchange_all(office,False,False,False,False,False,False)"/>
+
+                        <field name="executing_agency" attrs="{'readonly' : [('state','not in',('draft'))]}"  />
+                        <field name="company_id" readonly="1" />
+                    </group>
+
+
+                    <group col="4" colspan="4" >
+
+                        <field name="employee_id" attrs="{'required' : [('custody_type','=','personal')],'readonly' : [('state','not in',('draft'))]}"    on_change="onchange_all(employee_id,False,False,False,False,False,False)" domain="[('state','=','approved')]"/>            
+     
+                        <!--field name="employee_id1" attrs="{'readonly' : [('state','not in',('draft'))]}"      />            
+                     
+                        <field name="employee_id2" attrs="{'readonly' : [('state','not in',('draft'))]}"     /-->            
+ 
+                    </group>
+                        <button name="create_return_line"  type="object"  string="Create Line" attrs="{'invisible' : ['|',('state','not in',('draft'))]}"/> 
+
+                    <notebook >
+                        <page string="Asset Line">   
+                            <field name="asset_line"    attrs="{'readonly' : [('state','not in',('approved','draft'))]}"  >
+                                <tree string="Asset Lines" editable="buttom"  >
+                            
+                                   <field name="executing_agency" readonly='1' required='True'/>
+                                   <field name="custody_type" readonly='1' required='True'/>
+                                   <field name="department_to"  readonly='1' attrs="{'required' : [('custody_type','=','management')], }" />
+                                   <field name="office" readonly='1' attrs="{'readonly' : [('custody_type','=','personal')]}" />
+
+                                   <field name="employee_to" readonly='1' attrs="{'required' : [('custody_type','=','personal')],'readonly' : [('custody_type','=','management')]}" />
+                                   <field name="asset_id"  domain="[('asset_type','=','custody')]" context="{'form_view_ref':'account_asset_custody.view_account_asset_asset_form2'}" readonly='1' required="1"/>
+                                   <field name="product_id" readonly='1' />
+                                   <field name="time_scale"  readonly='1'/>
+                                   <field name="return_date" context="{'default_return_date':date}"/>
+                                   <field name="request_date" invisible="1" />
+                                   <field name="referance" invisible="1"  />
+                                   <field name="date" invisible="1" />
+                                   <field name="date_done"  invisible="1"/>
+                                   <field name="location_from" invisible="1"/>
+                                   <field name="location_to" invisible="1" />
+                                   <field name="serial_no" invisible="1" />
+                                   <field name="return_type" required='True' attrs="{'readonly' : [('state','=','confirmed')],'required':[('select','=',True)]}"/>
+                                   <field name="select" attrs="{'readonly' : [('state','=','confirmed')]}"/> 
+                                   <field name="state" invisible="1"/>
+                                </tree>  
+                            </field>          
+                         </page>
+         
+                        <field name="note" colspan="4" nolabel="1"  required="False"  />
+ 
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_custody_release_tree">
+        <field name="name">custody.release.tree</field>
+        <field name="model">asset.custody</field>
+        <field name="arch" type="xml">
+            <tree string="Custody Release">
+                <field name="executing_agency"/>
+                <field name="department_to"/>
+                <field name="employee_to"/>
+                <field name="office"/>
+                <field name="custody_type" />
+                <field name="date" />
+                <field name="state"/>  
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_custody_release_search" model="ir.ui.view">
+        <field name="name">custody.release.search</field>
+        <field name="model">asset.custody</field>
+        <field name="arch" type="xml">
+            <search string="Custody Release">
+               <group string="Filters">
+                    <filter name="personal" string="Personal" domain="[('custody_type','=','personal')]" separator="1"/>
+                    <filter name="management" string="Management" domain="[('custody_type','=','management')]" separator="1" />
+                    <field name="serial_no"/>
+                    <field name="employee_to"/>
+                    <field name="department_to"/>
+                </group>
+                <group expand="0" string="Group By..." colspan="4" col="10" >
+                    <filter icon="terp-dialog-close" string="Date" help="Assets Date" context="{'group_by':'date'}"/>
+                    <filter icon="terp-dialog-close" string="Custody Type" help="Assets State" context="{'group_by':'custody_type'}"/>
+                    <filter icon="terp-dialog-close" string="State" help="Assets Date" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!--  Release ACTION  -->
+
+<record model="ir.actions.act_window" id="action_custody_release">
+        <field name="name">Custody Release</field>
+        <field name="res_model">asset.custody</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    <field name="context">{"type":'released'}</field>
+    <field name="domain">[('type','=','released')]</field>
+    <field name="search_view_id" ref="view_custody_release_search" />    
+    </record>
+
+        <record id="action_custody_release_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_custody_release_tree"/>
+            <field name="act_window_id" ref="action_custody_release"/>
+        </record>  
+
+        <record id="action_custody_release_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_custody_release_form"/>
+            <field name="act_window_id" ref="action_custody_release"/>
+        </record>
+
+         <menuitem id="menu_asset_custody_release" parent="account_asset_custody.menu_asset_custody_parent" sequence="15" action="action_custody_release"/>
+
+
+
+		
+    <record model="ir.ui.view" id="id_asset_custody_form_inherit">
+            <field name="name">asset.custody.form.inherit</field>
+            <field name="model">asset.custody</field>
+            <field name="inherit_id" ref="account_asset_custody.view_custody_request_form"/>
+            <field name="arch" type="xml">
+
+            <!--  workflow -->
+            <field name="state" position="replace" >
+            	<field name="state" widget="statusbar" statusbar_visible="draft,confirmed,recived,canceled" />
+            </field>
+            <button name="cancel" position="replace" >
+		    <button name="cancel" string="Cancel" confirm="Are you sure you want to cancel this?" 
+                                states="draft,transfer,confirmed,approved" type="workflow" class="oe_highlight" icon="gtk-cancel"/>  
+            </button> 
+            <button name="confirm" position="replace" >
+                <!--button name="transfer" states="draft" string="Transfer" 
+		confirm="Are you sure you want to Confirm?" class="oe_highlight"/-->
+                <button name="confirm" states="draft" string="confirm" 
+		confirm="Are you sure you want to Confirm?" class="oe_highlight"/>   
+            </button>
+            <xpath expr="//field[@name='temporary_custody']" position="after">
+                <field name="company_id" />                  
+            </xpath>
+	    <field name="stock" position="after">
+                <field name="create_type" attrs="{'readonly':[('state','!=','draft')]}" required="1"/>
+            </field>
+
+            <xpath expr="//field[@name='asset_line']" position="replace">
+                <field name="asset_line" attrs="{'readonly' : [('state','in',('recieved','approved'))]}" >
+                                    <tree string="Asset " editable="buttom" create="false">
+                                        <field name="executing_agency" />
+                                        <field name="department_to" />
+                                        <field name="office"  />
+                                        <field name="custody_type" required='True' />
+                                        <field name="employee_to" domain="[('department_id','=', department_to)]" on_change="on_change_employee(employee_to)" />
+                                        <field name="product_id" required='True' on_change="onchange_product_serial(product_id)" domain="[('custody','=',True)]" />
+                                        <field name="is_serializable" invisible="1"/>
+                                        <field name="asset_id" />
+                                        <field name="qty" />
+                                        <field name="serial_no" />
+                                        <!--field name="serials" widget="many2many_tags" domain="[('name','=',False)]" attrs="{'required':[('is_serializable','=',True)],'readonly':[('is_serializable','!=',True)]}" context="{'default_linked':True}"/-->
+                                        <!--field name="model" readonly='True'/-->
+                                        <!--field name="department_from" readonly="1"/-->
+                                        <!--field name="employee_from" readonly="1"/-->
+                                        <field name="referance" invisible="1"/>
+                                        <field name="date" invisible="1" />
+                                        <field name="date_done" invisible="1"/>
+                                        <field name="location_from" invisible="1"/>
+                                        <field name="location_to" domain="[('custody','=',False)]" readonly="0" invisible="1"/>
+                                        <field name="time_scale" required='True'/>
+                                        <field name="return_date" required='False' attrs="{'required' : [('time_scale','=','temporary')], 'readonly' : [('time_scale','=','constant')] }" />
+                                        <field name="request_date" />
+                                    </tree>
+                                </field>
+            </xpath>
+
+            </field>  
+      </record>
+
+    <record model="ir.ui.view" id="view_account_asset_asset_tree">
+            <field name="name">account.asset.asset.tree</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset_custody.view_account_asset_asset_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="serial"/>
+                </xpath>
+                <xpath expr="//field[@name='main_type']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='executing_agency']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='custody_type']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='time_scale']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+    <record model="ir.ui.view" id="id_asset_custody_return_form_inherit">
+            <field name="name">asset.custody.return.form.inherit</field>
+            <field name="model">asset.custody</field>
+            <field name="inherit_id" ref="account_asset_custody.view_custody_return_form"/>
+            <field name="arch" type="xml">
+
+            <!--  workflow -->
+            <field name="state" position="replace" >
+            	<field name="state" widget="statusbar" statusbar_visible="draft,confirmed,recived,canceled" />
+            </field>
+            <button name="confirm" position="replace" >
+                <!--button name="transfer" states="draft" string="Transfer" 
+		confirm="Are you sure you want to Confirm?" class="oe_highlight"/-->
+                <button name="confirm" states="draft" string="confirm" 
+		confirm="Are you sure you want to Confirm?" class="oe_highlight"/>   
+            </button>
+            <button name="cancel" position="replace" >
+		    <button name="cancel" string="Cancel" confirm="Are you sure you want to cancel this?" 
+                                states="draft,confirmed" type="workflow" class="oe_highlight" icon="gtk-cancel"/>  
+            </button> 
+            </field>  
+      </record>
+
+      <record model="ir.ui.view" id="view_custody_return_type_form">
+            <field name="name">Custody Return Type Inherit</field>
+            <field name="model">custody.return.type</field>
+            <field name="inherit_id" ref="account_asset_custody.view_custody_return_type_form"/>
+            <field name="arch" type="xml">
+                    <field name="user_id" position="after">
+                        <field name="location_id"/>
+                    </field>
+                   <field name="name" position="after">
+                        <field name="stock_journal"/>
+                        <field name="remove"/>
+                        <field name="executing_agency"/>
+                    </field>
+            </field>
+      </record>
+
+ 
+	</data>
+</openerp>
+
+
+
+

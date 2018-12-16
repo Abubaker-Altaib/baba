@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<document filename="receive report.pdf">
+	<template pageSize="(595.0,842.0)" title="Enrich Payment"
+		author="NCTR" allowSplitting="20">
+		<pageTemplate>
+			<frame id="first" x1="1.3cm" y1="2.0cm" height="22.5cm" width="19cm" />
+			<pageGraphics>
+				<!-- You Logo - Change X,Y,Width and Height -->
+				<image x="1.3cm" y="25.0cm" height="77" width="180">[[company.logo or removeParentNode('image') ]]</image>
+				<setFont name="DejaVu Sans" size="8" />
+				<fill color="black" />
+				<stroke color="black" />
+				<setFont name="DejaVu Sans Bold" size="8" />
+			</pageGraphics>
+		</pageTemplate>
+	</template>
+	<stylesheet>
+		<blockTableStyle id="Table4">
+			<blockValign value="CENTER" />
+			<blockAlignment value="CENTER" />
+			<lineStyle kind="GRID" colorName="#2F4F4F" />
+			<blockTopPadding length="8" />
+			<blockBottomPadding length="12" />
+		</blockTableStyle>
+		<blockTableStyle id="Table2">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<blockTopPadding length="7" />
+			<blockBottomPadding length="10" />
+		</blockTableStyle>
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		<paraStyle name="P7" fontName="Helvetica-Bold" fontSize="12.0"
+			leading="5" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" />
+		<paraStyle name="P6" fontName="Helvetica" fontSize="12.0"
+			leading="14" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" />
+		<paraStyle name="P5" rightIndent="0.0" leftIndent="0.0"
+			fontName="Helvetica-Bold" fontSize="12.0" leading="14" alignment="CENTER"
+			spaceBefore="5.0" spaceAfter="5.0" />
+		<images />
+	</stylesheet>
+	<story>
+		<para style="P5"> [[ repeatIn(objects,'req') ]]بسم الله الرحمن الرحيم</para>
+		<para style="P5" leading="1">
+			<font color="white">
+			</font>
+		</para>
+		<blockTable colWidths="300.0,200.0" style="Table4">
+			<tr>
+				<td>
+					<para style="P6">إذن دفع</para>
+				</td>
+				<td>
+					<para style="P6">[[ company.name]]</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="P6">إفراج اجهزة مطرافية</para>
+				</td>
+				<td>
+					<para style="P6">[[ req.date_invoice or '/' ]]</para>
+				</td>
+			</tr>
+		</blockTable>
+
+		<para style="P5" leading="5">
+			<font color="white">
+			</font>
+		</para>
+		<blockTable colWidths="100.0,100.0,200.0,100.0" style="Table4">
+			<tr>
+				<td>
+					<para style="P6"></para>
+				</td>
+				<td>
+					<para style="P6">رقم الرخصة</para>
+				</td>
+				<td>
+					<para style="P6">[[ req.internal_sequence ]]</para>
+				</td>
+				<td>
+					<para style="P6">رقم الطلب</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="0.0,00.0,400.0,100.0" style="Table4">
+			<tr>
+				<td>
+					<para style="P6"></para>
+				</td>
+				<td>
+					<para style="P6"></para>
+				</td>
+				<td>
+					<para style="P6">[[  req.partner_id and req.partner_id.name or  req.partner_name]]</para>
+				</td>
+				<td>
+					<para style="P6">مقدم الطلب</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="P5" leading="5">
+			<font color="white">
+			</font>
+		</para>
+		<blockTable colWidths="150.0,250.0,100.0" style="Table4">
+			<tr>
+				<td>
+					<para style="P6">المبلغ</para>
+				</td>
+				<td>
+					<para style="P6">البيان</para>
+				</td>
+				<td>
+					<para style="P6">متسلسل</para>
+				</td>
+			</tr>
+			<tr>[[ repeatIn(req.invoice_line,'l') ]]
+				<td>
+					<para style="P6">[[ l.price_subtotal or '/' ]]</para>
+				</td>
+				<td>
+					<para style="P6">[[ l.name ]]</para>
+				</td>
+				<td>
+					<para style="P6">
+						<seq id="L1" />
+					</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="150.0,350.0" style="Table4">
+			<!--tr>
+				<td>
+					<para style="P6">[[ formatLang(req.amount_untaxed)]]</para>
+				</td>
+				<td>
+					<para style="P6">اﻹجمالي قبل الضريبة</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="P6">[[ formatLang(req.amount_tax)]]</para>
+				</td>
+				<td>
+					<para style="P6">الضرائب</para>
+				</td>
+			</tr-->
+			<tr>
+				<td>
+					<para style="P6">[[ formatLang(req.amount_total)]]</para>
+				</td>
+				<td>
+					<para style="P6">المطلوب</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="500.0" style="Table4">
+			<tr>
+				<td>
+					<para style="P6">كتابة  &#160;&#160; [[ repeatIn(words(req.amount_total),'li') ]] [[li['word'] or '0']] </para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="P5" leading="1">
+			<font color="white">
+			</font>
+		</para>
+		<blockTable colWidths="50.0,450.0" style="Table2">
+			<tr>
+				<td>
+					<para></para>
+				</td>
+				<td>
+					<para style="P6">ملاحظة: </para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para></para>
+				</td>
+				<td>
+					<para style="P6">[[req.comment]]</para>
+				</td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="250.0,250.0" style="Table2">
+			<tr>
+				<td>
+					<para style="P6">اﻟﺘﻮﻗﻴﻊ : </para>
+				</td>
+				<td>
+					<para style="P6">اﻟﺘﻮﻗﻴﻊ : </para>
+				</td>
+			</tr>
+		</blockTable>
+
+		<para>
+			<seqReset id="L1" />
+		</para>
+
+	</story>
+</document>

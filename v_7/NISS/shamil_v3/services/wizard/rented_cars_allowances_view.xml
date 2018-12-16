@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+	<record id="view_rented_cars_allowances" model="ir.ui.view">
+            <field name="name">rented.cars.allowances.wiz.form</field>
+            <field name="model">rented.cars.allowances.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Compute Rented Cars Allowances" version="7.0">
+			<group >
+			    <field name="company_id" />
+		            <field name="dep" />
+			    <field name="month"  />
+		    	    <field name="year" />
+		    	    <field name="action_type" />                    
+                    </group>
+		    <footer>
+	 		<button name="compuete_allowances" string="Compute" type="object" 
+                                attrs="{'invisible':[('action_type','!=','compute')]}"  class="oe_highlight"/>
+                        or
+	 		<button name="create_ratification" string="create ratification" type="object" 
+                                attrs="{'invisible':[('action_type','!=','transfer')]}"  class="oe_highlight"/>
+                        or 
+			<button  special="cancel" string="Close" class="oe_link"/>
+		    </footer>
+               
+                </form>
+            </field>
+        </record>
+
+        <record id="rented_cars_allowances_action" model="ir.actions.act_window">
+            <field name="name">Compute Rented Cars Allowances</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">rented.cars.allowances.wiz</field>
+             <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+		
+	<menuitem
+            action="rented_cars_allowances_action"
+            id="rented_cars_allowances_action_menu"
+            parent="menu_rented_cars_allowances" sequence="3"/>
+
+    </data>
+</openerp>
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="rule_injury_manager" model="ir.rule">
+            <field name="name">HR injury manager</field>
+            <field model="ir.model" name="model_id" ref="model_hr_injury"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('base.group_hr_manager')), (4,ref('base.group_hr_overview')), (4,ref('base.group_hr_juser')), (4,ref('base.group_hr_jmanager'))]"/>
+        </record>
+
+        <record id="rule_injury_user" model="ir.rule">
+            <field name="name">HR injury user</field>
+            <field model="ir.model" name="model_id" ref="model_hr_injury"/>
+            <field name="domain_force">['|',('name.company_id','=',False),('name.company_id','child_of',[user.company_id.id])]</field>
+            <field name="groups" eval="[(4,ref('hr_payroll_custom.group_payroll_user'))]"/>
+        </record>
+
+    </data>
+</openerp>

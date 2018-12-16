@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- halls lock Activity-->
+
+        <record id="wkf_halls_lock" model="workflow">
+            <field name="name">wkf.halls.lock</field>
+            <field name="osv">halls.lock</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_halls_lock_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_halls_lock"/>
+            <field name="name">draft</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+        <record id="wkf_halls_lock_confirmed_d" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_halls_lock"/>
+            <field name="name">confirmed_d</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed_d()</field>  
+        </record>
+        
+        <record id="wkf_halls_lock_confirmed" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_halls_lock"/>
+            <field name="name">confirmed</field>
+            <field name="kind">function</field>
+            <field name="action">confirmed()</field>  
+        </record>
+
+        <!--record id="wkf_halls_lock_approved_gn" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_halls_lock"/>
+            <field name="name">approved_gn</field>
+            <field name="kind">function</field>
+            <field name="action">approved_gn()</field>  
+        </record-->
+
+        <record id="wkf_halls_lock_approved_sc" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_halls_lock"/>
+            <field name="name">approved_sc</field>
+            <field name="kind">function</field>
+            <field name="action">approved_sc()</field>  
+        </record>
+
+        <record id="wkf_halls_lock_approved" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_halls_lock"/>
+            <field name="name">approved</field>
+            <field name="kind">function</field>
+            <field name="action">approved()</field>  
+        </record>
+
+        <record id="wkf_halls_lock_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_halls_lock"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">done()</field>  
+            <field name="flow_stop">True</field>          
+        </record>
+        
+        <record id="wkf_halls_lock_cansal_lock" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_halls_lock"/>
+            <field name="name">cansal_lock</field>
+            <field name="kind">function</field>
+            <field name="action">cansal_lock()</field>
+        </record>
+        
+        <!--record id="wkf_halls_lock_change_lock" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_halls_lock"/>
+            <field name="name">change_lock</field>
+            <field name="kind">function</field>
+            <field name="action">change_lock()</field>
+        </record-->
+        
+        
+        <record id="wkf_halls_lock_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_halls_lock"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel()</field>
+        </record>
+
+<!-- halls lock Transition-->
+
+        <record id="wkf_halls_lock_darft_confirmed_d" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_draft"/>
+            <field name="act_to" ref="wkf_halls_lock_confirmed_d"/>
+            <field name="signal">confirmed_d</field>
+        </record>
+
+        <record id="wkf_halls_lock_confirmed_d_to_confirmed" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_confirmed_d"/>
+            <field name="act_to" ref="wkf_halls_lock_confirmed"/>
+            <field name="signal">confirmed</field>
+        </record>
+        
+        <!--record id="wkf_halls_lock_confirmed_approved_gn" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_confirmed"/>
+            <field name="act_to" ref="wkf_halls_lock_approved_gn"/>
+            <field name="signal">approved_gn</field>
+        </record-->
+
+        <record id="wkf_halls_lock_confirmed_approved" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_confirmed"/>
+            <field name="act_to" ref="wkf_halls_lock_approved"/>
+            <field name="signal">approved</field>
+        </record>
+
+        <record id="wkf_halls_lock_confirmed_approved_sc" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_approved"/>
+            <field name="act_to" ref="wkf_halls_lock_approved_sc"/>
+            <field name="signal">approved_sc</field>
+        </record>
+
+        <record id="wkf_halls_lock_confirmed_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_approved_sc"/>
+            <field name="act_to" ref="wkf_halls_lock_done"/>
+            <field name="signal">done</field>
+        </record>
+
+        <record id="wkf_halls_lock_done_cansal_lock" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_done"/>
+            <field name="act_to" ref="wkf_halls_lock_cansal_lock"/>
+            <field name="signal">cansal_lock</field>
+        </record>
+        
+        <!--record id="wkf_halls_lock_done_change_lock" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_done"/>
+            <field name="act_to" ref="wkf_halls_lock_change_lock"/>
+            <field name="signal">change_lock</field>
+        </record-->
+
+		<record id="wkf_halls_lock_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_draft"/>
+            <field name="act_to" ref="wkf_halls_lock_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+		<record id="wkf_halls_lock_confirmed_d_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_confirmed_d"/>
+            <field name="act_to" ref="wkf_halls_lock_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+		<!--record id="wkf_halls_lock_approved_gn_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_approved_gn"/>
+            <field name="act_to" ref="wkf_halls_lock_cancel"/>
+            <field name="signal">cancel</field>
+        </record-->
+
+        <record id="wkf_halls_lock_approved_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_confirmed"/>
+            <field name="act_to" ref="wkf_halls_lock_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+		<record id="wkf_halls_lock_approved_sc_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_approved_sc"/>
+            <field name="act_to" ref="wkf_halls_lock_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_halls_lock_done_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_approved"/>
+            <field name="act_to" ref="wkf_halls_lock_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_halls_lock_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_halls_lock_cancel"/>
+            <field name="act_to" ref="wkf_halls_lock_draft"/>
+            <field name="signal">cancel_direct</field>
+        </record>
+
+
+
+
+    </data>
+</openerp>
+

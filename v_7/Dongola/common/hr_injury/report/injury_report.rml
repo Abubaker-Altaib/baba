@@ -1,0 +1,136 @@
+<document filename="injury.pdf">
+	<template pageSize="(842,595 )" leftMargin="7" rightMargin="7"
+		topmargin="10" bottommargin="10" showBoundary="0">
+		<pageTemplate id="first">
+			<frame id="first" x1="3.0" y1="3.0" width="830" height="570" />
+		</pageTemplate>
+	</template>
+	<stylesheet>
+		<blockTableStyle id="Table_with_frame">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<!-- Header -->
+			<lineStyle kind="GRID" thickness="0.3" colorName="#000000"/>
+		</blockTableStyle>
+		<blockTableStyle id="Table_content">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<lineStyle kind="GRID" thickness="0.3" colorName="#000000" />
+			<blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0" />
+		</blockTableStyle>
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		<paraStyle name="space_before_line" fontName="Helvetica-Bold"
+			fontSize="8.0" leading="10" alignment="CENTER" spaceBefore="6.0"
+			spaceAfter="6.0" />
+		<paraStyle name="space_after_line" fontName="Helvetica-Bold"
+			fontSize="8.0" leading="5" alignment="CENTER" spaceBefore="6.0"
+			spaceAfter="6.0" />
+		<paraStyle name="space_after_title" fontName="Helvetica-Bold"
+			leading="1" alignment="CENTER" spaceBefore="1" spaceAfter="1" />
+		<paraStyle name="P12" fontName="Helvetica-Bold" fontSize="12.0"
+			leading="10" alignment="CENTER" spaceBefore="6.0" spaceAfter="6.0" />
+        <paraStyle name="col_Right" fontName="Helvetica" fontSize="9.0"
+            leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" />
+		<paraStyle name="col_center" fontName="Helvetica" fontSize="9.0"
+			leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" />
+		<paraStyle name="small_col_Right" fontName="Helvetica"
+			fontSize="9" leading="11" alignment="RIGHT" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="P13" fontName="Helvetica-Bold" fontSize="10.0"
+			leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" />
+		<paraStyle name="small_col_left" fontName="Helvetica"
+			fontSize="9" leading="10" alignment="LEFT" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="small_col_center" fontName="Helvetica"
+			fontSize="9" leading="10" alignment="CENTER" spaceBefore="0.0"
+			spaceAfter="0.0" />
+	</stylesheet>
+	<story>
+		<para style="space_after_title"></para>
+		<para style="P12">تفاصيل إصابات العمل </para>
+		<para style="space_after_title"></para>
+		<para style="space_after_title"></para>
+		<para style="space_after_title"></para>
+		<para style="space_after_title"></para>
+		<para style="P12">
+			فى الفترة من : [[ data['form']['date_from'] or removeParentNode('para')]] إلي : [[ data['form']['date_to'] or removeParentNode('para')]]
+		</para>
+		<para style="space_after_title"></para>
+		<para style="space_after_title"></para>
+		<section>
+			<para style="space_after_title">[[ repeatIn(deps(data['form']), 'dept') ]]</para>
+			<blockTable colWidths="710">
+			<tr><td><para style="P13"> [[ dept.name ]] </para></td></tr>
+			</blockTable>
+			<para style="space_after_title"></para>
+			<para style="space_after_title"></para>
+			<para style="space_after_title"></para>
+			<para style="space_after_title"></para>
+			<blockTable colWidths="75,75,75,100,100,100,150,35" style="Table_content">
+				<tr>
+					<td>
+						<para style="col_center">قيمه العلاج </para>
+					</td>
+					<td>
+						<para style="col_center">مبلغ التعويض </para>
+					</td>
+					<td>
+						<para style="col_center">نسبة العجز </para>
+					</td>
+					<td>
+						<para style="col_center">تاريخ الإصابة </para>
+					</td>
+					<td>
+						<para style="col_center">نوع الإصابة </para>
+					</td>
+					<td>
+						<para style="col_center"> الوظيفة </para>
+					</td>
+					<td>
+						<para style="col_center">إسم المصاب </para>
+					</td>
+					<td>
+						<para style="col_center">#</para>
+					</td>
+				</tr>
+				<tr>
+					[[ repeatIn(lines(data['form'],dept.id), 'l') ]]
+					<td>
+						<para style="col_Right">[[ formatLang(l['amount']) ]]</para>
+					</td>
+					<td>
+						<para style="col_Right"> [[ formatLang(l['t_amount']) ]]</para>
+					</td>
+					<td>
+						<para style="col_Right">[[ formatLang(l['percentage']) ]]</para>
+					</td>
+					<td>
+						<para style="col_Right">[[ l['date']or '0' ]]</para>
+					</td>
+					<td>
+						<para style="col_Right">[[ l['t_name']or '0' ]] </para>
+					</td>
+					<td>
+						<para style="col_Right">[[ l['job_name']or '0' ]]</para>
+					</td>
+					<td>
+						<para style="col_Right">[[ l['name']or '0' ]]</para>
+					</td>
+					<td>
+						<para style="col_Right">[[ l['code']or '0' ]]</para>
+					</td>
+				</tr>
+			</blockTable>
+			<blockTable colWidths="710" style="Table_with_frame">
+            [[ has_lines() and removeParentNode('blockTable') ]]
+            <tr>
+                <td>
+                    <para style="col_center"> لا يوجد </para>
+                </td>
+            </tr>
+        </blockTable>
+		</section>
+	</story>
+</document>

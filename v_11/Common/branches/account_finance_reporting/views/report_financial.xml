@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_financial_custom">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="web.internal_layout">
+                <div class="page">
+		    <style>
+			table {
+			    border-collapse: collapse;
+			}
+
+			table, td {
+			    border: 1px solid black;
+			}
+			
+
+			#table tr:hover {background-color: #ddd;}
+			#table thead, th {
+			    padding-top: 12px;
+			    padding-bottom: 12px;
+			    text-align: right;
+			    background-color: #088A68;
+			    color: white;
+			}
+			.mini_header {
+			    padding-top: 12px;
+			    padding-bottom: 12px;
+			    text-align: right;
+		            font-weight: bold;
+			    background-color: #CEF6D8;
+
+			}
+			
+		    </style>
+
+                <center>
+                    <h2 t-esc="data['account_report_id'][1]"/>
+                    <div class="row mt32 mb32">
+                        <div class="col-xs-4">
+                        <strong>:المعاملات المقصودة</strong>
+                        <p>
+                            <span t-if="data['target_move'] == 'all'">كل المعاملات</span>
+                            <span t-if="data['target_move'] == 'posted'">المعاملات المعتمدة</span>
+                        </p>
+                    </div>
+                        <div class="col-xs-4">
+                        <p>
+                            <t t-if="data['date_from']"><strong>التاريخ من :</strong> <span t-esc="data['date_from']"/><br/></t>
+                            <t t-if="data['date_to']"><strong>التاريخ الي :</strong> <span t-esc="data['date_to']"/></t>
+                        </p>
+                       </div>
+                    </div>
+                </center>
+                    <table class="table table-condensed" t-if="data['debit_credit'] == 1">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th class="text-right">Debit</th>
+                                <th class="text-right">Credit</th>
+                                <th class="text-right">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td class="text-right" style="white-space: text-nowrap;">
+                                        <span t-att-style="style" t-esc="a.get('debit')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <td class="text-right" style="white-space: text-nowrap;">
+                                        <span t-att-style="style" t-esc="a.get('credit')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <td class="text-right" style="white-space: text-nowrap;">
+                                        <span t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+
+<!--  Balance sheet and General -->
+                    <table class="table table-condensed" t-if="not data['enable_filter'] and not data['debit_credit'] and not data['cash_flow_template'] and not data['with_details']">
+                        <thead>
+                            <tr>
+                                <th>البيان</th>
+                                <th class="text-right">الرصيد</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+
+<!--  Balance sheet and General with detail-->
+                    <table class="table table-condensed" t-if="not data['enable_filter'] and not data['debit_credit'] and not data['cash_flow_template'] and data['with_details'] == 1">
+                        <thead>
+                            <tr>
+                                <th>البيان</th>
+                                <th>رقم الايضاح</th>
+                                <th class="text-right">الرصيد</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td><span t-att-style="style" t-if=" a.get('level') != 1"  t-esc="a.get('detail_number')"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+
+<!--  Balance sheet and General with Comparason-->
+                    <table class="table table-condensed" t-if="data['enable_filter'] == 1 and not data['debit_credit'] and not data['owner_equity'] and not data['cash_flow_template'] and not data['income_activity'] and not data['with_details']">
+                        <thead>
+                            <tr>
+                                <th>البيان</th>
+                                <th class="text-right">السنه الحالية</th>
+                                <th class="text-right"><span t-esc="data['label_filter']"/></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..'"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1"  t-esc="a.get('balance_cmp')"/></td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+
+<!--  Balance sheet and General with Comparason and details-->
+                    <table class="table table-condensed" t-if="data['enable_filter'] == 1 and not data['debit_credit'] and not data['owner_equity'] == 1 and not data['cash_flow_template'] and not data['income_activity'] and data['with_details'] == 1">
+                        <thead>
+                            <tr>
+                                <th>البيان</th>
+                                <th>رقم الايضاح</th>
+                                <th class="text-right">السنه الحالية</th>
+                                <th class="text-right"><span t-esc="data['label_filter']"/></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..'"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td><span t-att-style="style" t-if=" a.get('level') != 1"  t-esc="a.get('detail_number')"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1"  t-esc="a.get('balance_cmp')"/></td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+<!--  Change Owner Equity -->
+                 
+                    <table id="table" class="table table-condensed" t-if="data['owner_equity'] == 1  and not data['debit_credit']">
+                        <thead>
+                            <tr>
+                                <th>البيان</th>
+                                <th>مال الجمعية</th>
+                                <th>صافي الاصول غير المقيدة</th>
+                                <th>الاصول المقيدة</th>
+                                <th>صافي الاوقاف</th>
+                                <th>المجموع</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <thead>
+                            <tr>
+                                <th><span  t-set="style" t-esc="data['date_to']" t-value="'font-weight: bold;'"/><strong> :السنة المنتهية في </strong></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                           <tr class="mini_header" >
+                            
+		                    <td><span  t-set="style" t-esc="data['date_from']" t-value="'font-weight: bold;'"/><strong> :الرصيد في </strong></td>
+                                    <td>
+                                         <t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'first' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>                                        
+                                    </td>
+                                      <td>
+					<t  t-esc="sum(l.get('balance_cmp')+ l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'second' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+		                    <td>
+                                       <t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'third' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> 			
+			            </td>
+		                    <td>
+                                       <t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'fourth' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> 			
+			            </td>
+
+		                    <td>
+					<t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') for l in get_account_lines if l.get('account_type') == 'sum' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> 			
+
+			            </td>
+                            </tr>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+                                   <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+
+                                    <td>
+                                         <span t-if=" a.get('colomn_order') == 'first'" t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+			            <td>
+					<span t-if=" a.get('colomn_order') == 'second'" t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+			            <td>
+					<span t-if=" a.get('colomn_order') == 'third'" t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+			            <td>
+					<span t-if=" a.get('colomn_order') == 'fourth'" t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+ 			            <td>
+				        <span t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>	
+			            </td>                                  
+                                </t>
+                            </tr>
+
+
+                            <tr class="mini_header" >  
+		                    <td><span  t-set="style" t-esc="data['date_to']" t-value="'font-weight: bold;'"/><strong> :الرصيد في </strong></td>                         
+                                    <td>
+                                         <t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') + l.get('balance') for l in get_account_lines if l.get('colomn_order') == 'first' )" t-att-style="style" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+                                    <td>
+					<t  t-esc="sum(l.get('balance_cmp')+ l.get('balance_cmp_init') + l.get('balance') for l in get_account_lines if l.get('colomn_order') == 'second' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+		                    <td>
+                                       <t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') + l.get('balance') for l in get_account_lines if l.get('colomn_order') == 'third' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> 			
+			            </td>
+		                    <td>
+                                       <t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') + l.get('balance') for l in get_account_lines if l.get('colomn_order') == 'fourth' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> 			
+			            </td>
+		                    <td>
+					<t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') + l.get('balance') for l in get_account_lines if l.get('account_type') == 'sum' )" t-att-style="style" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> 			
+			            </td>
+                            </tr>
+
+                        <thead>
+                            <tr>
+                                <th><span  t-set="style" t-esc="data['date_to_cmp']" t-value="'font-weight: bold;'"/><strong> :السنة المنتهية في </strong></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                            <tr class="mini_header" >
+
+		                    <td><span  t-set="style" t-esc="data['date_from_cmp']" t-value="'font-weight: bold;'"/><strong> :الرصيد في </strong></td>
+                                    <td>
+                                        <t t-esc=" sum(l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'first' )" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+			            <td>
+					<t t-esc=" sum(l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'second' )" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+		                    <td>
+					<t t-esc=" sum(l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'third' )" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+		                    <td>
+					<t t-esc=" sum(l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'fourth' )" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+		                    <td>
+					<t t-esc=" sum(l.get('balance_cmp_init') for l in get_account_lines if l.get('account_type') == 'sum' )" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+                            </tr>
+
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                   <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td>
+                                         <span t-if=" a.get('colomn_order') == 'first'" t-att-style="style" t-esc="a.get('balance_cmp')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                    </td>
+			            <td>
+					<span t-if=" a.get('colomn_order') == 'second'" t-att-style="style" t-esc="a.get('balance_cmp')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+			            <td>
+					<span t-if=" a.get('colomn_order') == 'third'" t-att-style="style" t-esc="a.get('balance_cmp')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+			            <td>
+					<span t-if=" a.get('colomn_order') == 'fourth'" t-att-style="style" t-esc="a.get('balance_cmp')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+ 			            <td>
+				        <span t-att-style="style" t-esc="a.get('balance_cmp')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>	
+			            </td>                                   
+                                </t>
+                            </tr>
+                           <tr class="mini_header" >
+                            
+		                    <td><span  t-set="style" t-esc="data['date_to_cmp']" t-value="'font-weight: bold;'"/><strong> :الرصيد في </strong></td>
+                                    <td>
+                                         <t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'first' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>                                        
+                                    </td>
+                                      <td>
+					<t  t-esc="sum(l.get('balance_cmp')+ l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'second' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+			            </td>
+		                    <td>
+                                       <t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'third' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> 			
+			            </td>
+		                    <td>
+                                       <t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') for l in get_account_lines if l.get('colomn_order') == 'fourth' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> 			
+			            </td>
+
+		                    <td>
+					<t  t-esc="sum(l.get('balance_cmp') + l.get('balance_cmp_init') for l in get_account_lines if l.get('account_type') == 'sum' )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/> 			
+
+			            </td>
+                            </tr>
+                        </tbody>
+                    </table> 
+            <!-- Cash Flow Statement-->
+            <!-- With Out Comparazon-->
+            
+
+                    <table id="table_layout" class="table table-condensed" t-if="data['cash_flow_template'] == 1 and not data['enable_filter'] and not data['debit_credit']">
+                        <thead>
+                            <tr>
+                               <th>البيان</th>
+                               <th class="text-left">السنة الحالية</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td class="text-left"><span t-if=" a.get('level') != 1" t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                </t>
+                            </tr>
+                            <tr>
+                                <th class="text-left">:الزيادة (النقص) في النقد المماثل</th>
+				<th class="text-left"><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+				t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+
+                            </tr>
+<tr>
+                                
+                               <td>:رصيد النقد اول المدة<span t-att-style="style"/> </td>
+                               <td> <t t-att-style="style" t-esc="get_initial_balance" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+
+                            </tr>
+
+                            <tr>
+                               <td>:رصيد النقد اخر المدة<span t-att-style="style"/> </td>
+                               <td> <t t-att-style="style" t-esc="(get_initial_balance+sum(l.get('balance') for l in get_account_lines if l.get('level') == 1 ))" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                            </tr>
+                          
+
+                        </tbody>
+                    </table>
+                  
+            <!-- Cash Flow Statement-->
+            <!-- With Comparazon-->
+            <!-- level > 1 ==>Display balance-->
+            <!-- level < 1 ==>Do not Display balance-->
+
+                    <table id="table_layout" class="table table-condensed" t-if="data['cash_flow_template'] == 1 and data['enable_filter'] == 1 and not data['debit_credit']">
+                        <thead>
+                            <tr>
+                               <th class="text-left">البيان</th>
+                               <th class="text-left">السنة الحالية</th>
+                                <th class="text-left">السنة السابقة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+
+                                    <td>
+                                        <span style="color: white;" t-esc="'..' * a.get('level', 0)"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td class="text-left"><span t-if=" a.get('level') != 1" t-att-style="style" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                    <td class="text-left"><span t-if=" a.get('level') != 1" t-att-style="style" t-esc="a.get('balance_cmp')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                </t>
+                            </tr>
+                            <tr>
+                                <th class="text-left">:الزيادة (النقص) في النقد المماثل</th>
+				<th class="text-left"><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+				t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+				<th class="text-left"><t  t-esc="sum(l.get('balance_cmp') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+				t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+
+
+                            </tr>
+<tr>
+                                
+                               <td>:رصيد النقد اول المدة<span t-att-style="style"/> </td>
+                               <td> <t t-att-style="style" t-esc="get_initial_balance" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                               <td> <t t-att-style="style" t-esc="get_initial_balance_cmp" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+
+                            </tr>
+
+                            <tr>
+                               <td>:رصيد النقد اخر المدة<span t-att-style="style"/> </td>
+                               <td> <t t-att-style="style" t-esc="(get_initial_balance+sum(l.get('balance') for l in get_account_lines if l.get('level') == 1 ))" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                               <td> <t t-att-style="style" t-esc="(get_initial_balance_cmp+sum(l.get('balance_cmp') for l in get_account_lines if l.get('level') == 1 ))" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                            </tr>
+                        </tbody>
+                    </table>  
+
+            <!-- Income and Activity -->
+
+                    <table class="table table-condensed" t-if="data['enable_filter'] == 1 and not data['debit_credit'] and data['income_activity'] == 1 and not data['with_details']">
+                        <thead>
+                            <tr>
+                                <th>البيان</th>
+                                <th class="text-right">مقيدة</th>
+                                <th class="text-right">غير مقيدة</th>
+                                <th class="text-right">اوقاف</th>
+                                <th class="text-right">السنة السابقة</th>
+                                <th class="text-right">السنة الحالية</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..'"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('restricted_balance')"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('unrestricted_balance')"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('awqaf_balance')"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('balance_cmp')"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+
+                                </t>
+                            </tr>
+                            <tr>
+                                <th class="text-left">:التغير في اصول الجمعية</th>
+				<th class="text-left"><t  t-esc="sum(l.get('restricted_balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+				t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+				<th class="text-left"><t  t-esc="sum(l.get('unrestricted_balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+				<th class="text-left"><t  t-esc="sum(l.get('awqaf_balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+				t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+				<th class="text-left"><t  t-esc="sum(l.get('balance_cmp') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+				<th class="text-left"><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style"
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                            </tr>
+                        </tbody>
+                    </table>
+
+            <!-- Income and Activity -->
+
+                    <table class="table table-condensed" t-if="data['enable_filter'] == 1 and not data['debit_credit'] and data['income_activity'] == 1 and data['with_details'] == 1">
+                        <thead>
+                            <tr>
+                                <th>البيان</th>
+                                <th>رقم الايضاح</th>
+                                <th class="text-right">مقيدة</th>
+                                <th class="text-right">غير مقيدة</th>
+                                <th class="text-right">اوقاف</th>
+                                <th class="text-right">السنة السابقة</th>
+                                <th class="text-right">السنة الحالية</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="get_account_lines" t-as="a">
+                                <t t-if="a['level'] != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+                                    <td>
+                                        <span style="color: white;" t-esc="'..'"/>
+                                        <span t-att-style="style" t-esc="a.get('name')"/>
+                                    </td>
+                                    
+                                    <td><span t-att-style="style" t-if=" a.get('level') != 1"  t-esc="a.get('detail_number')"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('restricted_balance')"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('unrestricted_balance')"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('awqaf_balance')"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('balance_cmp')"/></td>
+                                    <td class="text-right"><span t-att-style="style" t-if=" a.get('level') != 1" t-esc="a.get('balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+
+                                </t>
+                            </tr>
+                            <tr>
+                                <th class="text-left">:التغير في اصول الجمعية</th>
+                                <th></th>
+				<th class="text-left"><t  t-esc="sum(l.get('restricted_balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+				t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+				<th class="text-left"><t  t-esc="sum(l.get('unrestricted_balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+				<th class="text-left"><t  t-esc="sum(l.get('awqaf_balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+				t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+				<th class="text-left"><t  t-esc="sum(l.get('balance_cmp') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+				<th class="text-left"><t  t-esc="sum(l.get('balance') for l in get_account_lines if l.get('level') == 1 )" t-att-style="style"
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                            </tr>
+                        </tbody>
+                    </table>
+
+ <p style="page-break-before:always;"> </p> 
+<div t-if=" data['with_details'] == 1 and not data['debit_credit'] ">
+
+
+                <center>
+                    <h2  class="title"> الايضاحات </h2>
+                </center>
+<br/><br/>
+                <div t-foreach="get_account_details_lines" t-as="e">
+                <div class="detail_num" >
+                            <p>
+                                <t ><strong>ايضاح رقم :</strong> <span t-esc="e[0]['detail_number']"/>  <br/></t>
+                            </p>
+                </div>
+
+                    <table id="table_layout" class="table table-condensed" t-if=" not data['debit_credit'] and data['with_details'] == 1 ">
+                        <thead>
+                            <tr>
+                                <th class="text-left">الاسم</th>                            
+                                <th class="text-left">الرصيد</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="e" t-as="a">
+                                <t t-if="a['level'] != 0 and a.get('detail_balance') != 0">
+                                    <t t-if="a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: normal;'"/></t>
+                                    <t t-if="not a.get('level') &gt; 3"><t t-set="style" t-value="'font-weight: bold;'"/></t>
+                                    <td>
+                                        <span t-att-style="style" t-esc="a.get('detail_name')"/>                        
+                                        
+                                    </td>
+                                    <td><span  t-att-style="style" t-esc="a.get('detail_balance')" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+
+                                </t>
+                            </tr>
+                              <tr>
+                            <th class="text-left"><strong>المجموع</strong><span t-att-style="style"/></th>
+                            <th class="text-left"><t  t-esc="sum(l.get('detail_balance') for l in e )" t-att-style="style" 
+t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></th>
+                            
+                              </tr>
+                        </tbody>
+                        
+                    </table>
+<br/><br/>
+                    
+                </div>
+
+                </div>
+
+
+
+                </div> 
+
+            </t>
+        </t>
+    </t>
+</template>
+</odoo>

@@ -1,0 +1,726 @@
+<odoo>
+  <data>
+
+        <!-- Rearange Sale Menuitems -->
+
+        <menuitem id="sale.sale_menu_root"
+            name="Sales"
+            web_icon="sale,static/description/icon.png"
+            active="True"
+            sequence="7"
+            groups="sales_team.group_sale_manager,sale_custom.group_sale_officer,sale_custom.group_sale_admin,sale_custom.group_financial_manager,sale_custom.group_billing_officer_crm,sale_custom.group_direct_manager,sale_custom.group_marketing_manager"/>
+<!--  
+        <menuitem id="sale.sale_order_menu"
+            name="Orders"
+            parent="sale.sale_menu_root"
+            sequence="2"
+            groups="sales_team.group_sale_manager,sale_custom.group_sale_officer,sale_custom.group_marketing_manager"/>
+ -->
+        <menuitem id="sale.menu_sale_report"
+            name="Reporting"
+            parent="sale.sale_menu_root"
+            sequence="4"
+            groups="sales_team.group_sale_manager"/>
+
+        <menuitem id="sale.product_menu_catalog" 
+          name="Catalog" 
+          parent="sale.sale_menu_root" 
+          sequence="5" 
+          groups="sales_team.group_sale_salesman"/>
+
+        <menuitem id="sale.menu_sale_config"
+            name="Configuration"
+            parent="sale.sale_menu_root"
+            sequence="6"
+            groups="sale_custom.group_sale_admin"/>
+
+        <menuitem id="sale.menu_sale_general_settings"
+            name="Settings"
+            sequence="0"
+            groups="sale_custom.group_sale_admin"
+            parent="sale.menu_sale_config"/>
+
+        <menuitem id= "sale.menu_sales_config"
+            parent= "sale.menu_sale_config"
+            sequence= "3"
+            name= "Sales Orders"
+            groups= "sale_custom.group_sale_admin"/>
+
+        <menuitem
+            id="sale.Report_configuration"
+            parent="sale.menu_sales_config"
+            sequence="2"
+            name="Report Layout Categories"
+            groups="sale_custom.group_sale_admin"
+            active="False"
+        />
+
+
+    
+    <!-- action of Sale Center -->
+    <record  id="sale_center_action_window" model="ir.actions.act_window">
+      <field name="name">Sale Center</field>
+      <field name="res_model">sale.center</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- menuitem for Sale Center-->
+    <menuitem 
+      id="sale_center_menu"
+      name="Sales Centers" 
+      parent="sale.product_menu_catalog"
+      sequence="2"
+      action="sale_center_action_window"/>
+
+
+      <!-- Sale Center view form-->
+    <record  id="sale_center_form_view" model="ir.ui.view">
+      <field name="name">sale.center.form</field>
+      <field name="model">sale.center</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+
+          <group>
+            <field name="name" required="True"/>
+            <field name="code" required="True"/>
+          </group>
+
+        </sheet>
+       </form>
+      </field>
+    </record>
+
+    <!-- Sale Center view tree-->
+    <record  id="sale_center_tree_view" model="ir.ui.view">
+      <field name="name">sale.center.tree</field>
+      <field name="model">sale.center</field>
+      <field name="arch" type="xml">
+        <tree editable="top">
+          <field name="name" required="True"/>
+          <field name="code" required="True"/>
+        </tree>
+      </field>
+    </record>
+    
+
+    <!-- Channels view  form -->
+    <record  id="channel_form_view" model="ir.ui.view">
+      <field name="name">channel.form</field>
+      <field name="model">product.template</field>
+      <field name="priority">50</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+
+              <div class="oe_button_box" name="button_box">
+                  <button type="object" string="Services" name="action_open_view" 
+                                                   class="oe_stat_button" icon="fa-star"/>
+              </div>  
+
+              <group>
+                  <field name="name" placeholder="Channel Name"/>
+                  <field name="type" invisible="1" />
+                  <field name="channel" invisible="1"/>
+              </group>
+
+          </sheet> 
+       </form>
+      </field>
+    </record>
+
+     <!-- Channels view tree-->
+    <record id="channel_tree" model="ir.ui.view">
+      <field name="name">channel.tree</field>
+      <field name="model">product.template</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="type" invisible="1" />
+        </tree>
+      </field>
+    </record>
+
+    <!-- action of channel for view & tree -->
+    <record  id="channel_action_window" model="ir.actions.act_window">
+      <field name="name">Channels</field>
+      <field name="res_model">product.template</field>
+      <field name="context">{'default_channel' : True ,'default_type' : 'service'}</field>
+      <field name="domain">[('channel','=',True)]</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+   <!-- Channels action for form -->
+    <record id="channel_form_action" model="ir.actions.act_window.view">
+      <field eval="1" name="sequence"/>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="channel_form_view"/>
+      <field name="act_window_id" ref="channel_action_window"/>
+    </record>
+    <!-- Channels action for tree -->
+    <record id="cannel_tree_action" model="ir.actions.act_window.view">
+      <field name="sequence" eval="0"/>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="channel_tree"/>
+      <field name="act_window_id" ref="channel_action_window"/>
+    </record>
+
+    <!-- menuitem for channel-->
+    <menuitem 
+      id="channels_menu"
+      name="Channels" 
+      parent="sale.product_menu_catalog"
+      action="channel_action_window"
+      sequence="2"/>
+
+   
+
+    <!-- service view -->
+    <!-- delete "Products Labels" report -->
+        <report
+            id="product.report_product_template_label"
+            string="Products Labels"
+            model="False"
+            report_type="qweb-pdf"
+            name="product.report_producttemplatelabel"
+            file="product.report_producttemplatelabel"
+            print_report_name="'Products Labels - %s' % (object.name)"
+        />
+        
+    <record id="product_template_tree_view_inherit_sale_custom" model="ir.ui.view">
+      <field name="name">product.template.product.tree</field>
+      <field name="model">product.template</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" string="Service" />
+          <field name="channel_id" string="Channel" />
+          <field name="center_id" string="Center" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="product_template_only_form_view_inherit_sale_custom" model="ir.ui.view">
+        <field name="name">product.template.product.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+          <xpath expr="//form/sheet/div[2]/label" position="replace">
+            <label for="name" string="Product Name" attrs="{'invisible':[('service','=',True)]}" />
+            <label for="name" string="Service Name" attrs="{'invisible':[('service','=',False)]}" />
+          </xpath>
+
+          <xpath expr="//field[@name='name']" position="attributes">
+            <attribute name="placeholder">Name</attribute>
+          </xpath>
+
+          <xpath expr="//field[@name='categ_id']" position='after'>
+            <field name='service' invisible="1" required="1"/>
+            <field name='channel_id' 
+              domain="[('channel','=',True)]" 
+              attrs="{'invisible':[('service','=',False)]}" 
+              context="{'form_view_ref':'sale_custom.channel_form_view','default_channel':True,'default_type':'service'}" />
+            <field name="center_id" attrs="{'invisible':[('service','=',False)]}" />
+          </xpath> 
+
+          <xpath expr="//field[@name='categ_id']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+          
+          <xpath expr="//page[@name='variants']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+         
+          <xpath expr="//page[4]" position="after">
+                <page  name="fees" string="Service Fees">
+                    <field name="line_ids" nolable="1">
+                      <tree editable="button" string="Service Fees Lines">
+                        <field name="fees"/>
+                        <field name="range_from"/>
+                        <field name="range_to"/>
+                      <!--   <field name="ebs_percentage" />
+                        <field name="partner_percentage"/> -->
+                      </tree>
+                    </field>
+                </page>
+          </xpath>
+
+          <xpath expr="//page[@name='fees']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',False)]}</attribute>
+          </xpath>
+
+          <!-- new updates -->
+<!--           <xpath expr="//page[@name='invoicing']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath> -->
+          <!-- Updates 5/9/2018 -->
+          <xpath expr="//group[@name='payables']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+          <xpath expr="//group[@name='accounting']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+          <xpath expr="//group[@name='invoicing']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+          <xpath expr="//field[@name='taxes_id']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+          <!-- End of Updates 5/9/2018 -->
+          <xpath expr="//field[@name='default_code']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+          <xpath expr="//field[@name='barcode']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+          <xpath expr="//field[@name='list_price']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+          <xpath expr="//field[@name='standard_price']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+          <xpath expr="//field[@name='company_id']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+          <xpath expr="//field[@name='uom_id']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+          <xpath expr="//field[@name='uom_po_id']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+
+        </field>
+    </record>
+
+    
+    <!-- <record id="product_template_form_view_sale_order_button_inherit_sale_custom" model="ir.ui.view">
+        <field name="name">product.template.sale.button.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="sale.product_template_form_view_sale_order_button"/>
+        <field name="arch" type="xml">
+          <xpath expr="//button[@name='action_view_sales']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+        </field>
+    </record> -->
+
+    
+    <record id="view_product_template_purchase_buttons_from_inherit_sale_custom" model="ir.ui.view">
+        <field name="name">product.template.purchase.buttons.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="purchase.view_product_template_purchase_buttons_from"/>
+        <field name="arch" type="xml">
+          <xpath expr="//button[@name='%(purchase.action_purchase_line_product_tree)d']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+        </field>
+    </record>
+
+
+    
+    <record id="product_template_form_view" model="ir.ui.view">
+        <field name="name">product.template.product.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+
+          <xpath expr="//field[@name='type']" position='attributes'>
+            <attribute name='attrs'>{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+
+          <xpath expr="//group[@name='group_standard_price']" position='attributes'>
+            <attribute name='attrs'>{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+
+          <xpath expr="//div[@name='options']" position='attributes'>
+            <attribute name='attrs'>{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+
+          <xpath expr="//field[@name='categ_id']" position='after'>
+            <field name='service' invisible="1" />
+          </xpath>
+
+          <xpath expr="//page[@name='sales']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+
+          <xpath expr="//page[@name='inventory']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+
+          <xpath expr="//page[@name='notes']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True)]}</attribute>
+          </xpath>
+
+        </field>
+      </record>
+ 
+
+    
+    <record id="product_template_form_view_inherit_sale_custom" model="ir.ui.view">
+        <field name="name">product.template.product.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="purchase.view_product_supplier_inherit"/>
+        <field name="arch" type="xml">
+
+          <xpath expr="//field[@name='categ_id']" position='after'>
+            <field name='service' invisible="1" />
+          </xpath>
+
+          <xpath expr="//page[@name='purchase']" position="attributes">
+            <attribute name="attrs">{'invisible':[('service','=',True),('type','=','service')]}</attribute>
+          </xpath>
+
+        </field>
+      </record>
+
+    
+   <!-- action of service view -->
+
+    <record id="product_template_action" model="ir.actions.act_window">
+        <field name="name">Services</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="product_template_tree_view_inherit_sale_custom"/>
+        <field name="domain">[('service','=',True)]</field>
+        <field name="context">{'default_service':True,'default_type': 'service'}</field>
+    </record>
+
+    <!-- menuitem for service view -->
+
+    <menuitem action="product_template_action" id="sale.menu_product_template_action" parent="sale.product_menu_catalog" sequence="1" />
+
+
+    <!-- Tree view for certification -->
+    <record id="certification_tree_view" model="ir.ui.view">
+      <field name="name">certificate.tree.view</field>
+      <field name="model">sale.certificate</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="channel_id"/>
+          <field name="support_type_ids"/>
+        </tree>
+      </field>
+    </record>
+
+
+     <!-- Form View for certification -->
+    <record  id="certification_form_view" model="ir.ui.view">
+      <field name="name">certificate.form.view</field>
+      <field name="model">sale.certificate</field>
+      <field name="arch" type="xml">
+        <form duplicate="0">
+          <sheet>
+
+          <group>
+            <field name="channel_id" context="{'form_view_ref':'sale_custom.channel_form_view','default_channel':True,'default_type':'service'}" />
+          </group>
+
+          <notebook>
+            <page string='Support Types'>
+              <field name='support_type_ids'>
+                <tree string="Type of Support" editable='buttom'>
+                  <field name='support_type'/>
+                  <field name='fees'/>
+                </tree>
+              </field>
+            </page>
+
+            <page string='Certification Description'>
+              <field name='note' placeholder='write your Description here'/>
+            </page>
+          </notebook>
+          
+        </sheet>
+       </form>
+      </field>
+    </record>
+
+     
+
+    <!-- action of certification -->
+    <record  id="certification_action_window" model="ir.actions.act_window">
+      <field name="name">Sale Certification</field>
+      <field name="res_model">sale.certificate</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- menuitem for certification-->
+    <menuitem 
+      id="certification_menu"
+      name="Sale Certification" 
+      parent="sale.product_menu_catalog"
+      sequence="2"
+      action="certification_action_window"/>
+
+
+
+    <!-- menuitem for qutations orders-->
+
+      <menuitem id="sale.menu_sale_quotations"
+              action="sale.action_quotations"
+              parent="sale.sale_order_menu"
+              sequence="1" 
+              name="Quotations Orders"
+              groups="sales_team.group_sale_salesman,sale_custom.group_sale_officer,sale_custom.group_direct_manager,sale_custom.group_marketing_manager,sale_custom.group_financial_manager"/>
+
+    <!-- action for qutations orders -->
+      <record model="ir.actions.act_window" id="sale.action_quotations">
+      <field name="domain">[('card','=',True)]</field>
+      <field name="context">{'default_card':True}</field>
+      </record> 
+
+
+
+    <!-- form view for sale.order sale quotation -->
+    <record id="cards_quotation_inherit_sale_order_form" model="ir.ui.view">
+        <field name="name">cards.quotation.inherit.sale.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+          <xpath expr="//field[@name='partner_id']" position="after">
+            <field name="order_type" attrs="{'readonly':[('state','!=','draft')]}"/>
+          </xpath>
+
+          <xpath expr="//field[@name='payment_term_id']" position="attributes">
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+          </xpath>
+          
+          <xpath expr="//field[@name='order_line']" position="attributes">
+            <attribute name='attrs'>{'readonly':[('state','!=','draft')]}</attribute>
+          </xpath>
+         
+          <xpath expr="//notebook/page/field/form/group/group/field[@name='product_id']" position="attributes">
+            <attribute name='string'>Service</attribute> 
+            <!-- <attribute name='context'>{'default_service':True}</attribute> -->
+            <attribute name='domain'>[('type','!=','product')]</attribute> 
+          </xpath>
+
+          <xpath expr="//notebook/page/field/tree" position="attributes">
+            <attribute name='editable'>bottom</attribute>
+          </xpath>
+
+          <xpath expr="//notebook/page/field/tree/field[@name='product_id']" position="attributes">
+            <attribute name='domain'>[('type','!=','product'),('channel', '=', False)]</attribute> 
+            <attribute name='string'>Service</attribute>
+            <!-- <attribute name='context'>{'default_service':True}</attribute> -->
+          </xpath>
+
+          <xpath expr="//notebook/page/field/form/group/group[2]/div[2]/field[@name='analytic_tag_ids']" position="attributes">
+            <attribute name='invisible'>True</attribute> 
+          </xpath>
+
+          <xpath expr="//notebook/page/field/form/group/group[2]/label[@for='analytic_tag_ids']" position="attributes">
+            <attribute name='invisible'>True</attribute> 
+          </xpath>
+
+          <xpath expr="//notebook/page/field/tree/field[@name='analytic_tag_ids']" position="attributes">
+            <attribute name='invisible'>True</attribute> 
+          </xpath>
+
+          <xpath expr="//notebook/page[2]/group/group[@name='sales_person']" position="attributes">
+            <attribute name='invisible'>True</attribute> 
+          </xpath>
+
+          <xpath expr="//notebook/page[2]/group/group[@name='technical']" position="attributes">
+            <attribute name='invisible'>True</attribute> 
+          </xpath>
+
+          <xpath expr="//notebook/page[2]/group/group[@name='sale_pay']/field[@name='fiscal_position_id']" position="attributes">
+            <attribute name='invisible'>True</attribute> 
+          </xpath>
+
+          <xpath expr="//field[@name='pricelist_id']" position='attributes'>
+            <attribute name='invisible'>True</attribute>
+          </xpath>
+
+          <xpath expr="//notebook/page/field/tree/field[@name='product_uom']" position="attributes">
+            <attribute name='readonly'>True</attribute> 
+          </xpath>
+
+          <xpath expr="//notebook" position="inside">
+            <page name="description" string="Description">
+              <field name="description" nolable="1"  /> 
+            </page>
+            <page name="notes" string="Notes">
+              <field name="note" nolable="1"  /> 
+            </page>
+          </xpath>
+
+          <!-- work flow -->
+          <xpath expr="//field[@name='state']" position='attributes'>
+            <attribute name='statusbar_visible'>draft</attribute>
+          </xpath>
+          <!-- all action button if order_type (card) -->
+          <xpath expr="//button[@name='action_quotation_send']" position="attributes">
+            <attribute name='groups'>sale_custom.group_financial_manager</attribute>
+            <attribute name="attrs">{'invisible':['|',('order_type','=','other'),('state','not in',('client_approve','sent'))]}</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_quotation_send'][2]" position="attributes">
+            <attribute name='groups'>sale_custom.group_financial_manager</attribute>
+            <attribute name="attrs">{'invisible':['|',('order_type','=','other'),('state','!=','sent')]}</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_quotation_send'][3]" position="attributes">
+            <attribute name='groups'>sale_custom.group_financial_manager</attribute>
+            <attribute name="attrs">{'invisible':['|',('order_type','=','other'),('state','!=','sent')]}</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_quotation_send'][4]" position="attributes">
+            <attribute name='groups'>sale_custom.group_financial_manager</attribute>
+            <attribute name="attrs">{'invisible':['|',('order_type','=','other'),('state','!=','sent')]}</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_confirm']" position="attributes">
+            <attribute name='groups'>sale_custom.group_billing_officer_crm</attribute>
+            <attribute name='invisible'>True</attribute>
+          </xpath>
+
+          <xpath expr="//button[@name='action_confirm'][2]" position="attributes">
+            <attribute name='groups'>sale_custom.group_billing_officer_crm</attribute>
+            <attribute name='invisible'>True</attribute>
+          </xpath> 
+
+
+          <!-- Cancel buttons for sale quotation -->
+          <xpath expr="//header/button[1]" position="before">
+
+            <!-- 3-1 for order_type (card,other) -->
+            <button type='object' name='crm_approve' groups='sale_custom.group_sale_officer' string='Client Approved'  states='client_approve' class="btn-primary o_sale_print"/>
+
+            <!--3-2 set to draft for group_sale_officer order_type (other) -->
+            <button type='object' name='set_to_draft' groups='sale_custom.group_sale_officer' string='Set to draft' attrs="{'invisible':['|',('order_type','=','card'),('state','!=','client_approve')]}"/>
+
+            <!--3-3 cancel for group_sale_officer order_type (other) -->
+            <button name="action_cancel" type="object" string="Cancel" confirm="Are you sure you want to cancel?" groups="sale_custom.group_sale_officer"  attrs="{'invisible':['|',('order_type','=','card'),('state','!=','client_approve')]}"/>
+          </xpath>
+
+          <xpath expr="//button[@name='action_quotation_send']" position="before">
+
+            <!-- 1-for order_type (card,other) -->
+            <button type='object' name='officer_confirm' groups='sale_custom.group_sale_officer' string='Confirm' class="btn-primary o_sale_print" states='draft'/>
+
+             <!--2-1- for order_type (other) -->
+            <button type='object' name='financial_confirm' groups='sale_custom.group_direct_manager' string='Confirm' class="btn-primary o_sale_print"  attrs="{'invisible':['|',('order_type','=','card'),('state','!=','direct_manager')]}"/>
+
+            <!--2-2 set to draft for direct_manager order_type (other) -->
+            <button type='object' name='set_to_draft' groups='sale_custom.group_direct_manager' string='Set to draft'   attrs="{'invisible':['|',('order_type','=','card'),('state','!=','direct_manager')]}"/>
+
+            <!--2-3 cancel for direct_manager order_type (other) -->
+            <button name="action_cancel" type="object" string="Cancel" confirm="Are you sure you want to cancel?" groups="sale_custom.group_direct_manager"   attrs="{'invisible':['|',('order_type','=','card'),('state','!=','direct_manager')]}"/>
+
+            <!-- 4-1 for order_type (card,other) -->
+            <button type='object' name='markiting_confirm' groups='sale_custom.group_marketing_manager' string='Approve' class="btn-primary o_sale_print" states='markiting_manager'/>
+
+            <!--4-2 set to draft for marketing_manager order_type (other) -->
+             <button type='object' name='set_to_draft' groups='sale_custom.group_marketing_manager' string='Set to draft' attrs="{'invisible':['|',('order_type','=','card'),('state','!=','markiting_manager')]}"/>
+
+            <!--4-3 cancel for marketing_manager order_type (other) -->
+            <button name="action_cancel" type="object" string="Cancel" confirm="Are you sure you want to cancel?" groups="sale_custom.group_marketing_manager" attrs="{'invisible':['|',('order_type','=','card'),('state','!=','markiting_manager')]}"/>
+
+             <!-- for order_type (card) -->
+            <button type='object' name='financial_confirm' groups='sale_custom.group_financial_manager' string='Approve' class="btn-primary o_sale_print" attrs="{'invisible':['|',('order_type','=','other'),('state','!=','financial_manager')]}"/>
+
+            <!-- for order_type (card) -->
+            <button type='object' name='set_to_draft' groups='sale_custom.group_marketing_manager' string='Set to draft' attrs="{'invisible':['|',('order_type','=','other'),('state','not in',('markiting_manager','financial_manager'))]}"/>
+            
+            <!-- for order_type (card) -->
+            <button name="action_cancel" type="object" string="Cancel" confirm="Are you sure you want to cancel?" groups="sale_custom.group_financial_manager" attrs="{'invisible':['|',('order_type','=','other'),('state','!=','financial_manager')]}"/>
+          </xpath>
+<!-- 
+          <xpath expr="//header/button[@name='action_quotation_send'][4]" position="after">
+            <button name="action_cancel" type="object" string="Cancel" confirm="Are you sure you want to cancel?" groups="sale_custom.group_billing_officer_crm" states="crm_approve" />
+          </xpath> 
+  -->
+          <!-- end of cancel buttons -->
+          
+          <!-- for order_type (card,other) -->
+          <xpath expr="//button[@name='print_quotation']" position="attributes">
+            <attribute name='invisible'>1</attribute>
+          </xpath>
+
+
+          <xpath expr="//button[@name='action_draft']" position="attributes">
+            <attribute name='invisible'>True</attribute>
+          </xpath>
+
+          <!-- Customer Report, Financial Report -->
+          <xpath expr="//button[@name='action_quotation_send']" position="after">
+            <button name="%(sale_custom.action_quotation_order_customer)d" string="Customer Report" type="action" class="btn-primary" groups="sale_custom.group_marketing_manager,sale_custom.group_sale_officer,sale_custom.group_direct_manager" attrs="{'invisible':[('order_type','!=','card')]}" />
+
+            <button name="%(sale_custom.action_quotation_order_financial)d" string="Financial Report" type="action" class="btn-primary" groups="sale_custom.group_marketing_manager,sale_custom.group_sale_officer,sale_custom.group_direct_manager" attrs="{'invisible':[('order_type','!=','card')]}" />
+          </xpath>
+          <!-- Updates: change 'date_order' position, hide 'Other Information' page, add 'Notes' page -->
+          <xpath expr="//field[@name='validity_date']" position="before">
+            <field name="date_order" />
+          </xpath>
+          <xpath expr="//notebook/page[2]" position="attributes">
+            <attribute name="invisible">1</attribute>
+          </xpath>
+          <!-- End of Updates-->
+
+        </field>
+    </record>
+
+    <!-- new action for sale orders in Sales -->
+       <record id="action_bank_card_orders" model="ir.actions.act_window">
+            <field name="name">Sales Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+            <field name="search_view_id" ref="sale.sale_order_view_search_inherit_sale"/>
+            <field name="context">{'create':False,'delete':False}</field>
+            <field name="domain">[('po', '=', True)]</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Create a Quotation, the first step of a new sale.
+                </p><p>
+                    Once the quotation is confirmed, it becomes a sales order.
+                    You'll be able to invoice it and collect payments.
+                    From the <i>Sales Orders</i> menu, you can track delivery
+                    orders or services.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_bank_card_sale_order"
+            name="Sale Orders"
+            action="action_bank_card_orders"
+            parent="sale.sale_order_menu"
+            sequence="2" />
+
+        <delete model="ir.ui.menu" id="sale.menu_sale_order" />
+        <delete model="ir.ui.menu" id="sale.menu_sale_order_invoice" /> 
+        <delete model="ir.ui.menu" id="sale.menu_sale_order_upselling" /> 
+        <delete model="ir.ui.menu" id="sale.menu_sale_invoicing" />      
+
+        <menuitem id="sale.sales_team_config"
+            name="Sales Channels"
+            parent="sale.menu_sale_config"
+            sequence="2"
+            groups="sale_custom.group_sale_admin" />  
+
+        <menuitem id="sale.report_sales_team"
+            name="Sales Channels"
+            parent="sale.menu_sale_report"
+            sequence="2"
+            groups="sale_custom.group_sale_admin"/>
+
+        <menuitem id="sale.report_all_channels_sales"
+            name="All Channels Sales Orders"
+            parent="sale.menu_sale_report"
+            sequence="3"
+            groups="sale_custom.group_sale_admin"/>
+
+        <menuitem id="sale.prod_config_main" name="Products" parent="sale.menu_sale_config" sequence="5" groups="sale_custom.group_sale_admin" />  
+
+
+  </data>
+</odoo>

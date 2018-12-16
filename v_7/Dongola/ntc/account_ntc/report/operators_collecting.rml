@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+    
+    <template pageSize="(842.0,595.0)" title="Operators collecting Report" author="NCTR" allowSplitting="20">
+    <pageTemplate id="first">
+
+      <frame id="first"  x1="1.2cm" y1="1.7cm" width="27.5cm" height="16.5cm" showBoundary="0"/>
+      <!--header-->
+        <pageGraphics>
+            <image x="2cm" y="18.7cm" height="40.0" >[[ company.logo or removeParentNode('image') ]]</image>
+            <setFont name="DejaVu Sans" size="11"/>
+            <drawString x="13.5cm" y="19.7cm"  fontSize="14.0">[[ company.partner_id.name ]]</drawString>
+            <drawString x="13.7cm" y="18.9cm"  fontSize="14.0">نظام إدارة المؤسسة</drawString>
+            <setFont name="DejaVu Sans" size="8"/>
+            <fill color="black"/>
+            <stroke color="black"/>
+
+            <!-- page header -->
+            <lines>2cm 18.5cm 27.5cm 18.5cm</lines>
+            <lines>2cm 18.4cm 27.5cm 18.4cm</lines>
+            <lines>1.2cm 1.65cm 27.5cm 1.65cm</lines>
+
+            <drawString x="9.0cm" y="1.12cm" style="P13"> <pageCount/> </drawString>
+            <!--place x="1.3cm" y="0cm" height="2.55cm" width="27.7cm"-->
+            <place x="3.3cm" y="0cm" height="1.55cm" width="27.7cm">
+                <blockTable colWidths="10cm,10cm,7cm" >
+                    <tr>
+                        <td>
+                          <para leading="11" alignment="CENTER"> Page <pageNumber/> of <getName x="6cm" y="0cm" id="lastPage"/></para>
+                        </td>
+                        <td>
+                            <para leading="11" alignment="CENTER">المستخدم: [[ user.name ]] </para>
+                        </td>
+                        <td>
+                            <para></para>
+                        </td>
+                    </tr>
+                </blockTable>
+            </place>
+        </pageGraphics>
+      <!--/header-->
+    </pageTemplate>
+  </template>
+    <stylesheet>
+
+        <blockTableStyle id="Table2">
+            <blockValign value="RIGHT" />
+            <blockAlignment value="RIGHT" />
+            <blockBackground colorName="#e6e6e6" start="0,0"
+                stop="-1,0" />
+            <lineStyle kind="GRID" colorName="#2F4F4F" />
+            <blockTopPadding length="8" />
+            <blockBottomPadding length="4" />
+        </blockTableStyle>
+
+        <paraStyle name="space_after_title" fontName="KacstLetter"
+            fontSize="7.0" leading="18" alignment="CENTER" spaceBefore="1" spaceAfter="1" />
+        <paraStyle name="all" alignment="justify" />
+        <paraStyle name="P2" fontName="Helvetica-Bold" fontSize="14.0"
+            leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="7" />
+        <paraStyle name="P3" fontName="Microsoft Sans Serif-Bold" fontSize="12.0" alignment="CENTER" spaceBefore="0.0" spaceAfter="0" />
+        <paraStyle name="P8" fontName="Helvetica" fontSize="8.0"
+            leading="9" alignment="CENTER" spaceBefore="7" />
+        <images />
+    </stylesheet>
+
+    <story>
+        <para style="space_after_title"></para>
+        <para style="P2">تقرير موقف تحصيل الشركات من</para>
+        <para style="P2">[[ data['form']['start_date'] or "أول معاملة"]]</para>
+        <para style="P2">إلى</para>
+        <para style="P2">[[ data['form']['end_date'] or "أخر معاملة"]]</para>
+        <para style="P2"></para>
+        <para style="P2"></para>
+        <blockTable colWidths="95,140,95,140,140,160" style="Table2">
+            <tr>
+                <td>
+                    <para style="P3">نسبة المتبقي</para>
+                </td>
+                <td>
+                    <para style="P3">المتبقي</para>
+                </td>
+                <td>
+                    <para style="P3">نسبة التحصيل</para>
+                </td>
+                <td>
+                    <para style="P3">المتحصل</para>
+                </td>
+                <td>
+                    <para style="P3">اﻹعتماد</para>
+                </td>
+                <td>
+                    <para style="P3">البيان</para>
+                </td>
+            </tr>
+            <tr>[[repeatIn(lines(data),'st')]]
+                <td>
+                    <para style="P3">[[ st['rest_percent'] ]]</para>
+                </td>
+                <td>
+                    <para style="P3">[[ st['rest'] ]]</para>
+                </td>
+                <td>
+                    <para style="P3">[[ st['credit_percent'] ]]</para>
+                </td>
+                <td>
+                    <para style="P3">[[ st['credit'] ]]</para>
+                </td>
+                <td>
+                    <para style="P3">[[ st['debit'] ]]</para>
+                </td>
+                <td>
+                    <para style="P3">[[ st['name'] ]]</para>
+                </td>
+            </tr>
+        </blockTable>
+        <para style="P2" alignment="RIGHT"></para>
+        <para style="P2" alignment="RIGHT"></para>
+        <para style="P2" alignment="RIGHT"></para>
+        <para style="P2" alignment="RIGHT" rightIndent="10">ملاحظات :</para>
+
+    </story>
+</document>
+

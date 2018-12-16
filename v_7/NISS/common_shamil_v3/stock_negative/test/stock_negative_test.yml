@@ -1,0 +1,39 @@
+
+
+
+-
+  I confirm outgoing shipment of test.
+-
+  !workflow {model: stock.picking, action: button_confirm, ref: outgoing_shipment_test}
+
+-
+  I confirm incomming shipment of test.
+-
+  !workflow {model: stock.picking, action: button_confirm, ref: incoming_ship_test}
+-
+  I stock partial picking.
+-
+  !python {model: stock.partial.picking}: |
+    context.update({'active_model': 'stock.picking', 'active_id': ref('stock_negative.incoming_ship_test'), 'active_ids': [ref('stock_negative.incoming_ship_test')]})
+
+-
+  !record {model: stock.partial.picking, id: partial_incomming_test}:
+     picking_id: stock_negative.incoming_ship_test
+-
+    I receive  incomming shipment 
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_incomming_test')], context=context)
+
+-
+  I deliver outgoing shipment.
+-
+  !python {model: stock.partial.picking}: |
+    context.update({'active_model': 'stock.picking', 'active_id': ref('stock_negative.outgoing_shipment_test'), 'active_ids': [ref('stock_negative.outgoing_shipment_test')]})
+-
+  !record {model: stock.partial.picking, id: partial_outgoing_test}:
+    picking_id: stock_negative.outgoing_shipment_test
+-
+  !python {model: stock.partial.picking }: |
+    self.do_partial(cr, uid, [ref('partial_outgoing_test')], context=context)
+

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+         <record id="wkf_warantly" model="workflow">
+            <field name="name">hr.employee.family.wkf</field>
+            <field name="osv">hr.employee.family</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <record id="act_drafted" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_warantly"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+            
+        </record>
+
+       
+        <record id="act_approved" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_warantly"/>
+            <field name="name">approve</field>
+	    <field name="kind">function</field>
+            <field name="action">mymod_approved()</field>
+	            </record>
+
+        <record id="act_stopped" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_warantly"/>
+            <field name="name">stopped</field>
+            <field name="kind">function</field>
+            <field name="action">mymod_stopped()</field>
+        </record>
+               
+               
+ <record id="act_approvewfees" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_warantly"/>
+            <field name="name">approvewfees</field>
+	    <field name="kind">function</field>
+            <field name="action">write({'state':'approvewfees'})</field>
+        </record>
+
+       <record id="act_reject" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_warantly"/>
+            <field name="name">reject</field>
+	    <field name="kind">function</field>
+            <field name="action">write({'state':'rejected'})</field>
+	    <field name="flow_stop">True</field>
+        </record>
+
+<record id="act_rejectedwfees" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_warantly"/>
+            <field name="name">rejectedwfees</field>
+	    <field name="kind">function</field>
+            <field name="action">write({'state':'rejectedwfees'})</field>
+        </record>
+
+
+       <record id="t20w" model="workflow.transition">
+            <field name="act_from" ref="act_drafted"/>
+            <field name="act_to" ref="act_approved"/>
+	    <field name="signal">approve_warantly</field>
+        </record> 
+
+       <record id="t20ww" model="workflow.transition">
+            <field name="act_from" ref="act_approved"/>
+            <field name="act_to" ref="act_stopped"/>
+       <field name="signal">stopped_warantly</field>
+        </record> 
+        
+        <record id="t21w" model="workflow.transition">
+            <field name="act_from" ref="act_approved"/>
+            <field name="act_to" ref="act_approvewfees"/>
+	    <field name="signal">approvewfees_warantly</field>
+        </record>
+           
+          <record id="t21ww" model="workflow.transition">
+            <field name="act_from" ref="act_approved"/>
+            <field name="act_to" ref="act_reject"/>
+	    <field name="signal">reject_warantly</field>
+        </record>
+
+
+<record id="t23w" model="workflow.transition">
+            <field name="act_from" ref="act_approvewfees"/>
+            <field name="act_to" ref="act_reject"/>
+	    <field name="signal">reject_warantly</field>
+
+        </record>
+
+        <record id="t22w" model="workflow.transition">
+            <field name="act_from" ref="act_reject"/>
+            <field name="act_to" ref="act_rejectedwfees"/>
+	    <field name="signal">rejectedwfees_warantly</field>
+        </record>
+       
+       <record id="t23ww" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_reject"/>
+	    <field name="signal">reject_warantly</field>
+
+        </record>
+      </data>
+   </openerp>

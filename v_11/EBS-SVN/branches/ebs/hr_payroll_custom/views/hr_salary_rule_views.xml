@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_hr_payroll_structure_view_inhert"
+        name="Salary Structures Configuration"
+        parent="hr_payroll.menu_hr_payroll_configuration"
+        sequence="1"
+    />
+    <menuitem
+        id="menu_hr_salary_rule_view4"
+        name="Rules Configuration"
+        parent="hr_payroll.menu_hr_payroll_configuration"
+        sequence="4"
+    />
+    <!-- Salary structure -->
+    <record id="view_hr_payroll_structure_list_view1" model="ir.ui.view">
+        <field name="name">hr.payroll.structure.tree</field>
+        <field name="model">hr.payroll.structure</field>
+        <field name="arch" type="xml">
+            <tree string="Salary Structures">
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="structure_type"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="number" string="Number Of Level"/>
+                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_hr_employee_grade_form1" model="ir.ui.view">
+        <field name="name">hr.payroll.structure.form</field>
+        <field name="model">hr.payroll.structure</field>
+        <field name="arch" type="xml">
+            <form string="Salary Structures">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder=" Structur Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="structure_type" required="True"/>
+                            <field name="date_from"/>
+                            <field name="age_pension" required="True"/>
+
+                        </group >
+                          <group >
+                            <field name="sequence" string="Sequence"  widget='integer'/>
+                            <field name="date_to"/>
+                            <field name="number" string="Number Of Level"  widget='integer' required="True"/>
+                            <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                            <field name="type" invisible="True"/>
+
+
+                        </group>
+                       
+                    </group>
+                    <notebook colspan="4">
+                     <page string="Salary Level">
+                       <field name="children_ids" >
+                         <tree editable="top">
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="number"/>
+                            <field name="amount"/>
+                         </tree>
+                      </field>
+                     </page>
+                     <page string="Salary Grade">
+                       <field name="grade_ids">
+                         <tree editable="top">
+                            <field name="sequence"/>
+                            <field name="name"/>
+                            <field name="number"/>
+                            <field name="amount"/>
+                            <field name="parent_id" String="Level"/>
+                         </tree>
+                      </field>
+                     </page>
+                     <page string="Salary Degree">
+                       <field name="degree_ids">
+                         <tree editable="top">
+                            <field name="sequence"/>
+                            <field name="name"/>
+                            <field name="amount"/>
+                            <field name="parent_id" String="Grade"/>
+                         </tree>
+                      </field>
+                     </page>
+                     <page string="Salary Rules">
+                       <field name="rule_ids" domain="[('parent_rule_id','=',False)]">
+                         <tree>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="category_id"/>
+                            <field name="sequence" invisible="1"/>
+                            <field name="register_id"/>
+                         </tree>
+                      </field>
+                     </page>
+                </notebook>
+             </sheet>
+             <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="message_ids" widget="mail_thread"/>
+             </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_view_hr_payroll_structure_list_form1" model="ir.actions.act_window">
+        <field name="name">Salary Structures</field>
+        <field name="res_model">hr.payroll.structure</field>
+        <field name="view_type">form</field>
+        <field name="domain">[('type','=','structure')]</field>
+        <field name="context">
+            {
+                "default_type" : 'structure'
+            }
+            </field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="act_salary_structures_view_form" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_hr_employee_grade_form1" />
+            <field name="act_window_id" ref="action_view_hr_payroll_structure_list_form1" />
+    </record>
+    <record id="act_salary_structures_view_tree" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_hr_payroll_structure_list_view1" />
+            <field name="act_window_id" ref="action_view_hr_payroll_structure_list_form1" />
+    </record>
+    <menuitem
+        id="menu_hr_payroll_structure_view1"
+        name="Salary Structures"
+        action="action_view_hr_payroll_structure_list_form1"
+        parent="menu_hr_payroll_structure_view_inhert"
+        sequence="1"
+    />
+    <record id="view_hr_payroll_structure_list_view2" model="ir.ui.view">
+        <field name="name">hr.payroll.structure.tree</field>
+        <field name="model">hr.payroll.structure</field>
+        <field name="arch" type="xml">
+            <tree string="Salary Level">
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="parent_id" string="Structure"/>
+                <field name="number" string="Max Number Of Category"/>
+                <field name="amount"/>
+                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_hr_employee_grade_form2" model="ir.ui.view">
+        <field name="name">hr.payroll.structure.form</field>
+        <field name="model">hr.payroll.structure</field>
+        <field name="arch" type="xml">
+            <form string="Salary Level">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder=" Level Name"/>
+                        </h1>
+                    </div>
+                    
+                     <group>
+                        <group >
+                            <field name="parent_id" domain="[('type','=','structure')]" string="Structure" options="{'no_create': True, 'no_open': True}" required="True" />
+                        </group>
+                        <group >
+                            <field name="type" invisible="True"/>
+                            <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group col="4">
+                        <field name="sequence" string="Sequence"  widget='integer'/>
+                        <field name="number" string="Max Number Of Grade"  widget='integer' required="True"/>
+                        <field name="amount"  widget='integer'/>
+                   </group>
+             </sheet>
+             <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_view_hr_payroll_structure_list_form2" model="ir.actions.act_window">
+        <field name="name">Salary Level</field>
+        <field name="res_model">hr.payroll.structure</field>
+        <field name="view_type">form</field>
+        <field name="domain">[('type','=','level')]</field>
+        <field name="context">
+            {
+                "default_type" : 'level'
+            }
+            </field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="act_salary_structures_view_form2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_hr_employee_grade_form2" />
+            <field name="act_window_id" ref="action_view_hr_payroll_structure_list_form2" />
+    </record>
+    <record id="act_salary_structures_view_tree2" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_hr_payroll_structure_list_view2" />
+            <field name="act_window_id" ref="action_view_hr_payroll_structure_list_form2" />
+    </record>
+    <menuitem
+        id="menu_hr_payroll_structure_view2"
+        name="Salary Levels"
+        action="action_view_hr_payroll_structure_list_form2"
+        parent="menu_hr_payroll_structure_view_inhert"
+        sequence="2"
+    />
+    <record id="grate_job_action" model="ir.actions.act_window">
+            <field name="name">jobs</field>
+            <field name="res_model">hr.job</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('grade_id','=', active_id)]</field>
+            <field name="view_id" ref="hr.view_hr_job_tree"/>
+    </record>
+    <record id="view_hr_payroll_structure_list_view3" model="ir.ui.view">
+        <field name="name">hr.payroll.structure.tree</field>
+        <field name="model">hr.payroll.structure</field>
+        <field name="arch" type="xml">
+            <tree string="Salary Grade">
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="structure_id" string="Structure"/>
+                <field name="parent_id" string="Level"/>
+                <field name="number" string="Max Number Of Degree"/>
+                <field name="amount"/>
+                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_hr_employee_grade_form3" model="ir.ui.view">
+        <field name="name">hr.payroll.structure.form</field>
+        <field name="model">hr.payroll.structure</field>
+        <field name="arch" type="xml">
+            <form string="Salary Grade">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                             <button name="%(grate_job_action)d" type="action" class="oe_stat_button" icon="fa-tasks">
+                            <field string="Jobs" name="job_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder=" Grade Name"/>
+                        </h1>
+                    </div>
+                     <group>
+                        <group>
+                            <field name="structure_id"  string="Structure" options="{'no_create': True, 'no_open': True}" required="True"/>
+                            <field name="parent_id" domain="[('type','=','level'),('parent_id','=',structure_id)]" string="Level" options="{'no_create': True, 'no_open': True}" required="True"/>
+                            
+                        </group>
+                        <group >
+                            <field name="type" invisible="True"/>
+                            <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group col="4">
+                           <field name="sequence" string="Sequence"  widget='integer'/>
+                           <field name="number" string="Max Number Of Degree" widget='integer' required="True"/>
+                            <field name="amount"/>
+                            
+                        </group>
+             </sheet>
+             <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_view_hr_payroll_structure_list_form3" model="ir.actions.act_window">
+        <field name="name">Salary Grade</field>
+        <field name="res_model">hr.payroll.structure</field>
+        <field name="view_type">form</field>
+        <field name="domain">[('type','=','grade')]</field>
+        <field name="context">
+            {
+                "default_type" : 'grade',
+                "default_number": '10'
+            }
+            </field>
+        <field name="view_mode">tree,form</field>
+    </record>
+  <record id="act_salary_structures_view_form3" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_hr_employee_grade_form3" />
+            <field name="act_window_id" ref="action_view_hr_payroll_structure_list_form3" />
+    </record>
+    <record id="act_salary_structures_view_tree3" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_hr_payroll_structure_list_view3" />
+            <field name="act_window_id" ref="action_view_hr_payroll_structure_list_form3" />
+    </record>
+    <menuitem
+        id="menu_hr_payroll_structure_view3"
+        name="Salary Grades"
+        action="action_view_hr_payroll_structure_list_form3"
+        parent="menu_hr_payroll_structure_view_inhert"
+        sequence="3"
+    />
+    <record id="view_hr_payroll_structure_list_view4" model="ir.ui.view">
+        <field name="name">hr.payroll.structure.tree</field>
+        <field name="model">hr.payroll.structure</field>
+        <field name="arch" type="xml">
+            <tree string="Salary Degree">
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="parent_id" string="Grade"/>
+                <field name="level_id" string="Level"/>
+                <field name="amount"/>
+                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_hr_employee_grade_form4" model="ir.ui.view">
+        <field name="name">hr.payroll.structure.form</field>
+        <field name="model">hr.payroll.structure</field>
+        <field name="arch" type="xml">
+            <form string="Salary Degree">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder=" Degree Name"/>
+                        </h1>
+                    </div>
+                    <group >
+                     <group  >
+                         <field name="structure_id" string="Structure" options="{'no_create': True, 'no_open': True}" required="True"/>
+                          <field name="level_id" string="Level" domain="[('type','=','level'),('parent_id','=',structure_id)]" options="{'no_create': True, 'no_open': True}" required="True"/>
+                           <field name="parent_id" domain="[('type','=','grade'),('parent_id','=',level_id)]" string="Grade" options="{'no_create': True, 'no_open': True}" required="True"/>
+                        </group>
+                        <group>
+                            <field name="type" invisible="True"/>
+
+
+                        </group>
+                        </group>
+                        <group col="4">
+                        <field name="sequence" string="Sequence"  widget='integer'/>
+                        <field name="margin"/>
+                        <field name="amount"/>   
+                        </group>
+                   
+             </sheet>
+             <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_view_hr_payroll_structure_list_form4" model="ir.actions.act_window">
+        <field name="name">Salary Degree</field>
+        <field name="res_model">hr.payroll.structure</field>
+        <field name="view_type">form</field>
+        <field name="domain">[('type','=','degree')]</field>
+        <field name="context">{ "default_type" : 'degree'}</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="act_salary_structures_view_form4" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_hr_employee_grade_form4" />
+            <field name="act_window_id" ref="action_view_hr_payroll_structure_list_form4" />
+    </record>
+    <record id="act_salary_structures_view_tree4" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_hr_payroll_structure_list_view4" />
+            <field name="act_window_id" ref="action_view_hr_payroll_structure_list_form4" />
+    </record>
+    <menuitem
+        id="menu_hr_payroll_structure_view4"
+        name="Salary Degrees"
+        action="action_view_hr_payroll_structure_list_form4"
+        parent="menu_hr_payroll_structure_view_inhert"
+        sequence="4"
+    />
+    <delete model="ir.ui.menu" id="hr_payroll.menu_hr_payroll_structure_view"/>
+
+    <record id="hr_salary_rule_list1" model="ir.ui.view">
+        <field name="name">hr.salary.rule.list</field>
+        <field name="model">hr.salary.rule</field>
+        <field name="arch" type="xml">
+            <tree string="Salary Rules">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="rule_type"/>
+                <field name="sequence" invisible="1"/>
+                <field name="base_on"/>
+            </tree>
+        </field>
+    </record>
+    <record id="hr_salary_rule_form1" model="ir.ui.view">
+        <field name="name">hr.salary.rule.form</field>
+        <field name="model">hr.salary.rule</field>
+        <field name="arch" type="xml">
+            <form string="Salary Rules">
+                <Sheet>
+                    <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                options='{"terminology": "archive"}'/>
+                            </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder=" Salary Rule Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                           <field name="type" attrs="{'invisible': True}"/>
+                           <field name="category_id"/>
+                           <field name="code"/>
+                           <field name="sequence" />
+                           <field name="appears_on_payslip" invisible="1"/>
+                        </group>
+                        <group>
+                           <field name="rule_type" attrs="{'invisible': [('type', '=','incentives')]}"/>
+                           <field name="base_on" required="1"/>
+                           <field name="start_date" required="1"/>
+                           <field name="end_date"/>
+                           <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                        </group>
+                   </group>
+                    <notebook colspan="6">
+                        <page string="General">
+                               
+                        <group string="Computation">
+                                <group>
+                                <field name="amount_select"/><newline/>
+                      <field name="amount_percentage_base" widget="many2many_tags" attrs="{'invisible':[('amount_select','!=','percentage')], 'required': [('amount_select','=','percentage')]}"/><newline/>
+                                <field name="quantity" attrs="{'invisible':[('amount_select','=','code')], 'required':[('amount_select','!=','code')]}"/>
+                                <field name="amount_fix"  attrs="{'invisible':[('amount_select','!=','fix')], 'required':[('amount_select','=','fix')]}"/>
+                                <field name="amount_python_compute" attrs="{'invisible':[('amount_select','!=','code')], 'required':[('amount_select','=','code')]}"/>
+                                <field name="amount_percentage" attrs="{'invisible':[('amount_select','!=','percentage')], 'required':[('amount_select','=','percentage')]}"/>
+                               
+                               </group>
+                               <group>
+                                    
+                                    <field name="deduct_absence" attrs="{'invisible':[('type', '=','incentives')]}"/><newline/>
+                                    <field name="loan"/><newline/>
+                                    <field name="qualifications_linked" attrs="{'invisible': [('type', '!=','public')]}"/><newline/>
+                                    <field name="Linked_to_sanctions" attrs="{'invisible': [('type', '!=','public')]}"/><newline/>
+                                </group>
+                           </group>
+                           <group>
+                                    <group>
+                                        <separator string="Conditions"/>
+                                        <field name="condition_select"/><newline/>
+                                        <field name="condition_python" attrs="{'invisible':[('condition_select','!=','python')], 'required': [('condition_select','=','python')]}" colspan="4"/> <newline/>
+                                        <field name="condition_range" attrs="{'invisible':[('condition_select','!=','range')], 'required':[('condition_select','=','range')]}"/><newline/>
+                                        <field name="condition_range_min" colspan="2" attrs="{'invisible':[('condition_select','!=','range')], 'required':[('condition_select','=','range')]}"/><newline/>
+                                        <field name="condition_range_max" colspan="2" attrs="{'invisible':[('condition_select','!=','range')], 'required':[('condition_select','=','range')]}"/><newline/>
+                                    </group>
+                                    <group>
+                                        <separator string="Contribution"/>
+                                        <field name="register_id"/>
+                                        <newline/>
+                                    </group>
+                            </group>
+                        </page>
+                        <page string="Salary Amount Configurations" attrs="{'invisible':['|','|',('amount_select','=', 'percentage'),('amount_select','=', 'fix'),('amount_select','=', 'code')]}">
+                            <field name="salary_amount_ids" widget='one2many_list'>
+                                <tree editable="top">
+                                    <field name="structure_id" String="Structure" options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="level_id" String="Level" 
+                                           domain="[('type','=','level'),('parent_id','=',structure_id)]"  
+                                           options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="grade_id" String="Grade" 
+                                    domain="[('type','=','grade'),('parent_id','=',level_id)]" 
+                                    attrs="{'column_invisible': [('parent.amount_select', '=', 'levels')],'required':True}" 
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="degree_id" string="Degree" 
+                                       domain="[('type','=','degree'),('parent_id','=',grade_id)]" 
+                                       attrs="{'column_invisible': [('parent.amount_select', '!=', 'degrees')],'required':True}" 
+                                       options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="amount"/>
+                                </tree>
+                           </field>
+                        </page>
+                        <page string="Accounting Configurations">
+                            <group>
+                                <field name="account_id"/>
+                             </group>
+                        </page>
+                        <page string="Description">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </Sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_view_hr_salary_rule_list_form1" model="ir.actions.act_window">
+        <field name="name">Salary Rule</field>
+        <field name="res_model">hr.salary.rule</field>
+        <field name="view_type">form</field>
+        <field name="domain">[('type','=','public')]</field>
+        <field name="context">
+            {
+                "default_type" : 'public'
+            }
+            </field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="act_hr_salary_rule_view_form1" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_salary_rule_form1"/>
+            <field name="act_window_id" ref="action_view_hr_salary_rule_list_form1"/>
+    </record>
+    <record id="act_hr_salary_rule_view_tree1" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_salary_rule_list1"/>
+            <field name="act_window_id" ref="action_view_hr_salary_rule_list_form1"/>
+    </record>
+    <menuitem
+        id="menu_hr_salary_rule_view1"
+        name="Salary Rules"
+        action="action_view_hr_salary_rule_list_form1"
+        parent="menu_hr_salary_rule_view4"
+        sequence="1"
+    />
+    <record id="action_view_hr_salary_rule_list_form2" model="ir.actions.act_window">
+        <field name="name">Salary Rule</field>
+        <field name="res_model">hr.salary.rule</field>
+        <field name="view_type">form</field>
+        <field name="domain">[('type','=','special')]</field>
+        <field name="context">
+            {
+                "default_type" : 'special'
+            }
+            </field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="act_hr_salary_rule_view_form2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_salary_rule_form1" />
+            <field name="act_window_id" ref="action_view_hr_salary_rule_list_form2" />
+    </record>
+    <record id="act_hr_salary_rule_view_tree2" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_salary_rule_list1" />
+            <field name="act_window_id" ref="action_view_hr_salary_rule_list_form2" />
+    </record>
+    <menuitem
+        id="menu_hr_salary_rule_view2"
+        name="Special Salary Rules"
+        action="action_view_hr_salary_rule_list_form2"
+        parent="menu_hr_salary_rule_view4"
+        sequence="2"
+    />
+    <record id="action_view_hr_salary_rule_list_form3" model="ir.actions.act_window">
+        <field name="name">Salary Rule</field>
+        <field name="res_model">hr.salary.rule</field>
+        <field name="view_type">form</field>
+        <field name="domain">[('type','=','incentives')]</field>
+        <field name="context">
+            {
+                "default_type" :'incentives',
+                "default_rule_type" :'allowance'
+            }
+            </field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="act_hr_salary_rule_view_form3" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="hr_salary_rule_form1" />
+            <field name="act_window_id" ref="action_view_hr_salary_rule_list_form3" />
+    </record>
+    <record id="act_hr_salary_rule_view_tree3" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="hr_salary_rule_list1" />
+            <field name="act_window_id" ref="action_view_hr_salary_rule_list_form3" />
+    </record>
+    
+    <menuitem
+        id="menu_hr_salary_rule_view3"
+        name="Incentives and Grants"
+        action="action_view_hr_salary_rule_list_form3"
+        parent="menu_hr_salary_rule_view4"
+        sequence="3"/>
+        
+    <menuitem
+        id="hr_payroll.menu_action_hr_contribution_register_form"
+        action="hr_payroll.action_contribution_register_form"
+        parent="menu_hr_salary_rule_view4"
+        sequence="4"/>
+        
+    <menuitem
+        id="hr_payroll.hr_contract_advantage_template_menu_action"
+        action="hr_payroll.hr_contract_advantage_template_action"
+        parent="menu_hr_salary_rule_view4"
+        sequence="5"/>
+        
+      <menuitem
+        id="hr_payroll.menu_hr_salary_rule_category"
+        action="hr_payroll.action_hr_salary_rule_category"
+        parent="menu_hr_salary_rule_view4"
+        sequence="11"
+        groups="base.group_no_one" />
+        
+
+        
+    <delete model="ir.ui.menu" id="hr_payroll.menu_action_hr_salary_rule_form"/>
+</odoo>

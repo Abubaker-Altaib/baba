@@ -1,0 +1,40 @@
+<openerp>
+	<data>
+		<record id="asset_report_wizard_form" model="ir.ui.view">
+			<field name="name">asset.report.wizard.form</field>
+			<field name="model">asset.report.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Asset Report" version="7.0">
+					<group>
+						<group>
+							<field name='company_id' groups="base.group_multi_company" on_change="on_change_company()"/>
+							<field name='target_operation'/>
+						</group>
+						<group>
+							<field name='date_from' required="1"/>
+							<field name='date_to' required="1"/>
+						</group>
+					</group>
+					<field name='category_ids' required="1"/>
+					<footer>
+	                	<button name="print_report" string="Print" type="object" class="oe_highlight"/>
+						or 
+	                	<button special="cancel" string="Cancel" class="oe_link"/>
+            		</footer>
+				</form>
+			</field>
+		</record>
+		<record id="action_asset_report_wizard" model="ir.actions.act_window">
+			<field name="name">Assets Report</field>
+            <field name="res_model">asset.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="asset_report_wizard_form"/>
+		</record>
+		<menuitem  id="asset_report_wizard_menu" name="Asset Report" parent="account.menu_finance_reports" 
+             action="action_asset_report_wizard"/>
+
+        <!--report  header="False" auto="False" id="asset_report" model="fleet.vehicle.log.contract" name="maint_noti" string="Cars Maintenance Notification" rml="service/report/cars_maint_noti.rml"/-->
+	</data>
+</openerp>

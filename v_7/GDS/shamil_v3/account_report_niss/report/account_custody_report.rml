@@ -1,0 +1,331 @@
+<?xml version="1.0"?>
+<document filename="Custody Report.pdf">
+	<template pageSize="(595.0,852.0)" title="Total Account Statement" author="NCTR" allowSplitting="20">
+		<pageTemplate id="first">
+			<frame id="first" x1="0.5cm" y1="0.5cm" height="28.0cm" width="20cm" />
+			<!--header>
+				<pageGraphics>
+
+					<image x="1.4cm" y="16.3cm" height='130'>[[ company.logo or removeParentNode('image') ]]</image>
+				</pageGraphics>
+			</header-->
+					<!-- You Logo - Change X,Y,Width and Height -->
+		</pageTemplate>
+	</template>
+
+	<stylesheet>
+		<blockTableStyle id="Table2">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+		</blockTableStyle>
+
+		<blockTableStyle id="Table1">
+			<blockAlignment value="CENTER" />
+			<blockValign value="CENTER" />
+			<blockBackground colorName="#D3D3D3" start="0,0" stop="-1,0" />
+			<lineStyle kind="GRID" colorName="#e6e6e6" />
+			<blockTopPadding length="6" />
+			<blockBottomPadding length="4" />
+		</blockTableStyle>
+
+		<initialize>
+			<paraStyle name="all" alignment="justify" />
+		</initialize>
+		
+		<paraStyle name="Tilte" fontName="Helvetica-Bold" fontSize="14.0"
+			alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0" />
+		<paraStyle name="terp_default_Center" fontName="Helvetica"
+			fontSize="8.5" leading="11" alignment="CENTER" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="terp_default_Center_bold" fontName="Helvetica-Bold"
+			fontSize="8.5" leading="11" alignment="CENTER" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="terp_default_Right_bold" fontName="Helvetica-Bold"
+			fontSize="8.5" leading="11" alignment="RIGHT" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="terp_default_Right" fontName="Helvetica"
+			fontSize="9" leading="12" alignment="RIGHT" spaceBefore="0.0"
+			spaceAfter="0.0" />
+		<paraStyle name="white_space" fontName="Helvetica"
+			fontSize="8.5" leading="11" alignment="RIGHT" spaceBefore="4"
+			spaceAfter="4" />
+		<images />
+	</stylesheet>
+
+	<story>
+		<para style="white_space"></para>
+
+		<blockTable colWidths="539.0">
+			<tr>
+				<td>
+					<para style="Tilte">[[ get_custody_state(data) and 'تقرير إزالة العهد' or 'تقرير تفاصيل السندات' ]]</para>
+		<para style="white_space"></para>
+				</td>
+			</tr>
+<tr>
+				<td>
+					
+<para style="terp_default_Center_bold">[[ get_custody_state(data) == 'removed' and ' ' or removeParentNode('tr')]]</para>
+<para style="terp_default_Center_bold" fontSize="12.0">   العهد المزالة في الفترة من [[ data['form']['remove_date_from'] ]]   الى  [[ data['form']['remove_date_to'] ]]</para>
+				</td>
+			</tr>
+		</blockTable>
+		
+		<para style="white_space"></para>
+		
+
+		<blockTable colWidths="110,200,110.0,150.0" style="Table1">
+			<tr>
+				<!--td>
+					<para style="terp_default_Center_bold">المعاملات المقصودة</para>
+				</td-->
+				
+				<td>
+					<para style="terp_default_Center_bold">[[ get_custody_state(data) == 'all' and 'المزالة وغير المزالة' or get_custody_state(data) == 'removed' and 'المزالة' or get_custody_state(data) == 'not removed' and 'غير المزالة' or '']]</para>
+				</td>
+				
+				<td>
+					<para style="terp_default_Center_bold">[[ get_custody_state(data) and 'الكشف يتضمن المعاملات' or '' ]]</para>
+				</td>
+				
+				<td>
+					<para style="terp_default_Center_bold">الى [[ get_date_to(data) or 'غير محدد']]  </para>			
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">الفترة من [[ get_date_from(data) or 'غير محدد']]  </para>			
+				</td>
+			
+			</tr>
+			
+			
+		</blockTable>
+		
+		<para style="white_space"></para>
+
+		<section>
+                    <para style="terp_default_Right">[[ not data['form']['group_report'] and ' ' or removeParentNode('section')]]
+					</para>
+		<para style="white_space"></para>
+		<blockTable colWidths="110.0,50,60.0,90.0,40.0,40.0,95.0,60.0,30"
+			style="Table1" repeatRows="1">
+			<tr>
+                               <td>
+					<para style="terp_default_Center_bold">البيان</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">العملة</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">المبلغ</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">إسم الموظف</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">رقم الموظف</para>
+				</td>
+                                 <td>
+					<para style="terp_default_Center_bold">رقم الشيك / الإذن</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">رقم القيد</para>
+				</td>
+				
+				<td>
+					<para style="terp_default_Center_bold">التاريخ</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">#</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="terp_default_Right">[[ line['name'] ]] </para>
+				</td>
+				<td>
+					<para style="terp_default_Right">[[ line['currency_name'] ]] </para>
+				</td>
+				<td>
+					<para style="terp_default_Right">[[ formatLang(line['amount']) ]] </para>
+				</td>
+				<td>
+					<para style="terp_default_Right">[[ line['emp_name'] ]] </para>
+				</td>
+				<td>
+					<para style="terp_default_Right">[[ line['emp_code'] ]] </para>
+				</td>
+				<td>
+					<para style="terp_default_Right">[[ line['chk_seq'] or line['permission'] ]]</para>
+				</td>
+				<td>
+					<para style="terp_default_Right">[[ line['ref'] ]]</para>
+				</td>
+				<td>
+					<para style="terp_default_Right">[[ repeatIn(lines(data, 0 ), 'line') ]][[ line['date'] ]]
+					</para>
+				</td>
+				<td>
+						<para style="terp_default_Right">
+							<seq id="L2" />
+						</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="terp_default_Right">
+				<seqReset id="L2" />
+		</para>
+		<blockTable colWidths="160.0,80.0,150,185.0" style="Table2" repeatRows="1">
+			<tr>
+                                <td>
+					<para style="terp_default_Right_bold">
+						[[ get_currency() or  removeParentNode('blockTable') ]] 
+						<font color="white"></font>
+					</para>
+				</td>
+				<td>
+					<para style="terp_default_Right_bold" alignment="LEFT">
+						[[ formatLang(balance()) ]] 
+						<font color="white"></font>
+					</para>
+				</td>
+				
+				<td>
+					<para style="terp_default_Right_bold"></para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold"> المجمـــــــــــــــوع</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="white_space"></para>
+		</section>
+<!-- ************************ Grouped report ****************************************** -->
+<section>
+                    <para style="terp_default_Right">[[ data['form']['group_report'] and ' ' or removeParentNode('section')]]
+					</para>
+
+                <para style="terp_default_Right">[[ repeatIn(get_partner(data ), 'partner_id') ]]</para>
+		<para style="white_space"></para>
+
+		<blockTable colWidths="160.0,65,170.0,40.0,60.0,60,30"
+			style="Table1" >
+			
+			<tr>
+				
+				<td>
+					<para style="terp_default_Right">[[ partner_data(data, partner_id)['department_name'] ]] </para>
+				</td>
+				<td>
+					<para style="terp_default_Right"> الادارة  </para>
+				</td>
+				<td>
+					<para style="terp_default_Right">[[ partner_data(data, partner_id)['name'] ]]</para>
+				</td>
+				<td>
+					<para style="terp_default_Right">الاسم </para>
+				</td>
+				<td>
+				<para style="terp_default_Right">[[ partner_data(data, partner_id)['code'] ]]
+				</para>
+				</td>
+				<td>
+					<para style="terp_default_Right">رقم الموظف </para>
+				</td>
+				<td>
+						<para style="terp_default_Right">
+							<seq id="L3" />
+						</para>
+				</td>
+			</tr>
+		</blockTable>
+
+		<blockTable colWidths="160.0,60,70.0,80.0,125.0,60.0,30"
+			style="Table1" repeatRows="1">
+			<tr>
+                               <td>
+					<para style="terp_default_Center_bold">البيان</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">العملة</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">المبلغ</para>
+				</td>
+				
+                                 <td>
+					<para style="terp_default_Center_bold">رقم الشيك / الإذن</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">رقم القيد</para>
+				</td>
+				
+				<td>
+					<para style="terp_default_Center_bold">التاريخ</para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold">#</para>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<para style="terp_default_Right">[[ line['name'] ]] </para>
+				</td>
+				<td>
+					<para style="terp_default_Right">[[ line['currency_name'] ]] </para>
+				</td>
+				<td>
+					<para style="terp_default_Right">[[ formatLang(line['amount']) ]] </para>
+				</td>
+				
+				<td>
+				<para style="terp_default_Right" fontSize="8">[[ line['chk_seq'] or line['permission'] ]]</para>
+				</td>
+				<td>
+					<para style="terp_default_Right">[[ line['ref'] ]] </para>
+				</td>
+				<td>
+				<para style="terp_default_Right">[[ repeatIn(lines(data, partner_id), 'line') ]][[ line['date'] ]]
+					</para>
+				</td>
+				<td>
+						<para style="terp_default_Right">
+							<seq id="L2" />
+						</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="terp_default_Right">
+				<seqReset id="L2" />
+		</para>
+		<blockTable colWidths="220.0,70.0,80,215.0" style="Table2" repeatRows="1">
+			<tr>
+                                <td>
+					<para style="terp_default_Right_bold">
+						[[ get_currency() or  removeParentNode('blockTable') ]] 
+						<font color="white"></font>
+					</para>
+				</td>
+				<td>
+					<para style="terp_default_Right_bold" alignment="LEFT">
+						[[ formatLang(balance()) ]] 
+						<font color="white"></font>
+					</para>
+				</td>
+				
+				<td>
+					<para style="terp_default_Right_bold"></para>
+				</td>
+				<td>
+					<para style="terp_default_Center_bold"> المجمـــــــــــــــوع</para>
+				</td>
+			</tr>
+		</blockTable>
+		<para style="white_space"></para>
+		</section>
+			<para style="terp_default_Right">
+				<seqReset id="L3" />
+		</para>
+
+	</story>
+</document>

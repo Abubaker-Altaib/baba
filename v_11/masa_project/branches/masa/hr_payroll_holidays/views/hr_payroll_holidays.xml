@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <odoo>
+    <data>
+      <record model="ir.ui.view" id="hr_holidays_status_form">
+          <field name="name">hr holidays status inherit</field>
+          <field name="model">hr.holidays.status</field>
+          <field name="inherit_id" ref="hr_holidays_custom.hr_holidays_status_form" />
+          <field name="arch" type="xml">
+             <xpath expr="//group[2]/group[2]" position="after">
+             	<group string="Payroll Configration">
+             		<group colspan="6">
+             			<field name="payslip_type"/>
+             			<field name="percentage" attrs="{'required':[('payslip_type', '=', 'percentage')],'invisible':[('payslip_type','!=','percentage')]}"/>
+
+             			<field name="rule_ids" widget="many2many_tags" attrs="{'required': [('payslip_type', 'in', ['addition','exclusion'])], 'invisible':[('payslip_type','not in',['addition','exclusion'])]}"/>
+             		</group>
+             	</group>
+             </xpath>
+         </field>
+     </record>
+    </data>
+</odoo>

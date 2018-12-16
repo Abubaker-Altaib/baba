@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>    
+
+    <template id="enrich_report_tamplate">
+        <t t-call="web.html_container">
+           <t t-call="web.internal_layout">
+                <t t-foreach="docs" t-as="d">
+                    <div class="page">
+                        <body style="background-color:red">
+                            <h4 style="text-align: right;">التاريخ: <span t-esc="d.date"/> </h4>
+                            <h3 style="text-align: right;">الأخ/ المدير المالي</h3>
+                            <center>
+                                <h1>الموضوع/ تصفية النثرية</h1>
+                			    <h1>بالإشارة للموضوع أعلاه, نرجو شاكرين التكرم بتوجيه جهات الإختصاص لعمل الإجراءات اللازمة لتصفية النثرية حسب الكشف المرفق أدناه</h1>
+                                <h1>,,ولكم جزيل الشكر والتقدير</h1>
+                            </center>
+                            <p>........................... :الإسم<br />......................... :التوقيع</p>
+                            <table border="0" style="width:100%;">
+                                <tr>
+                                    <td style="width:50%;text-align: center;">الإجمالي: <span t-field="d.amount" /></td>
+                                    <td style="width:50%;text-align: right;"><span t-field="d.name" /> :النثرية</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:50%;text-align: center;">المدفوع: <span t-field="d.residual_amount" /></td>
+                                    <td style="width:50%;text-align: right;">المتبقي: <span t-field="d.paid_amount" /></td>
+                                </tr>
+                            </table>
+                            <h4 style="text-align: right;"><span t-field="d.department_id" /> :الإدارة</h4>
+                            <h4 style="text-align: right;">:التفاصيل</h4>
+                            <div class="table-responsive"><table class="table table-hover o_portal_my_doc_table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:30%;">التكلفة</th>
+                                            <th style="width:30%;"> التاريخ</th>
+                                            <th style="width:30%;"> البيان</th>
+                                            <th style="width:10%;"> # </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="d.enrich_lines" t-as="e">
+                                            <tr colspan="20">
+                                                <td style="width:30%;"><span t-field="e.cost" /></td>
+                                                <td style="width:30%;"><span t-field="e.date" /></td>
+                                                <td style="width:30%;"><span t-field="e.name" /></td>
+                                                <td style="width:10%;"><span t-field="e.id" /></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </body>
+                    </div>
+                </t>
+            </t>
+        </t>
+
+    </template>
+</odoo>

@@ -1,0 +1,521 @@
+<odoo>
+    <data>
+
+        <template id="trial_b">
+            <t t-call="web.html_container">
+                <t t-set="data_report_margin_top" t-value="12"/>
+                <t t-set="data_report_header_spacing" t-value="9"/>
+                <t t-set="data_report_dpi" t-value="110"/>
+                <t t-call="web.basic_layout">
+                    <div class="page">
+
+
+
+
+
+                        <html>
+                            <body>
+                                <head>
+                                    <style>
+
+
+
+
+                                        table, td, th {
+                                        border: 1px solid #ddd;
+                                        text-align: left;
+                                        }
+
+                                        table {
+                                        border-collapse: collapse;
+                                        width: 100%;
+                                        }
+
+                                        th, td {
+                                        padding: 15px;
+                                        }
+                                        th {
+                                        background-color:#cccccc;#E7D9D9
+                                        font-weight: bold;
+                                        }
+                                        td {
+                                        background-color:#E7D9D9;
+                                        font-weight: bold;
+
+
+
+                                        }
+                                        td, th {
+                                        border: 3px solid black;
+                                        padding: 3px 10px;
+                                        }
+
+                                        td,th,h1,h3,h4 { font-family: "Geeza Pro", "Nadeem",
+                                        "Al Bayan", "DecoType Naskh", "DejaVu Serif",
+                                        "STFangsong", "STHeiti", "STKaiti", "STSong",
+                                        "AB AlBayan", "AB Geeza", "AB Kufi", "DecoType Naskh",
+                                        "Aldhabi", "Andalus", "Sakkal Majalla", "Simplified Arabic",
+                                        "Traditional Arabic", "Arabic Typesetting", "Urdu Typesetting",
+                                        "Droid Naskh", "Droid Kufi", "Roboto", "Tahoma", "Times New Roman",
+                                        "Arial", serif;
+                                        }
+
+
+
+                                    </style>
+                                    <!--Font Name Helvetica-Bold-->
+                                </head>
+
+                                <center>
+                                    <h1>شركة الخدمات المصرفية الإلكترونية المحدودة</h1>
+
+
+
+                                </center>
+                                <center>
+                                    <h3>
+                                        الخرطوم شارع عثمان دقنة عمارة بنك السودان
+                                    </h3>
+                                </center>
+                                <center>
+                                    <h3>
+                                        Tel: (249)83 790840 - Fax: (249)83 790864
+                                    </h3>
+                                    <h3>
+                                        <!--ميزان المراجعة بالأرصدة-->
+
+                                        Trial Balance
+                                    </h3>
+                                </center>
+
+                                <hr/>
+
+
+
+
+
+
+                                <t t-if="data.get('parent_account',False)">
+
+                                    <h4  >
+
+                                        Parent Account :  <t t-esc="data['parent_account']"/>  </h4>
+
+
+                                </t>
+
+                                <h4 >
+                                    Date From:
+                                    <t t-esc="data['date_from']"/>
+                                    To :
+                                    <t t-esc="data['date_to']"/></h4>
+
+                                <t t-if="data.get('report_type',False) == 'details'">
+
+
+                                    <table >
+                                        <tr>
+
+
+                                            <th width="100" rowspan="2">
+                                                <center>الرمز</center>
+                                            </th>
+
+
+                                            <th width="200" rowspan="2">
+                                                <center>إسم الحساب</center>
+                                            </th>
+
+
+                                            <t t-if="data.get('initial_balance',False)">
+
+                                                <th width="200" colspan="2">
+                                                    <center>الأرصدة الإفتتاحية</center>
+                                                </th>
+
+                                                <th width="200" colspan="2">
+                                                    <center>أرصدة الحركة</center>
+                                                </th>
+
+
+
+                                            </t>
+
+
+                                            <th width="200" colspan="2">
+                                                <center>
+                                                    رصيد نهاية الفترة
+                                                </center>
+                                            </th>
+
+
+
+
+
+
+
+
+                                        </tr>
+                                        <tr>
+
+
+                                            <t t-if="data.get('initial_balance',False)">
+                                                <th width="200">
+                                                    <center>مدين</center>
+                                                </th>
+
+                                                <th width="200">
+                                                    <center>دائن</center>
+                                                </th>
+                                                <th width="200">
+                                                    <center>مدين</center>
+                                                </th>
+                                                <th width="200">
+                                                    <center>دائن</center>
+                                                </th>
+
+
+                                                <th width="200">
+                                                    <center>مدين</center>
+                                                </th>
+
+
+                                            </t>
+                                            <th width="200">
+                                                <center>دائن</center>
+                                            </th>
+
+
+
+
+                                        </tr>
+
+
+
+
+
+                                        <t t-if="data.get('initial_balance',False)">
+                                            <t t-set="Depit_Op_total" t-value="0"></t>
+                                            <t t-set="Credit_Op_total" t-value="0"></t>
+                                            <t t-set="Movements_Debit_total" t-value="0"></t>
+                                            <t t-set="Movements_Credit_total" t-value="0"></t>
+                                        </t>
+
+                                        <t t-set="Balance_O_Depit_total" t-value="0"></t>
+                                        <t t-set="Balance_O_Credit_total" t-value="0"></t>
+
+                                        <t t-foreach="data['query_result']" t-as="result">
+                                            <tr>
+
+                                                <td>
+                                                    <center><t t-esc="result['code']"/></center>
+                                                </td>
+
+
+
+                                                <td>
+                                                    <center><t t-esc="result['name']"/></center>
+                                                </td>
+
+
+                                                <t t-if="data.get('initial_balance',False)">
+
+
+                                                    <td>
+                                                        <center><t t-esc="'{:,}'.format(result['Depit Op'])"/></center>
+                                                    </td>
+
+                                                    <td>
+                                                        <center><t t-esc="'{:,}'.format(result['Credit Op'])"/></center>
+                                                    </td>
+                                                    <td>
+                                                        <center><t t-esc="'{:,}'.format(result['Movements-Debit'])"/></center>
+                                                    </td>
+
+                                                    <td>
+                                                        <center><t t-esc="'{:,}'.format(result['Movements-Credit'])"/></center>
+                                                    </td>
+
+
+
+
+
+                                                </t>
+
+
+
+                                                <td>
+                                                    <center><t t-esc="'{:,}'.format(result['Balance O Depit'])"/></center>
+                                                </td>
+
+                                                <td>
+                                                    <center><t t-esc="'{:,}'.format(result['Balance O Credit'])"/></center>
+                                                </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                <t t-if="data.get('initial_balance',False)">
+
+                                                    <t t-set="Depit_Op_total"
+                                                       t-value="Depit_Op_total +result['Depit Op']"></t>
+                                                    <t t-set="Credit_Op_total" t-value="Credit_Op_total +result['Credit Op']"></t>
+                                                    <t t-set="Movements_Debit_total" t-value="Movements_Debit_total + result['Movements-Debit']"></t>
+                                                    <t t-set="Movements_Credit_total"
+                                                       t-value="Movements_Credit_total + result['Movements-Credit']"></t>
+
+                                                </t>
+
+                                                <t t-set="Balance_O_Depit_total" t-value="Balance_O_Depit_total +result['Balance O Depit']"></t>
+                                                <t t-set="Balance_O_Credit_total" t-value="Balance_O_Credit_total + result['Balance O Credit']"></t>
+
+
+
+                                            </tr>
+
+
+
+
+
+
+
+
+
+                                            <t t-if="data.get('show_type',False) == 'details'">
+                                                <t t-foreach="get.get_childs(result['parent_id'],data['date_from'],data['date_to'],data['moves_state'])" t-as="child_result">
+                                                    <tr>
+
+                                                        <td style="background:white">
+                                                            <center><t t-esc="child_result['code']"/></center>
+                                                        </td>
+
+                                                        <td style="background:white">
+                                                            <center><t t-esc="child_result['name']"/></center>
+                                                        </td>
+
+
+
+
+
+
+
+                                                        <t t-if="data.get('initial_balance',False)">
+
+                                                            <td style="background:white">
+                                                                <center><t t-esc="'{:,}'.format(child_result['Depit Op'])"/></center>
+                                                            </td>
+                                                            <td style="background:white">
+                                                                <center><t t-esc="'{:,}'.format(child_result['Credit Op'])"/></center>
+                                                            </td>
+
+                                                            <td style="background:white">
+                                                                <center><t t-esc="'{:,}'.format(child_result['Movements-Debit'])"/></center>
+                                                            </td>
+
+                                                            <td style="background:white">
+                                                                <center><t t-esc="'{:,}'.format(child_result['Movements-Credit'])"/></center>
+                                                            </td>
+
+
+
+
+
+
+
+
+
+                                                        </t>
+
+
+                                                        <td style="background:white">
+                                                            <center><t t-esc="'{:,}'.format(child_result['Balance O Depit'])"/></center>
+                                                        </td>
+
+
+                                                        <td style="background:white">
+                                                            <center><t t-esc="'{:,}'.format(child_result['Balance O Credit'])"/></center>
+                                                        </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                    </tr>
+
+
+
+                                                </t>
+
+                                            </t>
+
+
+                                        </t>
+
+
+
+
+
+
+                                        <t t-if="not data.get('parent_account',False)">
+
+
+                                            <tr>
+
+
+                                                <td style="{background-color:yellow !important;}" colspan="2">
+                                                    <center>المجموع</center>
+                                                </td>
+
+
+
+                                                <t t-if="data.get('initial_balance',False)">
+
+                                                    <td style="{background-color:#cccccc;}">
+                                                        <center> <t t-esc="'{:,}'.format(round(Depit_Op_total,2))"/></center>
+                                                    </td>
+
+                                                    <td style="{background-color:#cccccc;}">
+                                                        <center> <t t-esc="'{:,}'.format(round(Credit_Op_total,2))"/></center>
+                                                    </td>
+
+                                                    <td style="{background-color:#cccccc;}">
+                                                        <center> <t t-esc="'{:,}'.format(round(Movements_Debit_total,2))"/></center>
+                                                    </td >
+
+
+                                                    <td style="{background-color:#cccccc;}">
+                                                        <center> <t t-esc="'{:,}'.format(round(Movements_Credit_total,2))"/></center>
+                                                    </td>
+
+
+
+
+
+
+
+
+
+                                                </t>
+
+                                                <td style="{background-color:yellow !important;}" >
+                                                    <center>
+
+                                                        <t t-esc="'{:,}'.format(round((Balance_O_Depit_total ),2))"/>
+
+                                                    </center>
+                                                </td>
+
+
+                                                <td style="{background-color:yellow !important;}" >
+                                                    <center>
+                                                        <t t-esc="'{:,}'.format(round(( Balance_O_Credit_total),2))"/>
+                                                    </center>
+                                                </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            </tr>                                        </t>
+
+
+                                    </table>
+
+                                </t>
+
+
+
+                            </body>
+                        </html>
+                    </div>
+                    <br/>
+                    <br/>
+                    <br/>
+
+                    <div class="footer">
+                        <div class="text-center" style="border-top: 1px solid black;">
+
+                            <span >
+                                <center>Page:1<span class="page"/> /1 <span class="topage"/></center>
+
+                            </span>
+
+                        </div>
+                        <p >
+                            <t t-if="data['moves_state'] == 'all' ">
+
+                                <!--كل القيود-->
+
+                                All Moves
+
+
+                            </t>
+                            <t t-if="data['moves_state'] == 'post' ">
+
+                                <!--كل القيود المرصدة فقط-->
+                                Only Posted Entries
+
+                            </t>
+                        </p>
+
+
+
+
+                        <p >
+                            Username :
+                            <t t-esc="user.name"/>
+                        </p>
+                        <p >
+                            <!--تاريخ الطباعة :-->
+                            PrintTime :   <t t-esc="str(data['time_now'])[0:19]"/>
+                        </p>
+
+
+                    </div>
+
+
+                </t>
+
+            </t>
+        </template>
+    </data>
+
+</odoo>

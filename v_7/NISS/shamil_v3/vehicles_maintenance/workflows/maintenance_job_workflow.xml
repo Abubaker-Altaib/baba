@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- maintenance job Activity-->
+        <record id="wkf_maintenance_job" model="workflow">
+            <field name="name">wkf.maintenance.job</field>
+            <field name="osv">maintenance.job</field>
+            <field name="on_create">True</field>
+        </record>
+        <record id="wkf_maintenance_job_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_job"/>
+            <field name="name">draft</field>
+            <field name="kind">function</field>
+            <field name="flow_start">True</field>
+            <field name="action">write({'state':'draft'})</field>
+        </record>
+        <record id="wkf_maintenance_job_request" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_job"/>
+            <field name="name">requested</field>
+            <field name="kind">function</field>
+            <field name="action">request()</field>
+        </record>
+
+        <record id="wkf_maintenance_job_request_manager" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_job"/>
+            <field name="name">requested_manager</field>
+            <field name="kind">function</field>
+            <field name="action">to_need_manager()</field>
+        </record>
+
+        <record id="wkf_maintenance_job_recieved" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_job"/>
+            <field name="name">recieved</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state':'recieved'})</field>
+        </record>
+        <record id="wkf_maintenance_job_return" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_job"/>
+            <field name="name">return</field>
+            <field name="kind">function</field>
+            <field name="action">return_fnc()</field>
+        </record>
+        <record id="wkf_maintenance_job_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_job"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="flow_stop">True</field>
+            <field name="action">done()</field>
+        </record>
+        <record id="wkf_maintenance_job_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_maintenance_job"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">cancel()</field>
+        </record>
+        <!-- maintenance job Transition-->
+        <record id="wkf_maintenance_job_darft_request" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_draft"/>
+            <field name="act_to" ref="wkf_maintenance_job_request"/>
+            <field name="condition">not need_manager()</field>
+            <field name="signal">request</field>
+        </record>
+
+        <record id="wkf_maintenance_job_darft_request_manager" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_draft"/>
+            <field name="act_to" ref="wkf_maintenance_job_request_manager"/>
+            <field name="condition">need_manager()</field>
+            <field name="signal">request</field>
+        </record>
+
+        <record id="wkf_maintenance_job_request_manager_request_manager" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_request_manager"/>
+            <field name="act_to" ref="wkf_maintenance_job_request"/>
+            <field name="signal">request_manager</field>
+        </record>
+
+        <record id="wkf_maintenance_job_request_manager_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_request_manager"/>
+            <field name="act_to" ref="wkf_maintenance_job_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_maintenance_job_darft_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_draft"/>
+            <field name="act_to" ref="wkf_maintenance_job_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        <record id="wkf_maintenance_job_request_recieved" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_request"/>
+            <field name="act_to" ref="wkf_maintenance_job_recieved"/>
+            <field name="signal">recieved</field>
+        </record>
+
+         <record id="wkf_maintenance_job_recieved_return" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_recieved"/>
+            <field name="act_to" ref="wkf_maintenance_job_return"/>
+            <field name="signal">return</field>
+        </record>
+
+        <record id="wkf_maintenance_job_recieved_done" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_recieved"/>
+            <field name="act_to" ref="wkf_maintenance_job_done"/>
+            <field name="signal">done</field>
+        </record>
+
+        <record id="wkf_maintenance_job_request_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_request"/>
+            <field name="act_to" ref="wkf_maintenance_job_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+        <record id="wkf_maintenance_job_recieved_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_recieved"/>
+            <field name="act_to" ref="wkf_maintenance_job_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_maintenance_job_return_cancel" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_return"/>
+            <field name="act_to" ref="wkf_maintenance_job_cancel"/>
+            <field name="signal">cancel</field>
+        </record>
+
+        <record id="wkf_maintenance_job_cancel_draft" model="workflow.transition">
+            <field name="act_from" ref="wkf_maintenance_job_cancel"/>
+            <field name="act_to" ref="wkf_maintenance_job_draft"/>
+            <field name="signal">draft</field>
+        </record>
+    </data>
+</openerp>

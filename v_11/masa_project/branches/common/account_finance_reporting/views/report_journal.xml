@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="report_journal_custom">
+    
+        <t t-foreach="docs" t-as="o">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+        
+            
+                <div class="page" t-attf-style="font-family: #{o.company_id.report_style_id.page_fount};">                  
+                <div class="col-xs-12" >
+                    <center>
+
+                         <h2  t-attf-style="font-family: #{o.company_id.report_style_id.header_fount};" >Public Journal Movement</h2>
+                         <h4> Journal: <t t-esc="o.name"/></h4>
+                    </center>
+                </div>
+
+                 <div class="col-xs-12">
+                        <br/>
+                        
+                    </div>
+                   
+                <table class="table table-condensed col-xs-12">
+                        <thead>
+                            <tr>
+                                 <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                     <center>   <span >Entries Sorted </span></center>
+                                    </th>
+                                <th  colspan="2"  t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                    <center>Date</center>
+                                </th>
+                                <th  t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                     <center> <span >Target Moves</span> </center>
+                                </th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                               <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                 <p t-if="data['form'].get('sort_selection') != 'l.date'"><span >Journal Entry Number</span> </p>
+                                 <p t-if="data['form'].get('sort_selection') == 'l.date'"> <spna> Date </spna></p>
+                            </td>
+                                <t   name="form_date" t-if="not data['form']['date_to']  ">
+                                    <td colspan="2" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" >
+                                  <strong t-if="data['form']['date_from']">from date:</strong><span t-esc="data['form']['date_from']"/>
+                                </td>
+                                </t>
+                                <t name="date_to" t-if="data['form']['date_to']">
+                                    <td  t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" >
+                                  
+                                 <strong>from date:</strong> <span t-esc="data['form']['date_from']"/>
+                                </td>
+                                <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                   
+                                  <strong>to date:</strong><span t-esc="data['form']['date_to']"/>
+                                </td>
+                                </t>
+                                     <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                    <p t-if="data['form']['target_move'] == 'all'">  <span >All Entries </span></p>
+                                    <p t-if="data['form']['target_move'] == 'posted'">  <span >All Posted Entries </span></p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="col-xs-12 row">
+                        <br/>
+                    </div>
+
+                    <table  class="table   table-condensed col-xs-12" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};font-family: #{o.company_id.report_style_id.table_fount};" >
+                        <thead t-attf-style="background-color: #{o.company_id.report_style_id.header_color};">
+                            
+                            <tr>
+                                <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"> <center> Date </center></th>
+                                 <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"> <center> <span>Move </span> </center> </th>
+                                 <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><center><span> Partner</span> </center> </th>
+                                <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"> <center > <span>Account</span> </center></th>
+                                
+                                <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"> <center> <span>Label </span></center> </th>
+                                <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><center>Debit</center></th>
+                                <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><center>Credit</center></th>
+                                <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" t-if="data['form']['amount_currency']"><center>Currency</center></th>
+                            </tr>
+                        </thead>
+                        <tbody t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                            <t t-foreach="lines[o.id]" t-as="aml">
+                                <t t-if="aml_even">
+                                    <tr t-attf-style="background-color: #{o.company_id.report_style_id.even_row_color};" >
+                                        
+                                        <td name="date_even_row" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" > <span t-field="aml.date"/>
+                                        </td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" ><span t-esc="aml.move_id.name != '/' and aml.move_id.name or ('*'+str(aml.move_id.id))"/>
+                                        </td>
+                                       
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" ><span t-esc="aml.sudo().partner_id and aml.sudo().partner_id.name and aml.sudo().partner_id.name[:23] or ''"/>
+                                        </td>
+                                         <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" ><span t-field="aml.account_id.code"/>
+                                        </td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-esc="aml.name[:35]"/></td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-esc="aml.debit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-esc="aml.credit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" t-if="data['form']['amount_currency'] and aml.amount_currency">
+                                            <span t-esc="aml.amount_currency" t-options="{'widget': 'monetary', 'display_currency': aml.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </t>
+
+                                <t t-if="not aml_even">
+                                    <tr t-attf-style="background-color: #{o.company_id.report_style_id.odd_row_color};" >
+                                        <td name="date_odd_row" t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" > <span t-field="aml.date"/>
+                                        </td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" ><span t-esc="aml.move_id.name != '/' and aml.move_id.name or ('*'+str(aml.move_id.id))"/>
+                                        </td>
+                                       
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" ><span t-esc="aml.sudo().partner_id and aml.sudo().partner_id.name and aml.sudo().partner_id.name[:23] or ''"/>
+                                        </td>
+                                         <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" ><span t-field="aml.account_id.code"/>
+                                        </td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-esc="aml.name[:35]"/></td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-esc="aml.debit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};"><span t-esc="aml.credit" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                        <td t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" t-if="data['form']['amount_currency'] and aml.amount_currency">
+                                            <span t-esc="aml.amount_currency" t-options="{'widget': 'monetary', 'display_currency': aml.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </t>
+                        </tbody>
+                        <thead t-attf-style="background-color: #{o.company_id.report_style_id.header_color};">
+                            <tr>
+                                <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};" colspan="5">
+                                     <strong>Total</strong>
+                                </th>
+                                <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                    <span t-esc="sum_debit(data, o)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                </th>
+                                <th t-attf-style="border:1px solid #{o.company_id.report_style_id.border_color};">
+                                    <span t-esc="sum_credit(data, o)" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </t>
+        </t>
+    
+    </t>
+
+</template>
+
+
+
+</odoo>

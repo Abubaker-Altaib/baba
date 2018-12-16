@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record id="view_bank_statement_form" model="ir.ui.view">
+			<field name="name">account.bank.statement.form</field>
+			<field name="model">account.bank.statement</field>
+			<field name="inherit_id" ref="account_voucher.view_bank_statement_form_voucher"/>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='line_ids']/tree/field[@name='voucher_id']" position="replace">
+					<field name="voucher_id" string="Payment/Receipt" readonly="1"/>
+					<button name="create_voucher" type="object" string="Create Payment/Receipt" 
+							icon="gtk-go-forward" attrs="{'invisible':[('voucher_id','!=',False)]}"/>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_bank_statement_form_custom" model="ir.ui.view">
+			<field name="name">account.bank.statement.form</field>
+			<field name="model">account.bank.statement</field>
+			<field name="inherit_id" ref="account_bank_statement.view_bank_statement_form_custom"/>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<xpath expr="//sheet/notebook/page[3]/field[@name='line_ids']" position="before">
+					<button name="reconcile" string="Reconcile" type="object"  class="oe_highlight"/>
+				</xpath>
+			</field>
+		</record>
+	</data>
+</openerp>

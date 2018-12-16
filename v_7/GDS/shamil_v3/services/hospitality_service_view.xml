@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openerp>
+	<data>
+
+		<!-- hospitality service Record Form,Tree View & Action -->
+
+		<record id="view_hospitality_service_view_form" model="ir.ui.view">
+			<field name="name">hospitality.service.form</field>
+			<field name="model">hospitality.service</field>
+			<field name="arch" type="xml" >
+			    <form string="Hospitality Service" version="7.0">
+                                <header col="11" colspan="4">
+				    <button name="confirmed_d" states="draft" string="Section Manager confirmation"
+					    confirm="Are you sure you want to Confirm this request?"  />
+                                    <!--groups="base.group_Section_manager,base.group_department_managers"-->
+				   <button name="confirmed" states="confirmed_d" string=" Department manegert confirmation"
+					  confirm="Are you sure you want to confirm this request?" />
+                                   <!--groups="base.group_department_managers"-->
+				   <button name="approved_sc" states="confirmed" string=" Admin  Section manger approval"
+					   confirm="Are you sure you want to approve this request"  />
+                                   <!--groups="base.group_service_section_manager"-->							
+                                   <button name="done" states="approved_sc" string="Admin affairs officer "
+					   confirm="Are you sure you want to approve this request?" />
+                                   <!--groups="base.group_hospitality_allowns"-->
+				   <button name="cancel" states="draft,confirmed_d,confirmed,approved,approved_sc" string="Cancel Request"
+					   icon="gtk-cancel" confirm="Are you sure you want to Cancel this request?" />
+				   <button name="ir_action_cancel_draft" states="cancel"
+					   string="Set to Draft" type="object" icon="gtk-convert" />
+                                   <!--groups="media.group_send_to_draft"-->
+				   <field name="state" widget="statusbar" statusbar_visible="draft,done,cancel"/>
+				</header>
+                                <sheet>
+                                          <group col="4" >
+                                                <field name="alarm" />
+                                                <field name="name" colspan="2" />				
+						<field name="date" colspan="2" />
+						<field name="company_id" colspan="2" />
+                                                <field name="department_id" colspan="2" required="1"/>
+						<field name="date_of_execution" colspan="2" required="1" />
+					        <field name="hosplity_type" colspan="2" />                                       
+                                             <!--field name="notes" colspan="2"  /-->	
+                   	                       <field name="partner_id" colspan="2"
+                                       attrs="{'invisible':[('state','not in',('approved_sc','done'))],'required':[('state','=','approved_sc'),('payment_selection','==','voucher')]}"/>
+                                                <field name="hospilty_place" colspan="2"  />
+	                                        <field name="no_day" colspan="2"  />
+                                                <field name="cost" colspan="2" attrs="{'required':[('state','=','approved_sc')]}"/>
+                   				<field name="payment_selection" colspan="2" 
+                                       attrs="{'invisible':[('state','not in',('approved_sc','done'))],'required':[('state','=','approved_sc')]}"/>
+                   				<field name="enrich_category" colspan="2" 
+                                            attrs="{'invisible':['!',('state','not in',('approved_sc','done')),
+                                            ('payment_selection','!=','enrich')],'required':[('state','=','approved_sc'),
+                                            ('payment_selection','==','enrich')]}" domain="[('state','=','confirmed'),
+                                            ('company_id','=',company_id)]"/>
+                                                <field name="allowance_computed" colspan="2" readonly = "1"/> 
+					</group>	
+					<notebook colspan="4">	
+					    <page string="Services Types and Quantaties">
+                                                 <field colspan="4" name="order_lines" nolabel="1" >
+                                                     <tree editable="bottom" string="Items Lines">
+						            <field name="service_type" />
+						            <field name="service_qty" />
+						            <field name="service_cost" />
+						            <field name="service_sort" />
+                                                     </tree>
+                                                 </field>
+                                            </page>			
+		                           <page string="Notes">
+					       <field name="notes" nolabel="1" />								
+				           </page>
+                                     </notebook>
+                                 </sheet>
+			     </form>
+			</field>
+		</record>
+
+
+		<record id="view_hospitality_service_tree" model="ir.ui.view">
+			<field name="name">hospitality.service.tree</field>
+			<field name="model">hospitality.service</field>
+			<field name="arch" type="xml">
+				<tree colors="blue:state in ('draft');gray:state in ('done','cancel');red:state in ('confirmed')"  
+                                       string="hospitality service">
+						<field name="name" colspan="2" />				
+						<field name="date" colspan="2" />
+						<field name="company_id" colspan="2" />
+						<field name="department_id" colspan="2"/>
+						<field name="partner_id" colspan="2"/>
+						<field name="allowance_computed"/>
+						<field name="cost" colspan="2"/>
+						<field name="state" colspan="2" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- hospitality service Search Filter -->
+
+		<record id="view_public_relation_foreigners_filter" model="ir.ui.view">
+			<field name="name">hospitality.service.list.select</field>
+			<field name="model">hospitality.service</field>
+			<field name="arch" type="xml">
+				<search string="Search for Press Record">
+					<field name="name" select="1" />
+					<separator orientation="vertical" />
+					<field name="date" colspan="1"/>
+					<separator orientation="vertical" />
+					<field name="department_id" colspan="1"/>
+					<separator orientation="vertical" />
+                                        <field name="state" select="1"/>
+                                        <separator orientation="vertical" />
+					<field name="date_of_execution" colspan="1"/>
+                                        <separator orientation="vertical" />
+					<field name="allowance_computed" colspan="1"/>
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="partner" icon="terp-personal"
+							domain="[]" context="{'group_by':'department_id'}" />
+						<filter string="State" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'state'}" />
+						<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+
+					</group>
+
+				</search>
+			</field>
+		</record>
+
+		<!-- hospitality service order lines  Record Form,Tree View & Action -->
+
+		<record id="order_lines_view_form" model="ir.ui.view">
+			<field name="name">order.lines.form</field>
+			<field name="model">order.lines</field>
+			<field name="arch" type="xml">
+				<form string="hospitality service Order Lines" version="7.0">
+                                     <sheet>
+						<field name="service_type" colspan="1" required="1"/>
+						<field name="service_qty" colspan="1" required="1" />
+                                    		<field name="service_cost" colspan="1" required="1"/>
+                                                <field name="service_sort" colspan="1" required="1"/>
+	                             </sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="order_lines_view_tree" model="ir.ui.view">
+			<field name="name">order.lines.tree</field>
+			<field name="model">order.lines</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<form string="hospitality service Order Lines">
+
+						<field name="service_type" colspan="1" required="1"/>
+						<field name="service_qty" colspan="1" required="1" />
+                                    		<field name="service_cost" colspan="1" required="1"/>
+                                                 <field name="service_sort" colspan="1" required="1"/>
+	
+				</form>
+			</field>
+		</record>
+
+
+
+
+
+		<!-- hospitality service type  Record Form,Tree View & Action -->
+
+		<record id="hospitality_service_type_view_form" model="ir.ui.view">
+			<field name="name">hospitality.service.type.form</field>
+			<field name="model">hospitality.service.type</field>
+			<field name="arch" type="xml">
+				<form string="hospitality service type" version="7.0">
+                                      <sheet>
+                                           <group>
+						<field name="code" colspan="1" />
+						<field name="name" colspan="1" required="1" />
+						<field name="parent_id" select="1"/>
+						<newline/>
+						<separator string="Accounting properties" colspan="4"/>
+						<newline/>
+						<field name="hospitality_journal_id" colspan="1" />
+						<field name="hospitality_account_id" colspan="1"/>
+						<field name="hospitality_analytic_id" colspan="1"/>
+                                           </group>
+	                             </sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="hospitality_service_type_view_tree" model="ir.ui.view">
+			<field name="name">hospitality.service.type.tree</field>
+			<field name="model">hospitality.service.type</field>
+			<field name="arch" type="xml">
+				<tree string="hospitality service type">
+					<field name="code" />
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+
+
+
+		<!-- hospitality service type  Search Filter -->
+
+		<record id="view_hospitality_service_type_filter" model="ir.ui.view">
+			<field name="name">hospitality.service.type.list.select</field>
+			<field name="model">hospitality.service.type</field>
+			<field name="arch" type="xml">
+				<search string="Search for hospitality Service">
+					<field name="name" select="1" />
+				</search>
+			</field>
+		</record>
+
+
+		<!-- hospitality allowances archive Record Form,Tree View & Action -->
+
+		<record id="view_hospitality_allowances_archive_view_form" model="ir.ui.view">
+			<field name="name">hospitality.allowances.archive.form</field>
+			<field name="model">hospitality.allowances.archive</field>
+			<field name="arch" type="xml">
+				<form string="Hospitality Allowances Archive" version="7.0">
+                                     <sheet>
+                                           <group>
+						<field name="name" colspan="2" />	
+						<field name="partner_id" colspan="2"/>
+                                                <field name="departments" colspan="2"/>			
+						<field name="date_from" colspan="2" />
+						<field name="date_to" colspan="2" />
+						<field name="amount" colspan="2" />
+						<field name="transfer" colspan="2" readonly = "1"/>
+						<field name="date" colspan="2" />
+						<field name="company_id" colspan="2" />
+                                           </group>	
+					   <notebook colspan="4">	
+						<page string="Executing Agencies Allowances">
+                                                	<field colspan="4" name="allowances_lines" nolabel="1"  >
+                                				<tree editable="bottom" string="Items Lines">
+						        	    <field name="department_id" />
+						        	    <field name="hospitality_service_type" />
+						        	    <field name="amount" />
+                                				</tree>
+                        				</field>
+                        			</page>
+					    	<page string="Account">
+							<field name="account_voucher_ids" colspan="4" nolabel="1" />
+					   	</page>											
+					   </notebook>
+					   <button colspan="2" name="action_create_ratification"  string="Create Ratification" type="object"
+                     			           confirm="Are you sure you want to create account Ratification?" icon="terp-gtk-go-back-rtl" 
+                                                   attrs="{'invisible':[('transfer','=',True)]}" groups="base.group_hospitality_allowns" />
+                                     </sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="view_hospitality_allowances_archive_tree" model="ir.ui.view">
+			<field name="name">hospitality.allowances.archive.tree</field>
+			<field name="model">hospitality.allowances.archive</field>
+			<field name="arch" type="xml">
+				<tree string="Hospitality Allowances Archive">
+						<field name="name" colspan="2" />				
+						<field name="date" colspan="2" />				
+						<field name="partner_id" colspan="2" />				
+						<field name="date_from" colspan="2" />
+						<field name="date_to" colspan="2"/>
+						<field name="amount" colspan="2"/>
+						<field name="transfer" colspan="2"/>
+				</tree>
+			</field>
+		</record>
+
+
+
+		<!-- hospitality service Search Filter -->
+
+		<record id="view_hospitality_allowances_archive_filter" model="ir.ui.view">
+			<field name="name">hospitality.allowances.archive.filter</field>
+			<field name="model">hospitality.allowances.archive</field>
+			<field name="arch" type="xml">
+				<search string="Hospitality Allowances Archive">
+                    <field name="partner_id" />
+                    <field name="department_id" widget="selection"/>
+					<separator orientation="vertical" />
+					<field name="date_from" select="1" />
+					<separator orientation="vertical" />
+					<field name="date_to" colspan="1"/>
+					<separator orientation="vertical" />
+					<newline />
+					<group expand="0" string="Group By..." colspan="4" col="10">
+						<filter string="Partner" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'partner_id'}" />
+						<filter string="Date" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'date'}" />
+						<filter string="Transfer" icon="terp-stock_effects-object-colorize"
+							domain="[]" context="{'group_by':'transfer'}" />
+
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<!-- Menu -->
+		
+
+		<record id="hospitality_service_action" model="ir.actions.act_window">
+			<field name="res_model">hospitality.service</field>
+			<field name="domain">[]</field>
+		</record>
+		
+		
+
+		
+		
+		<!-- halls Name  Record Form,Tree View & Action -->
+
+		<record id="halls_name_view_form" model="ir.ui.view">
+			<field name="name">halls.name.form</field>
+			<field name="model">halls.names</field>
+			<field name="arch" type="xml">
+			    <form string="Halls Names" version="7.0">	
+                                <sheet>	
+                                    <group>		
+                                        <field name="name" colspan="1" />
+                       	                <field name="code" colspan="1" />
+					<field name="used" colspan="1" />
+					<notebook colspan="4">	
+					    <page string="Hall Requeridment and Products">
+                                                <field colspan="4" name="hall_detalis" nolabel="1" >
+                                                     <tree editable="bottom" string="Items Lines">
+						            <field name="name" />
+						            <field name="request" />
+                                		     </tree>
+                                                 </field>
+					    </page>
+					</notebook>
+                                    </group>
+                                </sheet>			
+			   </form>
+			</field>
+		</record>
+
+
+		<record id="halls_name_view_tree" model="ir.ui.view">
+			<field name="name">halls.name.tree</field>
+			<field name="model">halls.names</field>
+			<field name="arch" type="xml">
+				<tree string="Hall Name and all need">
+					<field name="name" />
+					<field name="code" />
+					<field name="used"  />
+					<field name="lock_begin_date" />
+					<field name="lock_end_date"  />
+				</tree>
+			</field>
+		</record>
+
+
+
+		<!-- halls Names  Search Filter -->
+
+		<record id="view_halls_name_filter" model="ir.ui.view">
+			<field name="name">halls.name.list.select</field>
+			<field name="model">halls.names</field>
+			<field name="arch" type="xml">
+				<search string="Search for Halls Names">
+					<field name="name" select="1" />
+					<field name="used" select="1" />
+				    <field name="hall_detalis" select="1" />
+					
+				</search>
+			</field>
+		</record>
+		
+		
+		<!-- hall lock detailes Record Form,Tree View & Action -->
+
+		<record id="hall_deta_view_form" model="ir.ui.view">
+			<field name="name">halls.names.detalis.form</field>
+			<field name="model">halls.names.detalis</field>
+			<field name="arch" type="xml">
+				<form string="hall lock detailes" version="7.0">
+                                     <sheet>
+                                          <group>
+						<field name="name" colspan="1" />
+						<field name="request" colspan="1" />  
+                                          </group>
+                                    </sheet>                                		
+				</form>
+			</field>
+		</record>
+
+
+		<record id="hall_deta_view_tree" model="ir.ui.view">
+			<field name="name">halls.names.detalis.tree</field>
+			<field name="model">halls.names.detalis</field>
+			<field name="arch" type="xml">
+				<tree string="hospitality service Order Lines">
+					<field name="name" colspan="1" />
+					<field name="request" colspan="1" />
+				</tree>
+			</field>
+		</record>
+		
+	
+		
+<!-- halls lock  Record Form,Tree View & Action -->
+
+		<record id="halls_lock_view_form" model="ir.ui.view">
+			<field name="name">halls.lock.form</field>
+			<field name="model">halls.lock</field>
+			<field name="arch" type="xml">
+			     <form string="Halls Locks" version="7.0">
+                                 <header col="11" colspan="4">
+                                        <button name="confirmed_d" states="draft" string="Section Manager confirmation"
+					        confirm="Are you sure you want to Confirm this request?"  class="oe_highlight"/>
+                                              <!--groups="base.group_Section_manager,base.group_department_managers"/-->
+					<button name="confirmed" states="confirmed_d" string=" Department manegert confirmation"
+						confirm="Are you sure you want to confirm this request?"  class="oe_highlight" />
+                                        <!--groups="base.group_department_managers"/-->
+					<button name="approved" states="confirmed" string=" Admin  Affair mangar approval"
+						confirm="Are you sure you want to approve this request"  class="oe_highlight"/>
+                                        <!--groups="base.group_admin_affairs_manager"/-->
+					<button name="approved_sc" states="approved" string=" Admin  Section manger approval"
+						confirm="Are you sure you want to approve this request"  class="oe_highlight" />
+                                        <!--groups="base.group_service_section_manager" /-->
+					<button name="done" states="approved_sc" string="Admin affairs officer "
+						confirm="Are you sure you want to approve this request?"  class="oe_highlight" />
+                                        <!--groups="base.group_hospitality_allowns"/-->
+					<button name="cansal_lock" states="done" string="Cansal Lock hall"  class="oe_highlight"  type="object"
+						confirm="Are you sure you want to approve this request?" />
+                                        <!--groups="base.group_hospitality_allowns"/-->
+					<button name="change_lock" states="done" string="Change Lock hall" icon="gtk-index" type="object"
+						confirm="Are you sure you want to approve this request?"  class="oe_highlight"/>
+                                        <!--groups="base.group_hospitality_allowns"/-->
+					<button name="cancel" states="draft,confirmed_d,confirmed,approved,approved_sc" string="Cancel Request"
+					        confirm="Are you sure you want to Cancel this request?"  class="oe_highlight"/>
+					<button name="ir_action_cancel_draft" states="cancel"
+						string="Set to Draft" type="object" icon="gtk-convert"  class="oe_highlight"/>
+                                         <!--groups="media.group_send_to_draft"/-->
+					<field name="state" widget="statusbar" statusbar_visible="draft,done,cancel"/>
+				</header>
+				<sheet> 
+				    <group col="4">
+                                         <field name="name"  />
+                                         <field name="company_id"  />
+                              	         <field name="department_id"  domain="[('company_id','=',company_id)]" colspan="4"/>
+                                         <field name="date_from"  />
+					 <field name="date_to" />
+					 <newline/>
+					 <!--separator string="Ckeck Lock Halls" /-->
+                         	         <button string="Lock Halls" name="lock_hall" icon="gtk-index" type="object" />
+					 <newline/>
+					 <field name="hall_id" on_change="onchange_hall_id(hall_id)"  domain="[('used','=',False)]"/>
+                                         <field name="Purpose" />						
+					 <field name="no_day" /> 					
+					 <field name="multi_service" />
+					 <field name="emp_cordnate"  /> 					
+					 <field name="tel_cordnate"/>
+ 					 <field name="payment_selection" colspan="2" attrs="{'invisible':[('state','not in',('approved_sc','done'))],'required':[('state','=','approved_sc')]}"/>
+					 <field name="cost" colspan="2" attrs="{'invisible':['!',('state','not in',('approved_sc','done')),('payment_selection','!=','enrich')],'required':[('payment_selection','==','enrich')]}"/>
+					 <field name="enrich_category" colspan="2" attrs="{'invisible':['!',('state','not in',('approved_sc','done')),('payment_selection','!=','enrich')],'required':[('state','=','approved_sc'),('payment_selection','==','enrich')]}" domain="[('state','=','confirmed'),('company_id','=',company_id)]"/>	
+				    </group>					
+				   <notebook colspan="4">	
+					<page string="Hospitality_serice"  
+                                             attrs="{'invisible':[('multi_service','!=','extrnal_hospitality_service')],'required':[('multi_service','==','extrnal_hospitality_service')]}">
+					     <!--field name="no_day" colspan="2"/-->
+                                             <field colspan="4" name="service_order" nolabel="1"  >
+                                		 <tree editable="top" string="Items Lines">
+						       	<field name="service_type" />
+                                    			<field name="service_qty" />
+                                    			<field name="service_sort" />
+                                		  </tree>
+                        		       </field>
+                        		</page>	
+                           		<page string="Member Share">
+				             <group>					
+                                                  <field name="member" colspan="2"   nolabel="1" />
+				              </group>					
+                                        </page>
+                                        <page string="Hall Service">
+                                               <field name="all_service" colspan="2"  />
+                                         </page> 						
+                                   </notebook>
+                        	</sheet>			
+			     </form>
+			</field>
+		</record>
+
+
+		<record id="halls_lock_view_tree" model="ir.ui.view">
+			<field name="name">halls.lock.tree</field>
+			<field name="model">halls.lock</field>
+			<field name="arch" type="xml">
+				<tree string="Hall Lock ">
+                                        <field name="name"  />
+					<field name="company_id"/>
+					<field name="department_id" select="1"/>
+					<field name="date_from" select="1" />
+					<field name="date_to"  select="1" />
+                     			<field name="hall_id" select="1"/>
+                     			<field name="state" select="1"/>					
+				</tree>
+			</field>
+		</record>
+
+
+
+		<!-- halls Names  Search Filter -->
+
+		<!--record id="view_halls_name_filter" model="ir.ui.view">
+			<field name="name">halls.name.list.select</field>
+			<field name="model">halls.names</field>
+			<field name="type">search</field>
+			<field name="arch" type="xml">
+				<search string="Search for Halls Names">
+					<field name="name" select="1" />
+					<field name="used" select="1" />
+					
+				</search>
+			</field>
+		</record-->
+		
+		
+       <menuitem id="services_menu" name="Services"
+			parent="admin_affairs.menu_admin_affairs_operations" sequence="1"/>
+
+       <menuitem id="hospitality_service__main_menu" name="Hospitality Service"
+			parent="services_menu"  />
+			
+       <menuitem id="hospitality_service_menu" name="Hospitality Service"
+			parent="services_menu" action="hospitality_service_action" />
+       <menuitem id="service_configration_menu" name="Service Configuration"
+			parent="admin_affairs.admin_affairs_configuration_menu" />
+
+		<record id="hospitality_service_type_action" model="ir.actions.act_window">
+			<field name="res_model">hospitality.service.type</field>
+			<field name="domain">[]</field>
+		</record>
+		
+      <menuitem id="hospitality_service_type" name="Hospitality Services Type"
+			parent="service_configration_menu" action="hospitality_service_type_action" />
+
+                <record id="hospitality_allowances_archive_action" model="ir.actions.act_window">
+			<field name="res_model">hospitality.allowances.archive</field>
+			<field name="domain">[]</field>
+		</record>
+		
+      <menuitem id="hospitality_allowances_menu" name="Hospitality Services Allowances"
+			parent="hospitality_service__main_menu" />
+			
+      <menuitem id="hospitality_allowances_archive_menu" name="Hospitality Allowances Archive"
+			parent="hospitality_allowances_menu" action="hospitality_allowances_archive_action" />
+			
+			 <record id="halls_name_action" model="ir.actions.act_window">
+			<field name="res_model">halls.names</field>
+			<field name="domain">[]</field>
+		</record>
+       
+      <menuitem id="halls_name_menu" name="Halls Names"
+			parent="services_menu" action="halls_name_action" />
+			
+			
+			
+			 <record id="halls_lock_action" model="ir.actions.act_window">
+			<field name="res_model">halls.lock</field>
+			<field name="domain">[]</field>
+		</record>
+       
+      <menuitem id="halls_lock_menu" name="Halls Locks"
+			parent="services_menu" action="halls_lock_action" />
+			
+			
+	
+	</data>
+</openerp>

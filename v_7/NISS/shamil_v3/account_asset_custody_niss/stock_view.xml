@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+       <record id="view_category_category_custody_form_inherit" model="ir.ui.view">
+            <field name="name">product.category.exchange.inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="stock.view_category_property_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <field name="parent_id" position="after">
+                        <!--attrs="{'invisible':[('asset_category_id','=',False)]}"-->
+                        <field name="asset_category_id"/>
+                    </field>
+                    <group name="account_stock_property" position="after">
+                        <group name="custody_account" string="Custody Accounts" colspan="4" attrs="{'invisible':[('custody','!=',True)]}">
+                        <field name="journal_id" attrs="{'required':[('custody','=',True)]}"/>
+                        <field name="account_asset_id"  attrs="{'required':[('custody','=',True)]}"/>
+                        <field name="account_depreciation_id" attrs="{'required':[('custody','=',True)]}"/>
+                        <field name="account_expense_depreciation_id" attrs="{'required':[('custody','=',True)]}"/>
+                        <!--field name="asset_category_id" readonly="1"/-->
+                        </group>
+                    </group>
+                </data>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="cus_view_exchange_order_form">
+            <field name="name">Exchange Order</field>
+            <field name="model">exchange.order</field>
+            <field name="inherit_id" ref="stock_exchange.exchange_order_form"/>
+            <field name="arch" type="xml">
+                   <field name="department_id" position="after">
+                        <field name="custody"/>
+                        <field name="office" required="0" invisible="0" readonly="0" attrs="{'invisible' : [('custody','=',False)] , 'required' : [('custody','=',True)],'readonly':[('state','not in',('draft', 'confirmed'))] }"/>
+                        <field name="custody_type" required="0" readonly="0"  invisible="0" attrs="{'invisible' : [('custody','=',False)] , 'required' : [('custody','=',True)],'readonly':[('state','not in',('draft', 'confirmed'))]}"/>
+                        <field name="employee_to" required="0" invisible="0"  readonly="0" attrs="{'invisible' : [('custody','=',False)] , 'required' : [('custody_type','=','personal')],'readonly':[('state','not in',('draft', 'confirmed'))]}" domain="[('state','=','approved')]"/>
+ 
+                    </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="cus_view_exchange_return_form">
+            <field name="name">Exchange Order</field>
+            <field name="model">exchange.order</field>
+            <field name="inherit_id" ref="stock_exchange.return_order_form"/>
+            <field name="arch" type="xml">
+                    <field name="department_id" position="after">
+                        <field name="custody"/>
+                        <field name="office" required="0" invisible="0" readonly="0" attrs="{'invisible' : [('custody','=',False)] , 'required' : [('custody','=',True)],'readonly':[('state','not in',('draft', 'confirmed'))] }"/>
+                        <field name="custody_type" required="0" readonly="0"  invisible="0" attrs="{'invisible' : [('custody','=',False)] , 'required' : [('custody','=',True)],'readonly':[('state','not in',('draft', 'confirmed'))]}"/>
+                        <field name="employee_to" required="0" invisible="0"  readonly="0" attrs="{'invisible' : [('custody','=',False)] , 'required' : [('custody_type','=','personal')],'readonly':[('state','not in',('draft', 'confirmed'))]}"/>
+
+                    </field>
+            </field>
+        </record>
+
+        <record id="cus_view_picking_out_form" model="ir.ui.view">
+            <field name="name">cus.stock.picking.out.form.inherit</field>
+            <field name="model">stock.picking.out</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock_multi_company.view_picking_out_form"/>
+            <field name="arch" type="xml">
+  	         
+                <field name="company_id" position="after">
+                        <field name="custody" />
+                        <field name="custody_type" />
+                        <field name="office" />
+                        <field name="employee_to" />
+
+                </field>
+                
+            </field>
+        </record>
+
+        <record id="cus_view_picking_in_form" model="ir.ui.view">
+            <field name="name">cus.stock.picking.in.form.inherit</field>
+            <field name="model">stock.picking.in</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="stock_multi_company.view_picking_in_form"/>
+            <field name="arch" type="xml">
+                
+                <field name="company_id" position="after">
+                        <field name="custody" />
+                        <field name="custody_type" />
+                        <field name="office" />
+                        <field name="employee_to" domain="[('state','=','approved')]"/>
+                        <field name="rec_id"  />
+                </field>
+                
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

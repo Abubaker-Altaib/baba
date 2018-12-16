@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+    <record id="account_budget_operation_view_inherit_account_budget_ebs" model="ir.ui.view">
+      <field name="name">account.budget.operation.view.form</field>
+      <field name="model">account.budget.operation</field>
+      <field name="inherit_id" ref="account_budget_custom.account_budget_operation_view"/>
+      <field name="arch" type="xml">
+        <xpath expr="//form/header" position="replace">
+        	<header>
+	        	<button name="complete" string="Confirm" states="draft" type="object" group="account_custom.group_expenditure_unit" />
+	        	<button name="confirm" string="Approve" states="complete" type="object" group="account_custom.group_financial_section" />
+	        	<button name="action_cancel_draft" string="Cancel &amp; Set to Draft" states="complete" type="object" group="account_custom.group_financial_section" />
+	        	<button name="approve_done" string="Approve" states="confirm" type="object" group="account_custom.group_financial_manager" />
+	        	<button name="action_cancel_complete" string="Cancel &amp; Return to Head of Financial Section" states="confirm" type="object" group="account_custom.group_financial_manager" />
+	        	<button name="done" string="Approve" states="approve" type="object" group="account_custom.group_general_manager,account_custom.group_deputy_general_manager" />
+	        	<button name="action_cancel_approve" string="Cancel &amp; Return to Financial Manager" states="approve" type="object" group="account_custom.group_general_manager,account_custom.group_deputy_general_manager" />
+
+	            <field name="state" widget="statusbar"
+								statusbar_visible="draft,complete,confirm,done" />
+			</header>
+
+        </xpath>
+        <xpath expr="//field[@name='budget_line']" position="before" >
+        	<field name="analytic_account_id" attrs="{'invisible':[('type','=','increase')],
+                             'required':[('type','!=','increase')],'readonly':[('state','!=','draft')]}" />
+        </xpath>
+        <xpath expr="//field[@name='budget_line']" position="attributes">
+        	<attribute name='domain'>[('analytic_account_id','=',analytic_account_id) , ('crossovered_budget_id.state' , '!=' , 'done')]</attribute>
+        </xpath>
+
+        <xpath expr="//field[@name='budget_line']" position="attributes">
+          <attribute name='options'>{'no_create_edit': True}</attribute>
+        </xpath>
+
+        <xpath expr="//field[@name='line_ids']" position="attributes">
+          <attribute name='attrs'>{'readonly':['|',('state','!=','draft'),'&amp;',('type','=','transfer'),'|',('analytic_account_id','=',False),('budget_line','=',False)]}</attribute>
+          <attribute name='context'>{'default_line_ids_analytic_account_id':analytic_account_id}</attribute>
+        </xpath>
+        <xpath expr="//field[@name='budget_line_ids']" position="attributes">
+        	<attribute name="domain">[('analytic_account_id','=',analytic_account_id) , ('crossovered_budget_id.state' , '!=' , 'done')]</attribute>
+          <attribute name='options'>{'no_create_edit': True}</attribute>
+        </xpath>
+        <xpath expr="//notebook/page[1]/field/tree/field[@name='line_id']" position="attributes">
+            <attribute name="context">{'model':'account.budget.operation' , 'field':'line_id',
+                                                'type':parent.type ,
+                                                'analytic_account_id':parent.analytic_account_id,
+                                                'line_ids_analytic_account_id':line_ids_analytic_account_id}
+            </attribute>
+            <attribute name='options'>{'no_create_edit': True}</attribute>
+            <attribute name="domain">[('id','!=',parent.budget_line)]</attribute>
+
+        </xpath>
+        <xpath expr="//notebook/page[1]/field/tree" postion="inside">
+        	<field name="line_ids_analytic_account_id" attrs="{'readonly':[('parent.type','=','transfer')],'required':[('parent.type','=','increase')]}" />
+        </xpath>
+
+
+        <!-- this to change string of budget_line in form if you change transfer_type -->
+       <xpath expr="//field[@name='budget_line']" position="replace">
+        </xpath>
+        
+        <xpath expr="/form/sheet/group/field[@name='amount']" position="after">
+          <separator colspan="4"/>
+            <div>
+              <label for="budget_line" string="To Budget Line" style="font-weight: bold;"
+              attrs="{'invisible':['|',('type','!=','transfer'),('transfer_type','=','to_multi')]}"/>
+
+              <label for="budget_line" string="From Budget Line" style="font-weight: bold;"
+              attrs="{'invisible':['|',('type','!=','transfer'),('transfer_type','=','from_multi')]}"/>
+            </div>
+            <div>
+              <field name="budget_line" attrs="{'required': [('type','=','transfer')], 'invisible':['|',('type','=','close'),('type','=','increase')]}" domain="[('analytic_account_id','=',analytic_account_id) , ('crossovered_budget_id.state' , '!=' , 'done')]" context="{'model':'account.budget.operation' , 'field':'budget_line',
+                                      'line_ids':line_ids, 'type':type
+                                    }" options ="{'no_create_edit': True}"/>
+            </div>
+        </xpath> 
+        <xpath expr="/form/sheet/group/field[@name='transfer_type']" position="attributes">
+            <attribute name="attrs">{'readonly':[('state','!=','draft')]}</attribute>
+        </xpath>
+
+
+      </field>
+    </record>
+
+    <!-- Inherit tree view of account budget operation -->
+    <record model="ir.ui.view" id="account_budget_operation_view_tree_inherit_account_budget_ebs">
+      <field name="name">account.budget.operation.view.tree</field>
+      <field name="model">account.budget.operation</field>
+      <field name="inherit_id" ref="account_budget_custom.account_budget_operation_view_tree" />
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='budget_line']" position="replace">
+          <field name="budget_line" string="Budget Line" />
+        </xpath>
+      </field>
+    </record>
+
+	</data>
+</odoo>
